@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="WidgetThrobber" parent="@android:style/Widget.Holo.ProgressBar.Large"></style>
+    <style name="WidgetButton" parent="@android:style/Widget.Holo.Button.Small"></style>
+</resources>

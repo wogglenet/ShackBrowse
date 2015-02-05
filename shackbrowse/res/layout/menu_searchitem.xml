@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<net.woggle.CheckableLinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@+id/messageContainer"
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+  android:paddingLeft="3dip"
+  android:paddingRight="0dip"
+  android:orientation="vertical"
+  android:background="@color/selector_appmenu"
+  >
+
+  <LinearLayout
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+  android:orientation="horizontal"
+  android:paddingTop="8dip"
+  android:paddingBottom="8dip"
+  >
+	     <TextView
+	         android:id="@+id/text"
+	         android:layout_width="fill_parent"
+	         android:layout_height="wrap_content"
+	         android:textColor="@color/nonpreview_post_text_color"
+	         android:ellipsize="end"
+	         android:maxLines="6"
+	         android:textSize="@dimen/searchViewTextSize"
+	         android:paddingLeft="7dip"
+	     />
+ 	 </LinearLayout>
+</net.woggle.CheckableLinearLayout>

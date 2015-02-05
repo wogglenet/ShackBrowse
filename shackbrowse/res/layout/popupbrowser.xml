@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/bg_app_ics"
+>
+	<WebView
+	    android:id="@+id/popup_webView"
+	    android:layout_width="match_parent"
+	    android:layout_height="0dp"
+	    android:layout_weight="1"
+	    android:orientation="vertical"
+	/>
+	<LinearLayout
+	    android:id="@+id/popup_zoomcont"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:paddingTop="5dp"
+	    android:visibility="gone"
+	    android:orientation="vertical"
+	    >
+	<TextView android:text="Coarse Zoom Adjustment" android:layout_width="match_parent" android:layout_height="wrap_content" />
+	<SeekBar
+	    android:id="@+id/popup_seekbar"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:visibility="gone"
+	    />
+	<TextView android:text="Fine Zoom Adjustment" android:layout_width="match_parent" android:layout_height="wrap_content" />
+	<SeekBar
+	    android:id="@+id/popup_seekbarfine"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:visibility="gone"
+	    />
+	</LinearLayout>
+</LinearLayout>

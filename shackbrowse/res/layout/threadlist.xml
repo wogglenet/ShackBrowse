@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tlist_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_app_ics"
+    android:orientation="vertical">
+    <RelativeLayout 
+         android:id="@+id/tlist_FSnoResults"
+         android:visibility="gone"
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+            >
+            <TextView
+                android:id="@+id/tlist_noResultsText"
+	      	   android:layout_width="wrap_content"
+	      	   android:layout_height="wrap_content"
+	      	   android:layout_centerInParent="true"
+	      	   android:textColor="@color/nonpreview_post_text_color"
+	      	   android:text="@string/tlist_emptyText"
+      		   />
+    </RelativeLayout>
+    <ListView android:id="@id/android:list"
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:orientation="vertical" />
+
+        <RelativeLayout 
+         android:id="@+id/tlist_undoBar"
+         android:visibility="gone"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:layout_alignParentBottom="true"
+         android:background="@color/modtag_nws"
+         android:layout_margin="12dp"
+         android:padding="2dp"
+         >
+            <LinearLayout 
+                android:layout_width="match_parent"
+         		android:layout_height="wrap_content"
+         		android:background="@color/buttonBarBg"
+        		android:orientation="horizontal" >
+	        
+            <TextView 
+	            android:layout_width="0dp"
+	            android:layout_weight="1"
+	            android:layout_height="wrap_content"
+	            android:fontFamily="sans-serif"
+	            android:text="Thread Collapsed"
+	            android:textSize="18dp"
+	            android:paddingLeft="14dp"
+			    android:paddingRight="14dp"
+			    android:textColor="#ffffff"
+	            android:gravity="left|center_vertical" />
+            <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:background="?android:attr/dividerVertical"
+            android:layout_alignParentTop="true"/>
+            <Button
+                android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:drawableLeft="@drawable/ic_action_content_undo"
+				android:gravity="center_vertical"
+				android:text="Undo"
+				android:fontFamily="sans-serif-light"
+				android:textAllCaps="true"
+				android:id="@+id/buttonUndo"
+				android:textSize="18dp"
+				android:background="?android:attr/selectableItemBackground"
+				android:paddingLeft="10dp"
+			    android:paddingRight="10dp"
+			    android:layout_alignParentRight="true"
+				/>
+            </LinearLayout>
+        </RelativeLayout>
+</RelativeLayout>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer-array name="progress_colors">
+        <item>@color/modtag_inf</item>
+        <item>@color/replyCountNewBg</item>
+        <item>@color/modtag_nws</item>
+        <item>@color/gnushack</item>
+    </integer-array>
+    <color name="gnushack">#52c334</color>
+    <color name="gnushackdark">#333</color>
+    <color name="selected_highlight_postbg">#161616</color>
+    <color name="selected_postbg">#000000</color>
+    <color name="collapsed_postbg">#131313</color>
+    <color name="webview_bg">#040404</color>
+    <color name="thread_row_bottomline">#101010</color>
+    <color name="news_selected_highlight_postbg">#253940</color>
+    <color name="news_post_background">#662d91</color>
+    <color name="new_post_count">#00ff00</color>
+    <color name="modtag_text">#000000</color>
+    <color name="nonpreview_post_text_color">#fff</color>
+    <color name="collapsed_post_text_color">#999</color>
+    <color name="post_topline">#505050</color>
+    <color name="user_paricipated">#6a9fb5</color>
+    <color name="replyCount">#000</color>
+    <color name="userName">#f3e7b5</color>
+    <color name="OPUserName">#90A959</color>
+    <color name="selfUserName">#6A9FB5</color>
+    <color name="modUserName">#AC4142</color>
+    <color name="emplUserName">#aa759f</color>
+    <color name="separator">#151515</color>
+    <color name="app_bg_color">#090909</color>
+    <color name="thread_divider_color">#00000000</color>
+    <color name="post_divider_color">#00000000</color>
+    <color name="transparent">#00000000</color>
+    <color name="holoHighlight">#0DBFFD</color>
+    <color name="clickHighlight">#385460</color>
+    <color name="linkColor">#B0B0B0</color>
+    
+    <color name="buttonBarBg">#303030</color>
+    <color name="navBarBg">#222222</color>
+    <color name="actionBarHighLight">#303030</color>
+    <color name="buttonBarHighLight">#6A9FB5</color>
+    
+    <color name="timePosted">#707070</color>
+    <color name="threadLifeGood">#707070</color>
+    <color name="threadLifeOk">#947243</color>
+    <color name="threadLifeBad">#954444</color>
+    
+    <color name="post_topline_new">#90A959</color>
+    <color name="replyCountBg">#c0c0c0</color>
+	<color name="replyCountNewBg">#90A959</color>
+	<color name="modtag_political">#f4bf75</color>
+	<color name="modtag_nws">#ac4142</color>
+	<color name="shacktag_unf">#ac4142</color>
+	<color name="thread_containsbg">#909090</color>
+	<color name="modtag_tangent">#8f5536</color>
+	<color name="shacktag_wtf">#aa759f</color>
+	<color name="modtag_stupid">#90a959</color>
+	<color name="shacktag_ugh">#008000</color>
+	<color name="modtag_inf">#6A9FB5</color>
+	<color name="shacktag_inf">#6A9FB5</color>
+	<color name="shacktag_tag">#90A959</color>
+	<color name="shacktag_lol">#D28445</color> 
+	
+	<color name="tview_nws_postbg">#352828</color>
+	<color name="tview_inf_postbg">#282835</color>
+
+<!-- 
+    <color name="replyCountBg">#aaa</color>
+    <color name="replyCountNewBg">#1a1</color>
+	<color name="modtag_political">#FFFF00</color>
+	<color name="modtag_nws">#FF00FF</color>
+	<color name="shacktag_unf">#FF0000</color>
+	<color name="thread_containsbg">#C0C0C0</color>
+	<color name="modtag_tangent">#808000</color>
+	<color name="shacktag_wtf">#800080</color>
+	<color name="modtag_stupid">#00FF00</color>
+	<color name="shacktag_ugh">#008000</color>
+	<color name="modtag_inf">#0000FF</color>
+	<color name="shacktag_inf">#B0E0E6</color>
+	<color name="shacktag_tag">#00FF7F</color>
+    <color name="shacktag_lol">#FFA500</color>
+    -->
+    
+ <color name="Holoblue">#ff0099cc</color>
+ 	<color name="ics_background_start">#ff040404</color>
+    <color name="ics_background_end">#ff272D33</color>
+
+ <!--  
+    <color name="ics_background_start">#ff020202</color>
+    <color name="ics_background_end">#ff1b1f23</color> -->
+    <color name="SBlight">#bbef6d</color>
+    <color name="SBmed">#52c334</color>
+    <color name="SBdark">#368931</color>
+    <color name="SBvdark">#22571f</color>
+</resources>

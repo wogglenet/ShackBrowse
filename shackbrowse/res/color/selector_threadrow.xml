@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/net.woggle.shackbrowse" >
+
+     <item 
+        android:state_pressed="true" 
+        app:state_nws="false"
+        app:state_tangent="false"
+        app:state_inf="false"
+        app:state_political="false"
+        app:state_stupid="false"
+        android:drawable="@drawable/card_clicked_postbg" />
+    <item 
+        android:state_pressed="true" 
+        app:state_nws="true"
+        app:state_tangent="false"
+        app:state_inf="false"
+        app:state_political="false"
+        app:state_stupid="false"
+        android:drawable="@drawable/card_clicked_postbg_nws" />
+    <item 
+        android:state_pressed="true" 
+        app:state_nws="false"
+        app:state_tangent="true"
+        app:state_inf="false"
+        app:state_political="false"
+        app:state_stupid="false"
+        android:drawable="@drawable/card_clicked_postbg_tangent" />
+    <item 
+        android:state_pressed="true" 
+        app:state_nws="false"
+        app:state_tangent="false"
+        app:state_inf="true"
+        app:state_political="false"
+        app:state_stupid="false"
+        android:drawable="@drawable/card_clicked_postbg_informative" />
+    <item 
+        android:state_pressed="true" 
+        app:state_nws="false"
+        app:state_tangent="false"
+        app:state_inf="false"
+        app:state_political="true"
+        app:state_stupid="false"
+        android:drawable="@drawable/card_clicked_postbg_political" />
+    <item 
+        android:state_pressed="true" 
+        app:state_nws="false"
+        app:state_tangent="false"
+        app:state_inf="false"
+        app:state_political="false"
+        app:state_stupid="true"
+        android:drawable="@drawable/card_clicked_postbg_stupid" />
+    
+    
+    
+    
+    
+    
+    <item 
+        android:state_pressed="false"
+        android:state_checked="true"
+        app:state_nws="false"
+        app:state_tangent="false"
+        app:state_inf="false"
+        app:state_political="false"
+        app:state_stupid="false"
+        android:drawable="@drawable/card_highlighted_postbg" />
+    <item 
+        android:state_pressed="false"
+        android:state_checked="true"
+        app:state_nws="true"
+        app:state_tangent="false"
+        app:state_inf="false"
+        app:state_political="false"
+        app:state_stupid="false"
+        android:drawable="@drawable/card_highlighted_postbg_nws" />
+    <item 
+        android:state_pressed="false"
+        android:state_checked="true"
+        app:state_nws="false"
+        app:state_tangent="true"
+        app:state_inf="false"
+        app:state_political="false"
+        app:state_stupid="false"
+        android:drawable="@drawable/card_highlighted_postbg_tangent" />
+    <item 
+        android:state_pressed="false"
+        android:state_checked="true"
+        app:state_nws="false"
+        app:state_tangent="false"
+        app:state_inf="true"
+        app:state_political="false"
+        app:state_stupid="false"
+        android:drawable="@drawable/card_highlighted_postbg_informative" />
+    <item 
+        android:state_pressed="false"
+        android:state_checked="true"
+        app:state_nws="false"
+        app:state_tangent="false"
+        app:state_inf="false"
+        app:state_political="true"
+        app:state_stupid="false"
+        android:drawable="@drawable/card_highlighted_postbg_political" />
+    <item
+        android:state_pressed="false" 
+        android:state_checked="true"
+        app:state_nws="false"
+        app:state_tangent="false"
+        app:state_inf="false"
+        app:state_political="false"
+        app:state_stupid="true"
+        android:drawable="@drawable/card_highlighted_postbg_stupid" />
+    
+    
+    
+    
+    
+    
+    <item 
+        android:state_pressed="false"
+        app:state_nws="false"
+        app:state_tangent="false"
+        app:state_inf="false"
+        app:state_political="false"
+        app:state_stupid="false"
+        android:drawable="@drawable/card_selected_postbg" />
+    <item 
+        android:state_pressed="false"
+        app:state_nws="true"
+        app:state_tangent="false"
+        app:state_inf="false"
+        app:state_political="false"
+        app:state_stupid="false"
+        android:drawable="@drawable/card_selected_postbg_nws" />
+    <item 
+        android:state_pressed="false"
+        app:state_nws="false"
+        app:state_tangent="true"
+        app:state_inf="false"
+        app:state_political="false"
+        app:state_stupid="false"
+        android:drawable="@drawable/card_selected_postbg_tangent" />
+    <item 
+        android:state_pressed="false"
+        app:state_nws="false"
+        app:state_tangent="false"
+        app:state_inf="true"
+        app:state_political="false"
+        app:state_stupid="false"
+        android:drawable="@drawable/card_selected_postbg_informative" />
+    <item 
+        android:state_pressed="false"
+        app:state_nws="false"
+        app:state_tangent="false"
+        app:state_inf="false"
+        app:state_political="true"
+        app:state_stupid="false"
+        android:drawable="@drawable/card_selected_postbg_political" />
+    <item 
+        android:state_pressed="false"
+        app:state_nws="false"
+        app:state_tangent="false"
+        app:state_inf="false"
+        app:state_political="false"
+        app:state_stupid="true"
+        android:drawable="@drawable/card_selected_postbg_stupid" />
+</selector>

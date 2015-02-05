@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/singleThread"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/bg_app_ics"
+	>
+	<net.woggle.shackbrowse.PullToRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ptr_layout"
+               android:layout_width="fill_parent"
+    		   android:layout_height="fill_parent"
+    		   android:visibility="gone"
+    >
+    <ListView android:id="@android:id/list"
+               android:layout_width="fill_parent"
+    			android:layout_height="fill_parent"
+               
+               android:orientation="vertical"
+               />
+    </net.woggle.shackbrowse.PullToRefreshLayout>
+    <RelativeLayout 
+     android:id="@+id/tview_FSLoad"
+     android:visibility="gone"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+        >
+			<ProgressBar
+			style="@style/WidgetThrobber"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerInParent="true"
+			/>
+    </RelativeLayout>
+      <RelativeLayout 
+       android:id="@+id/tview_FSIcon"
+       android:visibility="gone"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+          >
+          <LinearLayout
+                android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_centerInParent="true"
+                >
+                <LinearLayout
+                android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+                android:orientation="horizontal" 
+                android:layout_gravity="center" >
+	                <ImageView 
+	                    android:layout_width="30dp"
+		                android:layout_height="30dp"
+		                android:scaleType="fitXY"
+		                android:src="@drawable/ic_launcher"
+		                android:layout_gravity="center" />
+		            <TextView 
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:text="Shack Browse"
+		                android:textSize="22dp"
+		                android:paddingLeft="3dp"
+		                android:textColor="@color/nonpreview_post_text_color"
+		                android:layout_gravity="center"/>
+	            </LinearLayout>
+	            <TextView 
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:fontFamily="sans-serif-light"
+	                android:text="by bradsh"
+	                android:textSize="14dp"
+	                android:layout_gravity="center"/>
+	            <TextView 
+	                android:id="@+id/expanding_layout"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:fontFamily="sans-serif-condensed"
+	                android:text="@string/tview_greeting"
+	                android:textSize="12dp"
+	                android:padding="15dp"
+	                android:layout_gravity="center"/>
+            </LinearLayout>
+      </RelativeLayout>
+</LinearLayout>

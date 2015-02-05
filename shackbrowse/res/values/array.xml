@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="taglines">
+        <item>Grim Fandango coming to PC, Mac, and Linux too</item>
+        <item>It gets you chicks!</item>
+        <item>Television, had quite a bit of experience...</item>
+        <item>Genjuro sized</item>
+        <item>phil sized</item>
+        <item>I ATE A CAT</item>
+        <item>BUT SHOW THEM TO ME</item>
+        <item>thanks.txt</item>
+        <item>RIP DON</item>
+        <item>I accidentally a car</item>
+        <item>MY GIRLFRIEND</item>
+        <item>Lamp, Sand, Lime</item>
+        <item>Dropping the server...</item>
+        <item>skeletor is NOT skinny</item>
+        <item>im a skydiver...the dropzone is life..</item>
+        <item>----\\\_____O_o/-----------</item>
+        <item>Hover boards are real</item>
+        <item>Fredrik, you haven\'t changed one bit since I last saw you</item>
+        <item>Now with privacy strips</item>
+        <item>Welcome to the world of paper shredding. You\'re in for a hell of a ride.</item>
+        <item>YOU LEAVE MY WEBSITE AGAIN, AND IM GONNA KICK YOUR ASS</item>
+        <item>FAIL WHALE INCOMING *breach* MWEEEEEEERRRRRRRRGHHH</item>
+        <item>WHAT A PIG</item>
+        <item>TO IGNORE ME MAD ME MAD</item>
+        <item>plastic cowboy hat</item>
+        <item>Shut up daggah</item>
+        <item>Plow the dirtbox</item>
+        <item>Leaving without saying goodbye??</item>
+        <item>Hit the gym, lawyer up</item>
+        <item>no u</item>
+        <item>Hot Wet Maarten</item>
+        <item>Appleflappen</item>
+        <item>there\'s no way a dog, even a pit could take me down.</item>
+        <item>CHECK YOUR FILTERS</item>
+        <item>Oblivion with guns</item>
+        <item>2014, the year of linux.</item>
+        <item>2018</item>
+        <item>U breadloaf</item>
+        <item>I AM FIREBONE</item>
+        <item>i used soap when i washed it</item>
+        <item>Sprite Throwing Champions, 2010, 2011, 2013.</item>
+    </string-array>
+    <string-array name="preference_swipecollapse">
+		<item>Disable swipe to collapse</item>
+		<item>Swipe only left</item>
+		<item>Swipe both directions</item>
+	</string-array>
+	<string-array name="preference_swipecollapse_vals">
+		<item>0</item>
+		<item>1</item>
+		<item>2</item>
+	</string-array>
+    <string-array name="preference_animspeed">
+        <item>Off</item>
+        <item>Superfast</item>
+        <item>Fast</item>
+        <item>Regular</item>
+        <item>Slower</item>
+        <item>Tedious</item>
+    </string-array>
+    <string-array name="preference_animspeed_vals">
+        <item>0</item>
+        <item>0.5</item>
+        <item>1.0</item>
+        <item>1.3</item>
+        <item>3.0</item>
+        <item>8.0</item>
+    </string-array>
+	<string-array name="preference_fontsizes">
+		<item>75%</item>
+		<item>90%</item>
+		<item>100%</item>
+		<item>110%</item>
+		<item>120%</item>
+		<item>130%</item>
+		<item>150%</item>
+		<item>175%</item>
+	</string-array>
+	<string-array name="preference_fontsize_vals">
+		<item>0.75</item>
+		<item>0.90</item>
+		<item>1.0</item>
+		<item>1.1</item>
+		<item>1.2</item>
+		<item>1.3</item>
+		<item>1.5</item>
+		<item>1.75</item>
+	</string-array>
+	<string-array name="preference_splitView">
+		<item>Never use Split View</item>
+		<item>Use Split View in Landscape</item>
+		<item>Always use Split View</item>
+	</string-array>
+	<string-array name="preference_splitView_vals">
+		<item>0</item>
+		<item>1</item>
+		<item>2</item>
+	</string-array>
+	<string-array name="preference_apiUrl">
+		<item>shackapi.hughes.cc</item>
+		<item>woggle.net/shackbrowseAPI</item>
+		<item>shackbrowseapi.appspot.com</item>
+		<item>WinChatty V2 (faster)</item>
+		<item>Woggle V2 (faster)</item>
+		<item>Custom API</item>
+	</string-array>
+	<string-array name="preference_apiUrl_vals">
+		<item>0</item>
+		<item>1</item>
+		<item>3</item>
+		<item>4</item>
+		<item>5</item>
+		<item>2</item>
+	</string-array>
+		<string-array name="preference_orientLock">
+		<item>System orientation or lock</item>
+		<item>Lock to Portrait</item>
+		<item>Lock to Landscape</item>
+		<item>Lock to Reverse Portrait</item>
+		<item>Lock to Reverse Landscape</item>
+	</string-array>
+	<string-array name="preference_orientLock_vals">
+		<item>0</item>
+		<item>1</item>
+		<item>2</item>
+		<item>3</item>
+		<item>4</item>
+	</string-array>
+	<string-array name="preference_forcepostpreview">
+		<item>Never force preview</item>
+		<item>Force preview on root posts</item>
+		<item>Force preview for all posts</item>
+	</string-array>
+	<string-array name="preference_forcepostpreview_vals">
+		<item>0</item>
+		<item>1</item>
+		<item>2</item>
+	</string-array>
+	<string-array name="preference_popupBrowser">
+		<item>Open all links in popup</item>
+		<item>Open everything but youtube and google play in popup</item>
+		<item>Open only images in popup</item>
+		<item>Open all links externally</item>
+	</string-array>
+	<string-array name="preference_popupBrowser_vals">
+		<item>0</item>
+		<item>1</item>
+		<item>2</item>
+		<item>3</item>
+	</string-array>
+    <string-array name="search_choices">
+        <item>Shack Posts</item>
+        <item>[LOL] Tags</item>
+    </string-array>
+    <string-array name="search_tag_choices">
+        <item>lol</item>
+        <item>tag</item>
+        <item>inf</item>
+        <item>unf</item>
+        <item>all</item>
+    </string-array>
+    <string-array name="search_day_choices">
+        <item>1</item>
+        <item>2</item>
+        <item>5</item>
+        <item>7</item>
+        <item>14</item>
+        <item>30</item>
+        <item>90</item>
+        <item>180</item>
+        <item>365</item>
+        <item>720</item>
+        <item>9999</item>
+    </string-array>
+</resources>

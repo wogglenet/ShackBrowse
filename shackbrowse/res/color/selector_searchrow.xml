@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/net.woggle.shackbrowse" >
+
+     <item 
+        android:state_pressed="true" 
+        app:state_new="false"
+        android:drawable="@drawable/card_clicked_postbg" />
+    <item 
+        android:state_pressed="true" 
+        app:state_new="true"
+        android:drawable="@drawable/card_clicked_postbg_new" />
+
+
+    <item 
+        android:state_checked="true"
+        app:state_new="false"
+        android:drawable="@drawable/card_highlighted_postbg" />
+    <item 
+        android:state_checked="true"
+        app:state_new="true"
+        android:drawable="@drawable/card_highlighted_postbg_new" />
+    
+    
+    
+    
+    <item 
+        app:state_new="false"
+        android:drawable="@drawable/card_selected_postbg" />
+    <item 
+        app:state_new="true"
+        android:drawable="@drawable/card_selected_postbg_new" />
+   
+</selector>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Generated with http://android-holo-colors.com -->
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<style name="fullScreenDialog" parent="android:Theme.Black">
+    	<item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+	</style>
+  
+	<style name="Widget.PullToRefresh.ProgressBar.Horizontal.Center"
+        parent="android:Widget.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/progress_bar_centered</item>
+        <item name="android:minHeight">2dip</item>
+        <item name="android:maxHeight">2dip</item>
+    </style>
+    
+	<style name="SBActionBar" parent="android:style/Widget.Holo.ActionBar">
+        <item name="android:background">@drawable/bg_button_bar</item>
+    </style>
+
+    <style name="OverFlow" parent="@android:style/Widget.Holo.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_action_navigation_more_vert</item>
+    </style>
+	
+
+</resources>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<net.woggle.CheckableLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+   android:id="@+id/searchRowLayout"
+   android:layout_width="fill_parent" 
+   android:layout_height="wrap_content"
+   android:orientation="vertical"
+  android:background="@color/selector_searchrow"
+   >
+
+
+<RelativeLayout
+    android:id="@+id/sresContainer"
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+  android:paddingTop="6dip"
+  android:paddingBottom="8dip"
+  android:paddingLeft="2dip"
+  android:paddingRight="10dip">
+
+  		<TextView
+	         android:id="@+id/sres_textPostLolCounts"
+	         android:layout_width="wrap_content"
+	         android:layout_height="wrap_content"
+	         android:layout_alignParentLeft="true"
+	         android:layout_alignParentTop="true"
+	         android:paddingLeft="5dip"
+	         android:paddingRight="5dip"
+	         android:layout_marginLeft="5dp"
+	       android:paddingTop="5dip"
+	       android:paddingBottom="5dip"
+	       android:textColor="@color/replyCount"
+	       android:textSize="@dimen/searchResultLolTagSize"
+	     />
+  		<LinearLayout
+  		    android:id="@+id/firstRow"
+  		    android:layout_width="wrap_content" 
+  		    android:layout_height="wrap_content" 
+  		    android:paddingBottom="2dp"
+  		    android:layout_alignWithParentIfMissing="true"
+  		    android:layout_toRightOf="@id/sres_textPostLolCounts"
+  		    android:layout_alignParentRight="true"
+  		    android:orientation="horizontal">
+	     	<TextView
+	         
+	         android:id="@+id/textUserName"
+	         android:paddingLeft="7dp"
+	         android:fontFamily="sans-serif-light"
+	         android:layout_width="wrap_content"
+	         android:layout_height="wrap_content"
+	         android:textColor="@color/userName"
+	         android:textSize="@dimen/userNameSize"
+		     />
+		     <TextView
+	     	 android:id="@+id/textPostedTime"
+	     	 android:layout_width="0dp"
+		     android:layout_weight="1"
+		     android:gravity="right"
+	     	 android:layout_height="wrap_content"
+	     	 android:maxLines="1"
+	     	 android:paddingLeft="4dp"
+	     	 android:fontFamily="sans-serif-light"
+	     	 android:layout_alignParentRight="true"
+	         android:textColor="@color/timePosted"
+	         android:textSize="@dimen/postTimeSize"
+	         android:layout_toRightOf="@id/textUserName"
+		     />
+	     </LinearLayout>
+	     <TextView
+         android:id="@+id/textContent"
+         android:paddingLeft="7dp"
+         android:layout_width="fill_parent"
+         android:layout_height="wrap_content"
+         android:layout_below="@id/firstRow"
+         android:layout_alignLeft="@id/firstRow"
+         android:ellipsize="marquee"
+         android:maxLines="2"
+         android:textSize="@dimen/textSize"
+     	/>
+	</RelativeLayout>
+</net.woggle.CheckableLinearLayout>

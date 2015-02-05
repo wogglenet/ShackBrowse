@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_app_ics"
+    android:orientation="vertical" >
+    <RelativeLayout 
+         android:id="@+id/mlist_FSnoResults"
+         android:visibility="gone"
+         android:layout_width="match_parent"
+         android:layout_height="0dp"
+         android:layout_weight="1"
+            >
+            <TextView
+	      	   android:layout_width="wrap_content"
+	      	   android:layout_height="wrap_content"
+	      	   android:layout_centerInParent="true"
+	      	   android:textColor="@color/nonpreview_post_text_color"
+	      	   android:text="@string/tlist_emptyText"
+      		   />
+    </RelativeLayout>
+    <ListView android:id="@id/android:list"
+               android:layout_width="match_parent"
+               android:layout_height="0dp"
+               android:layout_weight="1"
+               android:orientation="vertical"
+               android:cacheColorHint="#00000000" />
+    <RelativeLayout 
+         android:id="@+id/mlist_FSLoad"
+         android:visibility="gone"
+         android:layout_width="match_parent"
+         android:layout_height="0dp"
+         android:layout_weight="1"
+            >
+            <ProgressBar
+            style="@style/WidgetThrobber"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_centerInParent="true"
+
+         />
+        </RelativeLayout>
+</LinearLayout>

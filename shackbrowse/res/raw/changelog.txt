@@ -1,0 +1,916 @@
+<html>
+  <head>
+    <style type='text/css'>
+      a            { color:#a0a0e0 }
+      div.title    { 
+          color:#d28445; 
+          font-size:1.2em; 
+          font-weight:bold; 
+          margin-top:1em; 
+          margin-bottom:0.5em; }
+      div.subtitle { 
+          color:#90a959; 
+          font-size:0.7em; 
+          /* margin-bottom:1em; */ }
+      div.freetext { color:#F0F0F0 }
+      div.list     { color:#d0d0d0 }
+      li { margin-left: -15px;  }
+    </style>
+  </head>
+  <body>
+<!--
+TODO
+* TODO NO NETWORK ICON
+* PHOTOS+ UPLOAD
+* INLINE PHOTOS
+* UPLOAD PHOTOS TO DROPBOX?
+* QUOTES FROM TEXT SELECTION
+* SEARCH GOOGLE BY TEXT SELECTION
+-->
+
+$ 4.1.0Beta3
+% v 4.1.0Beta3
+_ Feb 4, 2015
+* Beta3:
+* Color tweaks
+* Frontpage fixes and improvements
+* Icon tweaks
+* Beta2:
+* Fixed crash on Android 5.0 due to Google's buggy libraries
+* Beta1:
+* Material Design
+* Frontpage section
+* Preferences are finally a fragment instead of an activity
+* Increased max resolution of camera uploads
+* Bug Fix: Crash with some camera uploads
+
+$ 4.0.6
+% v 4.0.6
+_ Jan 31, 2015
+* Threw in some Lollipop icons
+* Posts less than 6 characters are automatically padded with spaces to get around the Shacknews limit
+* Bug Fix: Sometimes message text would be saved as a draft when it shouldn't
+* Bug Fix: Fixed a bug in the preview parser causing it to seem as though posts with <3 in them posted incorrectly when in reality everything went ok
+
+$ 4.0.5
+% v 4.0.5
+_ Dec 11, 2014
+* Bug Fix: Not collapsing long post threadtrees appropriately
+* Color tweaks
+
+$ 4.0.4
+% v 4.0.4
+_ Sept 19, 2014
+* All donator features are now publicly available
+* Previous donators will automatically have their donator status uploaded to the woggle server
+* Previous donators will remain able to change lime icon settings, but limes can no longer be bought by new users
+* Bug Fix: Weird names not able to log in
+* Bug Fix: Crashes
+
+$ 4.0.3
+% v 4.0.3
+_ Sept 6, 2014
+* More taglines
+* Updated mod list (thanks Frozen Pixel)
+* Better notification preference syncing between server and client
+* Bug Fix: Not scrolling to post after replying to root in long thread
+* Bug Fix: Multiple notifications coming in at once do not all get recorded to notification history
+* Bug Fix: Crashes
+
+$ 4.0.2
+% v 4.0.2
+_ Sept 3, 2014
+* Taglines at load/reload
+* Bug Fix: First post not connected to rest of posts
+* Bug Fix: Should be no more weird auto scrolling
+* Bug Fix: Crashes
+
+$ 4.0.1
+% v 4.0.1
+_ Aug 20, 2014
+* More likely to directly show post instead of scrolling from search clicks
+* Bug Fix: Crashes related to multithreading synchronization
+
+$ 4.0.0
+% v 4.0.0
+_ Aug 18, 2014
+* Post expansion animations (animation speed in preferences)
+* Visual tweaks
+* New progress bar includes gnushack color
+* LOL tagging is asynchronous, with a loading icon on the post you lolled
+* Many many optimizations
+* Postqueue service bug fix for posting to nuked threads
+
+$ 3.3.3
+% v 3.3.3
+_ Jul 9, 2014
+* Minor layout and color changes
+* Can clear queued posts if they are stuck (navigation menu at the bottom)
+* Bug Fix: Notifications not setting up after reinstall or new phone
+
+$ 3.3.2
+% v 3.3.2
+_ Jun 22, 2014
+* Can select post text and click search to search posts for selection
+* Can click username and highlight user in thread
+* Bug Fix: Attempt at fixing posting stops working with network errors
+* Bug Fix: Attempt at fixing double posts from post queue
+* Bug Fix: Saved searches show up in appmenu in right place even when notifications are enabled
+
+$ 3.3.1
+% v 3.3.1
+_ May 28, 2014
+* Buggy link-long-click replaced with icon-buttons after links
+* Bug Fix: Resetting notification setting on upgrade
+* Bug Fix: Can't set reply and vanity preference for notifications
+* Bug Fix: Links don't show up in recent local posts
+* Bug Fix: Attempt at fixing double posts from post queue
+
+$ 3.3.0
+% v 3.3.0
+_ May 23, 2014
+* Post Queue Service
+* - Your posts will be queued to be sent in a database-backed queue
+* - If you change apps, your posts will still send
+* - If you lose connectivity, your posts will send when network becomes available, even if you are in another app
+* - If you restart your phone, your posts will send when you restart Shack Browse
+* - You will get notifications when you are in other apps and your posts PRL or send
+* - If you are in the app, you'll get a toast when being PRL'd
+* - Queued posts are denoted with loading spinners and will show up in the threads they are destined for
+* Massive optimization of scrolling and post clicking in threads with very long text posts
+* New API server: Woggle V2 (based on winchatty v2)
+* Cloud pinning is now done on woggle server (and should now work again, but only among shack browse devices)
+* Bug Fix: ThomW ShackLOL with usernames with spaces in them
+* Bug Fix: Shouldn't reset vanity/reply notification preferences on upgrade
+
+$ 3.2.1
+% v 3.2.1
+_ Apr 27, 2014
+* Undo button after collapsing threads
+* Support Android 4.1 inbox style notifications and big swipe-down notifications
+* Swipe / dismiss notifications now resets number notifications missed
+* Swipe-to-dismiss gesture support on notification viewer in app
+
+$ 3.2.0
+% v 3.2.0
+_ Apr 22, 2014
+* New instant notification system
+** Much more resilient than old system
+** Works better with multiple devices
+** Allows opt-in and opt-out of vanity and reply notifications separately
+** Vanity notifications are a donator feature
+** Custom keyword notifications (donator feature)
+* Notifications history list, accessible from navigation pane
+* Removed ellipsizing on threadlist due to bad android roms (Thanks Google)
+
+$ 3.1.6
+% v 3.1.6
+_ Apr 3, 2014
+* Auto version check
+* Composer: Long-press-on-word markup selector is more consistent.
+* Threadview: Post text is selectable and copyable. This feature has been a goal for 1 year.
+* ChattyPics Uploader: This is now a separate application included in the package. To use it, android-share an image. Now allows you to copy to clipboard or make a new post.
+* Search Results: Button to edit current search parameters of current search results. Should improve app flow when clicking a username to search posts and then wanting to filter results.
+* Search: "Tagger" added to advanced lol search
+* ShackLOL: new ThomW ShackLOL API support
+* NOTICE: OLD VERSIONS OF SHACKBROWSE WILL NOT WORK WITH THOMW SHACKLOL IN 2 MONTHS
+
+$ 3.1.5
+% v 3.1.5
+_ Mar 14, 2014
+* Bug Fix: Opening app via notification of single reply
+* Bug Fix: Opening app via link in another app
+* Bug Fix: Opening app sometimes results in app resetting
+* Bug Fix: Bug in TurboAPI implementation causing pointless requests
+* Bug Fix: Crash on LG G2 when long press word (maybe?)
+
+$ 3.1.4
+% v 3.1.4
+_ Jan 27, 2014
+* Bug Fix: Posting threads has delay in rare instances
+* Bug Fix: NWS post filter
+* Bug Fix: Rare bug where duplicate posts show when app db is corrupted
+
+$ 3.1.3
+% v 3.1.3
+_ Jan 16, 2014
+* Bug Fix: Odd behavior on app resume
+* Bug Fix: Crash fixes
+* Bug Fix: Sharing to Shack Browse
+* Bug Fix: Various other minor polish
+
+$ 3.1.0
+% v 3.1.0
+_ Jan 15, 2014
+* New way to setup popup browser autozoom
+* WinChatty V2 preference, allows use of WinChatty V2 API/database when possible (default enabled) (thanks arhughes)
+* WinChatty V2 API implemented in API ping tool
+* Caching optimization should dramatically (90%) reduce memory used by treebranch images, large threads should load much faster (thanks arhughes)
+* Network timeouts now 30 seconds
+* Can share link URLs from inside popup browser
+* Bug Fix: When sharing or copying links from inside popup browser when it was started with the "view all images in post" button, all image links will be shared/copied instead of just the first one
+* Bug Fix: Thread collapsing much more robust
+* Bug Fix: Bug clicking links inside spoilers
+
+$ 3.0.2
+% v 3.0.2
+_ Dec 9, 2013
+* Function to highlight text in a thread
+* To prevent odd bugs, all network actions timeout at 50 seconds
+* More optimization of threadlist scrolling
+* Dark background
+* Better link long click, now with haptic feedback
+* Bug Fix: Post is not fully shown sometimes when clicking on it
+* Bug Fix: Sometimes posts from search are not scrolled to after opening in dualpane
+* Bug Fix: Sometimes reply preview rows have styling
+* Bug Fix: Prevent double vibe when receiving two notifications in a row (like with vanity notifications)
+
+$ 3.0.1
+% v 3.0.1
+_ Nov 27, 2013
+* Note: Rush release for bug fixes. May be unstable.
+* Thread list scrolling optimizations, now smooth as butter
+* Usernames are findable with find on page
+* News posts quick search
+* Slightly more difficult to initiate swipe to collapse
+* Bug Fix: Posting hang
+* Bug Fix: Ping button, also cancelable now
+* Bug Fix: Keyword filtering change: collapse function REMOVED, supercollapse = collapse. Check your keyword filters
+* Bug Fix: Retry button on search results
+* Bug Fix: Find on page stays open when opening thread
+* Bug Fix: Rewrote backend of networking. Fixes numerous bugs.
+
+$ 3.0.0
+% v 3.0.0
+_ Nov 20, 2013
+* Only Android 4.0+ Supported
+* Uses Action Bar
+* Uses Navigation Drawer
+* Pull to refresh on thread replies
+* Swipe to collapse
+* Preference for swipe to collapse
+* New Visual Styles
+* New Optimizations
+* Many bug fixes
+
+$ 2.3.8
+% v 2.3.8
+_ Nov 4, 2013
+* Crash fixes
+
+$ 2.3.7
+% v 2.3.7
+_ Oct 28, 2013
+* Collapse button removed
+* Feedback quick SM button
+* Changed analytics for use with SB 3.0 design
+* Cloud actions are now more verbose when manually started
+* A thread author bug has been fixed on the appspot.com API server
+* Bug fix: A crash with shackmessaging from reply view should be fixed
+* Bug fix: "Re:" being added to shackmessage subject even when not a reply
+* Bug fix: a bug when returning from settings should be fixed
+
+$ 2.3.6
+% v 2.3.6
+_ Oct 18, 2013
+* Nested spoilers now behave as they do on shacknews
+* Shackmessages are checked on app launch when wifi is connected, and a notification will popup if you have new SMs
+* Preference to check for SMs at app launch while on cell network
+* Visual fixes
+* Tagging posts is now cancelable
+* Bug Fix: Image sharing intents (dropbox export and probably others)
+* Bug Fix: Attempt at fixing out of memory errors
+
+$ 2.3.5
+% v 2.3.5
+_ Sep 24, 2013
+* Errant "Cloud Data will load shortly" threads are now auto-fixed with background cloud sync process
+* Long press search results to check for LOL Tagger List
+* Show who lol'd is now an option for DONATOR QuickLOL
+* Slightly less likely to receive irrelevant notifications
+* Layout tweaks
+* Bug Fix: Layout bug on Android 2.3
+* Bug Fix: multiple app crash bugs
+* Bug Fix: hopefully fixed restore-app crash
+
+$ 2.3.4.1
+% v 2.3.4.1
+_ Sep 7, 2013
+* Bug Fix: Hotfix for Android 2.3 crash
+
+$ 2.3.4
+% v 2.3.4
+_ Sep 6, 2013
+* Can see who lol'd/tag'd/wtf'd etc individual posts (in post overflow button)
+* Settings re-unified
+* Numerous visual tweaks
+* Fast scroll is now an option in settings
+* Touch the X on a collapsed post to super-collapse
+* Halved ram usage
+* Massive Bug Fix: Cloud syncing favs hasn't actually worked for many people in quite some time
+* Bug Fix: Fixed app crash on posting via shared link
+* Bug Fix: Google Play Reported crash on resume
+* Bug Fix: Crash with long megathreads
+* Bug Fix: Self search brings to empty search if logged in without restarting app
+* Bug Fix: Possible fix for launch crash on Android 2.2 devices
+* Bug Fix: Crash when opening SB from email link then faving thread
+
+$ 2.3.3
+% v 2.3.3
+_ Sep 4, 2013
+* Better handling of app resume on low RAM devices
+* Better handling of mega threads, fastscroll on megathreads >300 replies, fewer crashes
+* Handling of https shacknews links
+* Visual tweaks
+* Bug Fix: Fixed issue where treebranches are sometimes broken randomly
+
+$ 2.3.2.2
+% v 2.3.2
+_ Aug 29, 2013
+* New visual styles
+* Figured out how to make popup browser full screen
+* Bug Fix: New attempt at preventing popup browser youtube videos from playing in background after it is closed
+* Bug Fix: Fixed bug where saved searches were not available to donators
+* Bug Fix: Unending notifications on public server
+* Optimization: Removed rounded corners to prevent GPU texture memory use which then was GC'd = scroll lag
+
+$ 2.3.1
+% v 2.3.1
+_ Aug 26, 2013
+* All users automatically enrolled in slow-notifications
+* Completely changed the way push notification servers work
+* Option to ping API servers
+* DONATORS: you will have to re-register for the fast notification server in options
+* DONATOR FEATURE: Support for vanity notifications
+* DONATORS: Changed the way donator features are activated - they are now simply ALL ON after you log into the donator screen once
+* Bug fix: Fixed a bug with the way notifications are registered with Google
+
+$ 2.3.0
+% v 2.3.0
+_ Aug 23, 2013
+* New visual styles
+* Popup browser options button right on it for <a href="http://www.shacknews.com/chatty?id=30604771">people who can't find things</a>
+* Blue bullet indicates threads you've posted in
+* Political threads indicated in reply view
+* Can search for posts you have drafted replies to
+* Notifications use ticker info
+* Notification options for vibrate, LED, and sounds
+* Note: This update will erase reply drafts made in previous versions
+* Overhaul: Performance improvements from significant reduction in GPU overdraw
+
+$ 2.2.1
+% v 2.2.1
+_ July 30, 2013
+* Bug Fix: Fixed the way notifications stack when you a receive a new one but haven't addressed the old one
+* Bug Fix: Notification related app crash
+* Bug Fix: Clicking on individual notification does not update seen search for "Replies to me"
+
+$ 2.2.0
+% v 2.2.0
+_ July 28, 2013
+* DONATOR FEATURE: Push notifications for replies to your posts. Enable preference in donator area, enable notifications in app-wide prefs.
+** This is a donator feature because the push monitoring server I built runs on google app engine which can only handle a small load for free. If we do not come close to the load, this may open to general use.
+* Search results remembers the last post you saw in search if you have run the search previously, and marks unseen posts for that search
+* Search results shows the title of premade searches at the top, shows what you're looking at with advanced searches
+
+$ 2.1.3
+% v 2.1.3
+_ July 17, 2013
+* Shacktag markup button simplified
+* XHDPI treebranches = less blurry tree branches
+* Changed new treebranch indicator
+* Changed the way username / password are set (for future features)
+* Cloud syncing is automatically enabled when you verify your username
+* Cloud syncing can be disabled in Thread List options
+* Cloud sync default interval changed to 5 minutes
+* Chattypics login moved to post composer preferences
+* Disabled sliding when opened via link / intent
+* Bug Fix: Fixed a bug where images were <a href="http://www.shacknews.com/chatty?id=30487489">not detected correctly</a>
+* Bug Fix: Better support UTF-8 app-wide
+
+$ 2.1.2
+% v 2.1.2
+_ July 15, 2013
+* Unseen posts in thread marked by green tree branches with green arrows in threads you've loaded before (option to turn off in reply view prefs)
+* When opening threads from links in other apps, thread list does not load automatically in background
+* 4 pixel change in reply view layouts
+* Bug Fix: Fixed the way the back button works after opening from a link in another app in multiple ways and scenarios
+* Bug Fix: External intent handling (links)
+
+$ 2.1.1
+% v 2.1.1
+_ July 12, 2013
+* DONATOR FEATURE: Auto-collapse and auto-supercollapse threads based on keywords or username. Enable in Unlock DLC area, add filters in menu under "Keyword Filters"
+* Changed overflow icon to be match opacity of other icons
+* New scrolling optimizations for thread view
+* Workaround for youtube app not handling their own URL shortener
+* Bug Fix: Search doesn't work with split view swapped
+
+$ 2.1.0
+% v 2.1.0
+_ July 11, 2013
+* Long press collapsed posts to "super-collapse" them into oblivion (abrasion feature)
+* Ability to clear lists of collapsed and super collapsed items in threadlist preferences
+* Long press threads to collapse
+* Option for swapped left/right split view
+* Messages now have a reply button in the action bar
+* Thread data doesnt auto-expire from search results or internal link handling
+* Changed indeterminate progress bar color to blue from orange
+* Bug Fix: Vanity search now works after putting in username after prompted when clicking vanity search without username set
+* Bug Fix: Messages uses newer style anti-overlapping text layout
+* Bug Fix: Lazy-loading of cloud pinned items in Latest Chatty pane
+* Bug Fix: Turns out background cloud syncing hasn't actually worked since it went public. Fixed that.
+* Bug Fix: Single pixel error on split view right side of screen. Float->int bug
+
+$ 2.0.5
+% v 2.0.5
+_ June 27, 2013
+* Tweaked progress bars
+* Volume key nav support for search results
+* Threadview data "expires" after 1 minute and will not be reused for subsequent openings of the same thread
+* Support for custom API URL. There are only two API servers for now but feel free to install your own SB API and use that. Check app-wide prefs for more info.
+* Bug Fix: LOLtags now display in root posts in thread view (bug due to previous optimizations)
+
+$ 2.0.4
+% v 2.0.4
+_ June 20, 2013
+* Tweaked colors
+* Softkeyboard closes when clicking go on advanced search
+* Spoilers in view post and post preview in post composer now appear with text visible
+* Bug Fix: Spoiler preview
+* Bug Fix: App crashes reported to Google play
+
+$ 2.0.3
+% v 2.0.3
+_ June 15, 2013
+* New "Find on page" search filter for thread list. Click the magnifying glass!
+* Minor layout changes
+* Bug Fix: App menu items not appear after being enabled in options
+* Bug Fix: App crash when faving thread after reply but before thread loads
+
+$ 2.0.2
+% v 2.0.2
+_ June 14, 2013
+* Cloud pinning now available to non-donators. Click menu in thread list and select cloud options to enable. Thanks arhughes!
+* Layout changes, tweaks, more orange progressbar
+* Bug Fixes: App crashes reported to Google play
+
+$ 2.0.1
+% v 2.0.1
+_ June 11, 2013
+* Check for username before allowing messaging
+* Pin click in reply view communicates with thread list icon
+* Reloading reply view refreshes unread count on pinned items in thread list
+* Threads you've posted in get bold blue reply color
+* Remove blue highlight line from thread list
+* Shacknews news posts highlight properly in thread list
+* XHDPI launcher icon for high res devices
+* Scroll past favorites option defaults to off
+* Bug Fix: Posting in Android 2.3
+* Bug Fix: App crash on launch with some 2.2 and 2.3 devices
+
+$ 2.0.0
+% v 2.0.0
+_ June 10, 2013
+* Fully unified holo-like UI between 4.0+ and 2.3 devices
+* Ability to collapse posts
+* New Overflow menu (hardware menu button does something finally!)
+* Save to favorites on main screen
+* Favorites display on main screen (Option to bring back separate favorites area)
+* Cleaned up UI
+* Took  some design cues from new gmail app
+* Search results moved out of viewpager
+* New speed optimizations
+
+$ 1.7.8.2
+% v 1.7.8.2
+_ June 6, 2013
+* Theming of searches matches rest of app
+* Rearranged buttonbar buttons
+* Bug Fix: App crash when returning from preferences in some situations
+* Usability Fix: Black background for advanced search clear buttons on 2.3 devices
+* Bug Fix: View post and preview buttons in post composer now obey font size preference
+* Bug Fix: Font sizes preference causing strange font sizes due to threadview optimizations
+
+$ 1.7.8.1
+% v 1.7.8.1
+_ June 5, 2013
+* Slightly tweaked scroll-helper in threadview
+* Clear buttons on advanced search replaced with little X's inside edittext
+* Bug Fix: Donator Feature: Saving LOL advanced searches
+
+$ 1.7.8
+% v 1.7.8
+_ June 4, 2013
+* >10 new optimizations in thread view backend - 100% performance increase in scrolling
+* Select text and click markup button for fast shacktags
+* Redesigned shacktag markup selector
+* Made it much easier to apply multiple shacktags to selected text
+* Newlines show up in post previews
+* Optimized post count caching
+* Show tree option removed - no longer offers performance benefit
+* Redesigned advanced search UI
+* DONATOR FEATURE: Ability to save advanced searches to the quick search list
+* Bug Fix: Fix for "error loading data"
+* Fix for non-Samsung devices: text selection in post composer is NOT lost by tapping markup button
+
+$ 1.7.7.2
+% v 1.7.7.2
+_ May 30, 2013
+* Preference to turn off tree view for performance
+* UTF-8 support for non-standard characters like hearts and pi
+* Bug Fix: Better cleanup of cloud sync thread when activity destroyed
+
+$ 1.7.7.1
+% v 1.7.7.1
+_ May 30, 2013
+* Change design of threadview buttons
+* More things obey font size preference
+* Update mod list
+* Update username colors of mods (red) and employees (purple), display in threadview now
+* Bug Fix: App crash when cloud syncing
+* Bug Fix: App restart button that appears when changing font sizes actually works again
+* Bug Fix: Possible fix for "error loading data" with some upgraded users
+
+$ 1.7.7
+% v 1.7.7
+_ May 29, 2013
+* Donator Feature: EXPERIMENTAL cloud syncing of favorites
+** Syncs with Chromeshack, LC.app, and shackbrowse 1.7.7 on other devices where it has been activated
+** Use cloud button on favorites page to activate
+** May or may not be available to non-donators in the future
+* Tweaked layouts based on jojomcbobo's input
+* XHDPI icons for high res devices
+* Reply button style changed to be uniform on 2.3 and 4.0 devices
+* Tweaked some text
+
+$ 1.7.6
+% v 1.7.6
+_ May 25, 2013
+* Action bar is hidden in landscape post composing so there is more room for text
+* Bug Fix: App crash when returning from prefs on messages
+* Bug Fix: Possible fix for loltag colors on 2.3 devices
+* Bug Fix: Search choices no longer disappear
+* Bug Fix: Default settings
+* Bug Fix: Landscape post bug on smaller phones
+
+$ 1.7.5
+% v 1.7.5
+_ May 22, 2013
+* Google Play links never open in popup browser
+* Ability to do basic search for informative posts
+* Donator feature: NWS basic search. It's skeezy and I want it hidden away
+* Popup browser defaults to opening youtube links (change in prefs)
+* Preferences screen clean up & donator page explanation
+* Bug Fix: volume keys work in popup browser for volume
+* Bug Fix: external link handling via intents
+* Bug Fix: trailing and leading spaces removed from username for search
+
+$ 1.7.4
+% v 1.7.4
+_ May 21, 2013
+* Updated look of popup web browser
+* Tweaked colors, strings, and text sizes
+* Can share a link to a post with another android app
+* Show root post LOLs in thread list is now default OFF
+* Bug Fix: fixed the way copy post URL works
+* Bug Fix: html tag parsing error on some posts
+* Bug Fix: disabled extract UI in landscape mode for some devices
+
+$ 1.7.3
+% v 1.7.3
+_ May 16, 2013
+* Swapped refresh and preferences buttons app wide
+* Can view sent messages
+* Open external button on popup browser closes browser first
+* Rearranged search according to popularity
+* Donator features: QuickLOL button. Saves you one tap for [LOL] addicts. Enable in donator area.
+
+$ 1.7.2
+% v 1.7.2
+_ May 6, 2013
+* New search page
+* Support for searching LOLs by tagger in basic search
+* View Post button in Post Composer allows for text selection and copy/paste (Android 3.0+)
+* Clicking on search results where the post is already in a loaded thread will just scroll to post instead of reloading thread
+* Analytics will determine the order of search options in the future. If you are paranoid, opt-out in preferences
+* Advanced Search Page now has scrolling for small screens in splitview
+* Revert: Pull to refresh in thread reply view. Unfixable bugs due to library structure.
+* Bug fix: Posts not selected/shown after search (via reversion)
+* Bug fix: Posts not selected/shown after reply (via reversion)
+* Bug fix: Hardware Search button crash / remove old search activity
+
+$ 1.7.1.2
+% v 1.7.1.2
+_ May 6, 2013
+* Bug fix: Weird ThomW data causing poorly handled exception
+* Bug fix: Icon and start slider should never show up on orientation change
+  
+$ 1.7.1.1
+% v 1.7.1.1
+_ May 4, 2013
+* Bug fix: Crash when clicking spoiler (due to changed data structure due to pull to refresh library)
+
+$ 1.7.1
+% v 1.7.1
+_ May 4, 2013
+* Pull to refresh
+* Long click threads to add to favorites
+
+$ 1.7.0
+% v 1.7.0
+_ May 4, 2013
+* Ability to create new shackmessages
+* Messageview shows unread messages
+* Messages are marked as read on server when you open them
+* Message replies fill old post into text editor
+* Send shackmessages to a user by clicking their username
+* Search posts and send messages by clicking usernames or under the 3 dots menu on every post
+* Improved popup browser: Clicked links bring up  progress bar again
+* Improved popup browser: Back button goes back instead of closing webview unless history is empty
+* Option to turn off swipe to dismiss
+* Replaced replyview close button with preferences button on replyview menubar
+* Preference changes now take immediate effect in thread reply view
+* Changing font sizes prompts for app restart
+* Bug Fix: Back button can dismiss reply view in splitview mode
+* Bug Fix: Crash when replying
+* Bug Fix: Crash when donating
+* Bug Fix: Crash on particular youtu.be links
+
+$ 1.6.1
+% v 1.6.1
+_ May 2, 2013
+* Donator limes reset due to security vulnerability. Someone made a keygen. You must re-register for your lime.
+* Donator option to turn off lime display
+* Potential fix for all dates reading as 1969
+* Minor layout changes (padding related)
+* Post composer should auto save draft when app is paused now
+* Fixed date problem in messages fragment
+
+$ 1.6.0
+% v 1.6.0
+_ Apr 30, 2013
+* Threads now slide in, fragment stays loaded, should be faster
+* Unified threadview for split view and non-split view
+* Shackmessages can be replied to, but cannot compose from scratch yet
+* Emergency fix for shacknews.com change in login
+* arhughes API disabled temporarily. All calls go to woggle in this version until his API server is fixed
+
+$ 1.5.2.3
+% v 1.5.2.3
+_ Apr 27, 2013
+* Fixed multiple showstopping bugs including not being able to reply
+* Fixed app crashes
+* Fixed the way back button works for splitview chatty links
+* Fixed multiple donator lime registration bugs
+* Reminder: your donator lime will not show up until you register in the donation area in preferences
+
+$ 1.5.2
+% v 1.5.2
+_ Apr 27, 2013
+* Share images and text links to Shack Browse from any android app
+* (Tablets) Intents and clicked chatty links now respect splitview setting, back button supported too
+* MAJOR reorganization in backend application communication; bugs may result
+* Back button reverses fullscreen mode in split view
+* Revert swapping of buttons on compose post
+* Revert back button exit confirmation
+* Bug fix: crash due to bag login data on messages area
+* Donator features: lime icon. Check donation area to enable
+
+$ 1.5.1
+% v 1.5.1
+_ Apr 25, 2013
+* MASSIVE FIX: reversed Android 3.0+ OS regression, network connections now open concurrently
+* Popup browser does not dismiss on orientation change, also resizes.
+* Landscape post composer layout works without enabling orientation lock
+* "abrasion mode" Post and preview buttons merged on root posts with option for all posts
+* Confirmation before back-buttoning out of program
+* Remove gradient backgrounds, other layout tweaks
+* Option to only nuke expired threads with favorites trashcan
+* Favorites trashcan is immediate
+* Default option is for popup browser not to open youtube links
+* Links in messages work
+* Cleaned up donation page
+* Bug fix: Invisible reply button
+
+$ 1.5.0
+% v 1.5.0
+_ Apr 24, 2013
+* Basic shackmessage support, no sending yet
+* Remove soft keyboard from donate page
+* Shackpics.com support
+* Youtu.be support
+* Donation button should now show when you have unlocked features
+* Bug fix: fixed a bug with dates showing only day of week for old posts
+* todo: accept share intent for pics
+* Bug fix: searchresults "No results found"
+* Bug fix: reloading thread doesnt scroll to previous position
+* Bug fix: preferences for show shack tags and show mod tags reversed
+* Bug fix: Copy URL copying wrong URL in edge cases
+
+$ 1.4.10
+% v 1.4.10
+_ Apr 15, 2013
+* Attempt at allowing donations through in-app billing
+* Time now shown in terms of hours since now. Option to return to old style in prefs
+* Landscape mode in compose post view
+* Threads you make auto favorite after loading
+* Bug Fix: search results no results found
+* Bug Fix: Threads you create will auto-load in thread view
+* Bug fix: crash with portrait picture taking in compose view
+* Bug fix: open all images button displays in wrong order
+
+$ 1.4.9
+% v 1.4.9
+_ Apr 6, 2013
+* Changed color of links to be closer to Shacknews
+* Clicking me button on searchview without username setting results in dialog bringing you directly to preference screen
+* Username not set dialogs bring you directly to login credentials preference screen
+* Software keyboards have search button when editing search text
+* Bug fix: uncolored posts in thread view weirdly locked open after searching to get there
+* Bug fix: strange bugs with selecting a post after replying and returning
+* Bug fix: fixed handling of underline shacktag
+* Bug fix: added colored underlines in shacktag parser
+* Bug fix: Shacktag nested colors/underlines now work - the only android app which does this correctly
+
+$ 1.4.8
+% v 1.4.8
+_ Apr 3, 2013
+* Attempt at clamping scrolling when clicking on new posts
+* Bug fix: bg disappears when clicking on text in expanded post
+
+$ 1.4.7
+% v 1.4.7
+_ Apr 1, 2013
+* Google play added to youtube exclusion option in preferences
+* Autozoom images in web browser with option in preferences, also allows tweaking the amount of zoom
+* Clicking on things gives a nice highlight effect
+* New API server available in options - woggle.net. Ping on your pc to determine speed advantage
+* Use Volume Buttons is now DEFAULT ON - this feature is awesome and I demand more people use it
+* Cleaned up preferences and descriptions
+* Bug Fix: links in spoilers
+
+$ 1.4.6
+% v 1.4.6
+_ Apr 1, 2013
+* Orientation lock in preferences
+* Post preview in post composer
+* Add preferences button to compose post view
+* Option to open only images in popup browser
+* Option to open everything but youtube in the popup browser
+* Dropbox support for image viewer
+* Can search lol tags by author
+* Date-sorting for lol author searches
+* Autoload new pages with scroll down in lol search results
+* Unspoiled text no longer underlined
+* Selecting text and hitting shack tag button in post composer loads selected text into prompt
+* Bug fix: shacktag button in compose post inserts text where cursor is
+* Bug fix: Search results pane shows "No results" when sliding back to it after sliding from favorites, even if there are results.
+
+$ 1.4.5
+% v 1.4.5
+_ Mar 29, 2013
+* shacklol tag search now times out
+* searchresults has cleaner "no results" page
+* Bug fix: changelog button in preferences
+* Bug fix: fixed thread not refreshing after reply
+* Bug fix: thomW server timeouts result in 5 minute wait before trying again
+* Bug fix: white backgrounds for non-image popup browser items
+
+% v 1.4.4
+_ Mar 28, 2013
+* grendel mode - if a post has multiple image links, these can be opened all at once in a single popup browser <a href="http://www.shacknews.com/chatty?id=29918381#item_29918381">click to test (work safe)</a>
+* images in popup browser are zoomed to fit their width, only works with some images, has bugs
+* volume button scroll now works in thread list view
+* whats new dialog
+* return of black separater between opened replies
+* whats new available from preferences
+* bug fix: made it harder to accidentally trigger link long click
+* bug fix: fixed problem with volume button scrolling not displaying whole post if at the bottom
+* bug fix: tweaked scroll helper for posts which arent immediately visible when clicked
+* bug fix: possible fix for devices which dont show dates
+* bug fix: app crash when trying to use volume buttom scroll on thread list view
+* bug fix: replies not refreshing after making a post in landscape mode
+* bug fix: thread not opening after making a new post in landscape mode
+
+$ 1.4.3
+% v 1.4.3
+_ Mar 26, 2013
+* Search for lol, tag, unf, and inf for thomw shacklol tags
+* choose date range for shacktag search
+* updated result view for shacktag search
+* op username highlights a certain color
+* your own username highlights unless you have usernames off, the your post text highlights
+* fixed bug where clicking on post after a long post leaves you scrolled to the wrong post. very very difficult because android sucks.
+
+$ 1.4.1
+% v 1.4.1
+_ Mar 24, 2013
+* potential fix for date bug on some devices
+
+$ 1.4.0
+% v 1.4.0
+_ Mar 23, 2013
+* ultra basic probably broken support to show up todays highest lolled posts. once i figure out the UI this will be expanded and refined.
+* favorites finally work correctly
+* favorites sort by time posted
+* dual pane mode now a preference
+* fullscreen button for thread view pane in split mode
+* bugfix: longpress on url triggered by vertical scroll on link
+
+$ 1.3.12
+% v 1.3.12
+_ Mar 18, 2013
+* Bug fix: volume button scroll nonfunctional for root post
+* Bug fix: make favorites appear after being saved without refresh.
+* Bug fix: thread view button bar being pushed down when hit refresh button in landscape
+* Bug fix: mod tags not work right, inaccurate
+
+$ 1.3.11
+% v 1.3.11
+_ Mar 17, 2013
+* tablet fix
+
+$ 1.3.10
+% v 1.3.10
+_ Mar 17, 2013
+* more color changes
+* moved save thread button to menubar
+* favorites show up when added w/o refresh
+* Fix bugs with drafts >1 line, made max drafts = 50
+* zoom support for composer, search results, search pane
+* implemented android up button on app icon
+* handle super deep threads with collapse treeview
+* fixed searchresults disappearing with rotation
+* threadview shows year for old posts
+* added long click to links. took hours, but i did it
+
+$ 1.3.9
+% v 1.3.9
+_ Mar 16, 2013
+* ThomW's crappy ShackLOL server will no longer halt the program. if it takes longer than 5 seconds to load LOLs the server will timeout and posts will load
+* new colors (thanks ryuuseki)
+* compose post view allows you to save drafts to disk (limited to 3 drafts for now)
+* Compose post too short for shacknews gives error
+* Shack tags in compose post view
+* View parent post from compose post view
+* Compose post view brings up dialog if you typed something and tried to exit
+* new icons in the button bar
+* auto close keyboard when not on search page
+* fixed copying wrong url for post, fix loltag wrong post
+* added refresh & settings button to menubar in threadview
+* fixed click on last post scroll bug
+* fixed wierd bug where loading throbber or saved thread button show up where they shouldnt especially on older devices
+* fixed fullscreen load throbber with invisible load on search results
+* tweaked treebranches                
+* click on username in threadview to search users posts
+* fixed search button for devices with hardware search buttons
+
+$ 1.3.8
+% v 1.3.8
+_ Mar 14, 2013
+* filters work correctly
+
+$ 1.3.6
+% v 1.3.6
+_ Mar 11, 2013
+* Saved threads should be feature complete, works in a sane way. Click a saved thread to mark new replies as read. Refresh button simply updates reply counts but does not mark as read
+* Throbber in threadview when loading and screen blank
+* version number in preferences
+* closing videos in web view will not leave video playing in background
+* many small bugs fixed
+
+$ 1.3.5
+% v 1.3.5
+_ Mar 10, 2013
+* thread view now shows loading icon while loading
+* fixed double loading post bug
+* fixed saved threads buttons not working
+* remove "replies" from replies tags, now just number
+* fixed bugs relating to orientation change on saved threads
+* fixed saved threads double loading
+* errors are back: toasts now. hopefully cause fewer crashes than dialogs?
+
+$ 1.3.4
+% v 1.3.4
+_ Mar 10, 2013
+* fix for large tablets
+* fixed landscape view
+* fixed NUMEROUS force closes
+* fixed search results page bugs
+
+$ 1.3.1
+% v 1.3.1
+_ Mar 9, 2013
+* treeview in comments make it very easy to follow structure
+* treeview scales with font zoom settings
+* removed loading row
+* new items in list now load before you get to the bottom
+* loading icons in buttonbars now
+* Saved threads works from all threadviews including search
+* Changed saved threads to buttons
+* removed and restructured much of back end
+
+$ END_OF_CHANGE_LOG
+  </body>
+</html>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<!--  COMPOSE ACTIONS  -->
+	<item android:id="@+id/menu_compose_markup"
+	   	  app:showAsAction="always"
+		  android:icon="@drawable/ic_action_image_color_lens"
+		  android:title="@string/compose_markup"
+		  android:visible="true"
+		  android:orderInCategory="1" />
+	<item android:id="@+id/menu_compose_camera"
+        app:showAsAction="ifRoom"
+		  android:icon="@drawable/ic_action_image_camera_alt"
+		  android:title="@string/compose_camera"
+		  android:visible="true"
+		  android:orderInCategory="1" />
+	<item android:id="@+id/menu_compose_picture"
+        app:showAsAction="ifRoom"
+		  android:icon="@drawable/ic_action_image_photo"
+		  android:title="@string/compose_gallery"
+		  android:visible="true"
+		  android:orderInCategory="1" />
+	<item android:id="@+id/menu_compose_post"
+        app:showAsAction="always"
+		  android:icon="@drawable/ic_action_content_send"
+		  android:title="@string/compose_post"
+		  android:visible="true"
+		  android:orderInCategory="1" />
+	<item android:id="@+id/menu_compose_preview"
+        app:showAsAction="never"
+		  android:icon="@drawable/ic_action_content_send"
+		  android:title="@string/compose_preview"
+		  android:visible="true"
+		  android:orderInCategory="1" />
+	<item android:id="@+id/menu_compose_showParent"
+        app:showAsAction="never"
+		  android:icon="@drawable/ic_action_action_report_problem"
+		  android:title="@string/compose_showParent"
+		  android:visible="true"
+		  android:orderInCategory="1" />
+	<item android:id="@+id/menu_compose_settings"
+        app:showAsAction="never"
+		  android:icon="@drawable/ic_action_action_settings"
+		  android:title="@string/settings"
+		  android:visible="true"
+		  android:orderInCategory="1" />
+</menu>

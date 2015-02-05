@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:id="@+id/splash_FSLoadSplash"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="4"
+            android:fontFamily="sans-serif"
+            android:textStyle="bold|italic"
+            android:textSize="150dp"
+            android:textColor="@color/gnushackdark"
+            android:layout_gravity="center"
+            android:layout_centerVertical="true"
+            android:layout_alignRight="@+id/splashText"
+            android:textIsSelectable="true"
+            android:layout_marginRight="-20dp" />
+        <LinearLayout
+            android:id="@id/splashText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="14dp"
+            android:layout_alignParentBottom="false">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center" >
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/ic_launcher"
+                    android:layout_gravity="center" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Shack Browse"
+                    android:id="@+id/splash_sbname"
+                    android:textSize="26dp"
+                    android:paddingLeft="3dp"
+                    android:textColor="@color/nonpreview_post_text_color"
+                    android:layout_gravity="center"
+                    android:textIsSelectable="true" />
+            </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-light"
+                android:text="by bradsh"
+                android:textSize="14dp"
+                android:layout_gravity="center"/>
+            <ProgressBar
+                style="@style/WidgetThrobber"
+                android:layout_marginTop="5dp"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="5dp" />
+
+        </LinearLayout>
+        <net.woggle.FontFitTextView
+            android:id="@+id/splash_tagline"
+            android:layout_marginTop="0dp"
+            android:padding="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/gnushack"
+            android:text="tagline"
+            android:fontFamily="sans-serif-condensed"
+            android:textStyle="italic"
+            android:textSize="20dp"
+            android:textColor="@android:color/white"
+            android:layout_gravity="center"
+            android:gravity="center_horizontal"
+            android:layout_below="@id/splashText"
+            android:layout_alignParentBottom="false" />
+
+    </RelativeLayout>
+
+</LinearLayout>

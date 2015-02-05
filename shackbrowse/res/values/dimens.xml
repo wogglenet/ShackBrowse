@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="viewPostTextSize">15px</dimen>
+    <dimen name="searchViewTextSize">16sp</dimen>
+    
+    <dimen name="menuItemTextSize">16sp</dimen>
+    <dimen name="menuHeaderTextSize">12sp</dimen>
+    
+    <dimen name="textSize">14sp</dimen>
+    <dimen name="previewTextSize">14sp</dimen>
+    <dimen name="userNameSize">16sp</dimen>
+    <dimen name="replyCountSize">16sp</dimen>
+    <dimen name="lolTagSize">9sp</dimen>
+    <dimen name="modTagSize">8sp</dimen>
+    <dimen name="searchResultLolTagSize">18sp</dimen>
+    <dimen name="postTimeSize">14sp</dimen>
+    <dimen name="buttonReplyTextSize">12sp</dimen>
+    <dimen name="buttonReplyHeight">34dp</dimen>
+    <dimen name="buttonPostOptWidth">30dp</dimen>
+    
+    <dimen name="editTextSize">16sp</dimen>
+    <dimen name="composeButtonTextSize">16sp</dimen>
+    <dimen name="composeButtonHeight">38dp</dimen>
+    
+    <dimen name="buttonBarLineWidth">2dp</dimen>
+    <dimen name="indicatorBottomMargin">46dp</dimen>
+    
+    <dimen name="cardBottomMargin">0dp</dimen>
+    <dimen name="cardLeftMargin">0dp</dimen>
+    <dimen name="cardLeftMarginBigger">1dp</dimen>
+    <dimen name="cardRightMargin">1dp</dimen>
+    
+    <dimen name="cardTopMargin">2dp</dimen>
+    <dimen name="cardTopMarginBigger">3dp</dimen>
+    <dimen name="cardBottomMarginSmaller">0dp</dimen>
+    
+    <dimen name="cardRadius">4dp</dimen>
+    <dimen name="cardRadiusTopSmaller">3dp</dimen>
+    
+    <dimen name="cardReplyTopMargin">1dp</dimen>
+    <dimen name="cardReplyBottomMarginLoading">45dp</dimen>
+    
+    <dimen name="cardRightMarginTagRoomTangent">36dp</dimen>
+    <dimen name="cardRightMarginTagRoomNws">23dp</dimen>
+    <dimen name="cardRightMarginTagRoomInf">49dp</dimen>
+    <dimen name="cardRightMarginTagRoomPolitical">37dp</dimen>
+    <dimen name="cardRightMarginTagRoomStupid">30dp</dimen>
+
+    <dimen name="alert_dialog_padding_material">24dp</dimen>
+</resources>

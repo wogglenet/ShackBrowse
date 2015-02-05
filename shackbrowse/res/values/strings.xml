@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>    
+    <string name="drawer_open">SBO</string>
+    <string name="drawer_close">SBC</string>
+    
+    <string name="app_name">Shack Browse</string>
+    <string name="picuploader_name">ChattyPics Uploader</string>
+    <string name="refreshThreads">Refresh</string>
+    <string name="refreshPosts">Refresh Posts</string>
+    <string name="tview_savethread">Save Thread</string>
+    <string name="tview_unsavethread">Un-save Thread</string>
+    <string name="copy_url">Copy URL</string>
+    <string name="new_post">New Post</string>
+    <string name="findOnPage">Find On Page</string>
+    <string name="findInThread">Highlight In Thread</string>
+    <string name="keyfilter">Keyword Filters</string>
+    <string name="modfilter">Modtag Filters</string>
+    <string name="cloudopt">Cloud Sync Options</string>
+    <string name="search">Search</string>
+    <string name="searchdel">Delete Custom Searches</string>
+    <string name="searchsave">Save Search</string>
+    <string name="editSearch">Edit Search</string>
+    <string name="retrySearch">Refresh Results</string>
+    
+    <string name="notesrefresh">Refresh Notification List</string>
+    <string name="notesdel">Clear List</string>
+    
+    <string name="msgSent">View Sent Messages</string>
+    <string name="msgInbox">View Message Inbox</string>
+    
+    <string name="newMsg">New Message</string>
+    <string name="replyMsg">Reply</string>
+    <string name="refreshMsg">Refresh Messages</string>
+    <string name="discardFavs">Discard All Favorites</string>
+    <string name="restoreCollapsed">Restore Collapsed</string>
+    
+    <string name="compose_preview">Show Preview</string>
+    <string name="compose_post">Post</string>
+    <string name="compose_showParent">Show Parent Post</string>
+    <string name="compose_markup">Apply Markup</string>
+    <string name="compose_gallery">Add Gallery Picture</string>
+    <string name="compose_camera">Add Camera Shot</string>
+    
+    <string name="thread_title">Thread</string>
+    <string name="note_title">Notifications</string>
+    <string name="message_title">Message</string>
+    <string name="browser_title">Browser</string>
+    <string name="browserZoom_title">Adjust Image Zoom</string>
+    <string name="browserClose">Close</string>
+    <string name="browserOpenExt">External Browser</string>
+    <string name="browserSettings">Settings</string>
+    <string name="browserZoom">Adjust Auto-Zoom</string>
+    <string name="browserShare">Share URL</string>
+    <string name="browserCopyURL">Copy URL</string>
+    
+    <string name="searchTypeText">Type:</string>
+    
+    <string name="unfav">Un-Favorite</string>
+    <string name="fav">Favorite</string>
+    
+    <string name="customApiText">ShackBrowse does not support stonedonkey api server, winchatty, or latestchatty. Only droidchatty and ShackBrowseAPI servers are supported. Download at http://woggle.net/api_export.zip . An http:// and a trailing / at the end are REQUIRED for the text box below. Example: http://woggle.net/shackbrowseAPI/</string>
+    <string name="customApiHeader">Warning</string>
+    
+    <string name="tlist_emptyText">No results found</string>
+    <string name="tview_greeting">To display items in this pane, click a post in the thread list</string>
+    
+
+    <string name="compose_viewPostButton">View Post</string>
+    <string name="compose_viewPreviewButton">Preview</string>
+    <string name="compose_postPreviewButton">Preview / Post</string>
+    <string name="compose_shackTagButton">Markup</string>
+    
+    <string name="reply_text_hint">Type your pointless drivel in here</string>
+    <string name="settings">Settings</string>
+    <string name="clrSearch">Clear All</string>
+    <string name="search_hint">Search all chatty posts</string>
+    <string name="tag">LOL</string>
+    <string name="mod">Mod</string>
+    
+    <string name="button_postreply">Reply</string>
+    <string name="button_postlol">LOL</string>
+    <string name="button_openallimages">Open All Images</string>
+    
+    <string name="button_retry">Retry</string>
+    
+    <!--  search form -->
+    <string name="me">Me</string>
+    <string name="searchLabel">Text</string>
+    <string name="searchTagLabel">Tag to search for</string>
+    <string name="searchDaysLabel">Days back to search</string>
+    <string name="authorLabel">Author</string>
+    <string name="taggerLabel">Username that tagged</string>
+    <string name="parentAuthorLabel">Parent Author</string>
+    
+    <string name="upload_picture">Upload picture</string>
+    <string name="take_picture">Take picture</string>
+    
+    <string name="preferences_pagelogin">Login Information</string>
+    <string name="preferences_pagelogin_summary">Set username and password for Shacknews and Chattypics.</string>
+    <string name="preferences_login">Shacknews Account Information</string>
+    <string name="preference_username_title">Username</string>
+    <string name="preference_username_summary">Shacknews.com username</string>
+    <string name="preference_password_title">Password</string>
+    <string name="preference_password_summary">Shacknews.com password</string>
+    
+    <string name="preferences_chattypics_login">Chattypics Account Information</string>
+    <string name="preference_chattypics_username_summary">Chattypics username</string>
+    <string name="preference_chattypics_password_summary">Chattypics password</string>
+    
+    <string name="preferences_header">Application Options</string>
+    <string name="preferences_popupbrowser">Popup Browser</string>
+    <string name="preferences_popupbrowser_summary">Choose when popup browser is used and how to scale images.</string>
+    <string name="preference_showfavs_title">Show Favorites Pane</string>
+    <string name="preference_showfavs_summary">Show favorites in their own specialized pane. Requires App restart.</string>
+    
+    <string name="preference_pushnot_title">Push Notifications</string>
+    <string name="preference_pushnot_summary">Sends you an instant push notification for various actions below.</string>
+
+    <string name="preference_pushrepl_title">Replies</string>
+    <string name="preference_pushrepl_summary">Notification when someone replies to your post.</string>
+    
+    <string name="preference_pushvan_title">Vanity</string>
+    <string name="preference_pushvan_summary">Notification when someone posts your name. Donator feature.</string>
+    
+    <string name="preference_pushkey_title">Keywords</string>
+    <string name="preference_pushkey_summary">Notification when someone posts a keyword. Donator feature.</string>
+    
+    <string name="preferences_appwide">App-wide Options</string>
+    <string name="preferences_appwide_summary">Splitview mode, Orientation lock, Font sizes, Favorites pane, Shack[LOL], Volume nav, API, Analytics opt-out</string>
+    
+    <string name="preference_usewinchatty_title">Use Winchatty V2 API</string>
+    <string name="preference_usewinchatty_summary">Uses the Winchatty V2 API when possible. This is a replica of the shacknews database and the server responds much more quickly. It is sometimes 5 seconds out of date. Cannot be used for all API calls, but can provide faster service.</string>
+    
+    <string name="preferences_notifications">Notifications</string>
+    <string name="preference_testnote">Test Notification</string>
+    <string name="preferences_notifications_summary">Push notification options</string>
+    <string name="preference_notesound_title">Sound</string>
+    <string name="preference_notevibrate_title">Vibrate</string>
+    <string name="preference_notecolor_title">LED Color</string>
+    <string name="preference_smcheckcell_title">Check SMs On Cell Network</string>
+    <string name="preference_smcheckcell_summary">If UNCHECKED, Shackmessages will only be checked on application start when connected to WiFi. Usually takes about 18k of data</string>
+    
+    <string name="preferences_threadlist">Thread List Options</string>
+    <string name="preferences_threadlist_summary">Choose which data to show and how to show it, as well as cloud sync options and supercollapsed thread reset</string>
+    <string name="preferences_threadview">Reply View Options</string>
+    <string name="preferences_threadview_summary">Swipe to dismiss, Show usernames, New post indicators, Shack[LOL]</string>
+    <string name="preferences_compose">Post Composer Options</string>
+    <string name="preferences_compose_summary">Force Post Preview Option</string>
+    <string name="preferences_pageloltag">LOLtag Support</string>
+    <string name="preferences_pageloltag_summary">Turn support for ThomW\'s tagging system on and off, and change how tags are displayed</string>
+    <string name="preference_getlols_title">User Moderation API</string>
+    <string name="preference_getlols_summary">Retrieve ThomW ShackLOL tag data for display. User created. Cached; refresh maximum once per five minutes. Incurs additional data use and slows load times when refreshing.</string>
+    <string name="preference_threadlist_threadlols_title">Show User Mod Tags</string>
+    <string name="preference_threadlist_threadlols_summary">Displays ThomW Shack[LOL] data contained in a thread in the topic listing view.</string>
+    <string name="preference_threadview_postlols_title">User Mod Tags</string>
+    <string name="preference_threadview_postlols_summary">Displays ThomW ShackLOL tags in the reply view.</string>
+    
+    <string name="preference_swappedsplit_title">Swapped Split View</string>
+    <string name="preference_swappedsplit_summary">Swap panes in split view</string>
+    
+    <string name="preference_clearcollapsed">Clear Collapsed</string>
+    <string name="preference_clearcollapsed_summary">Clear list of collapsed and super-collapsed threads</string>
+    
+    <string name="preference_cloudsync_title">Cloud Sync</string>
+    <string name="preference_cloudsync_summary">Pinned threads will be synced to other Shack Browse devices. Must have verified login.</string>
+    
+    <string name="preferences_options">Options</string>
+    <string name="preference_showpinned_title">Show Pinned Items</string>
+    <string name="preference_showpinned_summary">Show pinned items in the thread list.</string>
+    <string name="preference_scrollpast_title">Scroll Past Pinned</string>
+    <string name="preference_scrollpast_summary">Automatically scroll past pinned items when refreshing the thread list.</string>
+    <string name="preference_tag_thread_list_title">Show Mod Tags</string>
+    <string name="preference_tag_thread_list_summary">Show tagging information set by Shacknews moderators.</string>
+    <string name="preference_shacktag_thread_list_title">Show Markup</string>
+    <string name="preference_shacktag_thread_list_summary">Show or strip colorful shacktag markup from topic list preview text.</string>
+    
+    <string name="preference_splitView_title">Use Split View</string>
+    <string name="preference_splitView_summary">Select in which orientations to use split view mode, if at all.</string>
+    
+    <string name="preference_newbranches_title">Show New Posts</string>
+    <string name="preference_newbranches_summary">Show green tree branches next to posts that are new since the first time you loaded the thread.</string>
+    
+    <string name="preference_orientLock_title">Orientation Lock</string>
+    <string name="preference_orientLock_summary">Lock the application to an orientation.</string>
+    
+    <string name="preference_fontsize_title">Change Font Sizes</string>
+    <string name="preference_fontsize_summary">Make text larger. REQUIRES an app restart.</string>
+    
+    <string name="preference_showusername_title">Show Username in Preview</string>
+    <string name="preference_showusername_summary">Show the poster\'s username in reply previews. May take up too much space on narrow displays.</string>
+    
+    <string name="preference_fastscroll_title">Fast Scroll</string>
+    <string name="preference_fastscroll_summary">Show grabbable/draggable fast scroll control in long threads.</string>
+    
+    <string name="preference_swipedismiss_title">Swipe to Dismiss</string>
+    <string name="preference_swipedismiss_summary">Allows you to close the reply view with a left-to-right swipe.</string>
+    
+    <string name="preference_forcepostpreview_title">Force Post Preview</string>
+    <string name="preference_forcepostpreview_summary">Forces you to preview your post before posting it.</string>
+    
+    <string name="preference_popup_browser_title">Default Link Action</string>
+    <string name="preference_popup_browser_summary">Choose which links, if any, open internally in the popup browser.</string>
+    
+    <string name="preference_bIZ_title">Auto-Zoom Images</string>
+    <string name="preference_bIZ_summary">Attempt to fit images in the popup browser to your screen. Click to close settings and enter setup for this feature.</string>
+    
+    <string name="preference_swipecollapse_title">Swipe to Collapse</string>
+    <string name="preference_swipecollapse_summary">Control swipe to collapse action.</string>
+    
+    <string name="preference_strip_newlines_thread_list_title">Strip Newlines</string>
+    <string name="preference_strip_newlines_thread_list_summary">Strip line breaks from topic list previews.</string>
+    
+    <string name="preference_preview_line_count_title">Preview Line Count</string>
+    <string name="preference_preview_line_count_summary">Choose the number of lines to display in topic list previews.</string>
+    
+    <string name="preference_use_volume_buttons_title">Volume Button Navigation</string>
+    <string name="preference_use_volume_buttons_summary">Scroll through replies and threads using volume buttons. Only works with replies in split view mode.</string>
+    
+    <string name="preference_show_hours_since_title">Display Times as Hours Since</string>
+    <string name="preference_show_hours_since_summary">Choose whether to display post times as "hours since" when under 24 hours or to use dates.</string>
+    
+    <string name="preference_show_mod_tools_title">Shacknews Mod Tools</string>
+    <string name="preference_show_mod_tools_summary">Enable if you are a Shacknews moderator.</string>
+    
+    <string name="preferences_version">Application Version</string>
+    <string name="preference_version_title">Unknown</string>
+    <string name="preference_version_summary">Click to view the change log</string>
+    
+    <string name="preference_analytics_summary">Allow some usage data to be sent to the developer</string>
+    <string name="preference_analytics_title">Analytics Data</string>
+    
+    <string name="preference_apiUrl_title">Shacknews API Provider</string>
+    <string name="preference_apiUrl_summary">Select from five servers</string>
+    
+    <string name="preference_ping">Ping APIs</string>
+    
+    <string name="preference_donate">Donate</string>
+    <string name="preference_donate_summary">Donate or access donator features</string>
+    
+    <string name="changelog_full_title">Change Log</string>
+    <string name="changelog_title">What\'s New</string>
+    <string name="changelog_ok_button">OK</string>
+    <string name="changelog_show_full">more...</string>
+    
+    <string name="search_repliestome">Replies to My Posts</string>
+    <string name="search_vanity">Vanity Search</string>
+    <string name="preference_animspeed_title">Animation Speed</string>
+    <string name="preference_animspeed_summary">Adjust the speed of the reply expansion animation.</string>
+</resources>

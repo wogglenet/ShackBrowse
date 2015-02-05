@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Generated with http://android-holo-colors.com -->
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <style name="AppTheme" parent="Theme.AppCompat">
+      <!-- <item name="android:actionBarStyle">@style/SBActionBar</item> -->
+      <item name="android:actionOverflowButtonStyle">@style/OverFlow</item>
+      <!-- Set AppCompat’s color theming attrs -->
+      <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+
+      <item name="colorPrimary">@color/SBdark</item>
+      <item name="colorPrimaryDark">@color/SBvdark</item>
+      <item name="colorAccent">@color/SBmed</item>
+      <item name="windowActionBar">true</item>
+      <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+      <item name="md_dark_theme">true</item>
+      <!-- colorPrimary is used for the default action bar background -->
+
+
+    <!-- colorPrimaryDark is used for the status bar -->
+
+
+    <!-- colorAccent is used as the default value for colorControlActivated,
+         which is used to tint widgets -->
+
+
+    <!-- You can also set colorControlNormal, colorControlActivated
+         colorControlHighlight, and colorSwitchThumbNormal. -->
+
+  </style>
+    <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">true</item>
+        <item name="color">@android:color/white</item>
+    </style>
+
+</resources>

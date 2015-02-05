@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/menu_compMarkup"
+          app:showAsAction="always"
+          android:titleCondensed="Markup"
+          android:icon="@drawable/ic_action_image_color_lens"
+          android:title="@string/compose_markup" />
+</menu>

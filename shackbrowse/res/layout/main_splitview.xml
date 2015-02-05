@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout
+   xmlns:android="http://schemas.android.com/apk/res/android"
+   android:id="@+id/drawerContainer"
+   android:layout_width="match_parent"
+   android:layout_height="match_parent">
+   <!-- The main content view -->
+   <RelativeLayout
+    android:id="@+id/contentContainer"
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    >
+	   <FrameLayout
+	       android:id="@+id/content_frame"
+	       android:layout_width="match_parent"
+	       android:layout_height="match_parent" />
+	   <net.woggle.shackbrowse.SlideFrame
+		   xmlns:slidingLayer="http://schemas.android.com/apk/res-auto"
+		   android:id="@+id/searchResults"
+		   android:layout_width="match_parent"
+		   android:layout_height="match_parent"
+		   slidingLayer:stickTo="right"
+		   slidingLayer:closeOnTapEnabled="false">
+		</net.woggle.shackbrowse.SlideFrame>
+		<net.woggle.shackbrowse.SlideFrame
+		   xmlns:slidingLayer="http://schemas.android.com/apk/res-auto"
+		   android:id="@+id/singleThread"
+		   android:layout_width="match_parent"
+		   android:layout_height="match_parent"
+		   android:layout_toRightOf="@id/content_frame"
+		   slidingLayer:stickTo="right"
+		   slidingLayer:closeOnTapEnabled="false">
+		</net.woggle.shackbrowse.SlideFrame>
+		<FrameLayout
+		   android:id="@+id/browser_frame"
+	       android:layout_width="match_parent"
+	       android:layout_height="match_parent">
+	     </FrameLayout>
+   </RelativeLayout>
+   <!-- The navigation drawer -->
+   <FrameLayout
+       android:id="@+id/menu_frame"
+		    android:layout_height="match_parent"
+		    android:layout_width="260dp"
+		    
+		    android:layout_gravity="start"
+		    android:orientation="vertical">
+   </FrameLayout>
+</android.support.v4.widget.DrawerLayout>

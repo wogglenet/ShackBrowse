@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<net.woggle.CheckableLinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@+id/messageContainer"
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+  
+  android:paddingLeft="0dip"
+  android:paddingRight="0dip"
+  android:background="@color/selector_searchrow"
+  android:orientation="vertical"
+  >
+
+ <LinearLayout
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+  android:orientation="horizontal"
+  android:paddingTop="6dip"
+  android:paddingBottom="8dip"
+  android:paddingLeft="6dip"
+  android:paddingRight="8dip"
+  >
+
+ 	 <RelativeLayout
+ 	     android:layout_width="fill_parent"
+ 	     android:layout_height="wrap_content"
+ 	     >
+ 	     <LinearLayout
+ 	         android:id="@+id/firstRow"
+ 	        android:layout_width="fill_parent"
+ 	     	android:layout_height="wrap_content"
+ 	     	android:orientation="horizontal"
+ 	     	android:paddingBottom="0dp"
+ 	    	 >
+		     <TextView
+		         android:id="@+id/textUserName"
+		         android:layout_width="wrap_content"
+		         android:layout_height="wrap_content"
+		         android:textColor="@color/userName"
+		         android:textSize="@dimen/userNameSize"
+		         android:fontFamily="sans-serif-light"
+		         android:paddingLeft="4dip"
+		     />
+			</LinearLayout>
+
+	     <TextView
+	         android:id="@+id/textContent"
+	         android:layout_width="fill_parent"
+	         android:layout_height="wrap_content"
+	         android:layout_below="@id/firstRow"
+	         android:textColor="@color/nonpreview_post_text_color"
+	         android:ellipsize="end"
+	         android:maxLines="6"
+	         android:textSize="@dimen/previewTextSize"
+	         android:paddingLeft="4dip"
+	     />
+		 <TextView
+		     	 android:id="@+id/textPostedTime"
+		     	 android:layout_width="fill_parent"
+		     	 android:layout_height="wrap_content"
+		     	 android:maxLines="1"	 	 	   	 
+	         	 android:layout_below="@id/textContent"
+		         android:textColor="@color/timePosted"
+		         android:textSize="@dimen/postTimeSize"
+		         android:fontFamily="sans-serif-light"
+		         android:paddingLeft="4dip"
+		         android:paddingRight="5dip"
+		     />
+ 	 </RelativeLayout>
+ 	 </LinearLayout>
+</net.woggle.CheckableLinearLayout>

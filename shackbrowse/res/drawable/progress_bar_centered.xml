@@ -1,0 +1,32 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@android:id/background">
+        <shape>
+            <solid
+                    android:color="@color/buttonBarBg"
+            />
+        </shape>
+    </item>
+
+    <item android:id="@android:id/secondaryProgress">
+        <clip>
+            <shape>
+                <solid
+                    android:color="#303030"
+                />
+            </shape>
+        </clip>
+    </item>
+
+    <item android:id="@android:id/progress">
+        <clip
+            android:gravity="center">
+            <shape>
+                <solid
+                    android:color="#d28445"
+                />
+            </shape>
+        </clip>
+    </item>
+
+</layer-list>

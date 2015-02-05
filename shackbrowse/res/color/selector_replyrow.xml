@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/net.woggle.shackbrowse">
+    <item android:state_pressed="true" android:drawable="@color/clickHighlight" />
+    <item
+        app:state_loading="false"
+        app:state_nws="false"
+        app:state_political="false"
+        app:state_inf="false"
+        android:state_checked="false"
+        android:drawable="@android:color/transparent" />
+    <item
+        app:state_loading="false"
+        app:state_nws="true"
+        app:state_political="false"
+        app:state_inf="false"
+        android:state_checked="false"
+        android:drawable="@color/tview_nws_postbg" />
+    <item
+        app:state_loading="false"
+        app:state_nws="false"
+        app:state_political="false"
+        app:state_inf="true"
+        android:state_checked="false"
+        android:drawable="@color/tview_inf_postbg" />
+    <item
+        app:state_loading="false"
+        app:state_nws="false"
+        app:state_political="false"
+        app:state_inf="false"
+        android:state_checked="true"
+        android:drawable="@drawable/card_highlighted_postbg" />
+    <item
+        app:state_nws="true"
+        app:state_loading="false"
+        app:state_political="false"
+        app:state_inf="false"
+        android:state_checked="true"
+        android:drawable="@drawable/card_reply_highlighted_postbg_nws" />
+    <item
+        app:state_inf="true"
+        app:state_loading="false"
+        app:state_nws="false"
+        app:state_political="false"
+        android:state_checked="true"
+        android:drawable="@drawable/card_reply_highlighted_postbg_informative" />
+    <item
+        app:state_political="true"
+        app:state_loading="false"
+        app:state_nws="false"
+        app:state_inf="false"
+        android:state_checked="true"
+        android:drawable="@drawable/card_reply_highlighted_postbg_political" />
+    
+    <!--  loading  -->
+    <item
+        app:state_political="false"
+        app:state_nws="false"
+        app:state_inf="false"
+        app:state_loading="true"
+        android:state_checked="true"
+        android:drawable="@drawable/card_reply_loading" />
+    <item
+        app:state_nws="true"
+        app:state_inf="false"
+        app:state_political="false"
+        app:state_loading="true"
+        android:state_checked="true"
+        android:drawable="@drawable/card_reply_loading_nws" />
+    <item
+        app:state_political="true"
+        app:state_nws="false"
+        app:state_inf="false"
+        app:state_loading="true"
+        android:state_checked="true"
+        android:drawable="@drawable/card_reply_loading_political" />
+    <item
+        app:state_inf="true"
+        app:state_nws="false"
+        app:state_political="false"
+        app:state_loading="true"
+        android:state_checked="true"
+        android:drawable="@drawable/card_reply_loading_inf" />
+</selector>
