@@ -53,21 +53,23 @@ public class LoadingSplashFragment extends Fragment {
         randomizeTagline();
     }
     
-    private void randomizeTagline() {
-        TextView tline = (TextView) ((View) getView()).findViewById(R.id.splash_tagline);
-        String[] array = getResources().getStringArray(R.array.taglines);
-        tline.setText(array[randInt(0,(array.length - 1))]);
+    public void randomizeTagline() {
+        if (getView() != null) {
+            TextView tline = (TextView) ((View) getView()).findViewById(R.id.splash_tagline);
+            String[] array = getResources().getStringArray(R.array.taglines);
+            tline.setText(array[randInt(0, (array.length - 1))]);
 
-        // check if is beta or not
-        String thisversion;
-        try {
-            thisversion = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            // TODO Auto-generated catch block
-            thisversion = "unknown";
+            // check if is beta or not
+            String thisversion;
+            try {
+                thisversion = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionName;
+            } catch (PackageManager.NameNotFoundException e) {
+                // TODO Auto-generated catch block
+                thisversion = "unknown";
+            }
+            TextView sbname = (TextView) ((View) getView()).findViewById(R.id.splash_sbname);
+            sbname.setText("Shack Browse" + (thisversion.toLowerCase().contains("beta") ? " Beta" : ""));
         }
-        TextView sbname = (TextView) ((View) getView()).findViewById(R.id.splash_sbname);
-        sbname.setText("Shack Browse" + (thisversion.toLowerCase().contains("beta") ? " Beta" : ""));
     }
 
     public static int randInt(int min, int max) {

@@ -189,4 +189,23 @@
 		  android:icon="@drawable/ic_action_action_delete"
 		  android:title="@string/notesdel"
 		  android:orderInCategory="103" />
+<!-- FP BROWSER OPTIONS -->
+    <item android:id="@+id/menu_fpbrowserShare"
+        app:showAsAction="ifRoom"
+        android:visible="false"
+        android:icon="@drawable/ic_action_social_share"
+        android:title="@string/browserShare"
+        android:orderInCategory="30" />
+    <item android:id="@+id/menu_fpbrowserCopyURL"
+        app:showAsAction="ifRoom"
+        android:visible="false"
+        android:icon="@drawable/ic_action_content_content_copy"
+        android:title="@string/browserCopyURL"
+        android:orderInCategory="18" />
+    <item android:id="@+id/menu_fprefresh"
+        app:showAsAction="always"
+        android:visible="false"
+        android:icon="@drawable/ic_action_navigation_refresh"
+        android:title="@string/notesrefresh"
+        android:orderInCategory="105" />
 </menu>

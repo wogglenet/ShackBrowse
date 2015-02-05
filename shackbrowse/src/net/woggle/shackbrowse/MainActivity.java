@@ -139,6 +139,7 @@ public class MainActivity extends ActionBarActivity
     private boolean mArticleViewerIsOpen = false;
     private boolean mSplashOpen;
     public LoadingSplashFragment _loadingSplash;
+    private Fragment mCurrentFragment;
 
     public PullToRefreshAttacher getRefresher()
 	{
@@ -230,7 +231,7 @@ public class MainActivity extends ActionBarActivity
 			ft.commit();
 			
 			ft = fm.beginTransaction();
-			ft.replace(R.id.content_frame, _threadList, Integer.toString(CONTENT_THREADLIST));
+			// ft.replace(R.id.content_frame, _threadList, Integer.toString(CONTENT_THREADLIST));
 			ft.attach(_threadList);
 			ft.commit();
 
@@ -578,17 +579,17 @@ public class MainActivity extends ActionBarActivity
         OfflineThreadFragment otf = null;
         if (_currentFragmentType == CONTENT_FAVORITES)
         {
-        	otf = (OfflineThreadFragment)getFragmentManager().findFragmentById(R.id.content_frame);
+        	otf = (OfflineThreadFragment)getFragmentManager().findFragmentByTag(Integer.toString(CONTENT_FAVORITES));
         }
         SearchViewFragment svf = null;
         if (_currentFragmentType == CONTENT_SEARCHVIEW)
         {
-        	svf = (SearchViewFragment)getFragmentManager().findFragmentById(R.id.content_frame);
+        	svf = (SearchViewFragment)getFragmentManager().findFragmentByTag(Integer.toString(CONTENT_SEARCHVIEW));
         }
         NotificationFragment nf = null;
         if (_currentFragmentType == CONTENT_NOTIFICATIONS)
         {
-        	nf = (NotificationFragment)getFragmentManager().findFragmentById(R.id.content_frame);
+        	nf = (NotificationFragment)getFragmentManager().findFragmentByTag(Integer.toString(CONTENT_NOTIFICATIONS));
         }
         
         NotificationsDB ndb;
@@ -712,6 +713,24 @@ public class MainActivity extends ActionBarActivity
 	        case R.id.menu_refreshNotes:
 	        	nf.refreshNotes();
 	        	break;
+            case R.id.menu_fpbrowserCopyURL:
+                if ((_fpBrowser != null) && (!isArticleOpen()))
+                    _fpBrowser.copyURL();
+                if ((_articleViewer != null) && (isArticleOpen()))
+                    _articleViewer.copyURL();
+                break;
+            case R.id.menu_fpbrowserShare:
+                if ((_fpBrowser != null) && (!isArticleOpen()))
+                    _fpBrowser.shareURL();
+                if ((_articleViewer != null) && (isArticleOpen()))
+                    _articleViewer.shareURL();
+                break;
+            case R.id.menu_fprefresh:
+                if ((_fpBrowser != null) && (!isArticleOpen()))
+                    _fpBrowser.refresh();
+                if ((_articleViewer != null) && (isArticleOpen()))
+                    _articleViewer.refresh();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -849,6 +868,8 @@ public class MainActivity extends ActionBarActivity
         
         boolean showMessageItems = (_currentFragmentType == CONTENT_MESSAGES) && (!mPopupBrowserOpen) && (!isMenuOpen) && (!isResultsOpen);
         boolean showNoteItems = (_currentFragmentType == CONTENT_NOTIFICATIONS) && (!mPopupBrowserOpen) && (!isMenuOpen) && (!isResultsOpen);
+
+        boolean showFPBrowserItems = ((_currentFragmentType == CONTENT_FRONTPAGE) && (dualPane || !areSlidersOpen)) && (!mPopupBrowserOpen) && (!isMenuOpen) && (!isResultsOpen);
         
         boolean browserZoomMode = false;
         if ((mPBfragment != null) && (mPBfragment.mState == mPBfragment.SHOW_ZOOM_CONTROLS))
@@ -902,6 +923,10 @@ public class MainActivity extends ActionBarActivity
         
         menu.findItem(R.id.menu_refreshNotes).setVisible(showNoteItems && (dualPane || !areSlidersOpen));
         menu.findItem(R.id.menu_notesDel).setVisible(showNoteItems && (dualPane || !areSlidersOpen));
+
+        menu.findItem(R.id.menu_fpbrowserCopyURL).setVisible(showFPBrowserItems);
+        menu.findItem(R.id.menu_fpbrowserShare).setVisible(showFPBrowserItems);
+        menu.findItem(R.id.menu_fprefresh).setVisible(showFPBrowserItems);
         
 		return true;
     }
@@ -969,14 +994,32 @@ public class MainActivity extends ActionBarActivity
 		showOnlyProgressBarFromPTRLibrary(false);
 		
 		FragmentManager fragmentManager = getFragmentManager();
+
+
+        // clear all fragments from id.content_frame
+        Fragment toBeDeleted = (Fragment) getFragmentManager().findFragmentById(R.id.content_frame);
+        while (toBeDeleted != null)
+        {
+            System.out.println("DELETING A FRAG");
+            fragmentManager.beginTransaction()
+                    .remove(toBeDeleted)
+                    .commit();
+            fragmentManager.executePendingTransactions();
+            toBeDeleted = (Fragment) getFragmentManager().findFragmentById(R.id.content_frame);
+        }
+
+
 	    fragmentManager.beginTransaction()
-	                   .replace(R.id.content_frame, fragment)
+	                   .add(R.id.content_frame, fragment, Integer.toString(type))
 	                   .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
 	                   .commit();
+
+        mCurrentFragment = fragment;
+
         if (type == CONTENT_FRONTPAGE)
         {
             fragmentManager.beginTransaction()
-                    .add(R.id.content_frame, _articleViewer)
+                    .add(R.id.content_frame, _articleViewer, "article")
                     .hide(_articleViewer)
                     .commit();
 
@@ -984,7 +1027,7 @@ public class MainActivity extends ActionBarActivity
         }
 
         fragmentManager.beginTransaction()
-                .add(R.id.content_frame, _loadingSplash)
+                .add(R.id.content_frame, _loadingSplash, "splash")
                 .hide(_loadingSplash)
                 .commit();
 
@@ -1480,12 +1523,12 @@ public class MainActivity extends ActionBarActivity
 			// DUAL PANE SETUP
 			
 			// sresults slider
-			((RelativeLayout.LayoutParams)sres.getLayoutParams()).width = (int)(getScreenWidth() * (1f / 3f));
+			((RelativeLayout.LayoutParams)sres.getLayoutParams()).width = (int)(getScreenWidth() * (2f / 5f));
 			
 			// threadview slider
-    		((RelativeLayout.LayoutParams)contentframe.getLayoutParams()).width = (int)(getScreenWidth() / 3);
+    		((RelativeLayout.LayoutParams)contentframe.getLayoutParams()).width = (int)(getScreenWidth() * (2f / 5f));
     		
-    		((RelativeLayout.LayoutParams)slide.getLayoutParams()).width = (int)(getScreenWidth() * (2f / 3f)) + 1;
+    		((RelativeLayout.LayoutParams)slide.getLayoutParams()).width = (int)(getScreenWidth() * (3f / 5f)) + 1;
     		
     		if (_swappedSplit)
     		{
@@ -3053,6 +3096,7 @@ public class MainActivity extends ActionBarActivity
     {
         if (_currentFragmentType == CONTENT_FRONTPAGE) {
             mArticleViewerIsOpen = true;
+            _articleViewer.open("");
             _articleViewer.open(href);
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction()
@@ -3069,6 +3113,7 @@ public class MainActivity extends ActionBarActivity
     public void closeArticleViewer()
     {
         if (_currentFragmentType == CONTENT_FRONTPAGE) {
+            showOnlyProgressBarFromPTRLibrary(false);
             mArticleViewerIsOpen = false;
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction()
@@ -3092,23 +3137,48 @@ public class MainActivity extends ActionBarActivity
      */
     public void showLoadingSplash()
     {
-        mSplashOpen = true;
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
-                .show(_loadingSplash)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .commit();
+        if (mSplashOpen == false) {
+            mSplashOpen = true;
+            FragmentManager fragmentManager = getFragmentManager();
+            fragmentManager.beginTransaction()
+                    .show(_loadingSplash)
+                    .hide(mCurrentFragment)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .commit();
+            _loadingSplash.randomizeTagline();
+        }
 
     }
 
     public void hideLoadingSplash()
     {
-        mSplashOpen = false;
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
-                .hide(_loadingSplash)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .commit();
+        if (mSplashOpen == true) {
+            mSplashOpen = false;
+            FragmentManager fragmentManager = getFragmentManager();
+            fragmentManager.beginTransaction()
+                    .hide(_loadingSplash)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .commit();
+
+            if (isArticleOpen()) {
+                fragmentManager.beginTransaction()
+                        .hide(mCurrentFragment)
+                        .show(_articleViewer)
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                        .commit();
+            } else if (_currentFragmentType == CONTENT_FRONTPAGE) {
+                fragmentManager.beginTransaction()
+                        .show(mCurrentFragment)
+                        .hide(_articleViewer)
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                        .commit();
+            } else {
+                fragmentManager.beginTransaction()
+                        .show(mCurrentFragment)
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                        .commit();
+            }
+        }
     }
     public boolean isSplashOpen()
     {

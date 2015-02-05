@@ -72,17 +72,21 @@ public class FrontpageBrowserFragment extends Fragment {
         mWebview.getSettings().setBuiltInZoomControls(false);
         mWebview.getSettings().setDisplayZoomControls(false);
         mWebview.getSettings().setJavaScriptEnabled(true);
-        mWebview.setBackgroundColor(0x00000000);
+        mWebview.getSettings().setSupportMultipleWindows(true);
+        mWebview.getSettings().setAllowFileAccess(true);
+        mWebview.getSettings().setDomStorageEnabled(true);
         if (getActivity() != null)
-            ((MainActivity)getActivity()).showOnlyProgressBarFromPTRLibrary(true);
+            ((MainActivity)getActivity()).showOnlyProgressBarFromPTRLibrary(false);
 
         mWebview.setWebChromeClient(new WebChromeClient() {
-            public void onProgressChanged(WebView view, int progress)
-            {
-                if ((getActivity() != null) && (progress > 9) && (progress < 90))
-                {
-                    ((MainActivity)getActivity()).showOnlyProgressBarFromPTRLibraryDeterminate(true, progress);
-                }
+                                        public void onProgressChanged(WebView view, int progress) {
+                                            if ((getActivity() != null) && (progress < 85)) {
+                                                ((MainActivity) getActivity()).showLoadingSplash();
+                                            } else {
+                                                ((MainActivity) getActivity()).hideLoadingSplash();
+                                            }
+                                        }
+                                    });
             	/*
             	if (pb != null && progress < 100)
             	{
@@ -92,9 +96,9 @@ public class FrontpageBrowserFragment extends Fragment {
             		pb.bringToFront();
             		pb.setProgress(progress);
             	}
-            	*/
+            	*/ /*
                 System.out.println("prog:" + progress);
-                if (progress >= 90)
+                if (progress >= 85)
                 {
                     if (getActivity() != null)
                         ((MainActivity)getActivity()).showOnlyProgressBarFromPTRLibrary(false);
@@ -103,7 +107,7 @@ public class FrontpageBrowserFragment extends Fragment {
                     view.setBackgroundColor(Color.WHITE);
             }
         });
-
+*/
         mWebview.setWebViewClient(
         new WebViewClient() {
             @Override
@@ -119,6 +123,8 @@ public class FrontpageBrowserFragment extends Fragment {
                 else if ((uri.getHost().equalsIgnoreCase("www.shacknews.com") || uri.getHost().equalsIgnoreCase("shacknews.com")) &&  uri.getPath().toLowerCase().contains("article"))
                 {
                     ((MainActivity)getActivity()).openInArticleViewer(uri.toString());
+                    if (getActivity() != null)
+                        ((MainActivity)getActivity()).showOnlyProgressBarFromPTRLibrary(false);
                     return true;
                 }
                 return false;
@@ -126,10 +132,10 @@ public class FrontpageBrowserFragment extends Fragment {
 
         // mWebview.getSettings().setDefaultZoom(WebSettings.ZoomDensity.FAR);
         mWebview.getSettings().setUseWideViewPort(false);
-        mWebview.getSettings().setLoadWithOverviewMode(false);
+        mWebview.getSettings().setLoadWithOverviewMode(true);
 
         mWebview.loadUrl(mFirstHref);
-
+        ((MainActivity) getActivity()).showLoadingSplash();
     }
 
     // reset the progress bars when we are detached from the activity
@@ -185,5 +191,10 @@ public class FrontpageBrowserFragment extends Fragment {
 
     public void setFirstOpen(String href) {
         mFirstHref = href;
+    }
+
+    public void refresh() {
+        if (mWebview != null)
+            mWebview.reload();
     }
 }

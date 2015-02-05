@@ -4,7 +4,7 @@
         <item>@color/modtag_inf</item>
         <item>@color/replyCountNewBg</item>
         <item>@color/modtag_nws</item>
-        <item>@color/gnushack</item>
+        <item>@color/gnushackdark</item>
     </integer-array>
     <color name="gnushack">#52c334</color>
     <color name="gnushackdark">#333</color>
@@ -91,6 +91,6 @@
     <color name="ics_background_end">#ff1b1f23</color> -->
     <color name="SBlight">#bbef6d</color>
     <color name="SBmed">#52c334</color>
-    <color name="SBdark">#368931</color>
-    <color name="SBvdark">#22571f</color>
+    <color name="SBdark">#22571f</color>
+    <color name="SBvdark">#122f11</color>
 </resources>

@@ -1907,8 +1907,10 @@ public class ThreadListFragment extends ListFragment
         	*/
         	if ((!_silentLoad) && (getActivity() != null))
         	{
-                /*
+
         		MainActivity act = ((MainActivity)getActivity());
+                act.hideLoadingSplash();
+                /*
         		View view = null;
 				if (((View)ThreadListFragment.this.getView() != null) && (((View)ThreadListFragment.this.getView()).findViewById(R.id.tlist_FSLoad).getVisibility() == View.VISIBLE))
 				{

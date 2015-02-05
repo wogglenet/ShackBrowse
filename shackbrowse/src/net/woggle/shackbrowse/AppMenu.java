@@ -28,7 +28,7 @@ public class AppMenu extends ListFragment
     private boolean _viewAvailable;
 	private MenuAdapter _adapter;
 	private SharedPreferences _prefs;
-	int mCheckedPosition = 1;
+	int mCheckedPosition = 3;
 	private Object thisversion;
 	
 	@Override
