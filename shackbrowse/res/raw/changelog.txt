@@ -32,7 +32,7 @@ $ 4.1.0Beta3
 % v 4.1.0Beta3
 _ Feb 4, 2015
 * Beta3:
-* Color tweaks
+* Color tweaks.
 * Frontpage fixes and improvements
 * Icon tweaks
 * Beta2:
