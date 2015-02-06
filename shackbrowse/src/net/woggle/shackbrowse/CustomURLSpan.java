@@ -99,14 +99,30 @@ public class CustomURLSpan extends CustomClickableSpan implements OnLongClickLis
         	|| href.contains("://shacknews.com/chatty?id=")
         	|| href.contains("://www.shacknews.com/laryn.x?id=")
         	|| href.contains("://shacknews.com/laryn.x?id=")
+            || href.contains("shacknews.com/article")
         	)
         {
-        	Uri uri = Uri.parse(getURL());
-        	try
-        	{
-        		newId = Integer.valueOf(uri.getQueryParameter("id").trim());
-        	}
-        	catch (NumberFormatException e) { Toast.makeText(v.getContext(), "Invalid URL, could not open thread internally", Toast.LENGTH_SHORT).show(); }
+            if (href.contains("shacknews.com/article"))
+            {
+                if (((MainActivity)v.getContext()).getSliderOpen() && !((MainActivity)v.getContext()).getDualPane())
+                {
+                    ((MainActivity)v.getContext())._tviewFrame.closeLayer(true);
+                }
+                else if (((MainActivity)v.getContext())._sresFrame.isOpened())
+                {
+                    ((MainActivity)v.getContext())._sresFrame.closeLayer(true);
+                }
+                ((MainActivity)v.getContext()).openInArticleViewer(href);
+                return;
+            }
+            else {
+                Uri uri = Uri.parse(getURL());
+                try {
+                    newId = Integer.valueOf(uri.getQueryParameter("id").trim());
+                } catch (NumberFormatException e) {
+                    Toast.makeText(v.getContext(), "Invalid URL, could not open thread internally", Toast.LENGTH_SHORT).show();
+                }
+            }
         }
         
         // fix youtube app not handling their own youtu.be url shortener

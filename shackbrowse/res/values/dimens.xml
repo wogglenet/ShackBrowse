@@ -26,7 +26,7 @@
     <dimen name="indicatorBottomMargin">46dp</dimen>
     
     <dimen name="cardBottomMargin">0dp</dimen>
-    <dimen name="cardLeftMargin">0dp</dimen>
+    <dimen name="cardLeftMargin">1dp</dimen>
     <dimen name="cardLeftMarginBigger">1dp</dimen>
     <dimen name="cardRightMargin">1dp</dimen>
     

@@ -150,6 +150,8 @@ public class MainActivity extends ActionBarActivity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+
+        _prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		
 		// enforce overflow menu
 		try {
@@ -250,9 +252,7 @@ public class MainActivity extends ActionBarActivity
 
 		
 		getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-		
-		_prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		
+
 		// this is for upgraders, a check to upgrade donator prefs
 		upgradeDonatorPreferences();
 				
@@ -479,7 +479,7 @@ public class MainActivity extends ActionBarActivity
         _sresFrame.setSlidingEnabled(true);
         
         // default content setting
-        setContentTo(CONTENT_THREADLIST);
+        setContentTo(Integer.parseInt(_prefs.getString("APP_DEFAULTPANE", Integer.toString(CONTENT_FRONTPAGE))));
         
         // check for wifi connection
         ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
@@ -1042,7 +1042,7 @@ public class MainActivity extends ActionBarActivity
     	}
 
 
-		
+        _appMenu.updateMenuUi();
 		trackScreen(mTitle);
 	    
 	}
@@ -1771,8 +1771,6 @@ public class MainActivity extends ActionBarActivity
 		else if (_currentFragmentType != CONTENT_THREADLIST)
 		{
 			setContentTo(CONTENT_THREADLIST);
-			_appMenu.mCheckedPosition = 1;
-			_appMenu.updateMenuUi();
 		}
 		else
 		{
@@ -3094,10 +3092,25 @@ public class MainActivity extends ActionBarActivity
 
     public void openInArticleViewer(String href)
     {
-        if (_currentFragmentType == CONTENT_FRONTPAGE) {
+        if (_currentFragmentType != CONTENT_FRONTPAGE) {
             mArticleViewerIsOpen = true;
-            _articleViewer.open("");
-            _articleViewer.open(href);
+            _fpBrowser.mSplashSuppress = true;
+            setContentTo(CONTENT_FRONTPAGE);
+
+            _articleViewer.setFirstOpen(href);
+            FragmentManager fragmentManager = getFragmentManager();
+            fragmentManager.beginTransaction()
+                    .show(_articleViewer)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    .hide(_fpBrowser)
+                    .commit();
+        }
+        else if (_currentFragmentType == CONTENT_FRONTPAGE) {
+            mArticleViewerIsOpen = true;
+            _articleViewer.mSplashSuppress = true;
+            if (_articleViewer.mWebview != null)
+                _articleViewer.mWebview.loadData("", "text/html", null);
+
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction()
                     .show(_articleViewer)
@@ -3105,15 +3118,16 @@ public class MainActivity extends ActionBarActivity
                     .hide(_fpBrowser)
                     .commit();
 
-            mTitle = "Article";
-            setTitleContextually();
+            _articleViewer.open(href);
         }
+        mTitle = "Article";
+        setTitleContextually();
     }
 
     public void closeArticleViewer()
     {
         if (_currentFragmentType == CONTENT_FRONTPAGE) {
-            showOnlyProgressBarFromPTRLibrary(false);
+            // showOnlyProgressBarFromPTRLibrary(false);
             mArticleViewerIsOpen = false;
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction()
@@ -3139,12 +3153,19 @@ public class MainActivity extends ActionBarActivity
     {
         if (mSplashOpen == false) {
             mSplashOpen = true;
-            FragmentManager fragmentManager = getFragmentManager();
-            fragmentManager.beginTransaction()
-                    .show(_loadingSplash)
-                    .hide(mCurrentFragment)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .commit();
+            FragmentManager fM = getFragmentManager();
+            FragmentTransaction fT = fM.beginTransaction();
+                    fT.show(_loadingSplash);
+                    fT.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+
+
+            if (_currentFragmentType == CONTENT_FRONTPAGE) {
+                        fT.hide(_articleViewer);
+            }
+
+            fT.hide(mCurrentFragment);
+            fT.commit();
+
             _loadingSplash.randomizeTagline();
         }
 
@@ -3158,25 +3179,25 @@ public class MainActivity extends ActionBarActivity
             fragmentManager.beginTransaction()
                     .hide(_loadingSplash)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .commit();
+                    .commitAllowingStateLoss();
 
             if (isArticleOpen()) {
                 fragmentManager.beginTransaction()
                         .hide(mCurrentFragment)
                         .show(_articleViewer)
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                        .commit();
+                        .commitAllowingStateLoss();
             } else if (_currentFragmentType == CONTENT_FRONTPAGE) {
                 fragmentManager.beginTransaction()
                         .show(mCurrentFragment)
                         .hide(_articleViewer)
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                        .commit();
+                        .commitAllowingStateLoss();
             } else {
                 fragmentManager.beginTransaction()
                         .show(mCurrentFragment)
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                        .commit();
+                        .commitAllowingStateLoss();
             }
         }
     }

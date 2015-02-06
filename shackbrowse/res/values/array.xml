@@ -53,6 +53,20 @@
 		<item>1</item>
 		<item>2</item>
 	</string-array>
+    <string-array name="preference_APP_DEFAULTPANE_vals">
+        <item>6</item>
+        <item>0</item>
+        <item>4</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string-array name="preference_APP_DEFAULTPANE">
+        <item>Frontpage</item>
+        <item>Latest Chatty</item>
+        <item>Notifications</item>
+        <item>Messages</item>
+        <item>Search</item>
+    </string-array>
     <string-array name="preference_animspeed">
         <item>Off</item>
         <item>Superfast</item>

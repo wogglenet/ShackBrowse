@@ -79,7 +79,15 @@
         
     </PreferenceScreen>
   <PreferenceScreen android:key="appwide" android:title="@string/preferences_appwide" android:summary="@string/preferences_appwide_summary">
-     
+
+      <ListPreference
+          android:key="APP_DEFAULTPANE"
+          android:title="@string/preference_APP_DEFAULTPANE"
+          android:entries="@array/preference_APP_DEFAULTPANE"
+          android:entryValues="@array/preference_APP_DEFAULTPANE_vals"
+          android:summary="@string/preference_APP_DEFAULTPANE_summary"
+          android:defaultValue="6"
+          />
      <ListPreference
       android:key="splitView"
       android:title="@string/preference_splitView_title"

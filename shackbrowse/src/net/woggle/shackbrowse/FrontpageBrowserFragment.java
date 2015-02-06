@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -36,6 +37,7 @@ public class FrontpageBrowserFragment extends Fragment {
     public static final int BROWSER = 100;
     public static final int SHOW_ZOOM_CONTROLS = 200;
     private String mFirstHref;
+    public boolean mSplashSuppress = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -75,16 +77,16 @@ public class FrontpageBrowserFragment extends Fragment {
         mWebview.getSettings().setSupportMultipleWindows(true);
         mWebview.getSettings().setAllowFileAccess(true);
         mWebview.getSettings().setDomStorageEnabled(true);
+        mWebview.getSettings().setAllowFileAccessFromFileURLs(true);
+        mWebview.getSettings().setAllowUniversalAccessFromFileURLs(true);
+        /*
         if (getActivity() != null)
             ((MainActivity)getActivity()).showOnlyProgressBarFromPTRLibrary(false);
-
+*/
         mWebview.setWebChromeClient(new WebChromeClient() {
+                                 @Override
                                         public void onProgressChanged(WebView view, int progress) {
-                                            if ((getActivity() != null) && (progress < 85)) {
-                                                ((MainActivity) getActivity()).showLoadingSplash();
-                                            } else {
-                                                ((MainActivity) getActivity()).hideLoadingSplash();
-                                            }
+
                                         }
                                     });
             	/*
@@ -109,43 +111,59 @@ public class FrontpageBrowserFragment extends Fragment {
         });
 */
         mWebview.setWebViewClient(
-        new WebViewClient() {
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view,String _href)
-            {
-                Uri uri = Uri.parse(_href);
-                String id = uri.getQueryParameter("id");
-                if ((uri.getHost().equalsIgnoreCase("www.shacknews.com") || uri.getHost().equalsIgnoreCase("shacknews.com")) &&  id != null)
-                {
-                    ((MainActivity)getActivity()).openThreadViewAndSelect(Integer.parseInt(id));
-                    return true;
-                }
-                else if ((uri.getHost().equalsIgnoreCase("www.shacknews.com") || uri.getHost().equalsIgnoreCase("shacknews.com")) &&  uri.getPath().toLowerCase().contains("article"))
-                {
-                    ((MainActivity)getActivity()).openInArticleViewer(uri.toString());
+                new WebViewClient() {
+                    @Override
+                    public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                        if ((getActivity() != null) && (mSplashSuppress == false)) {
+                            ((MainActivity) getActivity()).showLoadingSplash();
+                        }
+                    }
+
+                    @Override
+                    public void onPageFinished(WebView view, String url) {
+                        if ((getActivity() != null) && (mSplashSuppress == false)) {
+                            ((MainActivity) getActivity()).hideLoadingSplash();
+                        }
+                        mSplashSuppress = false;
+                    }
+
+                    @Override
+                    public boolean shouldOverrideUrlLoading(WebView view, String _href) {
+                        Uri uri = Uri.parse(_href);
+                        String id = uri.getQueryParameter("id");
+                        if ((uri.getHost().equalsIgnoreCase("www.shacknews.com") || uri.getHost().equalsIgnoreCase("shacknews.com")) && id != null) {
+                            ((MainActivity) getActivity()).openThreadViewAndSelect(Integer.parseInt(id));
+                            return true;
+                        } else if ((uri.getHost().equalsIgnoreCase("www.shacknews.com") || uri.getHost().equalsIgnoreCase("shacknews.com")) && uri.getPath().toLowerCase().contains("article")) {
+                            ((MainActivity) getActivity()).openInArticleViewer(uri.toString());
+                    /*
                     if (getActivity() != null)
                         ((MainActivity)getActivity()).showOnlyProgressBarFromPTRLibrary(false);
-                    return true;
-                }
-                return false;
-        } });
+                        */
+                            return true;
+                        }
+                        return false;
+                    }
+                });
 
         // mWebview.getSettings().setDefaultZoom(WebSettings.ZoomDensity.FAR);
         mWebview.getSettings().setUseWideViewPort(false);
-        mWebview.getSettings().setLoadWithOverviewMode(true);
+        mWebview.getSettings().setLoadWithOverviewMode(false);
+        mWebview.setBackgroundColor(Color.BLACK);
 
         mWebview.loadUrl(mFirstHref);
-        ((MainActivity) getActivity()).showLoadingSplash();
     }
 
     // reset the progress bars when we are detached from the activity
     @Override
     public void onStop()
     {
+        /*
         if (getActivity() != null) {
             ((MainActivity) getActivity()).mSOPBFPTRL = true;
             ((MainActivity) getActivity()).showOnlyProgressBarFromPTRLibrary(false);
         }
+        */
         super.onStop();
     }
 

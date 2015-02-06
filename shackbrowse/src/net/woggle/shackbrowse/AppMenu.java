@@ -61,7 +61,7 @@ public class AppMenu extends ListFragment
         // set list view up
         getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         getListView().setDividerHeight(0);
-        getListView().setBackgroundColor(getResources().getColor(R.color.SBvdark));
+        getListView().setBackground(getResources().getDrawable(R.drawable.bg_menu));
         
         _prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
@@ -125,13 +125,45 @@ public class AppMenu extends ListFragment
     		        if (verified) {
     		        	_adapter.add(new MenuItems(0, "Queued Posts", 10, R.drawable.ic_action_image_add_to_photos));
     		        }
-    	        	
-    	        	getListView().setItemChecked(mCheckedPosition , true);
+
+                    informCheckedPosition();
+    	        	getListView().setItemChecked(mCheckedPosition, true);
     	        }
     		}
     	}
     }
-    
+
+    public void informCheckedPosition()
+    {
+        if (((MainActivity)getActivity())._currentFragmentType == MainActivity.CONTENT_FRONTPAGE)
+        {
+            mCheckedPosition = 2;
+        }
+        else if (((MainActivity)getActivity())._currentFragmentType == MainActivity.CONTENT_THREADLIST)
+        {
+            mCheckedPosition = 3;
+        }
+        else if (((MainActivity)getActivity())._currentFragmentType == MainActivity.CONTENT_NOTIFICATIONS)
+        {
+            mCheckedPosition = 4;
+        }
+        else if (((MainActivity)getActivity())._currentFragmentType == MainActivity.CONTENT_FAVORITES)
+        {
+            mCheckedPosition = 5;
+        }
+        else if (((MainActivity)getActivity())._currentFragmentType == MainActivity.CONTENT_MESSAGES)
+        {
+            mCheckedPosition = 6;
+        }
+        else if (((MainActivity)getActivity())._currentFragmentType == MainActivity.CONTENT_PREFS)
+        {
+            mCheckedPosition = 7;
+        }
+        else if (((MainActivity)getActivity())._currentFragmentType == MainActivity.CONTENT_SEARCHVIEW)
+        {
+            mCheckedPosition = 8;
+        }
+    }
     public void trackM(String label)
     {
     	((MainActivity)getActivity()).track("ui_action3", "fakeActionBarClick", label);
@@ -146,7 +178,7 @@ public class AppMenu extends ListFragment
     	{
             ((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_PREFS);
             trackM("openPref");
-            mCheckedPosition = position;
+            // mCheckedPosition = position;
             /*
     		Intent i = new Intent(getActivity(), PreferenceView.class);
             getActivity().startActivityForResult(i, ThreadListFragment.OPEN_PREFS);
@@ -183,13 +215,13 @@ public class AppMenu extends ListFragment
     	{
     		((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_THREADLIST);
             trackM("openLC");
-            mCheckedPosition = position;
+            //mCheckedPosition = position;
     	}
     	if (mid == 9)
     	{
     		((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_NOTIFICATIONS);
             trackM("openNotes");
-            mCheckedPosition = position;
+            //mCheckedPosition = position;
     	}
     	if (mid == 5)
     	{
@@ -212,19 +244,19 @@ public class AppMenu extends ListFragment
     	    
     		((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_MESSAGES);
             trackM("openMessages");
-            mCheckedPosition = position;
+            //mCheckedPosition = position;
     	}
     	if (mid == 6)
     	{
     		((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_SEARCHVIEW);
             trackM("openAdvSearch");
-            mCheckedPosition = position;
+           // mCheckedPosition = position;
     	}
     	if (mid == 8)
     	{
     		((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_FAVORITES);
             trackM("openFavorites");
-            mCheckedPosition = position;
+            //mCheckedPosition = position;
     	}
     	if (mid == 999)
     	{
@@ -239,9 +271,10 @@ public class AppMenu extends ListFragment
         {
             ((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_FRONTPAGE);
             trackM("openFrontpage");
-            mCheckedPosition = position;
+            //mCheckedPosition = position;
         }
-    	l.setItemChecked(mCheckedPosition, true);
+        updateMenuUi();
+    	//l.setItemChecked(mCheckedPosition, true);
         ((MainActivity)getActivity()).closeMenu();
     }
    

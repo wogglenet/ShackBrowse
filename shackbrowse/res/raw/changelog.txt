@@ -28,9 +28,15 @@ TODO
 * SEARCH GOOGLE BY TEXT SELECTION
 -->
 
-$ 4.1.0Beta3
-% v 4.1.0Beta3
-_ Feb 4, 2015
+$ 4.1.0Beta4
+% v 4.1.0Beta4
+_ Feb 6, 2015
+* Beta4:
+* Menu background
+* Fixes to frontpage section
+* Frontpage now loads by default. This can be changed in preferences.
+* Fixes to app menu
+* Fixes to pic uploader
 * Beta3:
 * Color tweaks.
 * Frontpage fixes and improvements

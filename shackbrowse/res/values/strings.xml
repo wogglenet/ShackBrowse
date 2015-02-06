@@ -246,4 +246,6 @@
     <string name="search_vanity">Vanity Search</string>
     <string name="preference_animspeed_title">Animation Speed</string>
     <string name="preference_animspeed_summary">Adjust the speed of the reply expansion animation.</string>
+    <string name="preference_APP_DEFAULTPANE">Default Load at Start</string>
+    <string name="preference_APP_DEFAULTPANE_summary">This setting controls which segment of the app loads when the app is started: frontpage, latest chatty, messages, etc.</string>
 </resources>
