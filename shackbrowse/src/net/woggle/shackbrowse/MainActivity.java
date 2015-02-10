@@ -538,7 +538,7 @@ public class MainActivity extends ActionBarActivity
         	getSupportActionBar().setTitle(getResources().getString(R.string.message_title));
         	mDrawerToggle.setDrawerIndicatorEnabled(false);
 		}
-        else if (_tviewFrame.isOpened() && (_currentFragmentType == CONTENT_NOTIFICATIONS || _currentFragmentType == CONTENT_THREADLIST || _currentFragmentType == CONTENT_FAVORITES) && !getDualPane())
+        else if (_tviewFrame.isOpened() && (_currentFragmentType == CONTENT_FRONTPAGE || _currentFragmentType == CONTENT_NOTIFICATIONS || _currentFragmentType == CONTENT_THREADLIST || _currentFragmentType == CONTENT_FAVORITES) && !getDualPane())
         {
         	getSupportActionBar().setTitle(getResources().getString(R.string.thread_title));
         	mDrawerToggle.setDrawerIndicatorEnabled(false);
@@ -555,8 +555,6 @@ public class MainActivity extends ActionBarActivity
         }
 
 		invalidateOptionsMenu();
-		
-		
 	}
 
 	@Override

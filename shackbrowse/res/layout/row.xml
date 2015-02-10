@@ -4,6 +4,8 @@
   android:id="@+id/threadlistContainer"
   android:layout_width="fill_parent"
   android:layout_height="wrap_content"
+  android:paddingBottom="1dp"
+    android:paddingTop="1dp"
   android:descendantFocusability="blocksDescendants"
   
   android:orientation="vertical"
@@ -67,7 +69,8 @@
 		     	 android:id="@+id/textPostedTime"
 		     	 android:layout_width="0dp"
 		     	 android:layout_weight="1"
-		     	 android:gravity="right"
+		     	 android:gravity="right|center_vertical"
+                 android:layout_gravity="center_vertical"
 		     	 android:layout_height="wrap_content"
 		     	 android:maxLines="1"
 	 	 	   	 android:layout_alignParentRight="true"
@@ -76,7 +79,7 @@
 		         android:textColor="@color/timePosted"
 		         android:textSize="@dimen/postTimeSize"
 		         android:paddingLeft="5dip"
-		         android:paddingRight="0dip"
+		         android:paddingRight="1dip"
 		     />
 	     </LinearLayout>
 	     <TextView
@@ -95,8 +98,8 @@
 	     
 	     <ImageButton 
             android:background="@android:color/transparent"
-            android:layout_width="44dp"
-            android:layout_height="36dp"
+            android:layout_width="48dp"
+            android:layout_height="40dp"
             android:scaleType="fitCenter"
             android:id="@+id/tlist_favorite"
             android:layout_gravity="center_vertical"

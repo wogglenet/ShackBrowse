@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -564,6 +565,63 @@ public class ThreadListFragment extends ListFragment
         boolean _showPolitical = _prefs.getBoolean("showPolitical", false);
         boolean _showOntopic = _prefs.getBoolean("showOntopic", true);
 
+        MaterialDialog.Builder build = new MaterialDialog.Builder(getActivity());
+        build.title("Choose which to show");
+        final String[] items = { "tangent","informative","nws","stupid","political","ontopic"};
+        final Integer[] checkedItems = { _showTangent ? 0 : null ,_showInformative ? 1 : null,_showNWS  ? 2 : null,_showStupid ? 3 : null,_showPolitical ? 4 : null, _showOntopic ? 5 : null};
+        build.items(items).itemsCallbackMultiChoice(checkedItems, new MaterialDialog.ListCallbackMulti() {
+            @Override
+            public void onSelection(MaterialDialog materialDialog, Integer[] integers, CharSequence[] charSequences) {
+                return;
+            }
+        })
+        .cancelable(true)
+        .negativeText("Cancel").positiveText("Update Filters")
+        .callback(new MaterialDialog.ButtonCallback() {
+            @Override
+            public void onPositive(MaterialDialog dialog) {
+                Integer[] index = dialog.getSelectedIndices();
+                ArrayList<Integer> checkedIndices = new ArrayList<Integer>(Arrays.asList(index));
+                Editor edit = _prefs.edit();
+                if (checkedIndices.contains(0) == true)
+                    edit.putBoolean("showTangent", true);
+                else
+                    edit.putBoolean("showTangent", false);
+
+                if (checkedIndices.contains(1) == true)
+                    edit.putBoolean("showInformative", true);
+                else
+                    edit.putBoolean("showInformative", false);
+
+                if (checkedIndices.contains(2) == true)
+                    edit.putBoolean("showNWS", true);
+                else
+                    edit.putBoolean("showNWS", false);
+
+                if (checkedIndices.contains(3) == true)
+                    edit.putBoolean("showStupid", true);
+                else
+                    edit.putBoolean("showStupid", false);
+
+                if (checkedIndices.contains(4) == true)
+                    edit.putBoolean("showPolitical", true);
+                else
+                    edit.putBoolean("showPolitical", false);
+
+                if (checkedIndices.contains(5) == true)
+                    edit.putBoolean("showOntopic", true);
+                else
+                    edit.putBoolean("showOntopic", false);
+
+                edit.commit();
+                refreshThreads();
+            }
+
+            @Override
+            public void onNegative(MaterialDialog dialog) {
+            }
+        }).show();
+/*
         MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(getActivity());
         builder.setTitle("Choose which to show");
         final String[] items = { "tangent","informative","nws","stupid","political","ontopic"};
@@ -630,6 +688,7 @@ public class ThreadListFragment extends ListFragment
         AlertDialog alert = builder.create();
         alert.setCanceledOnTouchOutside(true);
         alert.show();
+        */
     }
     
     void openThreadView(int index)
