@@ -8,6 +8,8 @@
     
     <dimen name="textSize">14sp</dimen>
     <dimen name="previewTextSize">14sp</dimen>
+    <dimen name="previewUserNameSize">14sp</dimen>
+    <dimen name="previewUserNameSizeBig">18sp</dimen>
     <dimen name="userNameSize">18sp</dimen>
     <dimen name="replyCountSize">18sp</dimen>
     <dimen name="lolTagSize">9sp</dimen>
@@ -48,5 +50,6 @@
     <dimen name="cardRightMarginTagRoomStupid">30dp</dimen>
 
     <dimen name="alert_dialog_padding_material">24dp</dimen>
+
 
 </resources>

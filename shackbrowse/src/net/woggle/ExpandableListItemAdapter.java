@@ -4,6 +4,7 @@ import android.animation.LayoutTransition;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TableRow;
+import android.widget.TextView;
 
 import com.nhaarman.listviewanimations.ArrayAdapter;
 import com.nhaarman.listviewanimations.ListViewSetter;
@@ -619,7 +621,7 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
     	public static void animateSwapTitle(final View view, final AnimationResIds resIds, boolean collapse, Post p, int oUNH, long duration)
     	{
 
-    		final ViewGroup tomove = (ViewGroup) view.findViewById(resIds.userNameResId);
+    		final TextView tomove = (TextView) view.findViewById(resIds.userNameResId);
     		final View loltag = view.findViewById(resIds.previewLolTag);
     		final View time = view.findViewById(resIds.postedTimeResId);
     		final View tohide = view.findViewById(resIds.textPreviewResId);
@@ -682,6 +684,7 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
                 else { loltag.setVisibility(View.GONE);
                 }
                 time.setVisibility(View.GONE);
+                tomove.setTextSize(TypedValue.COMPLEX_UNIT_PX, view.getContext().getResources().getDimension(R.dimen.previewUserNameSize));
 	            tohide.setVisibility(View.VISIBLE);
     			bg.setChecked(false);
     		}
@@ -690,6 +693,7 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
                 loltag.setVisibility(View.GONE);
                 time.setVisibility(View.VISIBLE);
                 tohide.setVisibility(View.GONE);
+                tomove.setTextSize(TypedValue.COMPLEX_UNIT_PX, view.getContext().getResources().getDimension(R.dimen.previewUserNameSizeBig));
                 bg.setChecked(true);
 
 /*

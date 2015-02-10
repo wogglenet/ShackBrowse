@@ -8,9 +8,9 @@
     </integer-array>
     <color name="gnushack">#52c334</color>
     <color name="gnushackdark">#333</color>
-    <color name="selected_highlight_postbg">#161616</color>
+    <color name="selected_highlight_postbg">#202020</color>
     <color name="selected_postbg">#000000</color>
-    <color name="collapsed_postbg">#131313</color>
+    <color name="collapsed_postbg">#161616</color>
     <color name="webview_bg">#040404</color>
     <color name="thread_row_bottomline">#101010</color>
     <color name="news_selected_highlight_postbg">#253940</color>
@@ -19,7 +19,7 @@
     <color name="modtag_text">#000000</color>
     <color name="nonpreview_post_text_color">#fff</color>
     <color name="collapsed_post_text_color">#999</color>
-    <color name="post_topline">#505050</color>
+    <color name="post_topline">#303030</color>
     <color name="user_paricipated">#6a9fb5</color>
     <color name="replyCount">#000</color>
     <color name="userName">#f3e7b5</color>

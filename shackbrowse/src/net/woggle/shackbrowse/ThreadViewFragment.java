@@ -1758,6 +1758,7 @@ public class ThreadViewFragment extends ListFragment
         			holder.preview.setVisibility(View.GONE);
         			holder.previewLolCounts.setVisibility(View.GONE);
         			holder.postedtime.setVisibility(View.VISIBLE);
+                    holder.previewUsername.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.previewUserNameSizeBig));
 
                     final TextView txtusr = holder.previewUsername;
                     holder.previewUsername.setOnClickListener(getUserNameClickListenerForPosition(position, holder.previewUsername));
@@ -1769,6 +1770,7 @@ public class ThreadViewFragment extends ListFragment
                     holder.previewUsername.setOnClickListener(null);
                     holder.previewUsername.setClickable(false);
         			holder.preview.setVisibility(View.VISIBLE);
+                    holder.previewUsername.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.previewUserNameSize));
         			holder.previewLolCounts.setVisibility(View.VISIBLE);
         			holder.postedtime.setVisibility(View.GONE);
             	}

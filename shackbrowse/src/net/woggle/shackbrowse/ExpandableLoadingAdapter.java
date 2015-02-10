@@ -29,7 +29,7 @@ public abstract class ExpandableLoadingAdapter<T> extends ExpandableListItemAdap
     
     public ExpandableLoadingAdapter(Context context, List<T> objects)
     {
-    	super(context, ExpandableListItemAdapter.createResIds(R.id.tview_threadrow_expanded_container, R.id.tview_threadrow_preview_container, R.layout.thread_row_container, R.id.textPreview, R.id.previewUNHolder, R.id.textPostedTime, R.id.previewView, R.id.textPostLolCounts), objects);
+    	super(context, ExpandableListItemAdapter.createResIds(R.id.tview_threadrow_expanded_container, R.id.tview_threadrow_preview_container, R.layout.thread_row_container, R.id.textPreview, R.id.textPreviewUserName, R.id.textPostedTime, R.id.previewView, R.id.textPostLolCounts), objects);
         _uniqueId = UUID.randomUUID();
         _context = context;
         setCurrentlyLoading(false);
