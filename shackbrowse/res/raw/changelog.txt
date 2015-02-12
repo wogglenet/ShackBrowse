@@ -28,9 +28,13 @@ TODO
 * SEARCH GOOGLE BY TEXT SELECTION
 -->
 
-$ 4.1.0Beta6
-% v 4.1.0Beta6
+$ 4.1.0Beta7
+% v 4.1.0Beta7
 _ Feb 12, 2015
+* Beta7:
+* Fixed autozoom bug
+* Frontpage is never split view
+* Fixed crash with modtag filters
 * Beta6: Minor bug fixes
 * Beta5:
 * Layout tweaks

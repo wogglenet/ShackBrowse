@@ -20,7 +20,7 @@ dependencies {
     compile 'com.google.android.gms:play-services:6.5.87'
     compile 'com.github.castorflex.smoothprogressbar:library:0.5.2'
     compile "com.android.support:support-v4:21.0.+"
-    compile 'com.afollestad:material-dialogs:0.6.2.3'
+    compile 'com.afollestad:material-dialogs:0.6.2.4'
     compile 'com.github.navasmdc:MaterialDesign:1.+@aar'
 }
 

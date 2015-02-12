@@ -568,7 +568,10 @@ public class ThreadListFragment extends ListFragment
         MaterialDialog.Builder build = new MaterialDialog.Builder(getActivity());
         build.title("Choose which to show");
         final String[] items = { "tangent","informative","nws","stupid","political","ontopic"};
-        final Integer[] checkedItems = { _showTangent ? 0 : null ,_showInformative ? 1 : null,_showNWS  ? 2 : null,_showStupid ? 3 : null,_showPolitical ? 4 : null, _showOntopic ? 5 : null};
+        ArrayList<Integer> index = new ArrayList<Integer>();
+        if (_showTangent) index.add(new Integer(0)); if (_showInformative) index.add(new Integer(1)); if (_showNWS) index.add(new Integer(2)); if (_showStupid) index.add(new Integer(3)); if (_showPolitical) index.add(new Integer(4)); if (_showOntopic) index.add(new Integer(5));
+        final Integer[] checkedItems = index.toArray(new Integer[]{});
+        // final Integer[] checkedItems = { _showTangent ? 0 : null ,_showInformative ? 1 : null,_showNWS  ? 2 : null,_showStupid ? 3 : null,_showPolitical ? 4 : null, _showOntopic ? 5 : null};
         build.items(items).itemsCallbackMultiChoice(checkedItems, new MaterialDialog.ListCallbackMulti() {
             @Override
             public void onSelection(MaterialDialog materialDialog, Integer[] integers, CharSequence[] charSequences) {

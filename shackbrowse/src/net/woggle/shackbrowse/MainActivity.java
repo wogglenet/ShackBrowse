@@ -683,9 +683,11 @@ public class MainActivity extends ActionBarActivity
 					
 					@Override
 					public void end() {
+                        setContentTo(CONTENT_PREFS);
+                        /*
 						Intent i = new Intent(MainActivity.this, PreferenceView.class);
 		                i.putExtra("pscreenkey", "popupbrowser");
-		                startActivityForResult(i, ThreadListFragment.OPEN_PREFS);
+		                startActivityForResult(i, ThreadListFragment.OPEN_PREFS); */
 					}
 				};
                 closeBrowser(true,onEnd);
@@ -1007,6 +1009,8 @@ public class MainActivity extends ActionBarActivity
             toBeDeleted = (Fragment) getFragmentManager().findFragmentById(R.id.content_frame);
         }
 
+
+        evaluateDualPane(getResources().getConfiguration());
 
 	    fragmentManager.beginTransaction()
 	                   .add(R.id.content_frame, fragment, Integer.toString(type))
@@ -1461,7 +1465,7 @@ public class MainActivity extends ActionBarActivity
 	        	setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
         }
     
-        if (_splitView == 0)
+        if (_splitView == 0 || _currentFragmentType == CONTENT_FRONTPAGE)
         {
         	setThreadViewFullScreen(false);
         	setDualPane(false);
@@ -1526,12 +1530,12 @@ public class MainActivity extends ActionBarActivity
 			// DUAL PANE SETUP
 			
 			// sresults slider
-			((RelativeLayout.LayoutParams)sres.getLayoutParams()).width = (int)(getScreenWidth() * (2f / 5f));
+			((RelativeLayout.LayoutParams)sres.getLayoutParams()).width = (int)(getScreenWidth() * (1f / 3f));
 			
 			// threadview slider
-    		((RelativeLayout.LayoutParams)contentframe.getLayoutParams()).width = (int)(getScreenWidth() * (2f / 5f));
+    		((RelativeLayout.LayoutParams)contentframe.getLayoutParams()).width = (int)(getScreenWidth() * (2f / 3f));
     		
-    		((RelativeLayout.LayoutParams)slide.getLayoutParams()).width = (int)(getScreenWidth() * (3f / 5f)) + 1;
+    		((RelativeLayout.LayoutParams)slide.getLayoutParams()).width = (int)(getScreenWidth() * (1f / 3f)) + 1;
     		
     		if (_swappedSplit)
     		{

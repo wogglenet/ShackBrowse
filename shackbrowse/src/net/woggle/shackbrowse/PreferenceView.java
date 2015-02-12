@@ -69,9 +69,10 @@ public class PreferenceView extends PreferenceFragment
 	private boolean _Venabled;
 
 	private Preference _keyNotification;
+    private OnGCMInteractListener GCMlistener;
 
-	
-	@Override
+
+    @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -197,7 +198,7 @@ public class PreferenceView extends PreferenceFragment
 					
 		});   	
         
-        final OnGCMInteractListener GCMlistener = new OnGCMInteractListener(){
+        GCMlistener = new OnGCMInteractListener(){
 			@Override
 			public void networkResult(String res) {
 				System.out.println("NETWORKSERVERS RESULT" + res);
@@ -315,18 +316,6 @@ public class PreferenceView extends PreferenceFragment
 				}
 			}};
         
-        Preference notePref = (Preference) findPreference("notifications");
-        notePref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
-
-			@Override
-			public boolean onPreferenceClick(Preference preference) {
-	        	_progressDialog = MaterialProgressDialog.show(getActivity(), "Checking Notification Status", "Communicating with Shack Browse server...", true, true);
-	        	_GCMAccess = new NetworkNotificationServers(getActivity(), GCMlistener);
-	        	_GCMAccess.doUserInfoTask();
-				
-		    	return false;
-			}}
-        );
 
         _keyNotification = (Preference) findPreference("noteKeywords");
         _keyNotification.setOnPreferenceClickListener(new OnPreferenceClickListener(){
@@ -719,5 +708,13 @@ public class PreferenceView extends PreferenceFragment
             }
         }
 	}
-    
+
+    @Override
+    public void onActivityCreated(Bundle bun)
+    {
+        super.onActivityCreated(bun);
+        _progressDialog = MaterialProgressDialog.show(getActivity(), "Checking Notification Status", "Communicating with Shack Browse server...", true, true);
+        _GCMAccess = new NetworkNotificationServers(getActivity(), GCMlistener);
+        _GCMAccess.doUserInfoTask();
+    }
 }

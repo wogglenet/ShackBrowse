@@ -2,7 +2,7 @@
 <PreferenceScreen
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:key="base">
-  <PreferenceCategory android:title="@string/preferences_header">
+  <PreferenceCategory android:title="@string/preferences_header" />
       <!-- 
       <PreferenceScreen
         android:key="logins"
@@ -23,7 +23,7 @@
 		  </PreferenceCategory>
 	  </PreferenceScreen>
 	   -->
-   <PreferenceScreen android:key="notifications" android:title="@string/preferences_notifications" android:summary="@string/preferences_notifications_summary">
+   <PreferenceCategory android:title="@string/preferences_notifications" android:summary="@string/preferences_notifications_summary">
         <CheckBoxPreference
   	     android:key="noteEnabled"
   	     android:title="@string/preference_pushnot_title"
@@ -76,9 +76,9 @@
   	     android:key="pref_testnote"
   	     android:title="@string/preference_testnote"
   	     />
-        
-    </PreferenceScreen>
-  <PreferenceScreen android:key="appwide" android:title="@string/preferences_appwide" android:summary="@string/preferences_appwide_summary">
+
+    </PreferenceCategory>
+  <PreferenceCategory android:title="@string/preferences_appwide" android:summary="@string/preferences_appwide_summary">
 
       <ListPreference
           android:key="APP_DEFAULTPANE"
@@ -153,9 +153,8 @@
   	     android:summary="@string/preference_analytics_summary"
   	     android:defaultValue="true"
   	     />
-    </PreferenceScreen>
     </PreferenceCategory>
-    <PreferenceScreen android:key="tlist" android:title="@string/preferences_threadlist" android:summary="@string/preferences_threadlist_summary">
+    <PreferenceCategory android:key="tlist" android:title="@string/preferences_threadlist" android:summary="@string/preferences_threadlist_summary">
         <CheckBoxPreference
   	     android:key="enableCloudSync"
   	     android:title="@string/preference_cloudsync_title"
@@ -206,8 +205,8 @@
   	     android:summary="@string/preference_preview_line_count_summary"
   	     android:numeric="integer"
   	     android:defaultValue="7"/>
-    </PreferenceScreen>
-    <PreferenceScreen android:key="popupbrowser" android:title="@string/preferences_popupbrowser" android:summary="@string/preferences_popupbrowser_summary">
+    </PreferenceCategory>
+    <PreferenceCategory android:key="popupbrowser" android:title="@string/preferences_popupbrowser" android:summary="@string/preferences_popupbrowser_summary">
         <ListPreference
   	     android:key="usePopupBrowser2"
   	     android:title="@string/preference_popup_browser_title"
@@ -221,8 +220,8 @@
 	  	     android:title="@string/preference_bIZ_title"
 	  	     android:summary="@string/preference_bIZ_summary"
 	  	 />
-	</PreferenceScreen>
-    <PreferenceScreen android:key="tview" android:title="@string/preferences_threadview" android:summary="@string/preferences_threadview_summary">
+	</PreferenceCategory>
+    <PreferenceCategory android:key="tview" android:title="@string/preferences_threadview" android:summary="@string/preferences_threadview_summary">
 	    <CheckBoxPreference
 	  	     android:key="swipeDismiss"
 	  	     android:title="@string/preference_swipedismiss_title"
@@ -262,8 +261,8 @@
             android:summary="@string/preference_animspeed_summary"
             android:defaultValue="1.5"
             />
-    </PreferenceScreen>
-    <PreferenceScreen android:key="postcomposer" android:title="@string/preferences_compose" android:summary="@string/preferences_compose_summary">
+    </PreferenceCategory>
+    <PreferenceCategory android:key="postcomposer" android:title="@string/preferences_compose" android:summary="@string/preferences_compose_summary">
         <ListPreference
   	     android:key="forcePostPreview"
   	     android:title="@string/preference_forcepostpreview_title"
@@ -271,7 +270,7 @@
          android:entryValues="@array/preference_forcepostpreview_vals"
   	     android:summary="@string/preference_forcepostpreview_summary"
   	     android:defaultValue="1"
-	  	 />
+	  	 /></PreferenceCategory>
         <PreferenceCategory android:title="@string/preferences_chattypics_login">
 	  	<EditTextPreference
 	  	     android:key="chattyPicsUserName"
@@ -285,7 +284,7 @@
 	  	     android:singleLine="true"
 	  	     android:password="true"/>
 	  </PreferenceCategory>
-    </PreferenceScreen>
+
   <PreferenceCategory android:title="@string/preferences_version">
       <Preference
   	     android:key="versionName"

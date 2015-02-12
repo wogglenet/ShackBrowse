@@ -54,7 +54,7 @@ public class FrontpageBrowserFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         mViewAvailable = true;
-        return inflater.inflate(R.layout.popupbrowser, null);
+        return inflater.inflate(R.layout.fpbrowser, null);
     }
 
 
@@ -69,16 +69,16 @@ public class FrontpageBrowserFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState)
     {
         super.onActivityCreated(savedInstanceState);
-        mWebview = (WebView) getView().findViewById(R.id.popup_webView);
+        mWebview = (WebView) getView().findViewById(R.id.fp_webView);
 
         mWebview.getSettings().setBuiltInZoomControls(false);
         mWebview.getSettings().setDisplayZoomControls(false);
         mWebview.getSettings().setJavaScriptEnabled(true);
         mWebview.getSettings().setSupportMultipleWindows(true);
-        mWebview.getSettings().setAllowFileAccess(true);
+        mWebview.getSettings().setAllowFileAccess(false);
         mWebview.getSettings().setDomStorageEnabled(true);
-        mWebview.getSettings().setAllowFileAccessFromFileURLs(true);
-        mWebview.getSettings().setAllowUniversalAccessFromFileURLs(true);
+        mWebview.getSettings().setAllowFileAccessFromFileURLs(false);
+        mWebview.getSettings().setAllowUniversalAccessFromFileURLs(false);
         /*
         if (getActivity() != null)
             ((MainActivity)getActivity()).showOnlyProgressBarFromPTRLibrary(false);
