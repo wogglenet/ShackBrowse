@@ -55,6 +55,7 @@ public class DonateActivity extends ActionBarActivity {
 	protected String _unlockData;
 
 	protected String _unlockSign;
+    private boolean _goldLime;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,8 +67,8 @@ public class DonateActivity extends ActionBarActivity {
 
         new DonatorTask().execute();
 
-        _donatorStatus = _prefs.getBoolean("enableDonatorFeatures", false);
-        mIsUnlocked = _prefs.getBoolean("enableDonatorFeatures", false);
+        _donatorStatus = _prefs.getBoolean("enableLimeAccess", false);
+        mIsUnlocked = _prefs.getBoolean("enableLimeAccess", false);
         mHasChecked = false;
         // Some sanity checks to see if the developer (that's you!) really followed the
         // instructions to run this sample (don't put these checks on your app!)
@@ -174,7 +175,7 @@ public class DonateActivity extends ActionBarActivity {
 	        {
 	        	((Button)findViewById(R.id.donateUnlockButton)).setText("Access Lime Settings");
 	        	Editor edit = _prefs.edit();
-	        	edit.putBoolean("enableDonatorFeatures", true);
+	        	edit.putBoolean("enableLimeAccess", true);
 	        	edit.commit();
 	        }
 	        else
@@ -183,16 +184,20 @@ public class DonateActivity extends ActionBarActivity {
                 ((Button)findViewById(R.id.donateUnlockButton)).setEnabled(false);
 	        }
     	}
+
+        _goldLime = _prefs.getString("goldLimeUsers", "").contains(_prefs.getString("userName", "")) && !_prefs.getString("userName", "").equals("");
+        _limeRegistered = _prefs.getString("limeUsers", "").contains(_prefs.getString("userName", "")) && !_prefs.getString("userName", "").equals("") || _goldLime;
+
         
-        _limeRegistered = _prefs.getString("limeUsers", "").contains(_prefs.getString("userName", "")) && !_prefs.getString("userName", "").equals("");
-        
-        SpannableString reg = new SpannableString("Serverside Lime Status: Registered for display next to username \"" + _prefs.getString("userName", "") + "\"");
+        SpannableString reg = new SpannableString("Serverside Lime Status: Registered plain lime for display next to username \"" + _prefs.getString("userName", "") + "\"");
         reg.setSpan(new ForegroundColorSpan(Color.rgb(100,255,100)), 23, reg.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
+        SpannableString goldreg = new SpannableString("Serverside Lime Status: Registered gold lime for display next to username \"" + _prefs.getString("userName", "") + "\"");
+        goldreg.setSpan(new ForegroundColorSpan(Color.rgb(255,195,0)), 23, goldreg.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
         SpannableString notreg = new SpannableString("Serverside Lime Status: Not registered for display");
         notreg.setSpan(new ForegroundColorSpan(Color.rgb(255,100,100)), 23, notreg.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
-        ((TextView)findViewById(R.id.donateLimeStatus)).setText(((_limeRegistered) ? reg : notreg));
+        ((TextView)findViewById(R.id.donateLimeStatus)).setText(((_limeRegistered) ? (_goldLime ? goldreg : reg) : notreg));
 
-        _donatorStatus = _prefs.getBoolean("enableDonatorFeatures", false);
+        _donatorStatus = _prefs.getBoolean("enableLimeAccess", false);
         SpannableString locked = new SpannableString("Donator Status: locked");
         locked.setSpan(new ForegroundColorSpan(Color.rgb(255,100,100)), 15, locked.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
         SpannableString unlocked = new SpannableString("Donator Status: unlocked");
@@ -257,7 +262,7 @@ public class DonateActivity extends ActionBarActivity {
                         {
                             ErrorDialog.display(DonateActivity.this, "Congrats", "Found your name in the online donator list.");
                             Editor edit = _prefs.edit();
-                            edit.putBoolean("enableDonatorFeatures", true);
+                            edit.putBoolean("enableLimeAccess", true);
                             edit.commit();
                             break;
                         }
@@ -269,7 +274,7 @@ public class DonateActivity extends ActionBarActivity {
                     @Override public void run()
                     {
                         mHasChecked = true;
-                        mIsUnlocked = _prefs.getBoolean("enableDonatorFeatures", false);
+                        mIsUnlocked = _prefs.getBoolean("enableLimeAccess", false);
                         updateUi();
                     }
                 });
@@ -277,13 +282,13 @@ public class DonateActivity extends ActionBarActivity {
         }
     }
     
-	class LimeTask extends AsyncTask<String, Void, String>
+	class LimeTask extends AsyncTask<String, Void, String[]>
 	{
 	    Exception _exception;
 		private String _taskMode;
 	    
         @Override
-        protected String doInBackground(String... params)
+        protected String[] doInBackground(String... params)
         {
             try
             {
@@ -300,7 +305,7 @@ public class DonateActivity extends ActionBarActivity {
                 			_progressDialog = MaterialProgressDialog.show(DonateActivity.this, "Adding Lime", "Communicating with server...");
                 		}
                 	});
-                	return ShackApi.putDonator(true, userName);
+                	return new String[]{ShackApi.putDonator(true, userName), null};
                 }
                 
                 if (params[0].equals("remove"))
@@ -311,7 +316,7 @@ public class DonateActivity extends ActionBarActivity {
                 			_progressDialog = MaterialProgressDialog.show(DonateActivity.this, "Removing Lime", "Communicating with server...");
                 		}
                 	});
-                	return ShackApi.putDonator(false, userName);
+                	return new String[]{ShackApi.putDonator(false, userName), null};
                 }
                 
                 if (params[0].equals("get"))
@@ -328,7 +333,7 @@ public class DonateActivity extends ActionBarActivity {
         }
         
         @Override
-        protected void onPostExecute(String result)
+        protected void onPostExecute(String[] result)
         {
         	try {
         		_progressDialog.dismiss();
@@ -359,9 +364,10 @@ public class DonateActivity extends ActionBarActivity {
             }
             else if (_taskMode.equals("get"))
             {
-            	System.out.println("DONATEACTIVITY: downloaded donator list: " + result);
+            	System.out.println("DONATEACTIVITY: downloaded donator list: " + result[1]);
             	SharedPreferences.Editor editor = _prefs.edit();
-            	editor.putString("limeUsers", result);
+                editor.putString("limeUsers", result[0]);
+                editor.putString("goldLimeUsers", result[1]);
             	editor.commit();
             	
             	runOnUiThread(new Runnable(){

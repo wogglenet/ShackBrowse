@@ -1712,17 +1712,21 @@ public class ShackApi
     {
         return new JSONArray(get(DONATOR_URL));
     }
-    public static String getLimeList() throws ClientProtocolException, IOException, JSONException
+    public static String[] getLimeList() throws ClientProtocolException, IOException, JSONException
     {
         JSONArray list = getDonators();
         String limes = new String();
+        String goldLimes = new String();
         for (int i = 0; i < list.length(); i++)
         {
-            if (list.getJSONObject(i).getString("lime").equals("1")) {
+            if (list.getJSONObject(i).getString("lime").equals("1") && list.getJSONObject(i).getString("type").equals("0")) {
                 limes = limes + ":" + list.getJSONObject(i).getString("user") + ";\n";
             }
+            if (list.getJSONObject(i).getString("lime").equals("1") && list.getJSONObject(i).getString("type").equals("1")) {
+                goldLimes = goldLimes + ":" + list.getJSONObject(i).getString("user") + ";\n";
+            }
         }
-        return limes;
+        return new String[]{limes, goldLimes};
     }
     public static boolean getLimeStatus(String username) throws ClientProtocolException, IOException, JSONException
     {

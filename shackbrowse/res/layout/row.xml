@@ -5,7 +5,7 @@
   android:layout_width="fill_parent"
   android:layout_height="wrap_content"
   android:paddingBottom="1dp"
-    android:paddingTop="1dp"
+  android:paddingTop="1dp"
   android:descendantFocusability="blocksDescendants"
   
   android:orientation="vertical"

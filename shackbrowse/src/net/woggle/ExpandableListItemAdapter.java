@@ -276,10 +276,12 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
         View titleView = null;
 
         View parentView = findViewForPosition(position);
-	        Object tag = parentView.getTag();
-	        if (tag instanceof ViewHolder) {
-	            titleView = ((ViewHolder) tag).titleView;
-	        }
+        if (parentView != null) {
+            Object tag = parentView.getTag();
+            if (tag instanceof ViewHolder) {
+                titleView = ((ViewHolder) tag).titleView;
+            }
+        }
         return titleView;
     }
     protected View getTitleParent(final int position) {

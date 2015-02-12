@@ -140,6 +140,7 @@ public class MainActivity extends ActionBarActivity
     private boolean mSplashOpen;
     public LoadingSplashFragment _loadingSplash;
     private Fragment mCurrentFragment;
+    private boolean mActivityAvailable = false;
 
     public PullToRefreshAttacher getRefresher()
 	{
@@ -1090,6 +1091,8 @@ public class MainActivity extends ActionBarActivity
 		Editor ed = _prefs.edit();
 		ed.putBoolean("isAppForeground", false);
 		ed.commit();
+
+        mActivityAvailable = false;
 	}
 	
 	@Override
@@ -1117,6 +1120,8 @@ public class MainActivity extends ActionBarActivity
         Editor ed = _prefs.edit();
 		ed.putBoolean("isAppForeground", true);
 		ed.commit();
+
+        mActivityAvailable = true;
 	}
 	
 	public void toggleMenu() {
@@ -1893,17 +1898,17 @@ public class MainActivity extends ActionBarActivity
 	/*
 	 * LIMES
 	 */
-	class LimeTask extends AsyncTask<String, Void, String>
+	class LimeTask extends AsyncTask<String, Void, String[]>
 	{
 	    Exception _exception;
 	    
         @Override
-        protected String doInBackground(String... params)
+        protected String[] doInBackground(String... params)
         {
             try
             {
                 if (_prefs.getBoolean("enableDonatorFeatures", false) && !_prefs.getString("userName", "").equals("")) {
-                    ShackApi.putDonator((_prefs.getString("limeUsers", "").contains(_prefs.getString("userName", "")) && !_prefs.getString("userName", "").equals("")), _prefs.getString("userName", ""));
+                    ShackApi.putDonator(((_prefs.getString("limeUsers", "").contains(_prefs.getString("userName", "")) || _prefs.getString("goldLimeUsers", "").contains(_prefs.getString("userName", ""))) && !_prefs.getString("userName", "").equals("")), _prefs.getString("userName", ""));
                 }
             	return ShackApi.getLimeList();
             }
@@ -1916,7 +1921,7 @@ public class MainActivity extends ActionBarActivity
         }
         
         @Override
-        protected void onPostExecute(String result)
+        protected void onPostExecute(String[] result)
         {
             if (_exception != null)
             {
@@ -1931,8 +1936,9 @@ public class MainActivity extends ActionBarActivity
             else
             {
             	SharedPreferences.Editor editor = _prefs.edit();
-            	editor.putString("limeUsers", result);
-            	editor.commit();
+            	editor.putString("limeUsers", result[0]);
+                editor.putString("goldLimeUsers", result[1]);
+                editor.commit();
             }
         }
 	}
@@ -1963,20 +1969,22 @@ public class MainActivity extends ActionBarActivity
         {
             if ((_exception != null) || (result == null))
             {
-                MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(MainActivity.this);
-    	        builder.setTitle("Woggle Offline");
-    	        builder.setMessage("Woggle servers are down. ShackBrowse may not work properly. Try again later.");
-    	        builder.setCancelable(false);
-    	        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-    				public void onClick(DialogInterface dialog, int id) {
-    					finish();
-    	            }
-    	        });
-    	        builder.setNegativeButton("Deal with brokenness", new DialogInterface.OnClickListener() {
-    				public void onClick(DialogInterface dialog, int id) {
-    	            }
-    	        });
-    	        builder.create().show();
+                if (mActivityAvailable) {
+                    MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(MainActivity.this);
+                    builder.setTitle("Woggle Offline");
+                    builder.setMessage("Woggle servers are down. ShackBrowse may not work properly. Try again later.");
+                    builder.setCancelable(false);
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            finish();
+                        }
+                    });
+                    builder.setNegativeButton("Deal with brokenness", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                        }
+                    });
+                    builder.create().show();
+                }
             }
             else
             {
@@ -1986,16 +1994,18 @@ public class MainActivity extends ActionBarActivity
             		
             		if (parts[0].equals("d"))
             		{
-                        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(MainActivity.this);
-            	        builder.setTitle("ShackBrowse Offline");
-            	        builder.setCancelable(false);
-            			builder.setMessage("ShackBrowse is currently unavailable. Try again later.");
-            			builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            				public void onClick(DialogInterface dialog, int id) {
-            					finish();
-            	            }
-            	        });
-            	        builder.create().show();
+                        if (mActivityAvailable) {
+                            MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(MainActivity.this);
+                            builder.setTitle("ShackBrowse Offline");
+                            builder.setCancelable(false);
+                            builder.setMessage("ShackBrowse is currently unavailable. Try again later.");
+                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    finish();
+                                }
+                            });
+                            builder.create().show();
+                        }
             		}
             		if ((parts[0].equals("f") || parts[0].equals("u")) && (parts.length > 1))
             		{
@@ -2011,48 +2021,46 @@ public class MainActivity extends ActionBarActivity
             				// opt out
             				if (_prefs.getString("ignoreNewVersion", "").equalsIgnoreCase(parts[1].toLowerCase()) && (parts[0].equals("u")))
             					return;
+                            if (mActivityAvailable) {
+                                MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(MainActivity.this);
+                                builder.setTitle("ShackBrowse Version");
+                                String versExp = "\nYour Version: " + thisversion + "\nNew: " + parts[1];
+                                builder.setMessage(parts[0].equals("f") ? "ShackBrowse must update." + versExp : "A new version of ShackBrowse is available!" + versExp);
+                                builder.setCancelable(false);
+                                builder.setPositiveButton("Update Now", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        final String appPackageName = (parts.length > 2) ? parts[2] : getPackageName(); // getPackageName() from Context or Activity object
+                                        try {
+                                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+                                        } catch (android.content.ActivityNotFoundException anfe) {
+                                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=" + appPackageName)));
+                                        }
+                                        if (parts[0].equals("f"))
+                                            finish();
+                                    }
+                                });
+                                if (parts[0].equals("f")) {
+                                    builder.setNegativeButton("Close App", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            finish();
+                                        }
+                                    });
+                                } else {
+                                    builder.setNegativeButton("Not Now", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
 
-                            MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(MainActivity.this);
-                	        builder.setTitle("ShackBrowse Version");
-            				String versExp = "\nYour Version: " + thisversion + "\nNew: " + parts[1];
-	            			builder.setMessage(parts[0].equals("f") ? "ShackBrowse must update." + versExp : "A new version of ShackBrowse is available!" + versExp);
-	            			builder.setCancelable(false);
-	            			builder.setPositiveButton("Update Now", new DialogInterface.OnClickListener() {
-	            				public void onClick(DialogInterface dialog, int id) {
-	            					final String appPackageName = (parts.length > 2) ? parts[2] : getPackageName(); // getPackageName() from Context or Activity object
-	            					try {
-	            					    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-	            					} catch (android.content.ActivityNotFoundException anfe) {
-	            					    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=" + appPackageName)));
-	            					}
-	            					if (parts[0].equals("f"))
-	            						finish();
-	            	            }
-	            	        });
-	            			if (parts[0].equals("f"))
-	            			{
-		            			builder.setNegativeButton("Close App", new DialogInterface.OnClickListener() {
-		            				public void onClick(DialogInterface dialog, int id) {
-		            					finish();
-		            	            }
-		            	        });
-	            			}
-	            			else
-	            			{
-		            			builder.setNegativeButton("Not Now", new DialogInterface.OnClickListener() {
-		            				public void onClick(DialogInterface dialog, int id) {
-		            					
-		            	            }
-		            	        });
-		            			builder.setNeutralButton("Never", new DialogInterface.OnClickListener() {
-		            				public void onClick(DialogInterface dialog, int id) {
-		            				    	Editor edit = _prefs.edit();
-		            				        edit.putString("ignoreNewVersion", parts[1]);
-		            				        edit.commit();
-		            	            }
-		            	        });
-	            			}
-	            	        builder.create().show();
+                                        }
+                                    });
+                                    builder.setNeutralButton("Never", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            Editor edit = _prefs.edit();
+                                            edit.putString("ignoreNewVersion", parts[1]);
+                                            edit.commit();
+                                        }
+                                    });
+                                }
+                                builder.create().show();
+                            }
             			}
             		}
             	}

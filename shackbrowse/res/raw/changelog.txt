@@ -28,9 +28,15 @@ TODO
 * SEARCH GOOGLE BY TEXT SELECTION
 -->
 
-$ 4.1.0Beta4
-% v 4.1.0Beta4
-_ Feb 6, 2015
+$ 4.1.0Beta6
+% v 4.1.0Beta6
+_ Feb 12, 2015
+* Beta6: Minor bug fixes
+* Beta5:
+* Layout tweaks
+* Crash fixes
+* Fixes for frontpage
+* Gold Limes for big spender donators
 * Beta4:
 * Menu background
 * Fixes to frontpage section

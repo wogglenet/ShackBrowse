@@ -1074,6 +1074,7 @@ public class ThreadViewFragment extends ListFragment
         int _bulletWidth = 20;
         int _maxBullets = 8;
         String _donatorList = "";
+        private String _donatorGoldList = "";
         boolean _showModTools = false;
 		private boolean _showHoursSince = true;
         private String _userName = "";
@@ -1086,6 +1087,7 @@ public class ThreadViewFragment extends ListFragment
         private Bitmap _bulletBranch;
         private Bitmap _bulletCollapse;
 		private BitmapDrawable _donatorIcon;
+        private BitmapDrawable _donatorGoldIcon;
 		private boolean _displayLimes = true;
 		private boolean _displayLolButton = false;
 		private HashMap<String, LolObj> _threadloldata;
@@ -1223,6 +1225,7 @@ public class ThreadViewFragment extends ListFragment
             _showHoursSince  = _prefs.getBoolean("showHoursSince", true);
             _fastScroll   = _prefs.getBoolean("fastScroll", true);
             _donatorList = _prefs.getString("limeUsers", "");
+            _donatorGoldList = _prefs.getString("goldLimeUsers", "");
             _displayLimes  = _prefs.getBoolean("displayLimes", true);
             // "enableDonatorFeatures"
             _displayLolButton  = true;
@@ -1741,6 +1744,10 @@ public class ThreadViewFragment extends ListFragment
                     {
                         holder.previewLimeHolder.setImageDrawable(_donatorIcon);
                     }
+                    if (_donatorGoldList.contains(":" + p.getUserName() + ";"))
+                    {
+                        holder.previewLimeHolder.setImageDrawable(_donatorGoldIcon);
+                    }
                 }
 
             	// tree branch
@@ -2056,6 +2063,10 @@ public class ThreadViewFragment extends ListFragment
         	bm.setColorFilter(new LightingColorFilter(Color.argb(1, 188, 188, 188), 0));
             // bm.setColorFilter(new ColorMatrixColorFilter(cm));
         	_donatorIcon = bm;
+
+            bm = new BitmapDrawable(getContext().getResources(), Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.limegold), size, size, false));
+            bm.setColorFilter(new LightingColorFilter(Color.argb(1, 188, 188, 188), 0));
+            _donatorGoldIcon = bm;
         }
 
         @Override
