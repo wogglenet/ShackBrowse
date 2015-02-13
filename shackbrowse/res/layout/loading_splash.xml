@@ -13,17 +13,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="5"
-            android:fontFamily="sans-serif"
+            android:fontFamily="sans-serif-condensed"
             android:textStyle="bold|italic"
-            android:textSize="250dp"
+            android:textSize="150dp"
             android:textColor="@color/gnushackdark"
             android:layout_gravity="center_horizontal"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
             android:layout_alignRight="@+id/splashText"
             android:textIsSelectable="true"
-            android:layout_marginRight="0dp"
-            android:paddingBottom="100dp"/>
+            android:paddingLeft="60dp"
+            android:paddingBottom="10dp"/>
         <LinearLayout
             android:id="@id/splashText"
             android:layout_width="wrap_content"
