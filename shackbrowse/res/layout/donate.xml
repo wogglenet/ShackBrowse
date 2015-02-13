@@ -51,16 +51,17 @@
         android:paddingLeft="10dip"
         android:layout_marginTop="15dip"
         android:paddingRight="10dip"
-        android:text="Checking donator status..."
+        android:text="Checking lime status..."
         android:enabled="false"
         />
    
-    <TextView 
+    <TextView
+        android:id="@+id/donatorText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="10dip"
         android:paddingRight="10dip"
-        android:text="Original donators may access their lime setting here. There are no other donator features. All previous donator features besides the lime icon are now available to all. It is no longer possible to donate."
+        android:text=""
         android:textSize="14sp"
          />
     
@@ -70,7 +71,7 @@
         android:layout_height="wrap_content"
         android:paddingLeft="10dip"
         android:paddingRight="10dip"
-        android:text="Donator status: features locked"
+        android:text="Lime status: checking..."
         android:textSize="12sp" />
 
     </LinearLayout>

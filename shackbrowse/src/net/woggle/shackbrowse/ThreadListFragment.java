@@ -529,7 +529,7 @@ public class ThreadListFragment extends ListFragment
     	
     	
 		MainActivity act = ((MainActivity)getActivity());
-		act.hideLoadingSplash();
+		act.showLoadingSplash();
 
 		getView().postDelayed(new Runnable(){
             @Override

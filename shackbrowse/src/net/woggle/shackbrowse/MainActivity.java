@@ -141,6 +141,7 @@ public class MainActivity extends ActionBarActivity
     public LoadingSplashFragment _loadingSplash;
     private Fragment mCurrentFragment;
     private boolean mActivityAvailable = false;
+    private boolean mNotificationsPreferenceFragmentVisible = false;
 
     public PullToRefreshAttacher getRefresher()
 	{
@@ -480,7 +481,7 @@ public class MainActivity extends ActionBarActivity
         _sresFrame.setSlidingEnabled(true);
         
         // default content setting
-        setContentTo(Integer.parseInt(_prefs.getString("APP_DEFAULTPANE", Integer.toString(CONTENT_FRONTPAGE))));
+        setContentTo(Integer.parseInt(_prefs.getString("APP_DEFAULTPANE", Integer.toString(CONTENT_THREADLIST))));
         
         // check for wifi connection
         ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
@@ -549,6 +550,11 @@ public class MainActivity extends ActionBarActivity
         	getSupportActionBar().setTitle(_searchResults._title);
         	mDrawerToggle.setDrawerIndicatorEnabled(false);
         }
+        else if (mNotificationsPreferenceFragmentVisible)
+        {
+            getSupportActionBar().setTitle("Notification Preferences");
+            mDrawerToggle.setDrawerIndicatorEnabled(false);
+        }
         else
         {
         	getSupportActionBar().setTitle(mTitle);
@@ -603,6 +609,11 @@ public class MainActivity extends ActionBarActivity
 	        		_tviewFrame.closeLayer(true);
 	        	else if (_sresFrame.isOpened())
 	        		_sresFrame.closeLayer(true);
+                else if (mNotificationsPreferenceFragmentVisible)
+                {
+                    mNotificationsPreferenceFragmentVisible = false;
+                    setContentTo(CONTENT_PREFS);
+                }
 	        	break;
 	        case R.id.menu_refreshThreads:
 	        	_threadList.refreshThreads();
@@ -987,7 +998,7 @@ public class MainActivity extends ActionBarActivity
             _articleViewer = (FrontpageBrowserFragment) Fragment.instantiate(getApplicationContext(), FrontpageBrowserFragment.class.getName(), new Bundle());
         }
 		
-		setTitleContextually();
+
 		
 		// turn off any refresher bars so the new fragment can work
 		getRefresher().setRefreshComplete();
@@ -1010,7 +1021,7 @@ public class MainActivity extends ActionBarActivity
         }
 
 
-        evaluateDualPane(getResources().getConfiguration());
+
 
 	    fragmentManager.beginTransaction()
 	                   .add(R.id.content_frame, fragment, Integer.toString(type))
@@ -1034,8 +1045,16 @@ public class MainActivity extends ActionBarActivity
                 .hide(_loadingSplash)
                 .commit();
 
+        if (_currentFragmentType == CONTENT_FRONTPAGE)
+        {
+            // kill weird ad crap running in background
+            _fpBrowser.mWebview.loadData("", "text/html", null);
+        }
+
 	    _currentFragmentType = type;
-	    
+
+        evaluateDualPane(getResources().getConfiguration());
+
 	    _sresFrame.closeLayer(true);
 		if (_tviewFrame.isOpened() && !getDualPane())
     		_tviewFrame.closeLayer(true);
@@ -1044,6 +1063,7 @@ public class MainActivity extends ActionBarActivity
     		closeBrowser();
     	}
 
+        setTitleContextually();
 
         _appMenu.updateMenuUi();
 		trackScreen(mTitle);
@@ -1309,7 +1329,7 @@ public class MainActivity extends ActionBarActivity
     {
 		if (_currentFragmentType == CONTENT_FAVORITES)
 		{
-			OfflineThreadFragment otf = (OfflineThreadFragment)getFragmentManager().findFragmentById(R.id.content_frame);
+			OfflineThreadFragment otf = (OfflineThreadFragment)getFragmentManager().findFragmentByTag(Integer.toString(CONTENT_FAVORITES));
 			otf.refreshOfflineThreads();
     	}
     }
@@ -1318,7 +1338,7 @@ public class MainActivity extends ActionBarActivity
     {
     	if (_currentFragmentType == CONTENT_FAVORITES)
 		{
-			OfflineThreadFragment otf = (OfflineThreadFragment)getFragmentManager().findFragmentById(R.id.content_frame);
+			OfflineThreadFragment otf = (OfflineThreadFragment)getFragmentManager().findFragmentByTag(Integer.toString(CONTENT_FAVORITES));
 			otf.updateThreadsWithoutUpdateReplies();
 		}
     	
@@ -1331,7 +1351,7 @@ public class MainActivity extends ActionBarActivity
         {
 	    	if (_currentFragmentType == CONTENT_FAVORITES)
 			{
-				OfflineThreadFragment otf = (OfflineThreadFragment)getFragmentManager().findFragmentById(R.id.content_frame);
+				OfflineThreadFragment otf = (OfflineThreadFragment)getFragmentManager().findFragmentByTag(Integer.toString(CONTENT_FAVORITES));
 				otf.markFavoriteAsRead(_rootPostId, count);
 			}
 	    	if (_showPinnedInTL)
@@ -1353,7 +1373,7 @@ public class MainActivity extends ActionBarActivity
     {
     	if (_currentFragmentType == CONTENT_FAVORITES)
 		{
-			OfflineThreadFragment otf = (OfflineThreadFragment)getFragmentManager().findFragmentById(R.id.content_frame);
+			OfflineThreadFragment otf = (OfflineThreadFragment)getFragmentManager().findFragmentByTag(Integer.toString(CONTENT_FAVORITES));
 			otf._doNotGetReplies = true;
 			if (otf._adapter != null)
 				otf._adapter.triggerLoadMore();
@@ -1465,7 +1485,7 @@ public class MainActivity extends ActionBarActivity
 	        	setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
         }
     
-        if (_splitView == 0 || _currentFragmentType == CONTENT_FRONTPAGE)
+        if (_splitView == 0 || _currentFragmentType == CONTENT_FRONTPAGE || _currentFragmentType == CONTENT_PREFS)
         {
         	setThreadViewFullScreen(false);
         	setDualPane(false);
@@ -1533,9 +1553,9 @@ public class MainActivity extends ActionBarActivity
 			((RelativeLayout.LayoutParams)sres.getLayoutParams()).width = (int)(getScreenWidth() * (1f / 3f));
 			
 			// threadview slider
-    		((RelativeLayout.LayoutParams)contentframe.getLayoutParams()).width = (int)(getScreenWidth() * (2f / 3f));
+    		((RelativeLayout.LayoutParams)contentframe.getLayoutParams()).width = (int)(getScreenWidth() * (1f / 3f));
     		
-    		((RelativeLayout.LayoutParams)slide.getLayoutParams()).width = (int)(getScreenWidth() * (1f / 3f)) + 1;
+    		((RelativeLayout.LayoutParams)slide.getLayoutParams()).width = (int)(getScreenWidth() * (2f / 3f)) + 1;
     		
     		if (_swappedSplit)
     		{
@@ -1774,6 +1794,11 @@ public class MainActivity extends ActionBarActivity
         else if ((_currentFragmentType == CONTENT_FRONTPAGE) && (_fpBrowser != null) && (_fpBrowser.mWebview.canGoBack()))
         {
              _fpBrowser.mWebview.goBack();
+        }
+        else if (mNotificationsPreferenceFragmentVisible)
+        {
+            mNotificationsPreferenceFragmentVisible = false;
+            setContentTo(CONTENT_PREFS);
         }
 		else if (_currentFragmentType != CONTENT_THREADLIST)
 		{
@@ -3161,6 +3186,7 @@ public class MainActivity extends ActionBarActivity
      */
     public void showLoadingSplash()
     {
+        System.out.println("SHOW:STATUSMSPLASHOPEN:" + mSplashOpen);
         if (mSplashOpen == false) {
             mSplashOpen = true;
             FragmentManager fM = getFragmentManager();
@@ -3183,6 +3209,7 @@ public class MainActivity extends ActionBarActivity
 
     public void hideLoadingSplash()
     {
+        System.out.println("HIDE:STATUSMSPLASHOPEN:" + mSplashOpen);
         if (mSplashOpen == true) {
             mSplashOpen = false;
             FragmentManager fragmentManager = getFragmentManager();
@@ -3211,9 +3238,23 @@ public class MainActivity extends ActionBarActivity
             }
         }
     }
+
     public boolean isSplashOpen()
     {
         return mSplashOpen;
+    }
+
+    public void openPreferenceNotificationFragment()
+    {
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.content_frame, new PreferenceFragmentNotifications())
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .commit();
+        // getSupportActionBar().setDisplayShowHomeEnabled(true);
+        // getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mNotificationsPreferenceFragmentVisible = true;
+        setTitleContextually();
     }
 
 }

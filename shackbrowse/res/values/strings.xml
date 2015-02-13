@@ -103,7 +103,7 @@
     <string name="preference_password_title">Password</string>
     <string name="preference_password_summary">Shacknews.com password</string>
     
-    <string name="preferences_chattypics_login">Chattypics Account Information</string>
+    <string name="preferences_chattypics_login">PicUploader Chattypics Account</string>
     <string name="preference_chattypics_username_summary">Chattypics username</string>
     <string name="preference_chattypics_password_summary">Chattypics password</string>
     
@@ -149,14 +149,14 @@
     <string name="preferences_pageloltag">LOLtag Support</string>
     <string name="preferences_pageloltag_summary">Turn support for ThomW\'s tagging system on and off, and change how tags are displayed</string>
     <string name="preference_getlols_title">User Moderation API</string>
-    <string name="preference_getlols_summary">Retrieve ThomW ShackLOL tag data for display. User created. Cached; refresh maximum once per five minutes. Incurs additional data use and slows load times when refreshing.</string>
+    <string name="preference_getlols_summary">Retrieve ThomW ShackLOL tag data for display. User created. Cached; refresh maximum once per five minutes. Incurs additional data use and slows load times when refreshing. Default ON.</string>
     <string name="preference_threadlist_threadlols_title">Show User Mod Tags</string>
-    <string name="preference_threadlist_threadlols_summary">Displays ThomW Shack[LOL] data contained in a thread in the topic listing view.</string>
+    <string name="preference_threadlist_threadlols_summary">Displays ThomW Shack[LOL] data contained in a thread in the topic listing view. Must be enabled in appwide settings first.</string>
     <string name="preference_threadview_postlols_title">User Mod Tags</string>
-    <string name="preference_threadview_postlols_summary">Displays ThomW ShackLOL tags in the reply view.</string>
+    <string name="preference_threadview_postlols_summary">Displays ThomW ShackLOL tags in the reply view. Must be enabled in appwide settings first.</string>
     
     <string name="preference_swappedsplit_title">Swapped Split View</string>
-    <string name="preference_swappedsplit_summary">Swap panes in split view</string>
+    <string name="preference_swappedsplit_summary">Swap left/right panes in split view</string>
     
     <string name="preference_clearcollapsed">Clear Collapsed</string>
     <string name="preference_clearcollapsed_summary">Clear list of collapsed and super-collapsed threads</string>
@@ -220,7 +220,7 @@
     <string name="preference_show_hours_since_summary">Choose whether to display post times as "hours since" when under 24 hours or to use dates.</string>
     
     <string name="preference_show_mod_tools_title">Shacknews Mod Tools</string>
-    <string name="preference_show_mod_tools_summary">Enable if you are a Shacknews moderator.</string>
+    <string name="preference_show_mod_tools_summary">Enable if you are a Shacknews moderator. I\'m honestly not even sure if these work.</string>
     
     <string name="preferences_version">Application Version</string>
     <string name="preference_version_title">Unknown</string>
@@ -248,4 +248,7 @@
     <string name="preference_animspeed_summary">Adjust the speed of the reply expansion animation.</string>
     <string name="preference_APP_DEFAULTPANE">Default Load at Start</string>
     <string name="preference_APP_DEFAULTPANE_summary">This setting controls which segment of the app loads when the app is started: frontpage, latest chatty, messages, etc.</string>
+    <string name="preferences_common">Basic Settings</string>
+    <string name="preferences_uncommon">Advanced Settings</string>
+    <string name="preftools">Tools</string>
 </resources>

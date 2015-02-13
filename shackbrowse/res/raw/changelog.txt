@@ -28,36 +28,16 @@ TODO
 * SEARCH GOOGLE BY TEXT SELECTION
 -->
 
-$ 4.1.0Beta7
-% v 4.1.0Beta7
-_ Feb 12, 2015
-* Beta7:
-* Fixed autozoom bug
-* Frontpage is never split view
-* Fixed crash with modtag filters
-* Beta6: Minor bug fixes
-* Beta5:
-* Layout tweaks
-* Crash fixes
-* Fixes for frontpage
-* Gold Limes for big spender donators
-* Beta4:
-* Menu background
-* Fixes to frontpage section
-* Frontpage now loads by default. This can be changed in preferences.
-* Fixes to app menu
-* Fixes to pic uploader
-* Beta3:
-* Color tweaks.
-* Frontpage fixes and improvements
-* Icon tweaks
-* Beta2:
-* Fixed crash on Android 5.0 due to Google's buggy libraries
-* Beta1:
+$ 5.0.0RC1
+% v 5.0.0RC1
+_ Feb 13, 2015
 * Material Design
+* New visuals, icons, colors, and layouts
 * Frontpage section
+* Crash fixes
+* Gold Limes for big spender donators
 * Preferences are finally a fragment instead of an activity
-* Increased max resolution of camera uploads
+* Increased max resolution and quality of camera uploads
 * Bug Fix: Crash with some camera uploads
 
 $ 4.0.6

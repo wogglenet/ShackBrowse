@@ -2,6 +2,7 @@ package net.woggle.shackbrowse;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,6 +11,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.text.ClipboardManager;
 import android.util.DisplayMetrics;
 import android.view.Display;
@@ -17,12 +19,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.webkit.MimeTypeMap;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.SeekBar;
 import android.widget.Toast;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by brad on 2/1/2015.
@@ -33,11 +45,12 @@ public class FrontpageBrowserFragment extends Fragment {
     private boolean mViewAvailable;
     WebView mWebview;
     public int mState;
-    final static public String TEST_IMAGE = "arrows.png";
     public static final int BROWSER = 100;
     public static final int SHOW_ZOOM_CONTROLS = 200;
     private String mFirstHref;
     public boolean mSplashSuppress = false;
+
+    public boolean mLoading = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -86,7 +99,15 @@ public class FrontpageBrowserFragment extends Fragment {
         mWebview.setWebChromeClient(new WebChromeClient() {
                                  @Override
                                         public void onProgressChanged(WebView view, int progress) {
-
+                                            if ((progress > 88) && (mLoading == true))
+                                            {
+                                                if ((getActivity() != null) && (mSplashSuppress == false)) {
+                                                    ((MainActivity) getActivity()).hideLoadingSplash();
+                                                    ((MainActivity) getActivity()).showOnlyProgressBarFromPTRLibrary(false);
+                                                }
+                                                mSplashSuppress = false;
+                                                mLoading = false;
+                                            }
                                         }
                                     });
             	/*
@@ -109,24 +130,85 @@ public class FrontpageBrowserFragment extends Fragment {
                     view.setBackgroundColor(Color.WHITE);
             }
         });
+
 */
         mWebview.setWebViewClient(
                 new WebViewClient() {
+
+                    @Override
+                    public WebResourceResponse shouldInterceptRequest (final WebView view, String url) {
+                        ArrayList<String> list = new ArrayList<String>();
+                        URL res = null;
+                        //if (true) return null;
+                        try {
+                                list = new ArrayList<String>(Arrays.asList(getActivity().getAssets().list("frontpage")));
+                                res = new URL(url);
+                        }catch(Exception e){
+                                e.printStackTrace();
+                                return null; // give up here if there is exception
+                        }
+
+                        boolean contains = false;
+                        String asset = null;
+                        for (String assetTest: list)
+                        {
+                            if (assetTest.contains(getLastBitFromUrl(res.getPath())))
+                            {
+                                System.out.println("INTERCEPTED!" + assetTest);
+                                asset = assetTest;
+                                contains = true;
+                                break;
+                            }
+                        }
+                        
+                        if (contains) {
+                            // present local resource for loading
+                            WebResourceResponse response;
+                            if (getFileExtension(getLastBitFromUrl(res.getPath())).equals("css"))
+                            {
+                                response = getWebResourceResponseFromAsset(asset, "text/css");
+                            }
+                            else if (getFileExtension(getLastBitFromUrl(res.getPath())).equals("js"))
+                            {
+                                response = getWebResourceResponseFromAsset(asset, "text/javascript");
+                            }
+                            else {
+                                // otherwise dont intercept
+                                return null;
+                            }
+                            System.out.println("INTERCEPTED SENT!" + asset);
+                            return response;
+                        } else {
+                            // otherwise dont intercept
+                            return null; //super.shouldInterceptRequest(view, url);
+                        }
+                    }
+
+                    /**
+                     * Return WebResourceResponse with CSS markup from an asset (e.g. "assets/style.css").
+                     */
+                    private WebResourceResponse getWebResourceResponseFromAsset(String asset, String mimeType) {
+                        try {
+                            return new WebResourceResponse(mimeType, "UTF-8",getActivity().getAssets().open("frontpage/" + asset));
+                        } catch (IOException e) {
+                            System.out.println("EXCEOPTIOON" + asset);
+                            e.printStackTrace();
+                            return null;
+                        }
+                    }
+
                     @Override
                     public void onPageStarted(WebView view, String url, Bitmap favicon) {
                         if ((getActivity() != null) && (mSplashSuppress == false)) {
                             ((MainActivity) getActivity()).showLoadingSplash();
                             ((MainActivity) getActivity()).showOnlyProgressBarFromPTRLibrary(true);
+                            mLoading = true;
                         }
                     }
 
                     @Override
                     public void onPageFinished(WebView view, String url) {
-                        if ((getActivity() != null) && (mSplashSuppress == false)) {
-                            ((MainActivity) getActivity()).hideLoadingSplash();
-                            ((MainActivity) getActivity()).showOnlyProgressBarFromPTRLibrary(false);
-                        }
-                        mSplashSuppress = false;
+
                     }
 
                     @Override
@@ -199,6 +281,19 @@ public class FrontpageBrowserFragment extends Fragment {
             getActivity().startActivity(Intent.createChooser(sendIntent, "Share Link"));
         }
     }
+    public static String getLastBitFromUrl(final String url){
+        // return url.replaceFirst("[^?]*/(.*?)(?:\\?.*)","$1);" <-- incorrect
+        return url.replaceFirst(".*/([^/?]+).*", "$1");
+    }
+
+    public static String getFileExtension(String path)
+    {
+        int i = path.lastIndexOf('.');
+        if (i >= 0) {
+            return path.substring(i+1);
+        }
+        else return path;
+    }
     public String getHREFText()
     {
         String copyText = mWebview.getUrl();
@@ -206,7 +301,7 @@ public class FrontpageBrowserFragment extends Fragment {
     }
 
     public void open(String href) {
-        mWebview.loadUrl(href);
+        mWebview.loadUrl(href); mLoading = true;
     }
 
     public void setFirstOpen(String href) {

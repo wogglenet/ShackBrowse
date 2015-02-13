@@ -19,7 +19,9 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Html;
 import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.MenuItem;
@@ -198,13 +200,16 @@ public class DonateActivity extends ActionBarActivity {
         ((TextView)findViewById(R.id.donateLimeStatus)).setText(((_limeRegistered) ? (_goldLime ? goldreg : reg) : notreg));
 
         _donatorStatus = _prefs.getBoolean("enableLimeAccess", false);
-        SpannableString locked = new SpannableString("Donator Status: locked");
-        locked.setSpan(new ForegroundColorSpan(Color.rgb(255,100,100)), 15, locked.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
-        SpannableString unlocked = new SpannableString("Donator Status: unlocked");
-        unlocked.setSpan(new ForegroundColorSpan(Color.rgb(100,255,100)), 15, unlocked.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
+        SpannableString locked = new SpannableString("Lime Status: unavailable");
+        locked.setSpan(new ForegroundColorSpan(Color.rgb(255,100,100)), 12, locked.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
+        SpannableString unlocked = new SpannableString("Lime Status: unlocked, click above button to change lime related settings");
+        unlocked.setSpan(new ForegroundColorSpan(Color.rgb(100,255,100)), 12, unlocked.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
         ((TextView)findViewById(R.id.donatorStatus)).setText(((_donatorStatus) ? unlocked : locked));
         
         ((CheckBox)findViewById(R.id.donateDisableLimeDisplay)).setChecked(!_prefs.getBoolean("displayLimes", true));
+
+        ((TextView)findViewById(R.id.donatorText)).setText(Html.fromHtml("Original donators may access their lime setting here. THERE ARE NO DONATOR FEATURES ANYMORE. All previous donator features besides the lime icon are now available to all. It is no longer possible to donate other than through the <a href='http://www.woggle.net'>woggle</a> website."));
+        ((TextView)findViewById(R.id.donatorText)).setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     class DonatorTask extends AsyncTask<String, Void, JSONArray>

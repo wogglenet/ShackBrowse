@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.MaterialDialogCompat;
 
 import org.json.JSONArray;
@@ -20,7 +21,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class LoginForm {
-	public Dialog _progressDialog;
+	public MaterialDialog _progressDialog;
 	protected String _userName = null;
 	protected String _password = null;
 	private Activity _context;
@@ -70,7 +71,7 @@ public class LoginForm {
         builder.setView(view);
         builder.setPositiveButton("Verify", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-            	_progressDialog = ProgressDialog.show(_context, "Verifying", "Attempting to log in...");
+            	_progressDialog = MaterialProgressDialog.show(_context, "Verifying", "Attempting to log in...");
                 _userName = usern.getText().toString();
                 _password = passw.getText().toString();
             	new CredentialsVerifyTask().execute();

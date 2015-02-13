@@ -2,155 +2,106 @@
 <PreferenceScreen
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:key="base">
-  <PreferenceCategory android:title="@string/preferences_header" />
-      <!-- 
-      <PreferenceScreen
-        android:key="logins"
-        android:title="@string/preferences_pagelogin"
-        android:summary="@string/preferences_pagelogin_summary">
-		  <PreferenceCategory android:title="@string/preferences_login">
-		  	<EditTextPreference
-		  	     android:key="userName"
-		  	     android:title="@string/preference_username_title"
-		  	     android:summary="@string/preference_username_summary"
-		  	     android:singleLine="true"/>
-		  	<EditTextPreference
-		  	     android:key="password"
-		  	     android:title="@string/preference_password_title"
-		  	     android:summary="@string/preference_password_summary"
-		  	     android:singleLine="true"
-		  	     android:password="true"/>
-		  </PreferenceCategory>
-	  </PreferenceScreen>
-	   -->
-   <PreferenceCategory android:title="@string/preferences_notifications" android:summary="@string/preferences_notifications_summary">
+    <PreferenceCategory android:title="@string/preferences_common">
+    <Preference
+        android:key="notifications"
+        android:title="@string/preferences_notifications"
+        android:summary="@string/preferences_notifications_summary" />
+        <ListPreference
+            android:key="APP_DEFAULTPANE"
+            android:title="@string/preference_APP_DEFAULTPANE"
+            android:entries="@array/preference_APP_DEFAULTPANE"
+            android:entryValues="@array/preference_APP_DEFAULTPANE_vals"
+            android:summary="@string/preference_APP_DEFAULTPANE_summary"
+            android:defaultValue="0"
+            />
+        <ListPreference
+            android:key="splitView"
+            android:title="@string/preference_splitView_title"
+            android:entries="@array/preference_splitView"
+            android:entryValues="@array/preference_splitView_vals"
+            android:summary="@string/preference_splitView_summary"
+            android:defaultValue="1"
+            />
+        <ListPreference
+            android:key="fontZoom"
+            android:title="@string/preference_fontsize_title"
+            android:entries="@array/preference_fontsizes"
+            android:entryValues="@array/preference_fontsize_vals"
+            android:summary="@string/preference_fontsize_summary"
+            android:defaultValue="1.0"
+            />
         <CheckBoxPreference
-  	     android:key="noteEnabled"
-  	     android:title="@string/preference_pushnot_title"
-  	     android:summary="@string/preference_pushnot_summary"
-  	     android:defaultValue="false"
-  	     />
-        <CheckBoxPreference
-  	     android:key="noteReplies"
-  	     android:title="@string/preference_pushrepl_title"
-  	     android:summary="@string/preference_pushrepl_summary"
-  	     android:dependency="noteEnabled"
-  	     android:defaultValue="false"
-  	     />
-        <CheckBoxPreference
-  	     android:key="noteVanity"
-  	     android:title="@string/preference_pushvan_title"
-  	     android:summary="@string/preference_pushvan_summary"
-  	     android:dependency="noteEnabled"
-  	     android:defaultValue="false"
-  	     />
+            android:key="useVolumeButtons"
+            android:title="@string/preference_use_volume_buttons_title"
+            android:summary="@string/preference_use_volume_buttons_summary"
+            android:defaultValue="true"
+            />
+        <ListPreference
+            android:key="apiUrl2"
+            android:title="@string/preference_apiUrl_title"
+            android:entries="@array/preference_apiUrl"
+            android:entryValues="@array/preference_apiUrl_vals"
+            android:summary="@string/preference_apiUrl_summary"
+            android:defaultValue="5"
+            />
+        <ListPreference
+            android:key="usePopupBrowser2"
+            android:title="@string/preference_popup_browser_title"
+            android:entries="@array/preference_popupBrowser"
+            android:entryValues="@array/preference_popupBrowser_vals"
+            android:summary="@string/preference_popup_browser_summary"
+            android:defaultValue="1"
+            />
         <Preference
-  	     android:key="noteKeywords"
-  	     android:title="@string/preference_pushkey_title"
-  	     android:summary="@string/preference_pushkey_summary"
-  	     android:dependency="noteEnabled"
-  	     />
-        <CheckBoxPreference
-  	     android:key="SMCheckOnCellNotification"
-  	     android:title="@string/preference_smcheckcell_title"
-  	     android:summary="@string/preference_smcheckcell_summary"
-  	     android:defaultValue="false"
-  	     />
-        <RingtonePreference
-         android:showDefault="true"
-		 android:key="notificationSound"
-		 android:title="@string/preference_notesound_title"
-     	 android:ringtoneType="notification"
-     	 />
-        <net.woggle.ColorDialogPreference
-		    android:key="notificationColor"
-		    android:title="@string/preference_notecolor_title"
-		    android:defaultValue="@color/modtag_stupid"
-		/>
-        <CheckBoxPreference
-  	     android:key="notificationVibrate"
-  	     android:title="@string/preference_notevibrate_title"
-  	     android:defaultValue="true"
-  	     />
-        <Preference
-  	     android:key="pref_testnote"
-  	     android:title="@string/preference_testnote"
-  	     />
-
-    </PreferenceCategory>
+            android:key="openBrowserImageZoom"
+            android:title="@string/preference_bIZ_title"
+            android:summary="@string/preference_bIZ_summary"
+            />
+        <ListPreference
+            android:key="replyAnimationSpeed"
+            android:title="@string/preference_animspeed_title"
+            android:entries="@array/preference_animspeed"
+            android:entryValues="@array/preference_animspeed_vals"
+            android:summary="@string/preference_animspeed_summary"
+            android:defaultValue="1.3"
+            />
+        <ListPreference
+            android:key="forcePostPreview"
+            android:title="@string/preference_forcepostpreview_title"
+            android:entries="@array/preference_forcepostpreview"
+            android:entryValues="@array/preference_forcepostpreview_vals"
+            android:summary="@string/preference_forcepostpreview_summary"
+            android:defaultValue="1"
+            />
+</PreferenceCategory>
+    <PreferenceCategory android:title="@string/preferences_uncommon" ></PreferenceCategory>
   <PreferenceCategory android:title="@string/preferences_appwide" android:summary="@string/preferences_appwide_summary">
-
       <ListPreference
-          android:key="APP_DEFAULTPANE"
-          android:title="@string/preference_APP_DEFAULTPANE"
-          android:entries="@array/preference_APP_DEFAULTPANE"
-          android:entryValues="@array/preference_APP_DEFAULTPANE_vals"
-          android:summary="@string/preference_APP_DEFAULTPANE_summary"
-          android:defaultValue="6"
+          android:key="orientLock"
+          android:title="@string/preference_orientLock_title"
+          android:entries="@array/preference_orientLock"
+          android:entryValues="@array/preference_orientLock_vals"
+          android:summary="@string/preference_orientLock_summary"
+          android:defaultValue="0"
           />
-     <ListPreference
-      android:key="splitView"
-      android:title="@string/preference_splitView_title"
-      android:entries="@array/preference_splitView"
-      android:entryValues="@array/preference_splitView_vals"
-      android:summary="@string/preference_splitView_summary"
-      android:defaultValue="1"
-      />
      <CheckBoxPreference
 	  	     android:key="swappedSplit"
 	  	     android:title="@string/preference_swappedsplit_title"
 	  	     android:summary="@string/preference_swappedsplit_summary"
 	  	     android:defaultValue="false"
 	  	     />
-     <ListPreference
-      android:key="orientLock"
-      android:title="@string/preference_orientLock_title"
-      android:entries="@array/preference_orientLock"
-      android:entryValues="@array/preference_orientLock_vals"
-      android:summary="@string/preference_orientLock_summary"
-      android:defaultValue="0"
-      />
-    <ListPreference
-      android:key="fontZoom"
-      android:title="@string/preference_fontsize_title"
-      android:entries="@array/preference_fontsizes"
-      android:entryValues="@array/preference_fontsize_vals"
-      android:summary="@string/preference_fontsize_summary"
-      android:defaultValue="1.0"
-      />
     <CheckBoxPreference
 	  	     android:key="getLols"
 	  	     android:title="@string/preference_getlols_title"
 	  	     android:summary="@string/preference_getlols_summary"
 	  	     android:defaultValue="true"
 	  	     />
-    <CheckBoxPreference
-  	     android:key="useVolumeButtons"
-  	     android:title="@string/preference_use_volume_buttons_title"
-  	     android:summary="@string/preference_use_volume_buttons_summary"
-  	     android:defaultValue="true"
-  	     />
+
     <CheckBoxPreference
   	     android:key="showHoursSince"
   	     android:title="@string/preference_show_hours_since_title"
   	     android:summary="@string/preference_show_hours_since_summary"
-  	     android:defaultValue="true"
-  	     />
-    <ListPreference
-  	     android:key="apiUrl2"
-  	     android:title="@string/preference_apiUrl_title"
-  	     android:entries="@array/preference_apiUrl"
-         android:entryValues="@array/preference_apiUrl_vals"
-  	     android:summary="@string/preference_apiUrl_summary"
-  	     android:defaultValue="5"
-  	 />
-    <Preference
-  	     android:key="pref_ping"
-  	     android:title="@string/preference_ping" />
-    <CheckBoxPreference
-  	     android:key="analytics"
-  	     android:title="@string/preference_analytics_title"
-  	     android:summary="@string/preference_analytics_summary"
   	     android:defaultValue="true"
   	     />
     </PreferenceCategory>
@@ -186,6 +137,7 @@
 	  	     android:title="@string/preference_threadlist_threadlols_title"
 	  	     android:summary="@string/preference_threadlist_threadlols_summary"
 	  	     android:defaultValue="true"
+            android:dependency="getLols"
 	  	     />
   	<CheckBoxPreference
   	     android:key="showShackTagsInThreadList"
@@ -206,21 +158,7 @@
   	     android:numeric="integer"
   	     android:defaultValue="7"/>
     </PreferenceCategory>
-    <PreferenceCategory android:key="popupbrowser" android:title="@string/preferences_popupbrowser" android:summary="@string/preferences_popupbrowser_summary">
-        <ListPreference
-  	     android:key="usePopupBrowser2"
-  	     android:title="@string/preference_popup_browser_title"
-  	     android:entries="@array/preference_popupBrowser"
-         android:entryValues="@array/preference_popupBrowser_vals"
-  	     android:summary="@string/preference_popup_browser_summary"
-  	     android:defaultValue="1"
-	  	 />
-	    <Preference
-	  	     android:key="openBrowserImageZoom"
-	  	     android:title="@string/preference_bIZ_title"
-	  	     android:summary="@string/preference_bIZ_summary"
-	  	 />
-	</PreferenceCategory>
+
     <PreferenceCategory android:key="tview" android:title="@string/preferences_threadview" android:summary="@string/preferences_threadview_summary">
 	    <CheckBoxPreference
 	  	     android:key="swipeDismiss"
@@ -246,6 +184,7 @@
 	  	     android:title="@string/preference_threadview_postlols_title"
 	  	     android:summary="@string/preference_threadview_postlols_summary"
 	  	     android:defaultValue="true"
+              android:dependency="getLols"
 	  	     />
 	    <CheckBoxPreference
   	     android:key="showModTools"
@@ -253,24 +192,8 @@
   	     android:summary="@string/preference_show_mod_tools_summary"
   	     android:defaultValue="false"
   	     />
-        <ListPreference
-            android:key="replyAnimationSpeed"
-            android:title="@string/preference_animspeed_title"
-            android:entries="@array/preference_animspeed"
-            android:entryValues="@array/preference_animspeed_vals"
-            android:summary="@string/preference_animspeed_summary"
-            android:defaultValue="1.5"
-            />
+
     </PreferenceCategory>
-    <PreferenceCategory android:key="postcomposer" android:title="@string/preferences_compose" android:summary="@string/preferences_compose_summary">
-        <ListPreference
-  	     android:key="forcePostPreview"
-  	     android:title="@string/preference_forcepostpreview_title"
-  	     android:entries="@array/preference_forcepostpreview"
-         android:entryValues="@array/preference_forcepostpreview_vals"
-  	     android:summary="@string/preference_forcepostpreview_summary"
-  	     android:defaultValue="1"
-	  	 /></PreferenceCategory>
         <PreferenceCategory android:title="@string/preferences_chattypics_login">
 	  	<EditTextPreference
 	  	     android:key="chattyPicsUserName"
@@ -284,16 +207,12 @@
 	  	     android:singleLine="true"
 	  	     android:password="true"/>
 	  </PreferenceCategory>
-
-  <PreferenceCategory android:title="@string/preferences_version">
-      <Preference
-  	     android:key="versionName"
-  	     android:title="@string/preference_version_title"
-  	     android:summary="@string/preference_version_summary" />
-      <Preference
-  	     android:key="pref_donate"
-  	     android:title="@string/preference_donate"
-  	     android:summary="@string/preference_donate_summary" />
-      </PreferenceCategory>
-      
+    <PreferenceCategory android:title="@string/preftools"></PreferenceCategory>
+    <Preference
+        android:key="pref_ping"
+        android:title="@string/preference_ping" />
+    <Preference
+        android:key="versionName"
+        android:title="@string/preference_version_title"
+        android:summary="@string/preference_version_summary" />
 </PreferenceScreen>

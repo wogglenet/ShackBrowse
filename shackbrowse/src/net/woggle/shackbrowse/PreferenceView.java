@@ -69,10 +69,9 @@ public class PreferenceView extends PreferenceFragment
 	private boolean _Venabled;
 
 	private Preference _keyNotification;
-    private OnGCMInteractListener GCMlistener;
 
 
-    @Override
+	@Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -81,9 +80,8 @@ public class PreferenceView extends PreferenceFragment
         _prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         
         addPreferencesFromResource(R.xml.preferences);
-       // getActionBar().setDisplayHomeAsUpEnabled(true);
         
-        String versionName = "Unknown";
+        String versionName = "App Version Unknown";
         try {
 			versionName = getActivity().getApplication().getPackageManager().getPackageInfo(getActivity().getApplication().getPackageName(), 0 ).versionName;
 		} catch (NameNotFoundException e) {
@@ -92,7 +90,7 @@ public class PreferenceView extends PreferenceFragment
 		}
         
         Preference customPref = (Preference) findPreference("versionName");
-        customPref.setTitle("Version " + versionName);
+        customPref.setTitle("Shack Browse V. " + versionName);
         final Context cont = getActivity();
         customPref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
 
@@ -103,7 +101,7 @@ public class PreferenceView extends PreferenceFragment
 				return false;
 			}}
         );
-        
+        /*
         Preference testNote = (Preference) findPreference("pref_testnote");
         testNote.setOnPreferenceClickListener(new OnPreferenceClickListener(){
 
@@ -146,25 +144,13 @@ public class PreferenceView extends PreferenceFragment
 				return false;
 			}}
         );
-        
+        */
         Preference bAutoImageZoomPref = (Preference) findPreference("openBrowserImageZoom");
         bAutoImageZoomPref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
 			@Override
 			public boolean onPreferenceClick(Preference preference) {
                 ((MainActivity)getActivity()).openBrowserZoomAdjust();
 				return true;
-			}}
-        );
-        
-        Preference donatePref = (Preference) findPreference("pref_donate");
-        donatePref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
-
-			@Override
-			public boolean onPreferenceClick(Preference preference) {
-				// hey, thats the same thing I just wrote!
-                Intent i = new Intent(cont, DonateActivity.class);
-                startActivity(i);
-				return false;
 			}}
         );
         
@@ -177,7 +163,7 @@ public class PreferenceView extends PreferenceFragment
 				return true;
 			}
 					
-		});   	
+		});
         
         Preference fontZoom = (Preference)findPreference("fontZoom");
         fontZoom.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -197,8 +183,8 @@ public class PreferenceView extends PreferenceFragment
 			}
 					
 		});   	
-        
-        GCMlistener = new OnGCMInteractListener(){
+        /*
+        final OnGCMInteractListener GCMlistener = new OnGCMInteractListener(){
 			@Override
 			public void networkResult(String res) {
 				System.out.println("NETWORKSERVERS RESULT" + res);
@@ -224,7 +210,7 @@ public class PreferenceView extends PreferenceFragment
 					_vanityNotification.setChecked(false);
 					_repliesNotification.setChecked(true);
 					edit.putBoolean("noteReplies", true);
-					edit.putBoolean("noteVanity", false); */
+					edit.putBoolean("noteVanity", false); */ /*
 					_vanityNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
 					_keyNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
 				}
@@ -315,8 +301,22 @@ public class PreferenceView extends PreferenceFragment
 					_progressDialog = null;
 				}
 			}};
-        
+        */
+        Preference notePref = (Preference) findPreference("notifications");
+        notePref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
 
+			@Override
+			public boolean onPreferenceClick(Preference preference) {
+                ((MainActivity)getActivity()).openPreferenceNotificationFragment();
+                /*
+	        	_progressDialog = MaterialProgressDialog.show(getActivity(), "Checking Notification Status", "Communicating with Shack Browse server...", true, true);
+	        	_GCMAccess = new NetworkNotificationServers(getActivity(), GCMlistener);
+	        	_GCMAccess.doUserInfoTask();
+                */
+		    	return false;
+			}}
+        );
+/*
         _keyNotification = (Preference) findPreference("noteKeywords");
         _keyNotification.setOnPreferenceClickListener(new OnPreferenceClickListener(){
 			@Override
@@ -465,7 +465,7 @@ public class PreferenceView extends PreferenceFragment
 			}
 					
 		});
-        
+        */
         Preference pingPref = (Preference) findPreference("pref_ping");
         pingPref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
 
@@ -504,7 +504,7 @@ public class PreferenceView extends PreferenceFragment
 	
 	/*
 	 * KEYWORDS
-	 */
+	 *
 	ArrayList<String> mNoteKeywords = new ArrayList<String>();
 	public void addKeyword()
     {
@@ -585,7 +585,7 @@ public class PreferenceView extends PreferenceFragment
         alert.setCanceledOnTouchOutside(false);
         alert.show();
     }
-	
+	*/
 	/*
 	 * 
 	 * PING TASK
@@ -709,12 +709,4 @@ public class PreferenceView extends PreferenceFragment
         }
 	}
 
-    @Override
-    public void onActivityCreated(Bundle bun)
-    {
-        super.onActivityCreated(bun);
-        _progressDialog = MaterialProgressDialog.show(getActivity(), "Checking Notification Status", "Communicating with Shack Browse server...", true, true);
-        _GCMAccess = new NetworkNotificationServers(getActivity(), GCMlistener);
-        _GCMAccess.doUserInfoTask();
-    }
 }
