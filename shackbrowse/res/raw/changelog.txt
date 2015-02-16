@@ -28,16 +28,19 @@ TODO
 * SEARCH GOOGLE BY TEXT SELECTION
 -->
 
-$ 5.0.0RC1
-% v 5.0.0RC1
+$ 5.0.0
+% v 5.0.0
 _ Feb 13, 2015
 * Material Design
 * New visuals, icons, colors, and layouts
 * Frontpage section
-* Crash fixes
+* Redesigned preferences
+* More taglines
 * Gold Limes for big spender donators
 * Preferences are finally a fragment instead of an activity
 * Increased max resolution and quality of camera uploads
+* Removed analytics
+* Crash fixes
 * Bug Fix: Crash with some camera uploads
 
 $ 4.0.6
