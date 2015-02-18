@@ -19,13 +19,15 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialogCompat;
 
+import java.util.regex.Pattern;
+
 public class CustomURLSpan extends CustomClickableSpan implements OnLongClickListener {
 	private String href;
 
 	public CustomURLSpan(String href) {
 		// TODO Auto-generated constructor stub
 		super();
-		this.href = href;
+		this.href = addHttp(href);
 	}
 	public static Dialog dialog;
 	private static WebView _wb;
@@ -34,6 +36,13 @@ public class CustomURLSpan extends CustomClickableSpan implements OnLongClickLis
 	{
 		return href;
 	}
+
+    public String addHttp(String url) {
+        if (!Pattern.compile("^(?:f|ht)tps?://.*", Pattern.DOTALL).matcher(url).matches()) {
+            url = "http://" + url;
+        }
+        return url;
+    }
 	/*
 	 * DEPRECATED 
 	 * LONGCLICK NOT ACTUALLY USED

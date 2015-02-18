@@ -546,16 +546,19 @@ public class MessageFragment extends ListFragment
         boolean _wasLastThreadGetSuccessful = false;
         public ArrayList<Message> getMessageData() throws ClientProtocolException, IOException, JSONException
         {
+            System.out.println("MSG start");
             ArrayList<Message> new_messages = new ArrayList<Message>();
 			try {
 				new_messages = ShackApi.getMessages(_pageNumber + 1, this.getContext(), ((MainActivity)getActivity()).getMessageType());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+                System.out.println("MSG Error getting msg!");
 			}
             
              _pageNumber++;
-             
+
+            System.out.println("MSG removing already displayed");
              // remove threads already displayed
              if (new_messages != null && new_messages.size() > 0)
              {
@@ -566,27 +569,36 @@ public class MessageFragment extends ListFragment
              }
              else
              {
+                 System.out.println("MSG STLCS false");
             	 _adapter.setLastCallSuccessful(false);
              }
-             
+            System.out.println("MSG RETURN!");
              return new_messages;
         }
         
         @Override
         protected ArrayList<Message> loadData() throws Exception
         {
+            System.out.println("MSG loaddata");
             // grab threads from the api
             return getMessageData();
         }
         @Override
         protected void afterDisplay()
         {
-        	if (!_silentLoad)
-        		_silentLoad = true;
+            System.out.println("MSG afterdisplay");
+        	if (!_silentLoad) {
+                System.out.println("MSG silentload");
+                _silentLoad = true;
+            }
         	
         	// pull to refresh integration
-        	if (getActivity() != null)
-        		((MainActivity)getActivity()).getRefresher().setRefreshComplete();
+            System.out.println("MSG refreshcomplete");
+        	if (getActivity() != null){
+                System.out.println("MSG refresh setting now");
+                ((MainActivity)getActivity()).getRefresher().setRefreshComplete();
+            }
+
         	
         }
         private class ViewHolder

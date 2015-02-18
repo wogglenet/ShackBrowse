@@ -32,6 +32,7 @@ import java.util.TimeZone;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -1412,7 +1413,7 @@ public class ShackApi
         HttpPost post = new HttpPost(LOGIN_URL);
         post.setHeader("User-Agent", USER_AGENT);
         post.setHeader("X-Requested-With", "XMLHttpRequest");
-        
+
         List<NameValuePair> values = new ArrayList<NameValuePair>();
         values.add(new BasicNameValuePair("get_fields[]", "result"));
         values.add(new BasicNameValuePair("user-identifier", userName));
@@ -1428,12 +1429,11 @@ public class ShackApi
             String getType = "inbox";
         	if (!inbox)
         		getType = "sent";
-        	
+
         	HttpGet get = new HttpGet("http://shacknews.com/messages/"+getType+"?page=" + pageNumber);
             get.setHeader("User-Agent", USER_AGENT);
             
             content = client.execute(get, response_handler);
-            
             
             ArrayList<Message> msg_items = new ArrayList<Message>();
             // process
@@ -1454,31 +1454,30 @@ public class ShackApi
             	start = msgs[i].indexOf(startStr);
             	end = msgs[i].indexOf("\">",start + startStr.length());
             	String id = msgs[i].substring(start + startStr.length(), end);
-            	
             	int iid = tryParseInt(id);
             	
             	startStr = "<div class=\"subject-column toggle-message\"><a href=\"#\">";
             	start = msgs[i].indexOf(startStr);
             	end = msgs[i].indexOf("</a>",start + startStr.length());
             	String subject = msgs[i].substring(start + startStr.length(), end);
-            	
+
             	startStr = "<div class=\"date-column toggle-message\"><a href=\"#\">";
             	start = msgs[i].indexOf(startStr);
             	end = msgs[i].indexOf("</a>",start + startStr.length());
             	String date = msgs[i].substring(start + startStr.length(), end);
-            	
+
             	startStr = "<div class=\"message-body\">";
             	start = msgs[i].indexOf(startStr);
             	end = msgs[i].indexOf("</div>",start + startStr.length());
             	String mContent = urlify("<span class=\"jt_sample\"><b>Subject</b>: " + subject + "<br/>" + "<b>Date</b>: " + date + "</span><br/><br/>" + msgs[i].substring(start + startStr.length(), end));
-            	
+
+
             	// convert time to local timezone
                 Long postedTime = convertTimeMsg(date);
-            	
+
             	msg_items.add(new Message(iid, user, subject, mContent, msgs[i].substring(start + startStr.length(), end), postedTime, read));
             	
             }
-            
             return msg_items;
         }
         else
@@ -1523,7 +1522,6 @@ public class ShackApi
             
             JSONObject resjson = new JSONObject(content);
             String uid = resjson.getJSONObject("result").getString("uid");
-            System.out.println("UID "+uid);
             
             values = new ArrayList<NameValuePair>();
             values.add(new BasicNameValuePair("message", msg));
@@ -1545,15 +1543,18 @@ public class ShackApi
         }        
     }	
     
-    public static String urlify(String mytext) {
-    	Pattern patt = Pattern.compile("(?i)\\b((?:https?://|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:\'\".,<>???����]))");
-        Matcher matcher = patt.matcher(mytext);    
-        if (matcher.find())
-        {
-        	return matcher.replaceAll("<a href=\"$1\">$1</a>");
+    public static String urlify(String mytext) throws PatternSyntaxException {
+        try {
+            Matcher matcher = android.util.Patterns.WEB_URL.matcher(mytext);
+            if (matcher.find()) {
+                return matcher.replaceAll("<a href=\"$0\">$0</a>");
+            } else {
+                return mytext;
+            }
         }
-        else
+        catch (Exception e)
         {
+            e.printStackTrace();
             return mytext;
         }
     }

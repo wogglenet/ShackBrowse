@@ -221,10 +221,10 @@ public class PopupBrowserFragment extends Fragment {
 	{
 		if (
 				(
-        		(_href.trim().substring(_href.length() - 4).contentEquals(".jpg"))
-        	|| (_href.trim().substring(_href.length() - 4).contentEquals(".gif"))
-        	|| (_href.trim().substring(_href.length() - 4).contentEquals(".png"))
-        	|| (_href.trim().substring(_href.length() - 5).contentEquals(".jpeg"))
+                 ((_href.length() >= 4) && (_href.trim().substring(_href.length() - 4).contentEquals(".jpg")))
+        	|| ((_href.length() >= 4) && (_href.trim().substring(_href.length() - 4).contentEquals(".gif")))
+        	|| ((_href.length() >= 4) && (_href.trim().substring(_href.length() - 4).contentEquals(".png")))
+        	|| ((_href.length() >= 5) && (_href.trim().substring(_href.length() - 5).contentEquals(".jpeg")))
 				)
         	
         	)

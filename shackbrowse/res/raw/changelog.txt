@@ -26,7 +26,16 @@ TODO
 * UPLOAD PHOTOS TO DROPBOX?
 * QUOTES FROM TEXT SELECTION
 * SEARCH GOOGLE BY TEXT SELECTION
+* STATS ON CLICKIN THINGS
+* THEMES
 -->
+
+$ 5.0.1
+% v 5.0.1
+_ Feb 18, 2015
+* Bug Fix: Rare bug where messages never load due to faulty regex
+* Bug Fix: Reload threads doesn't warp to top
+* Bug Fix: Weird transparency issue
 
 $ 5.0.0
 % v 5.0.0

@@ -1989,7 +1989,12 @@ public class ThreadListFragment extends ListFragment
 				
 				act.new anim(getListView()).toVisible();
 				*/
-				getListView().setSelection(0);
+				getListView().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        getListView().setSelection(0);
+                    }
+                });
 				
 				
 				_silentLoad = true;
