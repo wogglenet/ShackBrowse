@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.app.ListFragment;
@@ -61,7 +63,11 @@ public class AppMenu extends ListFragment
         // set list view up
         getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         getListView().setDividerHeight(0);
-        getListView().setBackground(getResources().getDrawable(R.drawable.bg_menu));
+        TypedArray a = getActivity().getTheme().obtainStyledAttributes(((MainActivity)getActivity()).mThemeResId, new int[] {R.attr.menuBGdrawable});
+        int attributeResourceId = a.getResourceId(0, 0);
+        Drawable drawable = getResources().getDrawable(attributeResourceId);
+        a.recycle();
+        getListView().setBackground(drawable);
         
         _prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 

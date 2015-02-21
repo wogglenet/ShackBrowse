@@ -30,6 +30,14 @@ TODO
 * THEMES
 -->
 
+$ 5.0.2
+% v 5.0.2
+_ Feb 21, 2015
+* Basic themes, more to come in future
+* Added Chatty.pics support
+* Tweaked golden lime
+* Bug Fix: Reload threads button now brings back to top
+
 $ 5.0.1
 % v 5.0.1
 _ Feb 18, 2015

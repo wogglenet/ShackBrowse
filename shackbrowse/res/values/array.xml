@@ -54,7 +54,7 @@
         <item>Shut it all down, Clay</item>
         <item>Pointy elbows.</item>
         <item>Humblebrags ahoy</item>
-        <item>Pics and divx</item>
+        <item>pics+divx</item>
         <item>Opt out.</item>
         <item>Zip-lining in Vegas</item>
         <item>roll the falcon</item>
@@ -70,6 +70,14 @@
         <item>Please do the needful</item>
         <item>* N U K E D *</item>
         <item>Not enough curved surfaces.</item>
+    </string-array>
+    <string-array name="preference_theme">
+        <item>Normal</item>
+        <item>bradsh\'s darkshack</item>
+    </string-array>
+    <string-array name="preference_theme_vals">
+        <item>0</item>
+        <item>1</item>
     </string-array>
     <string-array name="preference_swipecollapse">
 		<item>Disable swipe to collapse</item>

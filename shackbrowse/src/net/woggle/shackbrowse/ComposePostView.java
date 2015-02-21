@@ -90,13 +90,18 @@ public class ComposePostView extends ActionBarActivity {
 	private String mParentPostContent;
 	private String mParentAuthor;
 	private boolean _landscape = false;
-	
-	@Override
+    private int mThemeResId;
+
+    @Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
         super.onCreate(savedInstanceState);
         // prefs
         _prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        mThemeResId = MainActivity.themeEvaluator(_prefs.getString("appTheme","0"));
+        setTheme(mThemeResId);
+        
         _forcePostPreview  = Integer.parseInt(_prefs.getString("forcePostPreview", "1"));
         
         // drafts

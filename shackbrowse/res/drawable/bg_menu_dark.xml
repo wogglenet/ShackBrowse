@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item>
+        <shape android:shape="rectangle" >
+            <solid android:color="@color/gnushackdark" />
+        </shape>
+    </item>
+    <item>
+        <bitmap
+            android:src="@drawable/menubg"
+            android:alpha="1"
+            android:tileMode="clamp" />
+    </item>
+    <item>
+        <shape>
+            <gradient
+                android:startColor="@color/SBTplaindark"
+                android:endColor="@color/SBTplainvdark"
+                android:angle="270"
+                />
+        </shape>
+    </item>
+</layer-list>

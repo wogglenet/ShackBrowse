@@ -142,6 +142,7 @@ public class MainActivity extends ActionBarActivity
     private Fragment mCurrentFragment;
     private boolean mActivityAvailable = false;
     private boolean mNotificationsPreferenceFragmentVisible = false;
+    protected int mThemeResId = R.style.AppTheme;
 
     public PullToRefreshAttacher getRefresher()
 	{
@@ -153,8 +154,13 @@ public class MainActivity extends ActionBarActivity
 	{
 		super.onCreate(savedInstanceState);
 
+
         _prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		
+
+
+        mThemeResId = MainActivity.themeEvaluator(_prefs.getString("appTheme","0"));
+        setTheme(mThemeResId);
+
 		// enforce overflow menu
 		try {
 	        ViewConfiguration config = ViewConfiguration.get(this);
@@ -515,8 +521,15 @@ public class MainActivity extends ActionBarActivity
         	}
         }
 	}
-	
-	protected void setTitleContextually() {
+
+    public static int themeEvaluator(String appTheme) {
+        if (appTheme.equals("1"))
+            return R.style.AppThemeDark;
+        else
+            return R.style.AppTheme;
+    }
+
+    protected void setTitleContextually() {
         
 		if (mDrawerLayout.isDrawerOpen(_menuFrame))
 		{

@@ -58,13 +58,17 @@ public class DonateActivity extends ActionBarActivity {
 
 	protected String _unlockSign;
     private boolean _goldLime;
+    private int mThemeResId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        _prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        mThemeResId = MainActivity.themeEvaluator(_prefs.getString("appTheme","0"));
+        setTheme(mThemeResId);
         setContentView(R.layout.donate);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        _prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
 
 
         new DonatorTask().execute();

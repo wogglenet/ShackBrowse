@@ -98,4 +98,6 @@
     <color name="SBTdark">#3022571f</color>
     <color name="SBTXdark">#CC22571f</color>
     <color name="SBTvdark">#30122f11</color>
+    <color name="SBTplaindark">#30151515</color>
+    <color name="SBTplainvdark">#d0000000</color>
 </resources>

@@ -2060,12 +2060,12 @@ public class ThreadViewFragment extends ListFragment
         	        m[10] * c, m[11] * c, m[12] * c, m[13] * c, m[14] * c + bright, 
         	        m[15]    , m[16]    , m[17]    , m[18]    , m[19] }); 
         	        */
-        	bm.setColorFilter(new LightingColorFilter(Color.argb(1, 188, 188, 188), 0));
+        	bm.setColorFilter(new LightingColorFilter(Color.argb(1, 200, 200, 200), 0));
             // bm.setColorFilter(new ColorMatrixColorFilter(cm));
         	_donatorIcon = bm;
 
             bm = new BitmapDrawable(getContext().getResources(), Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.limegold), size, size, false));
-            bm.setColorFilter(new LightingColorFilter(Color.argb(1, 188, 188, 188), 0));
+            bm.setColorFilter(new LightingColorFilter(Color.argb(1, 200, 200, 200), 0));
             _donatorGoldIcon = bm;
         }
 

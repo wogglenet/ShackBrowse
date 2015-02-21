@@ -135,8 +135,8 @@ public class ThreadListFragment extends ListFragment
 		public void run() {
 			closeUndoBar();
 	}};
-	
-	public void setTurboAPIAllowed (boolean set)
+
+    public void setTurboAPIAllowed (boolean set)
     {
     	mTurboAPIAllowed = set;
     }
@@ -290,6 +290,8 @@ public class ThreadListFragment extends ListFragment
        	initAutoLoader();
        	if (savedInstanceState == null)
        		showLoadingView();
+
+
     }
     
     @Override
@@ -1989,13 +1991,17 @@ public class ThreadListFragment extends ListFragment
 				
 				act.new anim(getListView()).toVisible();
 				*/
-				getListView().post(new Runnable() {
+				/* getListView().post(new Runnable() {
                     @Override
                     public void run() {
                         getListView().setSelection(0);
                     }
                 });
-				
+*/
+                System.out.println("TLIST: SETSEL0");
+                getListView().setAdapter(null);
+                getListView().setAdapter(_adapter);
+                getListView().setSelection(0);
 				
 				_silentLoad = true;
         	}

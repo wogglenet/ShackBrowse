@@ -326,6 +326,14 @@ public class PopupBrowserFragment extends Fragment {
         		_href = "http://chattypics.com/files/" + splt[1];
         	}
         }
+        if (_href.contains("chatty.pics/viewer.php?"))
+        {
+            String[] splt = _href.split("=");
+            if (splt[1] != null)
+            {
+                _href = "http://chatty.pics/files/" + splt[1];
+            }
+        }
         if (_href.contains("fukung.net/v/"))
         {
         	String[] splt = _href.split(".net/v");

@@ -3,6 +3,13 @@
 <!-- Generated with http://android-holo-colors.com -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <style name="AppThemeDark" parent="AppTheme">
+        <item name="colorPrimary">@color/gnushackdark</item>
+        <item name="colorPrimaryDark">@color/selected_postbg</item>
+        <item name="colorAccent">@color/SBmed</item>
+        <item name="ptrHeaderBackground">@color/gnushackdark</item>
+        <item name="menuBGdrawable">@drawable/bg_menu_dark</item>
+    </style>
   <style name="AppTheme" parent="Theme.AppCompat">
       <!-- <item name="android:actionBarStyle">@style/SBActionBar</item> -->
       <item name="android:actionOverflowButtonStyle">@style/OverFlow</item>
@@ -10,6 +17,7 @@
       <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
 
       <item name="colorPrimary">@color/SBdark</item>
+      <item name="ptrHeaderBackground">@color/SBdark</item>
       <item name="colorPrimaryDark">@color/SBvdark</item>
       <item name="colorAccent">@color/SBmed</item>
       <item name="windowActionBar">true</item>
@@ -18,6 +26,8 @@
 
 
       <item name="md_dark_theme">true</item>
+
+      <item name="menuBGdrawable">@drawable/bg_menu</item>
       <!-- colorPrimary is used for the default action bar background -->
 
 

@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <attr name="menuBGdrawable" format="reference" />
+
+
     <declare-styleable name="modtype">
         <attr name="state_nws" format="boolean" />
         <attr name="state_new" format="boolean" />

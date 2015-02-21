@@ -251,4 +251,6 @@
     <string name="preferences_common">Basic Settings</string>
     <string name="preferences_uncommon">Advanced Settings</string>
     <string name="preftools">Tools</string>
+    <string name="preference_theme">App Colors</string>
+    <string name="preference_theme_summary">Change the colors of the app</string>
 </resources>

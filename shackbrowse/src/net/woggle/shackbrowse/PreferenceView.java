@@ -182,7 +182,26 @@ public class PreferenceView extends PreferenceFragment
 				return true;
 			}
 					
-		});   	
+		});
+
+        Preference appColor = (Preference)findPreference("appTheme");
+        appColor.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("App Theme");
+                builder.setMessage("Changing the app theme requires an app restart.");
+                builder.setPositiveButton("Restart Now", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        ((MainActivity)getActivity()).restartApp();
+                    }
+                });
+                builder.setNegativeButton("Later", null);
+                builder.create().show();
+                return true;
+            }
+
+        });
         /*
         final OnGCMInteractListener GCMlistener = new OnGCMInteractListener(){
 			@Override
