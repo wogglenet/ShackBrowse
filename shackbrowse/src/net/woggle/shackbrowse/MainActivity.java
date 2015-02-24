@@ -1950,7 +1950,7 @@ public class MainActivity extends ActionBarActivity
             try
             {
                 if (_prefs.getBoolean("enableDonatorFeatures", false) && !_prefs.getString("userName", "").equals("")) {
-                    ShackApi.putDonator(((_prefs.getString("limeUsers", "").contains(_prefs.getString("userName", "")) || _prefs.getString("goldLimeUsers", "").contains(_prefs.getString("userName", ""))) && !_prefs.getString("userName", "").equals("")), _prefs.getString("userName", ""));
+                    ShackApi.putDonator(((_prefs.getString("limeUsers", "").contains(_prefs.getString("userName", "")) || _prefs.getString("quadLimeUsers", "").contains(_prefs.getString("userName", "")) || _prefs.getString("goldLimeUsers", "").contains(_prefs.getString("userName", ""))) && !_prefs.getString("userName", "").equals("")), _prefs.getString("userName", ""));
                 }
             	return ShackApi.getLimeList();
             }
@@ -1980,6 +1980,7 @@ public class MainActivity extends ActionBarActivity
             	SharedPreferences.Editor editor = _prefs.edit();
             	editor.putString("limeUsers", result[0]);
                 editor.putString("goldLimeUsers", result[1]);
+                editor.putString("quadLimeUsers", result[2]);
                 editor.commit();
             }
         }

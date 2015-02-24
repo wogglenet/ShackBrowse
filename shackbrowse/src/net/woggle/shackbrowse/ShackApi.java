@@ -1717,17 +1717,21 @@ public class ShackApi
     {
         JSONArray list = getDonators();
         String limes = new String();
+        String quadLimes = new String();
         String goldLimes = new String();
         for (int i = 0; i < list.length(); i++)
         {
             if (list.getJSONObject(i).getString("lime").equals("1") && list.getJSONObject(i).getString("type").equals("0")) {
-                limes = limes + ":" + list.getJSONObject(i).getString("user") + ";\n";
+                limes = limes + ":" + list.getJSONObject(i).getString("user").toLowerCase() + ";\n";
             }
             if (list.getJSONObject(i).getString("lime").equals("1") && list.getJSONObject(i).getString("type").equals("1")) {
-                goldLimes = goldLimes + ":" + list.getJSONObject(i).getString("user") + ";\n";
+                goldLimes = goldLimes + ":" + list.getJSONObject(i).getString("user").toLowerCase() + ";\n";
+            }
+            if (list.getJSONObject(i).getString("lime").equals("1") && list.getJSONObject(i).getString("type").equals("2")) {
+                quadLimes = quadLimes + ":" + list.getJSONObject(i).getString("user").toLowerCase() + ";\n";
             }
         }
-        return new String[]{limes, goldLimes};
+        return new String[]{limes, goldLimes, quadLimes};
     }
     public static boolean getLimeStatus(String username) throws ClientProtocolException, IOException, JSONException
     {

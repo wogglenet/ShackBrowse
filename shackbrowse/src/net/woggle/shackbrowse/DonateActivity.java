@@ -59,6 +59,7 @@ public class DonateActivity extends ActionBarActivity {
 	protected String _unlockSign;
     private boolean _goldLime;
     private int mThemeResId;
+    private boolean _quadLime;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -192,16 +193,19 @@ public class DonateActivity extends ActionBarActivity {
     	}
 
         _goldLime = _prefs.getString("goldLimeUsers", "").contains(_prefs.getString("userName", "")) && !_prefs.getString("userName", "").equals("");
-        _limeRegistered = _prefs.getString("limeUsers", "").contains(_prefs.getString("userName", "")) && !_prefs.getString("userName", "").equals("") || _goldLime;
+        _quadLime = _prefs.getString("quadLimeUsers", "").contains(_prefs.getString("userName", "")) && !_prefs.getString("userName", "").equals("");
+        _limeRegistered = _prefs.getString("limeUsers", "").contains(_prefs.getString("userName", "")) && !_prefs.getString("userName", "").equals("") || _goldLime || _quadLime;
 
         
         SpannableString reg = new SpannableString("Serverside Lime Status: Registered plain lime for display next to username \"" + _prefs.getString("userName", "") + "\"");
         reg.setSpan(new ForegroundColorSpan(Color.rgb(100,255,100)), 23, reg.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
         SpannableString goldreg = new SpannableString("Serverside Lime Status: Registered gold lime for display next to username \"" + _prefs.getString("userName", "") + "\"");
         goldreg.setSpan(new ForegroundColorSpan(Color.rgb(255,195,0)), 23, goldreg.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
+        SpannableString quadreg = new SpannableString("Serverside Lime Status: Registered quad damage lime for display next to username \"" + _prefs.getString("userName", "") + "\"");
+        quadreg.setSpan(new ForegroundColorSpan(Color.rgb(50,50,255)), 23, goldreg.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
         SpannableString notreg = new SpannableString("Serverside Lime Status: Not registered for display");
         notreg.setSpan(new ForegroundColorSpan(Color.rgb(255,100,100)), 23, notreg.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
-        ((TextView)findViewById(R.id.donateLimeStatus)).setText(((_limeRegistered) ? (_goldLime ? goldreg : reg) : notreg));
+        ((TextView)findViewById(R.id.donateLimeStatus)).setText(((_limeRegistered) ? ((_goldLime || _quadLime) ? (_goldLime ? goldreg : quadreg) : reg) : notreg));
 
         _donatorStatus = _prefs.getBoolean("enableLimeAccess", false);
         SpannableString locked = new SpannableString("Lime Status: unavailable");
@@ -377,6 +381,7 @@ public class DonateActivity extends ActionBarActivity {
             	SharedPreferences.Editor editor = _prefs.edit();
                 editor.putString("limeUsers", result[0]);
                 editor.putString("goldLimeUsers", result[1]);
+                editor.putString("quadLimeUsers", result[2]);
             	editor.commit();
             	
             	runOnUiThread(new Runnable(){

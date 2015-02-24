@@ -183,78 +183,74 @@ ADDED from AndroidManifest.xml:56:9
 		ADDED from AndroidManifest.xml:56:50
 	android:name
 		ADDED from AndroidManifest.xml:56:19
-activity#net.woggle.shackbrowse.PreferenceView
-ADDED from AndroidManifest.xml:57:9
-	android:name
-		ADDED from AndroidManifest.xml:57:19
 activity#net.woggle.shackbrowse.PicUploader
-ADDED from AndroidManifest.xml:62:3
+ADDED from AndroidManifest.xml:57:3
 	android:label
-		ADDED from AndroidManifest.xml:62:78
+		ADDED from AndroidManifest.xml:57:78
 	android:icon
-		ADDED from AndroidManifest.xml:62:41
+		ADDED from AndroidManifest.xml:57:41
 	android:configChanges
-		ADDED from AndroidManifest.xml:62:119
+		ADDED from AndroidManifest.xml:57:119
 	android:name
-		ADDED from AndroidManifest.xml:62:13
+		ADDED from AndroidManifest.xml:57:13
 meta-data#com.google.android.backup.api_key
-ADDED from AndroidManifest.xml:69:9
+ADDED from AndroidManifest.xml:64:9
 	android:name
-		ADDED from AndroidManifest.xml:69:20
+		ADDED from AndroidManifest.xml:64:20
 	android:value
-		ADDED from AndroidManifest.xml:69:69
+		ADDED from AndroidManifest.xml:64:69
 receiver#net.woggle.shackbrowse.notifier.NotifierReceiver
-ADDED from AndroidManifest.xml:81:3
+ADDED from AndroidManifest.xml:76:3
 	android:permission
-		ADDED from AndroidManifest.xml:83:13
+		ADDED from AndroidManifest.xml:78:13
 	android:name
-		ADDED from AndroidManifest.xml:82:13
+		ADDED from AndroidManifest.xml:77:13
 intent-filter#com.google.android.c2dm.intent.RECEIVE+net.woggle.shackbrowse
-ADDED from AndroidManifest.xml:84:13
+ADDED from AndroidManifest.xml:79:13
 action#com.google.android.c2dm.intent.RECEIVE
-ADDED from AndroidManifest.xml:85:17
+ADDED from AndroidManifest.xml:80:17
 	android:name
-		ADDED from AndroidManifest.xml:85:25
+		ADDED from AndroidManifest.xml:80:25
 category#net.woggle.shackbrowse
+ADDED from AndroidManifest.xml:81:17
+	android:name
+		ADDED from AndroidManifest.xml:81:27
+receiver#net.woggle.shackbrowse.notifier.NotificationDeleteReceiver
+ADDED from AndroidManifest.xml:84:9
+	android:name
+		ADDED from AndroidManifest.xml:84:19
+intent-filter#net.woggle.shackbrowse.NOTIFICATION_DELETED
+ADDED from AndroidManifest.xml:85:13
+action#net.woggle.shackbrowse.NOTIFICATION_DELETED
 ADDED from AndroidManifest.xml:86:17
 	android:name
-		ADDED from AndroidManifest.xml:86:27
-receiver#net.woggle.shackbrowse.notifier.NotificationDeleteReceiver
-ADDED from AndroidManifest.xml:89:9
-	android:name
-		ADDED from AndroidManifest.xml:89:19
-intent-filter#net.woggle.shackbrowse.NOTIFICATION_DELETED
-ADDED from AndroidManifest.xml:90:13
-action#net.woggle.shackbrowse.NOTIFICATION_DELETED
-ADDED from AndroidManifest.xml:91:17
-	android:name
-		ADDED from AndroidManifest.xml:91:25
+		ADDED from AndroidManifest.xml:86:25
 service#net.woggle.shackbrowse.PostQueueService
-ADDED from AndroidManifest.xml:96:6
+ADDED from AndroidManifest.xml:91:6
 	android:enabled
-		ADDED from AndroidManifest.xml:96:15
+		ADDED from AndroidManifest.xml:91:15
 	android:name
-		ADDED from AndroidManifest.xml:96:38
+		ADDED from AndroidManifest.xml:91:38
 receiver#net.woggle.shackbrowse.NetworkChangeReceiver
-ADDED from AndroidManifest.xml:99:6
+ADDED from AndroidManifest.xml:94:6
 	android:label
-		ADDED from AndroidManifest.xml:101:13
+		ADDED from AndroidManifest.xml:96:13
 	android:name
-		ADDED from AndroidManifest.xml:100:13
+		ADDED from AndroidManifest.xml:95:13
 intent-filter#android.net.conn.CONNECTIVITY_CHANGE+android.net.wifi.WIFI_STATE_CHANGED
-ADDED from AndroidManifest.xml:102:13
+ADDED from AndroidManifest.xml:97:13
 action#android.net.conn.CONNECTIVITY_CHANGE
-ADDED from AndroidManifest.xml:103:17
+ADDED from AndroidManifest.xml:98:17
 	android:name
-		ADDED from AndroidManifest.xml:103:25
+		ADDED from AndroidManifest.xml:98:25
 action#android.net.wifi.WIFI_STATE_CHANGED
-ADDED from AndroidManifest.xml:104:17
+ADDED from AndroidManifest.xml:99:17
 	android:name
-		ADDED from AndroidManifest.xml:104:25
+		ADDED from AndroidManifest.xml:99:25
 meta-data#com.google.android.gms.version
-ADDED from AndroidManifest.xml:107:9
+ADDED from AndroidManifest.xml:102:9
 MERGED from com.google.android.gms:play-services:6.5.87:21:9
 	android:name
-		ADDED from AndroidManifest.xml:107:20
+		ADDED from AndroidManifest.xml:102:20
 	android:value
-		ADDED from AndroidManifest.xml:108:13
+		ADDED from AndroidManifest.xml:103:13

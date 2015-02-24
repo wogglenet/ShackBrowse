@@ -14,6 +14,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LightingColorFilter;
 import android.graphics.Rect;
+import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -1075,6 +1076,7 @@ public class ThreadViewFragment extends ListFragment
         int _maxBullets = 8;
         String _donatorList = "";
         private String _donatorGoldList = "";
+        private String _donatorQuadList = "";
         boolean _showModTools = false;
 		private boolean _showHoursSince = true;
         private String _userName = "";
@@ -1088,6 +1090,8 @@ public class ThreadViewFragment extends ListFragment
         private Bitmap _bulletCollapse;
 		private BitmapDrawable _donatorIcon;
         private BitmapDrawable _donatorGoldIcon;
+        private BitmapDrawable _donatorQuadIcon;
+        private BitmapDrawable _briefcaseIcon;
 		private boolean _displayLimes = true;
 		private boolean _displayLolButton = false;
 		private HashMap<String, LolObj> _threadloldata;
@@ -1226,6 +1230,7 @@ public class ThreadViewFragment extends ListFragment
             _fastScroll   = _prefs.getBoolean("fastScroll", true);
             _donatorList = _prefs.getString("limeUsers", "");
             _donatorGoldList = _prefs.getString("goldLimeUsers", "");
+            _donatorQuadList = _prefs.getString("quadLimeUsers", "");
             _displayLimes  = _prefs.getBoolean("displayLimes", true);
             // "enableDonatorFeatures"
             _displayLolButton  = true;
@@ -1738,15 +1743,40 @@ public class ThreadViewFragment extends ListFragment
 
                 // donator icon
                 holder.previewLimeHolder.setImageResource(android.R.color.transparent);
+                holder.previewLimeHolder.setOnClickListener(null);
+                holder.previewLimeHolder.setClickable(false);
                 if (_displayLimes)
                 {
-                    if (_donatorList.contains(":" + p.getUserName() + ";"))
+                    if (_donatorList.contains(":" + p.getUserName().toLowerCase() + ";"))
                     {
                         holder.previewLimeHolder.setImageDrawable(_donatorIcon);
                     }
-                    if (_donatorGoldList.contains(":" + p.getUserName() + ";"))
+                    if (_donatorGoldList.contains(":" + p.getUserName().toLowerCase() + ";"))
                     {
                         holder.previewLimeHolder.setImageDrawable(_donatorGoldIcon);
+                    }
+                    if (_donatorQuadList.contains(":" + p.getUserName().toLowerCase() + ";"))
+                    {
+                        holder.previewLimeHolder.setImageDrawable(_donatorQuadIcon);
+                        // easter egg
+                        holder.previewLimeHolder.setClickable(true);
+                        holder.previewLimeHolder.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                AnimationDrawable quad = (AnimationDrawable) getActivity().getResources().getDrawable(R.drawable.quaddamage);
+                                ((ImageView)v).setImageDrawable(quad);
+                                ((ImageView)v).setOnClickListener(null);
+                                v.setClickable(false);
+                                quad.start();
+                            }
+                        });
+                        /*
+
+                        */
+                    }
+                    if (p.getUserName().toLowerCase().equals("the man with the briefcase"))
+                    {
+                        holder.previewLimeHolder.setImageDrawable(_briefcaseIcon);
                     }
                 }
 
@@ -2060,13 +2090,21 @@ public class ThreadViewFragment extends ListFragment
         	        m[10] * c, m[11] * c, m[12] * c, m[13] * c, m[14] * c + bright, 
         	        m[15]    , m[16]    , m[17]    , m[18]    , m[19] }); 
         	        */
-        	bm.setColorFilter(new LightingColorFilter(Color.argb(1, 200, 200, 200), 0));
+        	bm.setColorFilter(new LightingColorFilter(Color.argb(1, 175, 175, 175), 0));
             // bm.setColorFilter(new ColorMatrixColorFilter(cm));
         	_donatorIcon = bm;
 
             bm = new BitmapDrawable(getContext().getResources(), Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.limegold), size, size, false));
-            bm.setColorFilter(new LightingColorFilter(Color.argb(1, 200, 200, 200), 0));
+            bm.setColorFilter(new LightingColorFilter(Color.argb(1, 175, 175, 175), 0));
             _donatorGoldIcon = bm;
+
+            bm = new BitmapDrawable(getContext().getResources(), Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.iconpowerup_quad), size, size, false));
+            bm.setColorFilter(new LightingColorFilter(Color.argb(1, 175, 175, 175), 0));
+            _donatorQuadIcon = bm;
+
+            bm = new BitmapDrawable(getContext().getResources(), Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.briefcaseicon), size, size, false));
+            bm.setColorFilter(new LightingColorFilter(Color.argb(1, 175, 175, 175), 0));
+            _briefcaseIcon = bm;
         }
 
         @Override
