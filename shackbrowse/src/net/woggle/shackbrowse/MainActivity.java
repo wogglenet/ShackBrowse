@@ -86,6 +86,8 @@ import com.afollestad.materialdialogs.MaterialDialogCompat;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressDrawable;
 
+import static net.woggle.shackbrowse.StatsFragment.statInc;
+
 public class MainActivity extends ActionBarActivity
 {
 	static final String PQPSERVICESUCCESS = "net.woggle.PQPServiceSuccess";
@@ -143,9 +145,8 @@ public class MainActivity extends ActionBarActivity
     public LoadingSplashFragment _loadingSplash;
     private Fragment mCurrentFragment;
     private boolean mActivityAvailable = false;
-    private boolean mNotificationsPreferenceFragmentVisible = false;
     protected int mThemeResId = R.style.AppTheme;
-    private int mNotificationsPreferenceFragmentLastFragmentType;
+    private Long mLastResumeTime = TimeDisplay.now();
 
     public PullToRefreshAttacher getRefresher()
 	{
@@ -402,6 +403,10 @@ public class MainActivity extends ActionBarActivity
         
         // set up donator icons
         new LimeTask().execute();
+
+        // sync stats
+        StatsFragment sfrag = new StatsFragment();
+        sfrag.blindStatSync(this);
         
         // clean up postqueue
 	    Intent msgIntent = new Intent(this, PostQueueService.class);
@@ -418,11 +423,10 @@ public class MainActivity extends ActionBarActivity
 			@Override
 			public void onOpened() {
 				// TODO Auto-generated method stub
-				if (!getDualPane())
-				{
-					mFrame.setVisibility(View.GONE);
-					_sresFrame.setVisibility(View.GONE);
-				}
+				if (!getDualPane()) {
+                    mFrame.setVisibility(View.GONE);
+                    _sresFrame.setVisibility(View.GONE);
+                }
 				
 				setTitleContextually();
 			}
@@ -458,7 +462,7 @@ public class MainActivity extends ActionBarActivity
 			}
 
             public void onXChange(float x){
-                slideContentFrameBasedOnTView(x);
+                slideContentFrameBasedOnTView(x, true);
 
             };
 
@@ -494,7 +498,10 @@ public class MainActivity extends ActionBarActivity
 				mFrame.setVisibility(View.VISIBLE);
 			}
 
-            public void onXChange(float x){};
+            public void onXChange(float x){
+                slideContentFrameBasedOnTView(x, false);
+
+            };
 		});
         
         _sresFrame.setSlidingEnabled(true);
@@ -553,7 +560,7 @@ public class MainActivity extends ActionBarActivity
 
         //We need to manually change statusbar color, otherwise, it remains green.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            context.getWindow().setStatusBarColor(Color.DKGRAY);
+            context.getWindow().setStatusBarColor(context.getResources().getColor(statusBarColor));
         }
 
         return themeId;
@@ -593,11 +600,6 @@ public class MainActivity extends ActionBarActivity
         	getSupportActionBar().setTitle(_searchResults._title);
         	mDrawerToggle.setDrawerIndicatorEnabled(false);
         }
-        else if (mNotificationsPreferenceFragmentVisible)
-        {
-            getSupportActionBar().setTitle("Notification Preferences");
-            mDrawerToggle.setDrawerIndicatorEnabled(false);
-        }
         else
         {
         	getSupportActionBar().setTitle(mTitle);
@@ -629,6 +631,11 @@ public class MainActivity extends ActionBarActivity
         {
         	otf = (OfflineThreadFragment)getFragmentManager().findFragmentByTag(Integer.toString(CONTENT_FAVORITES));
         }
+        StatsFragment stf = null;
+        if (_currentFragmentType == CONTENT_STATS)
+        {
+            stf = (StatsFragment)getFragmentManager().findFragmentByTag(Integer.toString(CONTENT_STATS));
+        }
         SearchViewFragment svf = null;
         if (_currentFragmentType == CONTENT_SEARCHVIEW)
         {
@@ -652,11 +659,6 @@ public class MainActivity extends ActionBarActivity
 	        		_tviewFrame.closeLayer(true);
 	        	else if (_sresFrame.isOpened())
 	        		_sresFrame.closeLayer(true);
-                else if (mNotificationsPreferenceFragmentVisible)
-                {
-                    mNotificationsPreferenceFragmentVisible = false;
-                    setContentTo(mNotificationsPreferenceFragmentLastFragmentType);
-                }
 	        	break;
 	        case R.id.menu_refreshThreads:
 	        	_threadList.refreshThreads();
@@ -785,6 +787,10 @@ public class MainActivity extends ActionBarActivity
                     _fpBrowser.refresh();
                 if ((_articleViewer != null) && (isArticleOpen()))
                     _articleViewer.refresh();
+                break;
+            case R.id.menu_statsTrash:
+                if (stf != null)
+                    stf.wipeStats();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -982,7 +988,8 @@ public class MainActivity extends ActionBarActivity
         menu.findItem(R.id.menu_fpbrowserCopyURL).setVisible(showFPBrowserItems);
         menu.findItem(R.id.menu_fpbrowserShare).setVisible(showFPBrowserItems);
         menu.findItem(R.id.menu_fprefresh).setVisible(showFPBrowserItems);
-        
+
+        menu.findItem(R.id.menu_statsTrash).setVisible(_currentFragmentType == CONTENT_STATS ? true : false);
 		return true;
     }
 
@@ -995,6 +1002,7 @@ public class MainActivity extends ActionBarActivity
     public static final int CONTENT_PREFS = 5;
     public static final int CONTENT_FRONTPAGE = 6;
     public static final int CONTENT_STATS = 7;
+    public static final int CONTENT_NOTEPREFS = 8;
 	
 	void setContentTo(int type)
 	{
@@ -1039,6 +1047,12 @@ public class MainActivity extends ActionBarActivity
         {
             mTitle = "Statistics";
             fragment = (StatsFragment)Fragment.instantiate(getApplicationContext(), StatsFragment.class.getName(), new Bundle());
+            statInc(this, "TimeInApp", TimeDisplay.secondsSince(mLastResumeTime)); mLastResumeTime = TimeDisplay.now();
+        }
+        if (type == CONTENT_NOTEPREFS)
+        {
+            mTitle = "Notification Preferences";
+            fragment = (PreferenceFragmentNotifications)Fragment.instantiate(getApplicationContext(), PreferenceFragmentNotifications.class.getName(), new Bundle());
         }
         if (type == CONTENT_FRONTPAGE)
         {
@@ -1166,6 +1180,8 @@ public class MainActivity extends ActionBarActivity
 		ed.commit();
 
         mActivityAvailable = false;
+
+        statInc(this, "TimeInApp", TimeDisplay.secondsSince(mLastResumeTime));
 	}
 	
 	@Override
@@ -1175,6 +1191,7 @@ public class MainActivity extends ActionBarActivity
 		super.onResume();
 
         StatsFragment.statInc(this, "AppOpened");
+        mLastResumeTime = TimeDisplay.now();
 
 		mOffline.startCloudUpdates();
 		
@@ -1461,6 +1478,7 @@ public class MainActivity extends ActionBarActivity
     }
     public void openSearch(Bundle args)
 	{
+        statInc(this, "SearchedForPosts");
     	if (_tviewFrame.isOpened() && !getDualPane())
     		_tviewFrame.closeLayer(true);
     	
@@ -1474,6 +1492,7 @@ public class MainActivity extends ActionBarActivity
 	}
 	public void openSearchLOL(Bundle args)
 	{
+        statInc(this, "SearchedForLOLs");
 		if (_tviewFrame.isOpened() && !getDualPane())
     		_tviewFrame.closeLayer(true);
 		
@@ -1487,6 +1506,7 @@ public class MainActivity extends ActionBarActivity
 	}
 	public void openSearchDrafts()
 	{
+        statInc(this, "LookedAtDrafts");
 		_sresFrame.openLayer(true);
 		_appMenu.updateMenuUi();
     	_searchResults.openSearchDrafts(this);
@@ -1538,7 +1558,7 @@ public class MainActivity extends ActionBarActivity
 	        	setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
         }
     
-        if (_splitView == 0 || _currentFragmentType == CONTENT_FRONTPAGE || _currentFragmentType == CONTENT_PREFS)
+        if (_splitView == 0 || _currentFragmentType == CONTENT_FRONTPAGE || _currentFragmentType == CONTENT_PREFS || _currentFragmentType == CONTENT_STATS || _currentFragmentType == CONTENT_NOTEPREFS)
         {
         	setThreadViewFullScreen(false);
         	setDualPane(false);
@@ -1556,7 +1576,7 @@ public class MainActivity extends ActionBarActivity
 	public boolean getDualPane () { return _dualPane; }
 	public boolean getSliderOpen () { return _tviewFrame.isOpened(); }
 
-    private void slideContentFrameBasedOnTView(float x) {
+    private void slideContentFrameBasedOnTView(float x, boolean isTView) {
         FrameLayout contentframe = (FrameLayout)findViewById(R.id.content_frame);
 
         // doesnt slide in dual pane
@@ -1564,6 +1584,10 @@ public class MainActivity extends ActionBarActivity
         {
            // System.out.println("X:" +x + " s" + (-1f - x) * 40f);
            contentframe.setTranslationX((1f - x) * (-.2f * contentframe.getWidth()));
+        }
+        if (!getDualPane() && _sresFrame.isOpened() && isTView)
+        {
+            _sresFrame.setTranslationX((1f - x) * (-.2f * contentframe.getWidth()));
         }
     }
 	
@@ -1860,11 +1884,6 @@ public class MainActivity extends ActionBarActivity
         else if ((_currentFragmentType == CONTENT_FRONTPAGE) && (_fpBrowser != null) && (_fpBrowser.mWebview.canGoBack()))
         {
              _fpBrowser.mWebview.goBack();
-        }
-        else if (mNotificationsPreferenceFragmentVisible)
-        {
-            mNotificationsPreferenceFragmentVisible = false;
-            setContentTo(mNotificationsPreferenceFragmentLastFragmentType);
         }
 		else if (_currentFragmentType != CONTENT_THREADLIST)
 		{
@@ -3321,21 +3340,6 @@ public class MainActivity extends ActionBarActivity
     public boolean isSplashOpen()
     {
         return mSplashOpen;
-    }
-
-    public void openPreferenceNotificationFragment(int fragmentParentSetContentToType)
-    {
-        mNotificationsPreferenceFragmentLastFragmentType = fragmentParentSetContentToType;
-        cleanUpViewer();
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, new PreferenceFragmentNotifications())
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .commit();
-        // getSupportActionBar().setDisplayShowHomeEnabled(true);
-        // getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mNotificationsPreferenceFragmentVisible = true;
-        setTitleContextually();
     }
 
     public void cleanUpViewer ()

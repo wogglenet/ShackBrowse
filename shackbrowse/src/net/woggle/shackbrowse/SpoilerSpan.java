@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import static net.woggle.shackbrowse.StatsFragment.statInc;
+
 public class SpoilerSpan extends ClickableSpan
 {
     static final int SPOILER_COLOR = Color.parseColor("#505050");
@@ -34,7 +36,7 @@ public class SpoilerSpan extends ClickableSpan
     public void onClick(View widget)
     {
         // only spoil if the view was given
-    	
+            statInc(widget.getContext(), "SpoilersClicked");
         
             _spoiled = true;
             // Toast.makeText(widget.getContext(), "spoiled:"+idInPost, 0).show();

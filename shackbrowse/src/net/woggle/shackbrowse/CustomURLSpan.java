@@ -21,6 +21,8 @@ import com.afollestad.materialdialogs.MaterialDialogCompat;
 
 import java.util.regex.Pattern;
 
+import static net.woggle.shackbrowse.StatsFragment.statInc;
+
 public class CustomURLSpan extends CustomClickableSpan implements OnLongClickListener {
 	private String href;
 
@@ -99,6 +101,7 @@ public class CustomURLSpan extends CustomClickableSpan implements OnLongClickLis
 	public void onClick (View v) 
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(v.getContext());
+        statInc(v.getContext(), "ClickedLink");
         int _useBrowser = Integer.parseInt(prefs.getString("usePopupBrowser2", "1"));
         
         // see if we can address URL internally

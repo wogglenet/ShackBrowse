@@ -3,6 +3,7 @@ package net.woggle.shackbrowse;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import android.util.Log;
 
@@ -66,6 +67,30 @@ public final class TimeDisplay {
 		return (((int)(threadAge) > 0) ? Integer.toString((int)(threadAge)) + "h " : "") + (int)(60 * (threadAge - (long)(threadAge))) + "m ago";
 	}
 
+    public static int secondsSince(long posted)
+    {
+        int seconds = (int)((TimeDisplay.now() - posted) / 1000f);
+        return seconds;
+    }
+    public static String secondsToNiceTime (int seconds)
+    {
+        int day = (int) TimeUnit.SECONDS.toDays(seconds);
+        long hours = TimeUnit.SECONDS.toHours(seconds) -
+                TimeUnit.DAYS.toHours(day);
+        long minute = TimeUnit.SECONDS.toMinutes(seconds) -
+                TimeUnit.DAYS.toMinutes(day) -
+                TimeUnit.HOURS.toMinutes(hours);
+        long second = TimeUnit.SECONDS.toSeconds(seconds) -
+                TimeUnit.DAYS.toSeconds(day) -
+                TimeUnit.HOURS.toSeconds(hours) -
+                TimeUnit.MINUTES.toSeconds(minute);
+        /*
+        int day = (int) TimeUnit.SECONDS.toDays(seconds);
+        long hours = TimeUnit.SECONDS.toHours(seconds) - (day *24);
+        long minute = TimeUnit.SECONDS.toMinutes(seconds) - (TimeUnit.SECONDS.toHours(seconds)* 60);
+        long second = TimeUnit.SECONDS.toSeconds(seconds) - (TimeUnit.SECONDS.toMinutes(seconds) * 60); */
+        return ((day > 0) ? day + " days, " : "") + ((hours > 0L) ? hours + " hours, " : "") + ((minute > 0L) ? minute + " minutes, " : "") + ((second > 0L) ? second + " seconds" : "");
+    }
     public static String getNiceTimeSince(Long posted, boolean showHoursSince) {
         String ret = "";
         final double threadAge = TimeDisplay.threadAge(posted);

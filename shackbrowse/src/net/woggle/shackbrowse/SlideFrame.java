@@ -108,7 +108,7 @@ public class SlideFrame extends FrameLayout {
     private static final int INVALID_POINTER = -1;
 
     private boolean mIsOpen;
-    private boolean mScrolling;
+    protected boolean mScrolling;
 
     private OnInteractListener mOnInteractListener;
 
@@ -731,6 +731,7 @@ public class SlideFrame extends FrameLayout {
 
     private void completeScroll() {
         boolean needPopulate = mScrolling;
+        mScrolling = false;
         if (needPopulate) {
             // Done with scroll, no longer want to cache view drawing.
             setDrawingCacheEnabled(false);
@@ -752,7 +753,6 @@ public class SlideFrame extends FrameLayout {
                 }
             }
         }
-        mScrolling = false;
     }
 
     public void setStickTo(int screenSide) {

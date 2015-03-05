@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import java.util.Random;
 
+import static net.woggle.shackbrowse.StatsFragment.statInc;
+
 /**
  * Created by brad on 2/5/2015.
  */
@@ -46,6 +48,18 @@ public class LoadingSplashFragment extends Fragment {
         super.onDestroyView();
     }
 
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        getActivity().findViewById(R.id.splash_tagline).setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                randomizeTagline();
+                statInc(v.getContext(), "ClickedOnLoadingSplashScreen");
+            }
+        });
+    }
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);

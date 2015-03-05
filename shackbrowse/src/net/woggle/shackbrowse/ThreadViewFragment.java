@@ -80,6 +80,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.ListIterator;
 
+import static net.woggle.shackbrowse.StatsFragment.statInc;
+import static net.woggle.shackbrowse.StatsFragment.statMax;
+
 public class ThreadViewFragment extends ListFragment
 {
     public PostLoadingAdapter _adapter;
@@ -459,6 +462,8 @@ public class ThreadViewFragment extends ListFragment
         	final GetTaggersTask gtt = new GetTaggersTask();
         	
         	gtt.execute(_adapter.getItem(pos).getPostId());
+
+            statInc(getActivity(), "CheckedLOLTaggers");
         }
     }
     class GetTaggersTask extends AsyncTask<Integer, Void, CharSequence> {
@@ -620,6 +625,7 @@ public class ThreadViewFragment extends ListFragment
     	 _refreshRestore = true;
 
         System.out.println("LASTEXP REFR" + _lastExpanded + " " + _selectPostIdAfterLoading);
+        statInc(getActivity(), "RefreshedPosts");
 
          _adapter.clear();
          _adapter.triggerLoadMore();
@@ -635,6 +641,7 @@ public class ThreadViewFragment extends ListFragment
     			Toast.makeText(getActivity(), "Thread added to favorites", Toast.LENGTH_SHORT).show();
     			_showUnFavSaved = false;
     			_showFavSaved = true;
+                statInc(getActivity(), "FavoritedAThread");
     		}
     		else
     		{
@@ -846,12 +853,12 @@ public class ThreadViewFragment extends ListFragment
                 if (updLol == null)
                     updLol = new LolObj();
 
-                if (tag.equalsIgnoreCase("lol")) updLol.incLol();
-                if (tag.equalsIgnoreCase("tag")) updLol.incTag();
-                if (tag.equalsIgnoreCase("ugh")) updLol.incUgh();
-                if (tag.equalsIgnoreCase("wtf")) updLol.incWtf();
-                if (tag.equalsIgnoreCase("inf")) updLol.incInf();
-                if (tag.equalsIgnoreCase("unf")) updLol.incUnf();
+                if (tag.equalsIgnoreCase("lol")) { updLol.incLol(); statInc(getActivity(), "GaveALOLTag"); statInc(getActivity(), "GaveALOLTaglol"); }
+                if (tag.equalsIgnoreCase("tag")) { updLol.incTag(); statInc(getActivity(), "GaveALOLTag"); statInc(getActivity(), "GaveALOLTagtag"); }
+                if (tag.equalsIgnoreCase("ugh")) { updLol.incUgh(); statInc(getActivity(), "GaveALOLTag"); statInc(getActivity(), "GaveALOLTagugh"); }
+                if (tag.equalsIgnoreCase("wtf")) { updLol.incWtf(); statInc(getActivity(), "GaveALOLTag"); statInc(getActivity(), "GaveALOLTagwtf"); }
+                if (tag.equalsIgnoreCase("inf")) { updLol.incInf(); statInc(getActivity(), "GaveALOLTag"); statInc(getActivity(), "GaveALOLTaginf"); }
+                if (tag.equalsIgnoreCase("unf")) { updLol.incUnf(); statInc(getActivity(), "GaveALOLTag"); statInc(getActivity(), "GaveALOLTagunf"); }
 
                 updLol.genTagSpan(getActivity());
                 _adapter.getItem(pos).setLolObj(updLol);
@@ -949,6 +956,9 @@ public class ThreadViewFragment extends ListFragment
                 // do not collapse root posts
                 if (_adapter.findPositionForId((Long)contentParent.getTag()) == 0)
                     return;
+
+                statInc(getActivity(), "OpenedPost");
+
                 if (_adapter.mAnimSpeed == 0f)
                 {
                     // no animation
@@ -970,7 +980,8 @@ public class ThreadViewFragment extends ListFragment
     {
     	if (getListView().getPositionForView(v) != ListView.INVALID_POSITION)
     	{
-    		this._postYLoc = v.getTop();
+
+            this._postYLoc = v.getTop();
     		
     		expandAndCheckPostWithoutAnimation(v);
     		
@@ -2183,6 +2194,8 @@ public class ThreadViewFragment extends ListFragment
                 System.out.println("TIMER: CTT: " + (TimeDisplay.now() - timer)); timer = TimeDisplay.now();
                 prePreBuildTreeCache(posts);
 
+                statMax(getActivity(), "MaxThreadSize", posts.size());
+
 	            return posts;
         	}
         	else
@@ -2221,6 +2234,7 @@ public class ThreadViewFragment extends ListFragment
                 }
             }
             System.out.println("TIMER: hasReplied: " + (TimeDisplay.now() - timer)); timer = TimeDisplay.now();
+
             Thread t = null;
             if ((_adapter != null) && (_adapter.getCount() > 0) && (_messageId == 0))
             {

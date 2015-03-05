@@ -183,7 +183,7 @@ public abstract class ExpandableLoadingAdapter<T> extends ExpandableListItemAdap
                     if (_verbose) System.out.println("LOADINGADAPTER: cleared before onpostexecute!");
                     setClearBeforeAddOnPostExecute(false);
                 }
-                
+
                 if (result.size() > 0)
                 {
                     beforeClear();

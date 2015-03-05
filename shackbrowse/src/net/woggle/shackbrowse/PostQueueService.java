@@ -21,11 +21,15 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 
+import static net.woggle.shackbrowse.StatsFragment.statInc;
+import static net.woggle.shackbrowse.StatsFragment.statMax;
+
 public class PostQueueService extends IntentService {
 
 	private Context ctx;
 	private PostQueueDB pdb;
 	private SharedPreferences prefs;
+    private boolean triggeredPRLStat = false;
 	public PostQueueService() {
 		super("PQPService");
 	}
@@ -63,6 +67,7 @@ public class PostQueueService extends IntentService {
 		System.out.println("POSTQU: RUNNING");
 		while (plist.size() > 0)
 		{
+            statMax(ctx, "MaximumItemsInQueue", plist.size());
 			System.out.println("POSTQU: SIZE " + plist.size());
 			
 			PostQueueObj post = plist.get(0);
@@ -116,6 +121,13 @@ public class PostQueueService extends IntentService {
 								    {
 								    	notify("Post Successful", sent + " sent. " + remaining + " in queue.", 58410, reply_id);
 								    }
+
+                                    // stats
+                                    if (post.getReplyToId() == 0)
+                                        statInc(ctx, "PostedThread");
+                                    else
+                                        statInc(ctx, "PostedReply");
+
 								} catch (JSONException e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
@@ -135,6 +147,11 @@ public class PostQueueService extends IntentService {
 									if (data.toString().toLowerCase().contains("Please wait a few minutes before trying to post again".toLowerCase()))
 									{
 										// PRL
+                                        if (!triggeredPRLStat) {
+                                            statInc(ctx, "TimesPRLed");
+                                            triggeredPRLStat = true;
+                                        }
+
 										System.out.println("POSTQU: PRL ERROR, BACKING OFF");
 										delay = (delay * 2);
 										
@@ -196,6 +213,8 @@ public class PostQueueService extends IntentService {
 									    {
 									    	notify("Post Error", "Cannot post to nuked thread.", 58414, 0);
 									    }
+
+                                        statInc(ctx, "PostedToNukedThread");
 									}
 									
 								}
@@ -242,6 +261,8 @@ public class PostQueueService extends IntentService {
 						    {
 						    	notify("ShackMessage Sent", "Your SM was successfully sent in the background.", 58415, 0);
 						    }
+
+                            statInc(ctx, "SentShackMessage");
 						}
 					}
 			}

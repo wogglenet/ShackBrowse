@@ -188,13 +188,18 @@ public class FrontpageBrowserFragment extends Fragment {
                      * Return WebResourceResponse with CSS markup from an asset (e.g. "assets/style.css").
                      */
                     private WebResourceResponse getWebResourceResponseFromAsset(String asset, String mimeType) {
-                        try {
-                            return new WebResourceResponse(mimeType, "UTF-8",getActivity().getAssets().open("frontpage/" + asset));
-                        } catch (IOException e) {
-                            System.out.println("EXCEOPTIOON" + asset);
-                            e.printStackTrace();
-                            return null;
+                        if (getActivity() != null) {
+                            try {
+                                InputStream loc = getActivity().getAssets().open("frontpage/" + asset);
+                                WebResourceResponse ret = new WebResourceResponse(mimeType, "UTF-8", loc);
+                                return ret;
+                            } catch (IOException e) {
+                                System.out.println("EXCEOPTIOON" + asset);
+                                e.printStackTrace();
+                                return null;
+                            }
                         }
+                        else { System.out.println("EXCEOPTION NO ACTIV" + asset); return null; }
                     }
 
                     @Override

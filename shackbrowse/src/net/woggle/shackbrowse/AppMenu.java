@@ -112,7 +112,9 @@ public class AppMenu extends ListFragment
                         _adapter.add(new MenuItems(0, getUsername(), 2, R.drawable.ic_action_action_account_box, null, new View.OnClickListener(){
                             @Override
                             public void onClick(View v) {
+                                ((MainActivity)getActivity()).cleanUpViewer();
                                 ((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_STATS);
+
                             }
                         }, R.drawable.ic_action_action_assessment));
                     }
@@ -123,7 +125,8 @@ public class AppMenu extends ListFragment
     	        		_adapter.add(new MenuItems(0, "Notifications" , 9, R.drawable.note_logo, null, new View.OnClickListener(){
                             @Override
                             public void onClick(View v) {
-                                ((MainActivity)getActivity()).openPreferenceNotificationFragment(((MainActivity)getActivity())._currentFragmentType);
+                                ((MainActivity)getActivity()).cleanUpViewer();
+                                ((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_NOTEPREFS);
                             }
                         }, R.drawable.ic_action_action_settings));
     	        	_adapter.add(new MenuItems(0, "Favorites" , 8, R.drawable.ic_action_toggle_star));
@@ -371,16 +374,6 @@ public class AppMenu extends ListFragment
 	                holder.icon = (ImageView)vi.findViewById(R.id.menuItemIcon);
                     holder.settings = (ImageView)vi.findViewById(R.id.menuItemSettings);
 
-                    if (m._settingsClick != null) {
-                        holder.settings.setOnClickListener(m._settingsClick);
-                        holder.settings.setVisibility(View.VISIBLE);
-                        holder.settings.setImageResource(m.getExtraImageDrawable());
-                    }
-                    else
-                    {
-                        holder.settings.setVisibility(View.GONE);
-                    }
-	                
 	                // zoom for preview.. needs to only be done ONCE, when holder is first created
 	                holder.text.setTextSize(TypedValue.COMPLEX_UNIT_PX, holder.text.getTextSize() * _zoom);
 	                
@@ -392,6 +385,16 @@ public class AppMenu extends ListFragment
 	            	holder.icon.setVisibility(View.GONE);
 	            else
 	            	holder.icon.setVisibility(View.VISIBLE);
+
+                if (m.getExtraImageDrawable() != 0) {
+                    holder.settings.setOnClickListener(m.getExtraOnClickListener());
+                    holder.settings.setVisibility(View.VISIBLE);
+                    holder.settings.setImageResource(m.getExtraImageDrawable());
+                }
+                else
+                {
+                    holder.settings.setVisibility(View.GONE);
+                }
 	            
 	            holder.icon.setImageResource(m.getImgRes());
             }
@@ -476,7 +479,7 @@ public class AppMenu extends ListFragment
     	}
 		MenuItems(int type, String text, int id, int img, PremadeSearch pms)
     	{
-            this(type , text, id ,img, null, null, 0);
+            this(type , text, id ,img, pms, null, 0);
     	}
         MenuItems(int type, String text, int id, int img, PremadeSearch pms, View.OnClickListener settingsClick, int imageDrawable)
         {
@@ -512,6 +515,10 @@ public class AppMenu extends ListFragment
 
         public int getExtraImageDrawable() {
             return mExtraImageDrawable;
+        }
+
+        public View.OnClickListener getExtraOnClickListener() {
+            return _settingsClick;
         }
     }
     
@@ -552,7 +559,6 @@ public class AppMenu extends ListFragment
 		String username = "";
 		PremadeSearch search = _adapter.getItem(pos).getPremadeSearch();
 
-		act.track("search4", "basicName", search.getName());
 		args = search.getArgs();
 		if (search.getRequiresUsername())
 		{

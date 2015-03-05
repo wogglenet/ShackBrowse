@@ -33,6 +33,8 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.MaterialDialogCompat;
 
+import static net.woggle.shackbrowse.StatsFragment.statInc;
+
 public class PicUploader extends ActionBarActivity {
 	private MaterialDialog _progressDialog;
 	
@@ -46,7 +48,7 @@ public class PicUploader extends ActionBarActivity {
         // prefs
         _prefs = PreferenceManager.getDefaultSharedPreferences(this);
         // grab the post being replied to, if this is a reply
-        
+        statInc(this, "UsedStandaloneChattyPicsUploader");
         setContentView(R.layout.picupload);
         String action = getIntent().getAction();
         String type = getIntent().getType();
@@ -98,6 +100,7 @@ public class PicUploader extends ActionBarActivity {
 	{
 	    _progressDialog = MaterialProgressDialog.show(PicUploader.this, "Upload", "Uploading image to chattypics");
 	    new UploadAndInsertTask().execute(imageLocation);
+        statInc(this, "ImagesToChattyPics");
 	}
 	
 	
@@ -265,6 +268,7 @@ public class PicUploader extends ActionBarActivity {
             	        builder.create().show();
             		}
             	});
+
             }
         }
 	}

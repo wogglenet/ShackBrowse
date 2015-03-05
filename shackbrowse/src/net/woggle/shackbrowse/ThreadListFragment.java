@@ -80,6 +80,8 @@ import android.widget.AbsListView.OnScrollListener;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.MaterialDialogCompat;
 
+import static net.woggle.shackbrowse.StatsFragment.statInc;
+
 public class ThreadListFragment extends ListFragment
 {
     ThreadLoadingAdapter _adapter;
@@ -436,6 +438,7 @@ public class ThreadListFragment extends ListFragment
     	Thread t = (Thread) getListView().getItemAtPosition(position);
     	if (t != null)
     	{
+            statInc(getActivity(), "PostCollapsed");
 			addCollapsed(t.getThreadId());
 			openUndoBar(t, _adapter.getPosition(t));
 			_adapter.remove(t);
@@ -464,6 +467,7 @@ public class ThreadListFragment extends ListFragment
     {
     	if (mUndoAbleCollapse != null)
     	{
+            statInc(getActivity(), "PostUndoCollapsed");
 	    	removeCollapsed(mUndoAbleCollapse.getThreadId());
 	    	_adapter.insert(mUndoAbleCollapse, mUndoAbleCollapsePos);
 	    	_adapter.notifyDataSetChanged();
@@ -487,6 +491,7 @@ public class ThreadListFragment extends ListFragment
     	if (((MainActivity)getActivity()).mOffline.toggleThread(thread.getThreadId(), thread.getPosted(), thread.getJson()))
  		{
 			Toast.makeText(getActivity(), "Thread added to favorites", Toast.LENGTH_SHORT).show();
+            statInc(getActivity(), "FavoritedAThread");
 		}
 		else
 		{
@@ -527,8 +532,8 @@ public class ThreadListFragment extends ListFragment
 							getListView().setOnScrollListener(null);
     	getListView().setOnTouchListener(null);
         */
-    	
-    	
+
+        statInc(getActivity(), "RefreshedThreadList");
     	
 		MainActivity act = ((MainActivity)getActivity());
 		act.showLoadingSplash();
@@ -1021,7 +1026,9 @@ public class ThreadListFragment extends ListFragment
 	    			{
 	    				System.out.println("DELETING: " + deletefws.get(j).toLowerCase());
 	    				// delete thread
+
 	    				iter.remove();
+                        statInc(getActivity(), "CollapsedDueToKeywordFilter");
 	    				break;
 	    			}
 	    		}
@@ -1032,6 +1039,7 @@ public class ThreadListFragment extends ListFragment
 	    				// delete thread
 	    				System.out.println("DELETING U: " + deleteufws.get(j).toLowerCase());
 	    				iter.remove();
+                        statInc(getActivity(), "CollapsedDueToUsernameFilter");
 	    				break;
 	    			}
 	    		}

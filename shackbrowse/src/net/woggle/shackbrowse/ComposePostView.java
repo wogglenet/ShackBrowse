@@ -10,6 +10,7 @@ import net.woggle.shackbrowse.legacy.LegacyFactory;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
@@ -55,6 +56,8 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.MaterialDialogCompat;
 
+import static net.woggle.shackbrowse.StatsFragment.statInc;
+
 public class ComposePostView extends ActionBarActivity {
 
 	protected static final int SELECT_IMAGE = 0;
@@ -89,6 +92,7 @@ public class ComposePostView extends ActionBarActivity {
 	private String mParentAuthor;
 	private boolean _landscape = false;
     private int mThemeResId;
+    private Long mLastResumeTime = 0L;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -334,6 +338,7 @@ public class ComposePostView extends ActionBarActivity {
     
     public void showPreview()
     {
+        statInc(this, "CheckedPostPreview");
     	EditText edit = (EditText)findViewById(R.id.textContent);
 		String postContent = edit.getText().toString();
 		postContent = getPreviewFromHTML(postContent);
@@ -404,6 +409,8 @@ public class ComposePostView extends ActionBarActivity {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 			} });
+
+            final Context ctx = this;
 	        
 	        // message mode supports no drafts
 	        if (!_messageMode)
@@ -411,6 +418,7 @@ public class ComposePostView extends ActionBarActivity {
 		        builder.setNeutralButton("Save and Exit", new DialogInterface.OnClickListener(){
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
+                        statInc(ctx, "DraftsSaved");
 						// save
 						_preventDraftSave = false;
 						finish();
@@ -419,7 +427,10 @@ public class ComposePostView extends ActionBarActivity {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						// delete any drafts
-						
+                        statInc(ctx, "BackedOutOfPost");
+                        if (_replyToPostId == 0)
+                            statInc(ctx, "BackedOutOfRootPost");
+
 			        	_drafts.deleteDraftById(_replyToPostId);
 			        	_preventDraftSave = true;
 						finish();
@@ -430,6 +441,7 @@ public class ComposePostView extends ActionBarActivity {
 	        	builder.setPositiveButton("Exit", new DialogInterface.OnClickListener(){
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
+                        statInc(ctx, "BackedOutOfMessageReply");
 						_preventDraftSave = true;
 						finish();
 				} });
@@ -469,7 +481,15 @@ public class ComposePostView extends ActionBarActivity {
             if (!_messageMode)
 			    _drafts.saveThisDraft(_replyToPostId, edit.getText().toString().replaceAll("\n", "<br/>"), _parentAuthorForDraft, _parentPostForDraft, _parentDateForDraft);
 		}
+        statInc(this, "TimeInComposer", TimeDisplay.secondsSince(mLastResumeTime));
 	}
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        mLastResumeTime = TimeDisplay.now();
+    }
 	
 	@Override
 	public void onConfigurationChanged (Configuration newConfig)
@@ -549,6 +569,9 @@ public class ComposePostView extends ActionBarActivity {
 	{
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3) {
+
+            statInc(arg1.getContext(), "AppliedShackTag");
+
 			if (_shackTagDialog != null)
 				_shackTagDialog.cancel();
 			
@@ -652,6 +675,7 @@ public class ComposePostView extends ActionBarActivity {
 	    {
 
             content = pad(content, 6, " ");
+            statInc(this, "LessThanSixChars");
             /* Old Behavior, make the user fix it
 
 
@@ -817,6 +841,7 @@ public class ComposePostView extends ActionBarActivity {
 	{
 	    _progressDialog = MaterialProgressDialog.show(ComposePostView.this, "Upload", "Uploading image to chattypics");
 	    new UploadAndInsertTask().execute(imageLocation);
+        statInc(this, "ImagesToChattyPics");
 	}
 	
 	void postSuccessful(PostReference pr)
