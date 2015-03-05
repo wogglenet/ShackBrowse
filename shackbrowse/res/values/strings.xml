@@ -253,4 +253,18 @@
     <string name="preftools">Tools</string>
     <string name="preference_theme">App Colors</string>
     <string name="preference_theme_summary">Change the colors of the app</string>
+
+
+    <string name="statItemAnnoyedByStartupZoomDialog">Annoyed By Startup Zoom Dialog</string>
+    <string name="statItemAppOpenedFresh">App Opened Fresh</string>
+    <string name="statItemAppUpgradedToNewVersion">App Upgraded To New Version</string>
+    <string name="statItemAppOpened">App Opened</string>
+    <string name="statItemPopUpBrowserOpened">PopUp Browser Opened</string>
+    <string name="statItemArticleOpened">Article Opened</string>
+    <string name="statItemThreadOpened">Thread Opened</string>
+    <string name="statItemNotifiedReply">Notified Reply</string>
+    <string name="statItemNotifications">Notifications</string>
+    <string name="statItemNotifiedShackMessage">Notified Shack Message</string>
+    <string name="statItemNotifiedKeyword">Notified Keyword</string>
+    <string name="statItemNotifiedVanity">Notified Vanity</string>
 </resources>

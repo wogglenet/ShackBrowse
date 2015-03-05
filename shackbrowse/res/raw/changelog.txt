@@ -30,6 +30,17 @@ TODO
 * THEMES
 -->
 
+$ 5.0.3
+% v 5.0.3
+_ Feb 21, 2015
+* More material dialogs
+* Notification settings easier to get to
+* Easter egg
+* the man with the briefcase gets a briefcase icon
+* Slidey animation
+* User stats
+* Bug Fix: highlighted app menu section when notifications disabled
+
 $ 5.0.2
 % v 5.0.2
 _ Feb 21, 2015

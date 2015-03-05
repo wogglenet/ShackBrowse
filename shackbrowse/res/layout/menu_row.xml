@@ -18,6 +18,7 @@
   >
   		<ImageView
             android:layout_width="25dp"
+            android:layout_weight="0"
             android:layout_height="25dp"
             android:scaleType="centerInside"
             android:id="@+id/menuItemIcon"
@@ -26,7 +27,8 @@
             />
 	     <TextView
 	         android:id="@+id/menuItemText"
-	         android:layout_width="fill_parent"
+	         android:layout_width="0px"
+             android:layout_weight="1"
 	         android:layout_height="wrap_content"
 	         android:textColor="@color/nonpreview_post_text_color"
 	         android:ellipsize="end"
@@ -35,5 +37,18 @@
 	         android:layout_gravity="center_vertical"
 	         android:paddingLeft="8dip"
 	     />
+        <ImageView
+          android:layout_width="25dp"
+          android:layout_height="25dp"
+            android:layout_weight="0"
+          android:scaleType="centerInside"
+          android:id="@+id/menuItemSettings"
+          android:layout_gravity="top"
+          android:gravity="end"
+          android:layout_marginRight="10dp"
+          android:src="@drawable/ic_action_action_settings"
+          android:visibility="gone"
+          android:background="?android:attr/selectableItemBackground"
+          />
  	 </LinearLayout>
 </net.woggle.CheckableLinearLayout>
