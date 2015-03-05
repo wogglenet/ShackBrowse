@@ -109,13 +109,23 @@ public class AppMenu extends ListFragment
                     if (!verified)
                         _adapter.add(new MenuItems(0, "Log In" , 2, R.drawable.ic_action_action_account_box));
                     else {
-                        _adapter.add(new MenuItems(0, getUsername(), 2, R.drawable.ic_action_action_account_box));
+                        _adapter.add(new MenuItems(0, getUsername(), 2, R.drawable.ic_action_action_account_box, null, new View.OnClickListener(){
+                            @Override
+                            public void onClick(View v) {
+                                ((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_STATS);
+                            }
+                        }, R.drawable.ic_action_action_assessment));
                     }
     	        	_adapter.add(new MenuItems(1, "Navigation" , 0, 0));
                     _adapter.add(new MenuItems(0, "Frontpage" , 11, R.drawable.ic_action_action_home));
     	        	_adapter.add(new MenuItems(0, "Latest Chatty" , 4, R.drawable.ic_action_communication_forum));
     	        	if (_prefs.getBoolean("noteEnabled", false))
-    	        		_adapter.add(new MenuItems(0, "Notifications" , 9, R.drawable.note_logo));
+    	        		_adapter.add(new MenuItems(0, "Notifications" , 9, R.drawable.note_logo, null, new View.OnClickListener(){
+                            @Override
+                            public void onClick(View v) {
+                                ((MainActivity)getActivity()).openPreferenceNotificationFragment(((MainActivity)getActivity())._currentFragmentType);
+                            }
+                        }, R.drawable.ic_action_action_settings));
     	        	_adapter.add(new MenuItems(0, "Favorites" , 8, R.drawable.ic_action_toggle_star));
     	        	_adapter.add(new MenuItems(0, "Shack Messages" , 5, R.drawable.ic_action_communication_email));
     	        	_adapter.add(new MenuItems(0, "Settings" , 7, R.drawable.ic_action_action_settings));
@@ -143,31 +153,35 @@ public class AppMenu extends ListFragment
     {
         if (((MainActivity)getActivity())._currentFragmentType == MainActivity.CONTENT_FRONTPAGE)
         {
-            mCheckedPosition = 2;
+            mCheckedPosition = _adapter.getPositionFromMID(11);
         }
         else if (((MainActivity)getActivity())._currentFragmentType == MainActivity.CONTENT_THREADLIST)
         {
-            mCheckedPosition = 3;
+            mCheckedPosition = _adapter.getPositionFromMID(4);
         }
         else if (((MainActivity)getActivity())._currentFragmentType == MainActivity.CONTENT_NOTIFICATIONS)
         {
-            mCheckedPosition = 4;
+            mCheckedPosition = _adapter.getPositionFromMID(9);
         }
         else if (((MainActivity)getActivity())._currentFragmentType == MainActivity.CONTENT_FAVORITES)
         {
-            mCheckedPosition = 5;
+            mCheckedPosition = _adapter.getPositionFromMID(8);
         }
         else if (((MainActivity)getActivity())._currentFragmentType == MainActivity.CONTENT_MESSAGES)
         {
-            mCheckedPosition = 6;
+            mCheckedPosition = _adapter.getPositionFromMID(5);
         }
         else if (((MainActivity)getActivity())._currentFragmentType == MainActivity.CONTENT_PREFS)
         {
-            mCheckedPosition = 7;
+            mCheckedPosition = _adapter.getPositionFromMID(7);
         }
         else if (((MainActivity)getActivity())._currentFragmentType == MainActivity.CONTENT_SEARCHVIEW)
         {
-            mCheckedPosition = 8;
+            mCheckedPosition = _adapter.getPositionFromMID(6);
+        }
+        else if (((MainActivity)getActivity())._currentFragmentType == MainActivity.CONTENT_STATS)
+        {
+            mCheckedPosition = _adapter.getPositionFromMID(2);
         }
     }
     public void trackM(String label)
@@ -279,6 +293,12 @@ public class AppMenu extends ListFragment
             trackM("openFrontpage");
             //mCheckedPosition = position;
         }
+        if (mid == 12)
+        {
+            ((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_STATS);
+            trackM("openStat");
+            //mCheckedPosition = position;
+        }
         updateMenuUi();
     	//l.setItemChecked(mCheckedPosition, true);
         ((MainActivity)getActivity()).closeMenu();
@@ -311,6 +331,16 @@ public class AppMenu extends ListFragment
         public int getItemViewType(int position) {
             return getItem(position).getType();
         }
+
+        public int getPositionFromMID(int MID)
+        {
+            for (int i = 0; i < _adapter.getCount(); i++)
+            {
+                if (_adapter.getItem(i).getId() == MID)
+                    return i;
+            }
+            return 0;
+        }
         
 
         @Override
@@ -339,6 +369,17 @@ public class AppMenu extends ListFragment
 	                holder = new ViewHolderMenuItem();
 	                holder.text = (TextView)vi.findViewById(R.id.menuItemText);
 	                holder.icon = (ImageView)vi.findViewById(R.id.menuItemIcon);
+                    holder.settings = (ImageView)vi.findViewById(R.id.menuItemSettings);
+
+                    if (m._settingsClick != null) {
+                        holder.settings.setOnClickListener(m._settingsClick);
+                        holder.settings.setVisibility(View.VISIBLE);
+                        holder.settings.setImageResource(m.getExtraImageDrawable());
+                    }
+                    else
+                    {
+                        holder.settings.setVisibility(View.GONE);
+                    }
 	                
 	                // zoom for preview.. needs to only be done ONCE, when holder is first created
 	                holder.text.setTextSize(TypedValue.COMPLEX_UNIT_PX, holder.text.getTextSize() * _zoom);
@@ -402,6 +443,7 @@ public class AppMenu extends ListFragment
         {
             public ImageView icon;
 			TextView text;
+            public ImageView settings;
         }
         private class ViewHolderMenuHeader
         {
@@ -415,14 +457,16 @@ public class AppMenu extends ListFragment
     
     public class MenuItems
     {
-    	private int _type;
+        private View.OnClickListener _settingsClick;
+        private int _type;
     	// 0 = normal menu item, 1 = header, 2 = searchitem
     	private String _text;
     	private int _id;
     	private int _imgSrc;
 		private PremadeSearch _premadesearch;
+        private int mExtraImageDrawable;
 
-		MenuItems(PremadeSearch pms)
+        MenuItems(PremadeSearch pms)
     	{
 			this (2, pms.getName(), 999, 0, pms);
     	}
@@ -432,13 +476,19 @@ public class AppMenu extends ListFragment
     	}
 		MenuItems(int type, String text, int id, int img, PremadeSearch pms)
     	{
-    		_text = text;
-    		_id = id;
-    		_imgSrc = img;
-    		_type = type;
-    		_premadesearch = pms;
+            this(type , text, id ,img, null, null, 0);
     	}
-		
+        MenuItems(int type, String text, int id, int img, PremadeSearch pms, View.OnClickListener settingsClick, int imageDrawable)
+        {
+            _settingsClick = settingsClick;
+            _text = text;
+            _id = id;
+            _imgSrc = img;
+            _type = type;
+            _premadesearch = pms;
+            mExtraImageDrawable = imageDrawable;
+        }
+
 		public String getText()
 		{
 			return _text;
@@ -459,6 +509,10 @@ public class AppMenu extends ListFragment
 		{
 			return _premadesearch;
 		}
+
+        public int getExtraImageDrawable() {
+            return mExtraImageDrawable;
+        }
     }
     
     /*

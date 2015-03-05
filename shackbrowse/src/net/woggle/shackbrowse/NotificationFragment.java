@@ -412,7 +412,8 @@ public class NotificationFragment extends ListFragment
             holder.content.setLinkTextColor(getResources().getColor(R.color.linkColor));
             // holder.content.setText(m.getPreview(_showShackTags, _stripNewLines));
             holder.content.setText(PostFormatter.formatContent(n.getAuthor(), n.getBody(), null, false, true));
-            
+
+            /*
             final double threadAge = TimeDisplay.threadAge(n.getTime());
             // threadage > 8760 == one year. optimization to prevent getyear from being run on every thread
         	if (threadAge > 8760f && !TimeDisplay.getYear(TimeDisplay.now()).equals(TimeDisplay.getYear(n.getTime())))
@@ -428,7 +429,8 @@ public class NotificationFragment extends ListFragment
 	            }
 	            else
 	            	holder.posted.setText(TimeDisplay.doubleThreadAgeToString(threadAge));
-        	}
+        	}*/
+            holder.posted.setText(TimeDisplay.getNiceTimeSince(n.getTime(), _showHoursSince));
           
             // special highlight for employee and mod names
             if (User.isEmployee(n.getAuthor()))

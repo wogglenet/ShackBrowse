@@ -10,7 +10,6 @@ import net.woggle.shackbrowse.legacy.LegacyFactory;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
@@ -30,7 +29,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBarActivity;
@@ -99,8 +97,7 @@ public class ComposePostView extends ActionBarActivity {
         // prefs
         _prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        mThemeResId = MainActivity.themeEvaluator(_prefs.getString("appTheme","0"));
-        setTheme(mThemeResId);
+        mThemeResId = MainActivity.themeApplicator(this);
         
         _forcePostPreview  = Integer.parseInt(_prefs.getString("forcePostPreview", "1"));
         

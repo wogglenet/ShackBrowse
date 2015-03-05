@@ -5,9 +5,7 @@ import java.util.List;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -34,7 +32,6 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 
 /**
@@ -65,8 +62,7 @@ public class DonateActivity extends ActionBarActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         _prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        mThemeResId = MainActivity.themeEvaluator(_prefs.getString("appTheme","0"));
-        setTheme(mThemeResId);
+        mThemeResId = MainActivity.themeApplicator(this);
         setContentView(R.layout.donate);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 

@@ -118,6 +118,7 @@ public class SlideFrame extends FrameLayout {
     private int mFlingDistance;
 
     private boolean mLastTouchAllowed = false;
+    private float mLastOXCP = -1f;
 
     public SlideFrame(Context context) {
         this(context, null);
@@ -179,13 +180,40 @@ public class SlideFrame extends FrameLayout {
         public void onClosed();
         
         public void onDrag();
-        
+
+        public void onXChange(float x);
     }
     
     float lastPercent = 0f;
     public void scrollToWrapper (int x, int y)
     {
     	scrollTo(x,y);
+
+        float granularity = 0.005f;
+
+        if ((mOnInteractListener != null) && (getWidth() > 0f)) {
+            float ratio = ((x * -1f) / getWidth());
+            ratio = Math.abs(ratio);
+            // System.out.println("XDATA" + (ratio - mLastOXCP) + " " + granularity + " " + mLastOXCP + " " + ratio + " " + x + " " + getWidth());
+            if (mLastOXCP == -1f)
+            {
+                mLastOXCP = ratio;
+                mOnInteractListener.onXChange(mLastOXCP);
+            }
+            else
+            {
+                if (Math.abs(ratio - mLastOXCP) > granularity)
+                {
+                    mLastOXCP = ratio;
+                    mOnInteractListener.onXChange(mLastOXCP);
+                }
+                if (ratio == 1f || ratio == 0f)
+                {
+                    mLastOXCP = ratio;
+                    mOnInteractListener.onXChange(mLastOXCP);
+                }
+            }
+        }
     	/*
     	System.out.println("XDATA" + x + " " + getScrollX() + " " + getWidth());
     	if (getWidth() > 0)

@@ -7,6 +7,7 @@ import net.woggle.shackbrowse.NotificationObj;
 import net.woggle.shackbrowse.NotificationsDB;
 import net.woggle.shackbrowse.PostFormatter;
 import net.woggle.shackbrowse.R;
+import net.woggle.shackbrowse.StatsFragment;
 import net.woggle.shackbrowse.TimeDisplay;
 
 import android.app.Notification;
@@ -115,6 +116,9 @@ public class NotifierReceiver extends BroadcastReceiver {
 				Editor editor = prefs.edit();
 				editor.putInt("GCMNoteCountReply", numNew);
 				editor.commit();
+
+                StatsFragment.statInc(context, "NotifiedReply", numNew);
+                StatsFragment.statInc(context, "Notifications", numNew);
 			}
 			else if (data.getString("type").equalsIgnoreCase("vanity"))
 			{
@@ -180,6 +184,9 @@ public class NotifierReceiver extends BroadcastReceiver {
 				Editor editor = prefs.edit();
 				editor.putInt("GCMNoteCountVanity", numNew);
 				editor.commit();
+
+                StatsFragment.statInc(context, "NotifiedVanity", numNew);
+                StatsFragment.statInc(context, "Notifications", numNew);
 			}
 			else if (data.getString("type").equalsIgnoreCase("keyword"))
 			{
@@ -244,6 +251,9 @@ public class NotifierReceiver extends BroadcastReceiver {
 				Editor editor = prefs.edit();
 				editor.putInt("GCMNoteCount" + data.getString("keyword").hashCode(), numNew);
 				editor.commit();
+
+                StatsFragment.statInc(context, "NotifiedKeyword", numNew);
+                StatsFragment.statInc(context, "Notifications", numNew);
 			}
 			else if (data.getString("type").equalsIgnoreCase("shackmsg"))
 			{
@@ -263,13 +273,13 @@ public class NotifierReceiver extends BroadcastReceiver {
 				
 				resultIntent.putExtra("notificationOpenMessages", true);
 				resultIntent.putExtra("notificationNLSID", Integer.parseInt(data.getString("nlsid")));
-	
+                int numNew = 0;
 				if (data.getString("username").equals("multiple"))
 				{
 					// multiple replies
 					mBuilder.setContentTitle("New shackmessages");
 					mBuilder.setContentText("Click to show a list");
-					int numNew = 0;
+
 					if (data.getString("username").equals("multiple"))
 					{
 						try {
@@ -303,6 +313,9 @@ public class NotifierReceiver extends BroadcastReceiver {
 				Editor editor = prefs.edit();
 				editor.putString("GCMShackMsgLastNotifiedId", data.getString("id"));
 				editor.commit();
+
+                StatsFragment.statInc(context, "NotifiedShackMessage", numNew);
+                StatsFragment.statInc(context, "Notifications", numNew);
 			}
 		}
    }

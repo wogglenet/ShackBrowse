@@ -672,14 +672,10 @@ public class OfflineThread
 		}
  	
  	}
- 	public String getCloudUsername()
+
+    public String getCloudUsername()
     {
-        String userName = ((MainActivity)_activity)._prefs.getString("userName", "");
-    	if ((userName.length() == 0) || !((MainActivity)_activity)._prefs.getBoolean("usernameVerified", false))
-        {
-	        return null;
-        }
-		return userName.trim();
+        return ((MainActivity)_activity).getCloudUsername();
     }
  	
  	Runnable cloudUpdater = new Runnable()

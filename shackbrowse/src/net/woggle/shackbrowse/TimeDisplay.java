@@ -65,4 +65,42 @@ public final class TimeDisplay {
 		// threadage is in hours
 		return (((int)(threadAge) > 0) ? Integer.toString((int)(threadAge)) + "h " : "") + (int)(60 * (threadAge - (long)(threadAge))) + "m ago";
 	}
+
+    public static String getNiceTimeSince(Long posted, boolean showHoursSince) {
+        String ret = "";
+        final double threadAge = TimeDisplay.threadAge(posted);
+        // set posted time
+        if (threadAge <= 24f && showHoursSince)
+        {
+            // this is actually the same as the final else below, but this is the most common result
+            ret = TimeDisplay.doubleThreadAgeToString(threadAge);
+        }
+        else {
+            // check if this post is so old its not even the same year
+            // threadage > 8760 == one year. optimization to prevent getyear from being run on every thread
+            if (threadAge > 8760f && !TimeDisplay.getYear(TimeDisplay.now()).equals(TimeDisplay.getYear(posted)))
+            {
+                // older than one year
+                ret = TimeDisplay.convTime(posted, "MMM dd, yyyy h:mma zzz");
+            }
+            else
+            {
+                if ((!showHoursSince) || (threadAge > 24f)) {
+                    if (TimeDisplay.threadAge(posted) > 96f) {
+                        // default readout for !showsince or > 96h, has month
+                        ret = TimeDisplay.convertTimeLong(posted);
+                    }
+                    else {
+                        // has only day of week
+                        ret = TimeDisplay.convertTime(posted);
+                    }
+                } else {
+                    // standard less than 24h with showtimesince... this will actually always be caught by the first if as an optimization
+                    ret = TimeDisplay.doubleThreadAgeToString(threadAge);
+                }
+            }
+        }
+        return ret;
+    }
+
 }

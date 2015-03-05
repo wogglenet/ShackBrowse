@@ -39,12 +39,14 @@ import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -143,6 +145,7 @@ public class MainActivity extends ActionBarActivity
     private boolean mActivityAvailable = false;
     private boolean mNotificationsPreferenceFragmentVisible = false;
     protected int mThemeResId = R.style.AppTheme;
+    private int mNotificationsPreferenceFragmentLastFragmentType;
 
     public PullToRefreshAttacher getRefresher()
 	{
@@ -157,9 +160,11 @@ public class MainActivity extends ActionBarActivity
 
         _prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
+        // sets theme
+        mThemeResId = MainActivity.themeApplicator(this);
 
-        mThemeResId = MainActivity.themeEvaluator(_prefs.getString("appTheme","0"));
-        setTheme(mThemeResId);
+        // app open stat
+        StatsFragment.statInc(this, "AppOpenedFresh");
 
 		// enforce overflow menu
 		try {
@@ -392,6 +397,7 @@ public class MainActivity extends ActionBarActivity
 					annoyBrowserZoomDialog();
 				}
 			});
+            StatsFragment.statInc(this, "AppUpgradedToNewVersion");
         }
         
         // set up donator icons
@@ -450,7 +456,12 @@ public class MainActivity extends ActionBarActivity
 					mFrame.setVisibility(View.VISIBLE);
 				_sresFrame.setVisibility(View.VISIBLE);
 			}
-			
+
+            public void onXChange(float x){
+                slideContentFrameBasedOnTView(x);
+
+            };
+
 		});
         _sresFrame.setOnInteractListener(new SlideFrame.OnInteractListener() {
 			
@@ -482,6 +493,8 @@ public class MainActivity extends ActionBarActivity
 			{
 				mFrame.setVisibility(View.VISIBLE);
 			}
+
+            public void onXChange(float x){};
 		});
         
         _sresFrame.setSlidingEnabled(true);
@@ -522,11 +535,28 @@ public class MainActivity extends ActionBarActivity
         }
 	}
 
-    public static int themeEvaluator(String appTheme) {
-        if (appTheme.equals("1"))
-            return R.style.AppThemeDark;
-        else
-            return R.style.AppTheme;
+    public static int themeApplicator(Activity context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String appTheme =  prefs.getString("appTheme", "0");
+        int themeId;
+        int statusBarColor;
+        if (appTheme.equals("1")) {
+            themeId = R.style.AppThemeDark;
+            statusBarColor = R.color.selected_postbg;
+        }
+        else {
+            themeId = R.style.AppTheme;
+            statusBarColor = R.color.SBvdark;
+        }
+
+        context.setTheme(themeId);
+
+        //We need to manually change statusbar color, otherwise, it remains green.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            context.getWindow().setStatusBarColor(Color.DKGRAY);
+        }
+
+        return themeId;
     }
 
     protected void setTitleContextually() {
@@ -625,7 +655,7 @@ public class MainActivity extends ActionBarActivity
                 else if (mNotificationsPreferenceFragmentVisible)
                 {
                     mNotificationsPreferenceFragmentVisible = false;
-                    setContentTo(CONTENT_PREFS);
+                    setContentTo(mNotificationsPreferenceFragmentLastFragmentType);
                 }
 	        	break;
 	        case R.id.menu_refreshThreads:
@@ -964,6 +994,7 @@ public class MainActivity extends ActionBarActivity
 	public static final int CONTENT_NOTIFICATIONS = 4;
     public static final int CONTENT_PREFS = 5;
     public static final int CONTENT_FRONTPAGE = 6;
+    public static final int CONTENT_STATS = 7;
 	
 	void setContentTo(int type)
 	{
@@ -1003,6 +1034,11 @@ public class MainActivity extends ActionBarActivity
         {
             mTitle = "Settings";
             fragment = (PreferenceFragment)Fragment.instantiate(getApplicationContext(), PreferenceView.class.getName(), new Bundle());
+        }
+        if (type == CONTENT_STATS)
+        {
+            mTitle = "Statistics";
+            fragment = (StatsFragment)Fragment.instantiate(getApplicationContext(), StatsFragment.class.getName(), new Bundle());
         }
         if (type == CONTENT_FRONTPAGE)
         {
@@ -1137,7 +1173,9 @@ public class MainActivity extends ActionBarActivity
 	{
 		
 		super.onResume();
-		
+
+        StatsFragment.statInc(this, "AppOpened");
+
 		mOffline.startCloudUpdates();
 		
 		// register to receive information from PQPService
@@ -1275,6 +1313,8 @@ public class MainActivity extends ActionBarActivity
 	public void openMessageView(int messageId, Message message)	{ openThreadView(0, Post.fromMessage(message), 0, null, false, messageId, message.getSubject(), false, false); }
 	public void openThreadView(int threadId, Post post, int selectPostIdAfterLoading, String json, boolean autoFaveOnLoad, int messageId, String messageSubject, boolean preserveBackStack, boolean doesntExpire)
 	{
+        StatsFragment.statInc(this, "ThreadOpened");
+
 		boolean expired = false;
 		long current = (System.currentTimeMillis() / 1000);
 		
@@ -1515,6 +1555,17 @@ public class MainActivity extends ActionBarActivity
 	}
 	public boolean getDualPane () { return _dualPane; }
 	public boolean getSliderOpen () { return _tviewFrame.isOpened(); }
+
+    private void slideContentFrameBasedOnTView(float x) {
+        FrameLayout contentframe = (FrameLayout)findViewById(R.id.content_frame);
+
+        // doesnt slide in dual pane
+        if (!getDualPane() && contentframe.getVisibility() == View.VISIBLE)
+        {
+           // System.out.println("X:" +x + " s" + (-1f - x) * 40f);
+           contentframe.setTranslationX((1f - x) * (-.2f * contentframe.getWidth()));
+        }
+    }
 	
 	public void setDualPane (boolean dualPane)
 	{
@@ -1598,6 +1649,8 @@ public class MainActivity extends ActionBarActivity
     			sres.setVisibility(View.VISIBLE);
     		}
 		}
+        contentframe.setTranslationX(0f);
+
 		_dualPane = dualPane;
 		_threadView.updateThreadViewUi();
 		
@@ -1811,7 +1864,7 @@ public class MainActivity extends ActionBarActivity
         else if (mNotificationsPreferenceFragmentVisible)
         {
             mNotificationsPreferenceFragmentVisible = false;
-            setContentTo(CONTENT_PREFS);
+            setContentTo(mNotificationsPreferenceFragmentLastFragmentType);
         }
 		else if (_currentFragmentType != CONTENT_THREADLIST)
 		{
@@ -2729,6 +2782,16 @@ public class MainActivity extends ActionBarActivity
         alert.show();
 		
 	}
+
+    public String getCloudUsername()
+    {
+        String userName = _prefs.getString("userName", "");
+        if ((userName.length() == 0) || !_prefs.getBoolean("usernameVerified", false))
+        {
+            return null;
+        }
+        return userName.trim();
+    }
 	
 	public void showOnlyProgressBarFromPTRLibrary(boolean showOnlyProgressBarWithoutHeader)
 	{
@@ -2837,7 +2900,7 @@ public class MainActivity extends ActionBarActivity
 		return false;
 	}
 
-	public void openBrowser(String... hrefs) { openBrowser(false, hrefs); }
+	public void openBrowser(String... hrefs) { StatsFragment.statInc(this, "PopUpBrowserOpened"); openBrowser(false, hrefs); }
 	public void openBrowserZoomAdjust() { openBrowser(true, (String[])null); }
 	private void openBrowser(boolean showZoomSetup, String... hrefs) {
 		FragmentManager fm = getFragmentManager();
@@ -3027,6 +3090,7 @@ public class MainActivity extends ActionBarActivity
 	{
 		if ((!_prefs.contains("browserImageZoom5")) && (!_prefs.getBoolean("neverShowAutoZoomAnnoy", false)))
 		{
+            StatsFragment.statInc(this, "AnnoyedByStartupZoomDialog");
             MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(this);
 		    builder.setTitle("Set up Autozoom");
 		    LayoutInflater annoyInflater = LayoutInflater.from(this);
@@ -3141,6 +3205,7 @@ public class MainActivity extends ActionBarActivity
 
     public void openInArticleViewer(String href)
     {
+        StatsFragment.statInc(this, "ArticleOpened");
         if (_currentFragmentType != CONTENT_FRONTPAGE) {
             mArticleViewerIsOpen = true;
             _fpBrowser.mSplashSuppress = true;
@@ -3258,8 +3323,10 @@ public class MainActivity extends ActionBarActivity
         return mSplashOpen;
     }
 
-    public void openPreferenceNotificationFragment()
+    public void openPreferenceNotificationFragment(int fragmentParentSetContentToType)
     {
+        mNotificationsPreferenceFragmentLastFragmentType = fragmentParentSetContentToType;
+        cleanUpViewer();
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, new PreferenceFragmentNotifications())
@@ -3270,5 +3337,29 @@ public class MainActivity extends ActionBarActivity
         mNotificationsPreferenceFragmentVisible = true;
         setTitleContextually();
     }
+
+    public void cleanUpViewer ()
+    {
+        if (isMenuOpen())
+        {
+            closeMenu();
+        }
+        else if (mPopupBrowserOpen)
+        {
+                closeBrowser();
+        }
+        else if (getSliderOpen() && !getDualPane())
+        {
+            _tviewFrame.closeLayer(true);
+        }
+        else if (_sresFrame.isOpened())
+        {
+            _sresFrame.closeLayer(true);
+        }
+        else if ((_currentFragmentType == CONTENT_FRONTPAGE) && (_fpBrowser != null) && (isArticleOpen())) {
+            closeArticleViewer();
+        }
+    }
+
 
 }

@@ -1666,6 +1666,8 @@ public class ThreadViewFragment extends ListFragment
                 	holder.rowtype.refreshDrawableState(); // needed because setmodtagsfalse does not do this
                 }
 
+                holder.postedtime.setText(TimeDisplay.getNiceTimeSince(p.getPosted(), _showHoursSince));
+                /*
             	final double threadAge = TimeDisplay.threadAge(p.getPosted());
             	// set posted time
                 if (threadAge <= 24f && _showHoursSince)
@@ -1698,6 +1700,7 @@ public class ThreadViewFragment extends ListFragment
                         }
                     }
                 }
+                */
 
             	// 5L is used by the postqueue system to indicate the post hasnt been posted yet
             	if (p.getPosted() == 5L)

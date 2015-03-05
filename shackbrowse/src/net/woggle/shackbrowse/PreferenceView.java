@@ -326,7 +326,7 @@ public class PreferenceView extends PreferenceFragment
 
 			@Override
 			public boolean onPreferenceClick(Preference preference) {
-                ((MainActivity)getActivity()).openPreferenceNotificationFragment();
+                ((MainActivity)getActivity()).openPreferenceNotificationFragment(MainActivity.CONTENT_PREFS);
                 /*
 	        	_progressDialog = MaterialProgressDialog.show(getActivity(), "Checking Notification Status", "Communicating with Shack Browse server...", true, true);
 	        	_GCMAccess = new NetworkNotificationServers(getActivity(), GCMlistener);

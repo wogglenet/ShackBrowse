@@ -36,6 +36,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.MaterialDialogCompat;
 
 public class PreferenceFragmentNotifications extends PreferenceFragment
 {
@@ -335,7 +336,7 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
     ArrayList<String> mNoteKeywords = new ArrayList<String>();
     public void addKeyword()
     {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(getActivity());
         builder.setTitle("Add Keyword Notification");
         // Set up the input
         final LinearLayout lay = new LinearLayout(getActivity());
@@ -370,7 +371,7 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
     }
     public void removeKeyword(final String keyword)
     {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(getActivity());
         builder.setTitle("Remove Notification Keyword");
 
         builder.setMessage("Stop notifications for " + keyword + "?");
@@ -394,7 +395,7 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
     }
     public void showKeywords()
     {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(getActivity());
         builder.setTitle("Keyword Notifications");
         final CharSequence[] items = mNoteKeywords.toArray(new CharSequence[mNoteKeywords.size()]);
         builder.setItems(items, new DialogInterface.OnClickListener() {

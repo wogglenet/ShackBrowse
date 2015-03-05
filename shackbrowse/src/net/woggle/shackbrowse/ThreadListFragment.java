@@ -1602,7 +1602,9 @@ public class ThreadListFragment extends ListFragment
             {
                 holder.posted.setTextColor(getResources().getColor(R.color.threadLifeGood));
             }
-            
+
+            holder.posted.setText(TimeDisplay.getNiceTimeSince(t.getPosted(), _showHoursSince));
+            /*
             // threadage > 8760 == one year. optimization to prevent getyear from being run on every thread
             if (threadAge > 8760f && !TimeDisplay.getYear(TimeDisplay.now()).equals(TimeDisplay.getYear(t.getPosted())))
         		holder.posted.setText(TimeDisplay.convTime(t.getPosted(), "MMM dd, yyyy h:mma zzz"));
@@ -1618,6 +1620,7 @@ public class ThreadListFragment extends ListFragment
 	            else
 	            	holder.posted.setText(TimeDisplay.doubleThreadAgeToString(threadAge));
         	}
+        	*/
             
             // reply count formatting
             holder.replyCount.setText(formatReplyCount(t));
