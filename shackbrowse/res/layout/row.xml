@@ -47,7 +47,6 @@
 		         android:layout_height="wrap_content"
 		         android:textColor="@color/userName"
 		         android:textSize="@dimen/userNameSize"
-		         android:textStyle="bold"
 		         android:fontFamily="sans-serif-light"
 		         android:paddingLeft="4dip"
 		     />

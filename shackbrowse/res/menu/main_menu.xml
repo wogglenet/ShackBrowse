@@ -208,4 +208,11 @@
         android:icon="@drawable/ic_action_navigation_refresh"
         android:title="@string/notesrefresh"
         android:orderInCategory="105" />
+<!-- STATS OPTIONS -->
+    <item android:id="@+id/menu_statsTrash"
+        app:showAsAction="always"
+        android:visible="false"
+        android:icon="@drawable/ic_action_action_delete"
+        android:title="@string/statsdel"
+        android:orderInCategory="30" />
 </menu>

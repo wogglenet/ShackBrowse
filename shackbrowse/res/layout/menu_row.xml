@@ -13,17 +13,17 @@
   android:layout_width="fill_parent"
   android:layout_height="wrap_content"
   android:orientation="horizontal"
-  android:paddingTop="9dip"
-  android:paddingBottom="9dip"
   >
   		<ImageView
-            android:layout_width="25dp"
+            android:layout_width="43dp"
             android:layout_weight="0"
-            android:layout_height="25dp"
+            android:layout_height="43dp"
             android:scaleType="centerInside"
             android:id="@+id/menuItemIcon"
             android:layout_gravity="top"
             android:layout_marginLeft="3dp"
+            android:paddingTop="9dip"
+            android:paddingBottom="9dip"
             />
 	     <TextView
 	         android:id="@+id/menuItemText"
@@ -36,19 +36,24 @@
 	         android:textSize="@dimen/menuItemTextSize"
 	         android:layout_gravity="center_vertical"
 	         android:paddingLeft="8dip"
+             android:paddingTop="9dip"
+             android:paddingBottom="9dip"
 	     />
         <ImageView
-          android:layout_width="25dp"
-          android:layout_height="25dp"
-            android:layout_weight="0"
+          android:layout_width="53dp"
+          android:layout_height="43dp"
+          android:layout_weight="0"
           android:scaleType="centerInside"
           android:id="@+id/menuItemSettings"
           android:layout_gravity="top"
           android:gravity="end"
-          android:layout_marginRight="10dp"
+          android:layout_marginRight="0dp"
           android:src="@drawable/ic_action_action_settings"
           android:visibility="gone"
           android:background="?android:attr/selectableItemBackground"
+            android:paddingTop="9dip"
+            android:paddingBottom="9dip"
+            android:paddingRight="10dip"
           />
  	 </LinearLayout>
 </net.woggle.CheckableLinearLayout>

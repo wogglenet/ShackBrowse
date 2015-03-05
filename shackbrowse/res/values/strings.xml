@@ -24,6 +24,8 @@
     
     <string name="notesrefresh">Refresh Notification List</string>
     <string name="notesdel">Clear List</string>
+
+    <string name="statsdel">Clear Cloud Stats</string>
     
     <string name="msgSent">View Sent Messages</string>
     <string name="msgInbox">View Message Inbox</string>
@@ -254,17 +256,115 @@
     <string name="preference_theme">App Colors</string>
     <string name="preference_theme_summary">Change the colors of the app</string>
 
-
-    <string name="statItemAnnoyedByStartupZoomDialog">Annoyed By Startup Zoom Dialog</string>
-    <string name="statItemAppOpenedFresh">App Opened Fresh</string>
-    <string name="statItemAppUpgradedToNewVersion">App Upgraded To New Version</string>
-    <string name="statItemAppOpened">App Opened</string>
-    <string name="statItemPopUpBrowserOpened">PopUp Browser Opened</string>
-    <string name="statItemArticleOpened">Article Opened</string>
-    <string name="statItemThreadOpened">Thread Opened</string>
-    <string name="statItemNotifiedReply">Notified Reply</string>
-    <string name="statItemNotifications">Notifications</string>
-    <string name="statItemNotifiedShackMessage">Notified Shack Message</string>
-    <string name="statItemNotifiedKeyword">Notified Keyword</string>
-    <string name="statItemNotifiedVanity">Notified Vanity</string>
+    <!-- The following is a retarded workaround to what I want and makes me hate android -->
+    <string name="statsItemAnnoyedByStartupZoomDialog">Times Annoyed By Startup Zoom Dialog</string>
+    <string name="statsItemAppOpenedFresh">Opened from launcher</string>
+    <string name="statsItemAppUpgradedToNewVersion">App upgraded to new version</string>
+    <string name="statsItemAppOpened">Resumed using app</string>
+    <string name="statsItemPopUpBrowserOpened">PopUp browser opened</string>
+    <string name="statsItemArticleOpened">Articles opened</string>
+    <string name="statsItemThreadOpened">Threads opened</string>
+    <string name="statsItemNotifiedReply">Notifications: Reply</string>
+    <string name="statsItemNotifications">Notifications: All</string>
+    <string name="statsItemNotifiedShackMessage">Notifications: Shack Message</string>
+    <string name="statsItemNotifiedKeyword">Notifications: Keyword</string>
+    <string name="statsItemNotifiedVanity">Notifications: Vanity</string>
+    <string name="statsItemFirstStatRecord">First recorded statistic</string>
+    <string name="statsItemTimesViewedStats">Statistics area opened</string>
+    <string name="statsItemMaxNumberOfStatsRecorded">Statistics types currently recorded</string>
+    <string name="statsItemMaximumItemsInQueue">Maximum number of items ever in post queue at once</string>
+    <string name="statsItemTimesPRLed">Hit the PRL</string>
+    <string name="statsItemCheckedPostPreview">Checked post preview before posting</string>
+    <string name="statsItemDraftsSaved">Drafts saved in post composer</string>
+    <string name="statsItemBackedOutOfPost">Backed out of post composer after typing a post</string>
+    <string name="statsItemBackedOutOfRootPost">Backed out of posting a new thread</string>
+    <string name="statsItemBackedOutOfMessageReply">Backed out of sending a shack message</string>
+    <string name="statsItemAppliedShackTag">Applied a markup shack tag</string>
+    <string name="statsItemPostedThread">Threads posted</string>
+    <string name="statsItemPostedReply">Replies posted</string>
+    <string name="statsItemPostedToNukedThread">Attempted replies to nuked posts</string>
+    <string name="statsItemSentShackMessage">Shackmessages sent</string>
+    <string name="statsItemLessThanSixChars">Posts made less than six characters</string>
+    <string name="statsItemImagesToChattyPics">Images uploaded to chattypics</string>
+    <string name="statsItemClickedOnLoadingSplashScreen">Times clicked on tagline in splash screen</string>
+    <string name="statsItemClickedLink">Links clicked</string>
+    <string name="statsItemFavoritedAThread">Threads favorited</string>
+    <string name="statsItemRefreshedThreadList">Refreshed thread list</string>
+    <string name="statsItemSearchedForPosts">Searches for a post</string>
+    <string name="statsItemSearchedForLOLs">Searches for LOLs</string>
+    <string name="statsItemLookedAtDrafts">Actually looked at list of drafted posts</string>
+    <string name="statsItemUsedStandaloneChattyPicsUploader">Used standalone chattypics uploader</string>
+    <string name="statsItemSpoilersClicked">Spoilers spoiled</string>
+    <string name="statsItemPostCollapsed">Threads collapsed</string>
+    <string name="statsItemPostUndoCollapsed">Accidental collapses</string>
+    <string name="statsItemCollapsedDueToUsernameFilter">Threads auto-collapsed by username</string>
+    <string name="statsItemCollapsedDueToKeywordFilter">Threads auto-collapsed by keyword</string>
+    <string name="statsItemCheckedLOLTaggers">Times curious who lolled a post</string>
+    <string name="statsItemRefreshedPosts">Refreshed a thread</string>
+    <string name="statsItemGaveALOLTag">Gave a LOLTag</string>
+    <string name="statsItemGaveALOLTaglol">LOLTag: LOL\'d</string>
+    <string name="statsItemGaveALOLTagtag">LOLTag: TAG\'d</string>
+    <string name="statsItemGaveALOLTagugh">LOLTag: UGH\'d</string>
+    <string name="statsItemGaveALOLTagwtf">LOLTag: WTF\'d</string>
+    <string name="statsItemGaveALOLTaginf">LOLTag: INF\'d</string>
+    <string name="statsItemGaveALOLTagunf">LOLTag: UNF\'d</string>
+    <string name="statsItemOpenedPost">Posts Opened</string>
+    <string name="statsItemMaxThreadSize">Largest number of posts seen in single thread</string>
+    <string name="statsItemTimeInApp">Time spent in main app</string>
+    <string name="statsItemTimeInComposer">Time spent in composer</string>
+    <!-- items in  the array will show up even when not yet registered -->
+    <string-array name="statsItems">
+        <item>statsItemAnnoyedByStartupZoomDialog</item>
+        <item>statsItemAppOpenedFresh</item>
+        <item>statsItemAppUpgradedToNewVersion</item>
+        <item>statsItemAppOpened</item>
+        <item>statsItemPopUpBrowserOpened</item>
+        <item>statsItemArticleOpened</item>
+        <item>statsItemThreadOpened</item>
+        <item>statsItemNotifiedReply</item>
+        <item>statsItemNotifications</item>
+        <item>statsItemNotifiedShackMessage</item>
+        <item>statsItemNotifiedKeyword</item>
+        <item>statsItemNotifiedVanity</item>
+        <item>statsItemTimesPRLed</item>
+        <item>statsItemMaximumItemsInQueue</item>
+        <item>statsItemCheckedPostPreview</item>
+        <item>statsItemDraftsSaved</item>
+        <item>statsItemBackedOutOfPost</item>
+        <item>statsItemBackedOutOfRootPost</item>
+        <item>statsItemBackedOutOfMessageReply</item>
+        <item>statsItemAppliedShackTag</item>
+        <item>statsItemPostedThread</item>
+        <item>statsItemPostedReply</item>
+        <item>statsItemPostedToNukedThread</item>
+        <item>statsItemSentShackMessage</item>
+        <item>statsItemLessThanSixChars</item>
+        <item>statsItemImagesToChattyPics</item>
+        <item>statsItemClickedOnLoadingSplashScreen</item>
+        <item>statsItemClickedLink</item>
+        <item>statsItemFavoritedAThread</item>
+        <item>statsItemRefreshedThreadList</item>
+        <item>statsItemSearchedForPosts</item>
+        <item>statsItemSearchedForLOLs</item>
+        <item>statsItemLookedAtDrafts</item>
+        <item>statsItemUsedStandaloneChattyPicsUploader</item>
+        <item>statsItemSpoilersClicked</item>
+        <item>statsItemPostCollapsed</item>
+        <item>statsItemPostUndoCollapsed</item>
+        <item>statsItemCollapsedDueToUsernameFilter</item>
+        <item>statsItemCollapsedDueToKeywordFilter</item>
+        <item>statsItemCheckedLOLTaggers</item>
+        <item>statsItemRefreshedPosts</item>
+        <item>statsItemGaveALOLTag</item>
+        <item>statsItemGaveALOLTaglol</item>
+        <item>statsItemGaveALOLTagtag</item>
+        <item>statsItemGaveALOLTagugh</item>
+        <item>statsItemGaveALOLTagwtf</item>
+        <item>statsItemGaveALOLTaginf</item>
+        <item>statsItemGaveALOLTagunf</item>
+        <item>statsItemOpenedPost</item>
+        <item>statsItemMaxThreadSize</item>
+        <item>statsItemTimeInApp</item>
+        <item>statsItemTimeInComposer</item>
+    </string-array>
 </resources>

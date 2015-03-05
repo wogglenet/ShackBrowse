@@ -30,15 +30,17 @@ TODO
 * THEMES
 -->
 
-$ 5.0.3
-% v 5.0.3
+$ 5.1.0
+% v 5.1.0
 _ Feb 21, 2015
-* More material dialogs
+* User stats, synced to the cloud
 * Notification settings easier to get to
+* More material dialogs
 * Easter egg
 * the man with the briefcase gets a briefcase icon
+* Click taglines for new taglines
 * Slidey animation
-* User stats
+* Now injecting mobile-friendly CSS into frontpage viewer for faster loading
 * Bug Fix: highlighted app menu section when notifications disabled
 
 $ 5.0.2
