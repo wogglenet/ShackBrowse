@@ -678,7 +678,7 @@ public class AppMenu extends ListFragment
 		    	
 		    	for (int i = 0; i < savedSearches.length(); i++)
 		    	{
-		    		_adapter.insert(new MenuItems(new PremadeSearch("Saved Search: " + savedSearches.getJSONObject(i).getString("name"), savedSearches.getJSONObject(i).getInt("typeIsLol"), SearchViewFragment.deserializeBundle(savedSearches.getJSONObject(i).getString("args")), false)), (_prefs.getBoolean("noteEnabled", false)) ? 8 : 7);
+		    		_adapter.insert(new MenuItems(new PremadeSearch("Saved Search: " + savedSearches.getJSONObject(i).getString("name"), savedSearches.getJSONObject(i).getInt("typeIsLol"), SearchViewFragment.deserializeBundle(savedSearches.getJSONObject(i).getString("args")), false)), (_prefs.getBoolean("noteEnabled", false)) ? 10 : 9);
 		    	}
 	        }
 	        catch (JSONException e)

@@ -41,6 +41,7 @@ _ Mar 3, 2015
 * Now injecting mobile-friendly CSS into frontpage viewer for faster loading
 * Bug Fix: highlighted app menu section when notifications disabled
 * Bug Fix: Statusbar color on lollipop
+* Bug Fix: Saved searches location on app menu
 
 $ 5.0.2
 % v 5.0.2
