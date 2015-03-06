@@ -26,14 +26,12 @@ TODO
 * UPLOAD PHOTOS TO DROPBOX?
 * QUOTES FROM TEXT SELECTION
 * SEARCH GOOGLE BY TEXT SELECTION
-* STATS ON CLICKIN THINGS
-* THEMES
 -->
 
 $ 5.1.0
 % v 5.1.0
-_ Feb 21, 2015
-* User stats, synced to the cloud
+_ Mar 3, 2015
+* User stats, synced to the cloud between all devices
 * Notification settings easier to get to
 * More material dialogs
 * Easter egg
@@ -42,6 +40,7 @@ _ Feb 21, 2015
 * Slidey animation
 * Now injecting mobile-friendly CSS into frontpage viewer for faster loading
 * Bug Fix: highlighted app menu section when notifications disabled
+* Bug Fix: Statusbar color on lollipop
 
 $ 5.0.2
 % v 5.0.2
