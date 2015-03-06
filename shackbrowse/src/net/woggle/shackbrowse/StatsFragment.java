@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.MaterialDialogCompat;
 
 import org.apache.http.client.ClientProtocolException;
@@ -40,6 +41,7 @@ public class StatsFragment extends ListFragment {
     private ArrayList<StatsItem> mItems; // ListView items list
     protected long mFirstTime = TimeDisplay.now();
     private Activity mContext;
+    private String mCloudUserName;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,7 +65,7 @@ public class StatsFragment extends ListFragment {
                 setContext(getActivity());
                 new CloudStats().execute("");
             }
-        }, 200);
+        }, 100);
 
     }
 
@@ -71,7 +73,7 @@ public class StatsFragment extends ListFragment {
     {
         MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(getActivity());
         builder.setTitle("Delete Stats?");
-        builder.setMessage("This will clear cloud stats both on this device and on the server. Are you SURE?");
+        builder.setMessage("This will clear stats both on this device and in the cloud for your username. Are you SURE?");
         builder.setCancelable(false);
         builder.setPositiveButton("Clear Stats Everywhere", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -86,6 +88,54 @@ public class StatsFragment extends ListFragment {
         });
         builder.create().show();
 
+    }
+
+    public void optOutDialog()
+    {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        new MaterialDialog.Builder(getActivity())
+                .title("Select Opt Out Option")
+                .items(R.array.preference_optoutstats)
+                .itemsCallbackSingleChoice(prefs.getInt("optOutFromStats", 0), new MaterialDialog.ListCallback() {
+                    @Override
+                    public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+                        SharedPreferences.Editor edit = prefs.edit();
+                        edit.putInt("optOutFromStats", which);
+                        edit.commit();
+                        mCloudUserName = ((MainActivity)getActivity()).getCloudUsername();
+
+                        // paranoids get a wipe of local
+                        if (which == 2)
+                            new CloudStats().execute("wipe");
+                        else
+                            new CloudStats().execute("");
+
+                        if ((which > 0) && (mCloudUserName != null)) {
+                            new MaterialDialog.Builder(getActivity())
+                                    .title("Nullify Cloud Data")
+                                    .content("You can choose at this time to remove all cloud data for user " + mCloudUserName + ". This cannot be undone. Would you like to delete cloud stats?")
+                                    .negativeText("No, do not delete")
+                                    .positiveText("Delete all cloud stat data for " +mCloudUserName)
+                                    .callback(new MaterialDialog.ButtonCallback() {
+                                        @Override
+                                        public void onPositive(MaterialDialog dialog) {
+                                            super.onPositive(dialog);
+                                            nullifyRemoteStats(getActivity());
+                                        }
+                                    })
+                                    .show();
+                        }
+                    }
+                })
+                .positiveText("Confirm")
+                .show();
+    }
+
+    public void nullifyRemoteStats(Activity context)
+    {
+        setContext(context);
+        new CloudStats().execute("remotestatremove");
     }
 
     public void blindStatSync(Activity context)
@@ -157,9 +207,9 @@ public class StatsFragment extends ListFragment {
         public void setLastTime(long time) {
             this.lastTime = time;
         }
-        public StatsItem(String title, int num, long time, long lastTime){
-            this.title = title;
-            this.fancyTitle = title.substring(9);
+        public StatsItem(String titleWithoutUsernameButIncludingStatsItemPrefix, int num, long time, long lastTime){
+            this.title = titleWithoutUsernameButIncludingStatsItemPrefix;
+            this.fancyTitle = titleWithoutUsernameButIncludingStatsItemPrefix.substring(9);
             this.num = num;
             this.time = time;
             this.lastTime = lastTime;
@@ -174,7 +224,11 @@ public class StatsFragment extends ListFragment {
         }
         public StatsItem calcDesc()
         {
-            if (this.time == 0L && this.title != "statsItemFirstStatRecord")
+            if (this.title == "notTurnedOn")
+            {
+                this.desc = "Statistics are turned off";
+            }
+            else if (this.time == 0L && this.title != "statsItemFirstStatRecord")
             {
                 this.desc = "Not yet logged";
             }
@@ -184,17 +238,19 @@ public class StatsFragment extends ListFragment {
             }
             else if (this.title.contains("Max"))
             {
-                this.desc = "Maxed at " + this.getNum();
+                this.desc = this.getNum() + "";
             }
             else if (this.title.contains("TimeIn"))
             {
-                this.desc = TimeDisplay.secondsToNiceTime(this.getNum()) + " since " + TimeDisplay.getNiceTimeSince(time, true);
+                double daysSince = TimeDisplay.threadAge(this.getTime());
+                daysSince = Math.ceil(daysSince);
+                int perDay = (int)(this.getNum() / daysSince);
+                this.desc = TimeDisplay.secondsToNiceTime(this.getNum()) + ", " + TimeDisplay.secondsToNiceTime(perDay) + "/day, since " + TimeDisplay.getNiceTimeSince(time, true);
             }
             else {
-                double hoursSince = TimeDisplay.threadAge(mFirstTime);
-                if (hoursSince < 24f)
-                    hoursSince = 24f; // prevents ridiculously high perDay on recently logged items
-                double perDay = this.getNum() / (hoursSince / 24f);
+                double daysSince = TimeDisplay.threadAge(this.getTime());
+                daysSince = Math.ceil(daysSince);
+                double perDay = this.getNum() / daysSince;
                 BigDecimal perDayF = new BigDecimal(String.valueOf(perDay)).setScale(1, BigDecimal.ROUND_HALF_UP);
                 this.desc = num + " total, " + perDayF.toString() + "/day last updated " + TimeDisplay.getNiceTimeSince(lastTime, true);
             }
@@ -265,144 +321,233 @@ public class StatsFragment extends ListFragment {
         protected ArrayList<StatsItem> doInBackground(String... params) {
             JSONObject cloudJson;
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-            ArrayList<StatsItem> statList = new ArrayList<StatsItem>();
+            int localOnly = prefs.getInt("optOutFromStats", 0);
+            ArrayList<StatsItem> remoteStatList = new ArrayList<StatsItem>();
             JSONArray stats = new JSONArray();
-            try {
-                cloudJson = ShackApi.getCloudPinned(((MainActivity)mContext).getCloudUsername());
+            mCloudUserName = ((MainActivity)mContext).getCloudUsername();
+            if (mCloudUserName == null || mCloudUserName.equals(""))
+                return null;
 
-                stats = cloudJson.optJSONArray("stats");
-                if (stats == null)
-                    stats = new JSONArray();
-
-                // move jsonarray to arraylist
-
-                // create a crap upload and do not retain data from download
-                if (params[0].equalsIgnoreCase("blind"))
-                {
-                    mBlind = true;
+            if (params[0].equalsIgnoreCase("remotestatremove"))
+            {
+                try {
+                    cloudJson = ShackApi.getCloudPinned(mCloudUserName);
+                    cloudJson.remove("stats");
+                    String result = ShackApi.putCloudPinned(cloudJson, mCloudUserName);
                 }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+            if (localOnly == 2)
+            {
                 if (params[0].equalsIgnoreCase("wipe"))
                 {
-                    // clear local prefs
-                    SharedPreferences.Editor edit = prefs.edit();
-                    Map<String, ?> keys = prefs.getAll();
-                    for (Map.Entry<String, ?> entry : keys.entrySet()) {
-                        if (entry.getKey().startsWith("stats")) {
-                            edit.remove(entry.getKey());
-                        }
-                    }
-                    edit.commit();
-                    // add one back
-                    statInc(mContext, "TimesViewedStats");
-                    // so that its not totally empty..
-                    statList.add(new StatsItem("statsItemTimesViewedStats", 1, TimeDisplay.now(), TimeDisplay.now()));
+                    clearLocalPrefs(prefs);
                     mFirstTime = TimeDisplay.now();
                 }
-                // load data from download into statlist, sync local data
-                else {
-                    for (int i = 0; i < stats.length(); i++) {
+                remoteStatList.add(new StatsItem("notTurnedOn", 0, 0L, 0L).calcDesc());
+                // calcdesc will tell them everything is off
+
+            }
+            // local only
+            else if (localOnly == 1)
+            {
+                if (params[0].equalsIgnoreCase("blind"))
+                {
+                    // nothing to do
+                }
+                else if (params[0].equalsIgnoreCase("wipe"))
+                {
+                    clearLocalPrefs(prefs);
+                    mFirstTime = TimeDisplay.now();
+                }
+
+                loadLocalStatsIntoRemoteStatList(prefs, remoteStatList);
+                // set up first time variable
+                for (int i = 0; i < remoteStatList.size(); i++) {
+                    if (remoteStatList.get(i).getTime() < mFirstTime) {
+                        mFirstTime = remoteStatList.get(i).getTime();
+                    }
+                }
+            }
+            else if (localOnly == 0) {
+                try {
+                    cloudJson = ShackApi.getCloudPinned(mCloudUserName);
+
+                    stats = cloudJson.optJSONArray("stats");
+                    if (stats == null)
+                        stats = new JSONArray();
+
+                    // move jsonarray to arraylist
+
+                    // create a crap upload and do not retain data from download
+                    if (params[0].equalsIgnoreCase("blind")) {
+                        mBlind = true;
+                    }
+                    if (params[0].equalsIgnoreCase("wipe")) {
+                        clearLocalPrefs(prefs);
+
+                        // so that its not totally empty..
+                        remoteStatList.add(new StatsItem("statsItemTimesViewedStats", 1, TimeDisplay.now(), TimeDisplay.now()));
+                        mFirstTime = TimeDisplay.now();
+                    }
+                    // load data from download into statlist, sync local data
+                    else {
+                        for (int i = 0; i < stats.length(); i++) {
+                            try {
+                                JSONObject stat = stats.getJSONObject(i);
+                                remoteStatList.add(new StatsItem(stat.getString("title"), stat.getInt("num"), stat.getLong("time"), stat.getLong("lastTime")));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+                        // preferences should be
+                        // statsItemCheckedBlah = 1
+                        // statsTimeCheckedBlah = Timedisplay.now() or first-most time
+                        // statsLastTimeCheckedBlah = Timedisplay.now() or last-most time
+
+                        // cycle through local data and sync with cloud data
+
+                        Map<String, ?> keys = prefs.getAll();
+                        for (Map.Entry<String, ?> entry : keys.entrySet()) {
+                            // local prefs use item.getTitle() + cloudName as pref key
+                            if (entry.getKey().startsWith("statsItem") && entry.getKey().endsWith(mCloudUserName)) {
+                                System.out.println("FDOUND STATS ITEM: " + entry.getKey().substring(9));
+                                String itemRootNameWithUsername = entry.getKey().substring(9);
+                                if (prefs.contains(entry.getKey()) && (prefs.getInt(entry.getKey(), 0) != 0)) {
+                                    // entry exists and current number is not 0
+                                    // substring 9 gives us the name of the item, without the "statsItem" prefix
+                                    addOrUpdateStatItem(entry.getKey(), prefs.getInt(entry.getKey(), 0), prefs.getLong("statsTime" + itemRootNameWithUsername, 0L), prefs.getLong("statsLastTime" + itemRootNameWithUsername, 0L), remoteStatList);
+                                }
+                            }
+                        }
+                    }
+
+                    // move arraylist to jsonarray
+                    // also use this loop to determine earliest initialized stat mFirstTime
+                    JSONArray uploadList = new JSONArray();
+                    for (int i = 0; i < remoteStatList.size(); i++) {
+                        if (remoteStatList.get(i).getTime() < mFirstTime) {
+                            System.out.println("Setting FirstTime based on " + remoteStatList.get(i).getTitle());
+                            mFirstTime = remoteStatList.get(i).getTime();
+                        }
                         try {
-                            JSONObject stat = stats.getJSONObject(i);
-                            statList.add(new StatsItem(stat.getString("title"), stat.getInt("num"), stat.getLong("time"), stat.getLong("lastTime")));
+                            JSONObject stat = new JSONObject();
+                            stat.put("title", remoteStatList.get(i).getTitle());
+                            stat.put("num", remoteStatList.get(i).getNum());
+                            stat.put("time", remoteStatList.get(i).getTime());
+                            stat.put("lastTime", remoteStatList.get(i).getLastTime());
+                            uploadList.put(stat);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
 
+                    cloudJson.remove("stats");
+                    cloudJson.put("stats", uploadList);
 
-                    // preferences should be
-                    // statsItemCheckedBlah = 1
-                    // statsTimeCheckedBlah = Timedisplay.now() or first-most time
-                    // statsLastTimeCheckedBlah = Timedisplay.now() or last-most time
+                    // rebuild watched jsonarray from thread keys
+                    String result = ShackApi.putCloudPinned(cloudJson, mCloudUserName);
+                    if ((_verbose) && (result != null)) _verboseMsg = "Stat Sync Success";
 
-                    // cycle through local data and sync with cloud data
-
+                    // sync is complete, now safe to 0 local data
+                    // 0 out the local pref, as it has now been added to the cloud data and reuploaded safely. no data loss, otherwise an exception would have occurred
                     Map<String, ?> keys = prefs.getAll();
+                    SharedPreferences.Editor edit = prefs.edit();
                     for (Map.Entry<String, ?> entry : keys.entrySet()) {
-                        if (entry.getKey().startsWith("statsItem")) {
-                            System.out.println("FDOUND STATS ITEM: " + entry.getKey().substring(9));
+                        // at this point times have already been updated to cloud stats, only need to edit #s
+                        // Max stats not 0'd
+                        if (entry.getKey().startsWith("statsItem") && !entry.getKey().contains("Max") && entry.getKey().endsWith(mCloudUserName)) {
                             if (prefs.contains(entry.getKey()) && (prefs.getInt(entry.getKey(), 0) != 0)) {
-                                // entry exists and current number is not 0
-                                // substring 9 gives us the name of the item, without the "statsItem" prefix
-                                addOrUpdateStatItem(entry.getKey(), prefs.getInt(entry.getKey(), 0), prefs.getLong("statsTime" + entry.getKey().substring(9), 0L), prefs.getLong("statsLastTime" + entry.getKey().substring(9), 0L), statList);
+                                edit.putInt(entry.getKey(), 0);
                             }
                         }
                     }
+                    edit.commit();
+
+
+                } catch (ClientProtocolException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
                 }
-
-                // move arraylist to jsonarray
-                // also use this loop to determine earliest initialized stat mFirstTime
-                JSONArray uploadList = new JSONArray();
-                for (int i = 0; i < statList.size(); i++) {
-                    if (statList.get(i).getTime() < mFirstTime) {
-                        System.out.println("Setting FirstTime based on " + statList.get(i).getTitle());
-                        mFirstTime = statList.get(i).getTime();
-                    }
-                    try {
-                        JSONObject stat = new JSONObject();
-                        stat.put("title", statList.get(i).getTitle());
-                        stat.put("num", statList.get(i).getNum());
-                        stat.put("time", statList.get(i).getTime());
-                        stat.put("lastTime", statList.get(i).getLastTime());
-                        uploadList.put(stat);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                cloudJson.remove("stats");
-                cloudJson.put("stats", uploadList);
-
-                // rebuild watched jsonarray from thread keys
-                String result = ShackApi.putCloudPinned(cloudJson, ((MainActivity)mContext).getCloudUsername());
-                if ((_verbose) && (result != null)) _verboseMsg = "Stat Sync Success";
-
-                // sync is complete, now safe to 0 local data
-                // 0 out the local pref, as it has now been added to the cloud data and reuploaded safely. no data loss, otherwise an exception would have occurred
-                Map<String,?> keys = prefs.getAll();
-                SharedPreferences.Editor edit = prefs.edit();
-                for (Map.Entry<String, ?> entry : keys.entrySet()) {
-                    // at this point times have already been updated to cloud stats, only need to edit #s
-                    if (entry.getKey().startsWith("statsItem")) {
-                        if (prefs.contains(entry.getKey()) && (prefs.getInt(entry.getKey(), 0) != 0)) {
-                            edit.putInt(entry.getKey(),0);
-                        }
-                    }
-                }
-                edit.commit();
-
-
-            } catch (ClientProtocolException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
             }
-            return statList;
+            return remoteStatList;
+        }
+
+        private void loadLocalStatsIntoRemoteStatList(SharedPreferences prefs, ArrayList<StatsItem> remoteStatList) {
+            Map<String, ?> keys = prefs.getAll();
+            for (Map.Entry<String, ?> entry : keys.entrySet()) {
+                // local prefs use item.getTitle() + cloudName as pref key
+                if (entry.getKey().startsWith("statsItem") && entry.getKey().endsWith(mCloudUserName)) {
+                    System.out.println("FDOUND STATS ITEM: " + entry.getKey().substring(9));
+                    String prefKeyWithoutStatsItemPrefix = entry.getKey().substring(9);
+                    String prefKeyWithoutUsername = entry.getKey().substring(0, entry.getKey().length() - mCloudUserName.length());
+                    if (prefs.contains(entry.getKey()) && (prefs.getInt(entry.getKey(), 0) != 0)) {
+                        // entry exists and current number is not 0
+                        // substring 9 gives us the name of the item, without the "statsItem" prefix
+                        remoteStatList.add(new StatsItem(prefKeyWithoutUsername, prefs.getInt(entry.getKey(), 0), prefs.getLong("statsTime" + prefKeyWithoutStatsItemPrefix, 0L), prefs.getLong("statsLastTime" + prefKeyWithoutStatsItemPrefix, 0L)));
+                    }
+                }
+            }
+        }
+
+        private void clearLocalPrefs(SharedPreferences prefs) {
+            // clear local prefs
+            SharedPreferences.Editor edit = prefs.edit();
+            Map<String, ?> keys = prefs.getAll();
+            for (Map.Entry<String, ?> entry : keys.entrySet()) {
+                if (entry.getKey().startsWith("stats") && entry.getKey().endsWith(mCloudUserName)) {
+                    edit.remove(entry.getKey());
+                }
+            }
+            edit.commit();
+
+            // add one back
+            statInc(mContext, "TimesViewedStats");
         }
 
         @Override
         protected void onPostExecute(ArrayList<StatsItem> result) {
-            if (!mBlind) {
-                if (_verbose) Toast.makeText(mContext, _verboseMsg, Toast.LENGTH_SHORT).show();
-                _verbose = false;
+            if (result == null)
+                return;
 
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+            int localOnly = prefs.getInt("optOutFromStats", 0);
+            // no stats mode
+            if (localOnly == 2)
+            {
                 mItems = result;
-
-                statMax(mContext, "MaxNumberOfStatsRecorded", mItems.size());
-
-                addInNonExistingStats(mItems);
-
-                Collections.sort(mItems);
-
-                // calcDesc does the actual calculation on this, the item just needs to be in the array for display
-                mItems.add(0, new StatsItem("statsItemFirstStatRecord", 0, 0L, 0L).calcDesc());
-
                 setListAdapter(new StatListAdapter(mContext, mItems));
+            }
+            // local or remote stats
+            else {
+                if (!mBlind) {
+                    if (_verbose) Toast.makeText(mContext, _verboseMsg, Toast.LENGTH_SHORT).show();
+                    _verbose = false;
+
+                    mItems = result;
+
+                    statMax(mContext, "MaxNumberOfStatsRecorded", mItems.size());
+
+                    addInNonExistingStats(mItems);
+
+                    Collections.sort(mItems);
+
+                    // calcDesc does the actual calculation on this, the item just needs to be in the array for display
+                    mItems.add(0, new StatsItem("statsItemFirstStatRecord", 0, 0L, 0L).calcDesc());
+
+                    setListAdapter(new StatListAdapter(mContext, mItems));
+                }
             }
         }
 
@@ -427,23 +572,48 @@ public class StatsFragment extends ListFragment {
         }
 
         // statList has only cloud items in it at this point. this function adds local items into the array. local prefs are the first 4 inputs, cloud data is the array
-        public void addOrUpdateStatItem(String title, int numberToAddOrInit, long time, long lastTime, ArrayList<StatsItem> statList) {
+        public void addOrUpdateStatItem(String prefKey, int numberToAddOrInit, long time, long lastTime, ArrayList<StatsItem> statList) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
             SharedPreferences.Editor edit = prefs.edit();
+            String prefKeyWithoutUsername = prefKey.substring(0, prefKey.length() - mCloudUserName.length());
             boolean foundItem = false;
+            // prefKey INCLUDES username
+            // remote item names dont have username on them
             // look to see if cloud data already had an entry for the local item
-            for (StatsItem item : statList) {
-                // found the cloud item which matches the local pref
-                if (item.getTitle().equalsIgnoreCase(title)) {
+            for (StatsItem remoteItem : statList) {
+                // found the cloud item which matches the local pref, and pref is not a max
+                if (remoteItem.getTitle().equalsIgnoreCase(prefKeyWithoutUsername) && !prefKeyWithoutUsername.contains("Max")) {
+
                     // add local to cloud. later, local pref will be 0'd
-                    item.setNum(item.getNum() + numberToAddOrInit);
+                    remoteItem.setNum(remoteItem.getNum() + numberToAddOrInit);
 
                     // check to see if cloud data predates local time or supersedes
-                    if (item.getTime() < time) {
-                        edit.putLong("statsTime" + title.substring(9), item.getTime());
+                    if (remoteItem.getTime() < time) {
+                        edit.putLong("statsTime" + prefKey.substring(9), remoteItem.getTime());
                     }
-                    if (item.getLastTime() > lastTime) {
-                        edit.putLong("statsLastTime" + title.substring(9), item.getLastTime());
+                    if (remoteItem.getLastTime() > lastTime) {
+                        edit.putLong("statsLastTime" + prefKey.substring(9), remoteItem.getLastTime());
+                    }
+                    foundItem = true;
+                }
+                // max items
+                else if (remoteItem.getTitle().equalsIgnoreCase(prefKeyWithoutUsername) && prefKeyWithoutUsername.contains("Max")) {
+                    // is cloud item more than local?
+                    if (remoteItem.getNum() > numberToAddOrInit)
+                    {
+                        edit.putInt(prefKey, remoteItem.getNum());
+                    }
+                    // is cloud item less than local?
+                    else if (remoteItem.getNum() < numberToAddOrInit)
+                    {
+                        remoteItem.setNum(numberToAddOrInit);
+                    }
+                    // check to see if cloud data predates local time or supersedes
+                    if (remoteItem.getTime() < time) {
+                        edit.putLong("statsTime" + prefKey.substring(9), remoteItem.getTime());
+                    }
+                    if (remoteItem.getLastTime() > lastTime) {
+                        edit.putLong("statsLastTime" + prefKey.substring(9), remoteItem.getLastTime());
                     }
                     foundItem = true;
                 }
@@ -452,7 +622,7 @@ public class StatsFragment extends ListFragment {
 
             // no entry in cloud data for local item, so add local item to cloud array which will be uploaded now that its synched
             if (!foundItem)
-                statList.add(new StatsItem(title, numberToAddOrInit, time, TimeDisplay.now()));
+                statList.add(new StatsItem(prefKeyWithoutUsername, numberToAddOrInit, time, TimeDisplay.now()));
         }
     }
 
@@ -465,34 +635,65 @@ public class StatsFragment extends ListFragment {
     {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(con);
         SharedPreferences.Editor edit = prefs.edit();
+
+        int localOnly = prefs.getInt("optOutFromStats", 0);
+        String cloudUsername = getCloudUsername(con);
+
+        if (cloudUsername == null)
+            return;
+
+        // no stats mode
+        if (localOnly == 2)
+            return;
+
         Long now = TimeDisplay.now();
 
-        if (now <= prefs.getLong("statsTime" + itemName, now))
+        if (now <= prefs.getLong("statsTime" + itemName + cloudUsername, now))
         {
-            edit.putLong("statsTime" + itemName, now);
+            edit.putLong("statsTime" + itemName + cloudUsername, now);
         }
-        if (now >= prefs.getLong("statsTimeLast" + itemName, now))
+        if (now >= prefs.getLong("statsLastTime" + itemName + cloudUsername, now))
         {
-            edit.putLong("statsTimeLast" + itemName, now);
+            edit.putLong("statsLastTime" + itemName + cloudUsername, now);
         }
 
-        edit.putInt("statsItem" + itemName, prefs.getInt("statsItem" + itemName, 0) + by);
+        edit.putInt("statsItem" + itemName + cloudUsername, prefs.getInt("statsItem" + itemName + cloudUsername, 0) + by);
         edit.commit();
+    }
+    public static String getCloudUsername(Context con)
+    {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(con);
+        String userName = prefs.getString("userName", "");
+        if ((userName.length() == 0) || !prefs.getBoolean("usernameVerified", false))
+        {
+            return null;
+        }
+        return userName.trim();
     }
     public static void statMax(Context con, String itemName, int max) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(con);
         SharedPreferences.Editor edit = prefs.edit();
+        String cloudUsername = getCloudUsername(con);
+        int localOnly = prefs.getInt("optOutFromStats", 0);
+
+        if (cloudUsername == null)
+            return;
+
+        // no stats mode
+        if (localOnly == 2)
+            return;
+
         Long now = TimeDisplay.now();
 
-        if (now <= prefs.getLong("statsTime" + itemName, now)) {
-            edit.putLong("statsTime" + itemName, now);
+        if (now <= prefs.getLong("statsTime" + itemName + cloudUsername, now)) {
+            edit.putLong("statsTime" + itemName + cloudUsername, now);
         }
-        if (now >= prefs.getLong("statsTimeLast" + itemName, now))
+        if (now >= prefs.getLong("statsLastTime" + itemName + cloudUsername, now))
         {
-            edit.putLong("statsTimeLast" + itemName, now);
+            edit.putLong("statsLastTime" + itemName + cloudUsername, now);
         }
-        if (max > prefs.getInt("statsItem" + itemName, 0)) {
-            edit.putInt("statsItem" + itemName, max);
+        if (max > prefs.getInt("statsItem" + itemName + cloudUsername, 0)) {
+            edit.putInt("statsItem" + itemName + cloudUsername, max);
         }
         edit.commit();
     }

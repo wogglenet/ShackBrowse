@@ -792,6 +792,10 @@ public class MainActivity extends ActionBarActivity
                 if (stf != null)
                     stf.wipeStats();
                 break;
+            case R.id.menu_statsOptOut:
+                if (stf != null)
+                    stf.optOutDialog();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -990,6 +994,7 @@ public class MainActivity extends ActionBarActivity
         menu.findItem(R.id.menu_fprefresh).setVisible(showFPBrowserItems);
 
         menu.findItem(R.id.menu_statsTrash).setVisible(_currentFragmentType == CONTENT_STATS ? true : false);
+        menu.findItem(R.id.menu_statsOptOut).setVisible(_currentFragmentType == CONTENT_STATS ? true : false);
 		return true;
     }
 
@@ -2022,7 +2027,7 @@ public class MainActivity extends ActionBarActivity
             try
             {
                 if (_prefs.getBoolean("enableDonatorFeatures", false) && !_prefs.getString("userName", "").equals("")) {
-                    ShackApi.putDonator(((_prefs.getString("limeUsers", "").contains(_prefs.getString("userName", "")) || _prefs.getString("quadLimeUsers", "").contains(_prefs.getString("userName", "")) || _prefs.getString("goldLimeUsers", "").contains(_prefs.getString("userName", ""))) && !_prefs.getString("userName", "").equals("")), _prefs.getString("userName", ""));
+                    ShackApi.putDonator(((_prefs.getString("limeUsers", "").toLowerCase().contains(_prefs.getString("userName", "").toLowerCase()) || _prefs.getString("quadLimeUsers", "").toLowerCase().contains(_prefs.getString("userName", "").toLowerCase()) || _prefs.getString("goldLimeUsers", "").toLowerCase().contains(_prefs.getString("userName", "").toLowerCase())) && !_prefs.getString("userName", "").equals("")), _prefs.getString("userName", ""));
                 }
             	return ShackApi.getLimeList();
             }

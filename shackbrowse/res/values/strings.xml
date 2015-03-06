@@ -312,6 +312,8 @@
     <string name="statsItemMaxThreadSize">Largest number of posts seen in single thread</string>
     <string name="statsItemTimeInApp">Time spent in main app</string>
     <string name="statsItemTimeInComposer">Time spent in composer</string>
+    <string name="notTurnedOn">Disabled</string>
+    <string name="statsopt">Opt Out</string>
     <!-- items in  the array will show up even when not yet registered -->
     <string-array name="statsItems">
         <item>statsItemAnnoyedByStartupZoomDialog</item>

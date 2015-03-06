@@ -210,9 +210,15 @@
         android:orderInCategory="105" />
 <!-- STATS OPTIONS -->
     <item android:id="@+id/menu_statsTrash"
-        app:showAsAction="always"
+        app:showAsAction="never"
         android:visible="false"
         android:icon="@drawable/ic_action_action_delete"
         android:title="@string/statsdel"
         android:orderInCategory="30" />
+    <item android:id="@+id/menu_statsOptOut"
+        app:showAsAction="never"
+        android:visible="false"
+        android:icon="@drawable/ic_action_file_cloud"
+        android:title="@string/statsopt"
+        android:orderInCategory="31" />
 </menu>

@@ -28,6 +28,17 @@ TODO
 * SEARCH GOOGLE BY TEXT SELECTION
 -->
 
+$ 5.1.1
+% v 5.1.1
+_ Mar 6, 2015
+* Your local stats will wipe with this update
+* Can opt out of stats
+* Time/day for time in app stat
+* Bug Fix: Stats with max display had serious bug
+* Bug Fix: Lime case sensitivity related bug
+* Bug Fix: Local stats were not kept separate for different users
+* Bug Fix: ChattyPics standalone upload app was not obliterating file names
+
 $ 5.1.0
 % v 5.1.0
 _ Mar 3, 2015

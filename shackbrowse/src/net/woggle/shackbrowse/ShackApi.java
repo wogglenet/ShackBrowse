@@ -233,6 +233,7 @@ public class ShackApi
     {
         File file = new File(imageLocation);
         String name = file.getName();
+        name = "shackbrowseUpload.jpg";
         FileEntity e = new FileEntity(file, "image");
         
         String BOUNDARY = "648f67b67d304b01f84ceb0e0c56c8b7";
@@ -1610,14 +1611,14 @@ public class ShackApi
     // cloud sync
     public static JSONObject getCloudPinned(String username) throws ClientProtocolException, IOException, JSONException
     {
-    	if (username != null)
+    	if (username != null && !username.equals(""))
     		return getJson(CLOUDPIN_URL + URLEncoder.encode(username, "UTF8") + "/settings");
 		return null;
     }
     
     public static String putCloudPinned(JSONObject json, String username) throws ClientProtocolException, IOException, JSONException
     {
-    	if (username != null)
+        if (username != null && !username.equals(""))
     	{
 	    	//instantiates httpclient to make request
     		DefaultHttpClient client = new DefaultHttpClient();

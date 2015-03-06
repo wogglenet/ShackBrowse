@@ -79,6 +79,11 @@
         <item>0</item>
         <item>1</item>
     </string-array>
+    <string-array name="preference_optoutstats">
+        <item>Use cloud sync between devices</item>
+        <item>Local stats only, no cloud</item>
+        <item>Paranoid; collect no stats!</item>
+    </string-array>
     <string-array name="preference_swipecollapse">
 		<item>Disable swipe to collapse</item>
 		<item>Swipe only left</item>
