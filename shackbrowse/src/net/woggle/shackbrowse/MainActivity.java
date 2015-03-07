@@ -60,8 +60,10 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
 import android.text.Editable;
+import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -76,6 +78,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -1312,9 +1315,22 @@ public class MainActivity extends ActionBarActivity
         }
         MaterialDialogCompat.Builder alert = new MaterialDialogCompat.Builder(this);
     	alert.setTitle("Shackmessage to " + username);
-    	alert.setMessage("Subject:");
+        LinearLayout layout = new LinearLayout(this);
+        layout.setPadding(5,5,5,5);
+        TextView tv = new TextView(this);
+        tv.setText("Subject:");
+        int padding_in_dp = 5;  // 6 dps
+        final float scale = getResources().getDisplayMetrics().density;
+        int padding_in_px = (int) (padding_in_dp * scale + 0.5f);
+        tv.setPadding(padding_in_px, padding_in_px, padding_in_px, padding_in_px);
+        tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 0));
+        tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+        layout.addView(tv);
     	final EditText input = new EditText(this);
-    	alert.setView(input);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
+        layout.addView(input);
+    	alert.setView(layout);
     	alert.setPositiveButton("Next", new DialogInterface.OnClickListener() {
     	public void onClick(DialogInterface dialog, int whichButton) {
 			Editable value = input.getText();
@@ -1322,7 +1338,8 @@ public class MainActivity extends ActionBarActivity
 			openComposerForMessageReply(ThreadViewFragment.POST_MESSAGE, post, value.toString());
     	}});
     	alert.setNegativeButton("Cancel", null);
-    	alert.show();
+    	alert.show().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        input.requestFocus();
 	}
 	
 	public void openThreadView(int threadId) { openThreadView(threadId, null, 0, null, false, 0, null, false, false); }

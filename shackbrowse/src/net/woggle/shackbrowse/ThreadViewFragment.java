@@ -546,6 +546,7 @@ public class ThreadViewFragment extends ListFragment
         {
         	if (getActivity () != null)
     		{
+                statInc(getActivity(), "CheckedLOLTaggers");
     			getActivity().runOnUiThread(new Runnable(){
 	        		@Override public void run()
 	        		{

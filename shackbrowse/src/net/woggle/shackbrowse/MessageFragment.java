@@ -21,13 +21,16 @@ import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.app.ListFragment;
 import android.text.Editable;
+import android.text.InputType;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AbsListView.OnScrollListener;
@@ -233,20 +236,32 @@ public class MessageFragment extends ListFragment
         	return;
         }
         MaterialDialogCompat.Builder alert = new MaterialDialogCompat.Builder(getActivity());
-    	alert.setTitle("New Shackmessage");
-    	alert.setMessage("To:");
-    	final EditText input = new EditText(getActivity());
-    	alert.setView(input);
-
-    	alert.setPositiveButton("Next", new DialogInterface.OnClickListener() {
-    	public void onClick(DialogInterface dialog, int whichButton) {
-			Editable value = input.getText();
-			_progressDialog = MaterialProgressDialog.show(getActivity(), "Please wait", "Checking that username exists...");
-			new CheckUsernameTask().execute(value.toString());
-			}
-    	});
-    	alert.setNegativeButton("Cancel", null);
-    	alert.show();
+        alert.setTitle("New Shackmessage");
+        LinearLayout layout = new LinearLayout(getActivity());
+        layout.setPadding(5,5,5,5);
+        TextView tv = new TextView(getActivity());
+        tv.setText("To:");
+        int padding_in_dp = 5;  // 6 dps
+        final float scale = getResources().getDisplayMetrics().density;
+        int padding_in_px = (int) (padding_in_dp * scale + 0.5f);
+        tv.setPadding(padding_in_px, padding_in_px, padding_in_px, padding_in_px);
+        tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 0));
+        tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+        layout.addView(tv);
+        final EditText input = new EditText(getActivity());
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
+        layout.addView(input);
+        alert.setView(layout);
+        alert.setPositiveButton("Next", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                Editable value = input.getText();
+                _progressDialog = MaterialProgressDialog.show(getActivity(), "Please wait", "Checking that username exists...");
+                new CheckUsernameTask().execute(value.toString());
+            }});
+        alert.setNegativeButton("Cancel", null);
+        alert.show().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        input.requestFocus();
     }
     
     
@@ -275,7 +290,13 @@ public class MessageFragment extends ListFragment
             if (result != null)
             	((MainActivity)getActivity()).openNewMessagePromptForSubject(result);
             else
-            	ErrorDialog.display(getActivity(), "Error", "Shack Username Does Not Exist"); 
+            {
+                MaterialDialog.Builder alert = new MaterialDialog.Builder(getActivity());
+                alert.content("Could not find a user by that name")
+                .title("Not Found")
+                .positiveText("Sorry")
+                        .show();
+            }
             if (_exception != null)
                ErrorDialog.display(getActivity(), "Error", "Error checking username exists:\n" + _exception.getMessage()); 
         }
