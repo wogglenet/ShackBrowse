@@ -65,9 +65,10 @@ public class AppMenu extends ListFragment
         getListView().setDividerHeight(0);
         TypedArray a = getActivity().getTheme().obtainStyledAttributes(((MainActivity)getActivity()).mThemeResId, new int[] {R.attr.menuBGdrawable});
         int attributeResourceId = a.getResourceId(0, 0);
-        Drawable drawable = getResources().getDrawable(attributeResourceId);
+        //Drawable drawable = getResources().getDrawable(attributeResourceId);
         a.recycle();
-        getListView().setBackground(drawable);
+        getListView().setBackgroundResource(attributeResourceId);
+        // getListView().setBackground(drawable);
         
         _prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
