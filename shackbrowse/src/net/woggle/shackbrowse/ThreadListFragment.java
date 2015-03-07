@@ -17,7 +17,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Random;
 
 import net.woggle.CheckableLinearLayout;
 import net.woggle.SwipeDismissListViewTouchListener;
@@ -33,12 +32,10 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -59,7 +56,6 @@ import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -504,9 +500,11 @@ public class ThreadListFragment extends ListFragment
 
 	void refreshThreads()
     {
-		_preventAutoLoad = true;
-		_adapter.cancel();
-    	_silentLoad = false;
+        if (_viewAvailable) {
+            _preventAutoLoad = true;
+            if (_adapter != null)
+                _adapter.cancel();
+            _silentLoad = false;
     	
     	/*
         getListView().clearChoices();
@@ -533,30 +531,29 @@ public class ThreadListFragment extends ListFragment
     	getListView().setOnTouchListener(null);
         */
 
-        statInc(getActivity(), "RefreshedThreadList");
-    	
-		MainActivity act = ((MainActivity)getActivity());
-		act.showLoadingSplash();
+            statInc(getActivity(), "RefreshedThreadList");
 
-		getView().postDelayed(new Runnable(){
-            @Override
-            public void run() {
-                System.out.println("REFRESHL DOIN THINGS");
-                getListView().clearChoices();
-                _adapter.clear();
-                _adapter.notifyDataSetChanged();
-                _adapter.triggerLoadMore();
-                _preventAutoLoad = false;
-                if (_adapter.updatePrefs())
-                {
-                    System.out.println("zoom or other pref changed, redraw listview");
-                    getListView().invalidate();
+            MainActivity act = ((MainActivity) getActivity());
+            act.showLoadingSplash();
+
+            getView().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println("REFRESHL DOIN THINGS");
+                    getListView().clearChoices();
+                    _adapter.clear();
                     _adapter.notifyDataSetChanged();
+                    _adapter.triggerLoadMore();
+                    _preventAutoLoad = false;
+                    if (_adapter.updatePrefs()) {
+                        System.out.println("zoom or other pref changed, redraw listview");
+                        getListView().invalidate();
+                        _adapter.notifyDataSetChanged();
 
+                    }
                 }
-            }
-        }, 500);
-
+            }, 500);
+        }
     }
     
     public static final int POST_NEW_THREAD = 430;
@@ -1597,7 +1594,7 @@ public class ThreadListFragment extends ListFragment
             holder.content.setMaxLines(_previewLines);
             //holder.content.setEllipsize(TextUtils.TruncateAt.END);
             
-            final double threadAge = TimeDisplay.threadAge(t.getPosted());
+            final double threadAge = TimeDisplay.threadAgeInHours(t.getPosted());
             if (threadAge > 16f)
             {
             	holder.posted.setTextColor(getResources().getColor(R.color.threadLifeBad));
@@ -1614,19 +1611,19 @@ public class ThreadListFragment extends ListFragment
             holder.posted.setText(TimeDisplay.getNiceTimeSince(t.getPosted(), _showHoursSince));
             /*
             // threadage > 8760 == one year. optimization to prevent getyear from being run on every thread
-            if (threadAge > 8760f && !TimeDisplay.getYear(TimeDisplay.now()).equals(TimeDisplay.getYear(t.getPosted())))
+            if (threadAgeInHours > 8760f && !TimeDisplay.getYear(TimeDisplay.now()).equals(TimeDisplay.getYear(t.getPosted())))
         		holder.posted.setText(TimeDisplay.convTime(t.getPosted(), "MMM dd, yyyy h:mma zzz"));
         	else
         	{
-	            if ((!_showHoursSince) || (threadAge > 24f))
+	            if ((!_showHoursSince) || (threadAgeInHours > 24f))
 	            {
-	            	if (threadAge > 96f)
+	            	if (threadAgeInHours > 96f)
 	            		holder.posted.setText(TimeDisplay.convertTimeLong(t.getPosted()));
 	            	else
 	            		holder.posted.setText(TimeDisplay.convertTime(t.getPosted()));
 	            }
 	            else
-	            	holder.posted.setText(TimeDisplay.doubleThreadAgeToString(threadAge));
+	            	holder.posted.setText(TimeDisplay.doubleThreadAgeToString(threadAgeInHours));
         	}
         	*/
             

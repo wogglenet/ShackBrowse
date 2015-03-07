@@ -53,7 +53,7 @@
           android:background="?android:attr/selectableItemBackground"
             android:paddingTop="9dip"
             android:paddingBottom="9dip"
-            android:paddingRight="10dip"
+            android:paddingRight="6dip"
           />
  	 </LinearLayout>
 </net.woggle.CheckableLinearLayout>

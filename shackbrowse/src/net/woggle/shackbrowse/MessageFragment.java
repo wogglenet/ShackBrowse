@@ -12,8 +12,6 @@ import org.json.JSONException;
 
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -504,7 +502,7 @@ public class MessageFragment extends ListFragment
             // holder.content.setText(m.getPreview(_showShackTags, _stripNewLines));
             holder.content.setText(m.getSubject());
             
-            final double threadAge = TimeDisplay.threadAge(m.getPosted());
+            final double threadAge = TimeDisplay.threadAgeInHours(m.getPosted());
             // threadage > 8760 == one year. optimization to prevent getyear from being run on every thread
         	if (threadAge > 8760f && !TimeDisplay.getYear(TimeDisplay.now()).equals(TimeDisplay.getYear(m.getPosted())))
         		holder.posted.setText(TimeDisplay.convTime(m.getPosted(), "MMM dd, yyyy h:mma zzz"));

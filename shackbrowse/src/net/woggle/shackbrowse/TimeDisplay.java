@@ -41,7 +41,7 @@ public final class TimeDisplay {
 	{
 		return convTime(original, "yyyy");
 	}
-	static double threadAge(Long original)
+	static double threadAgeInHours(Long original)
 	{
 		 try
 	        {
@@ -57,7 +57,7 @@ public final class TimeDisplay {
 	}
 	static String postedLongToThreadAgeToString (Long original)
 	{
-		double threadAge = TimeDisplay.threadAge(original);
+		double threadAge = TimeDisplay.threadAgeInHours(original);
 		// threadage is in hours
 		return (((int)(threadAge) > 0) ? Integer.toString((int)(threadAge)) + "h " : "") + (int)(60 * (threadAge - (long)(threadAge))) + "m ago";
 	}
@@ -89,11 +89,11 @@ public final class TimeDisplay {
         long hours = TimeUnit.SECONDS.toHours(seconds) - (day *24);
         long minute = TimeUnit.SECONDS.toMinutes(seconds) - (TimeUnit.SECONDS.toHours(seconds)* 60);
         long second = TimeUnit.SECONDS.toSeconds(seconds) - (TimeUnit.SECONDS.toMinutes(seconds) * 60); */
-        return ((day > 0) ? day + " days, " : "") + ((hours > 0L) ? hours + " hours, " : "") + ((minute > 0L) ? minute + " minutes, " : "") + ((second > 0L) ? second + " seconds" : "");
+        return ((day > 0) ? day + "d" : "") + ((hours > 0L) ? " " + hours + "h" : "") + ((minute > 0L) ? " " + minute + "m" : "") + ((second > 0L) ? " " + second + "s" : "");
     }
     public static String getNiceTimeSince(Long posted, boolean showHoursSince) {
         String ret = "";
-        final double threadAge = TimeDisplay.threadAge(posted);
+        final double threadAge = TimeDisplay.threadAgeInHours(posted);
         // set posted time
         if (threadAge <= 24f && showHoursSince)
         {
@@ -111,7 +111,7 @@ public final class TimeDisplay {
             else
             {
                 if ((!showHoursSince) || (threadAge > 24f)) {
-                    if (TimeDisplay.threadAge(posted) > 96f) {
+                    if (TimeDisplay.threadAgeInHours(posted) > 96f) {
                         // default readout for !showsince or > 96h, has month
                         ret = TimeDisplay.convertTimeLong(posted);
                     }

@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.ClipboardManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,12 +22,10 @@ import com.afollestad.materialdialogs.MaterialDialogCompat;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -156,7 +155,10 @@ public class StatsFragment extends ListFragment {
         // retrieve theListView item
         StatsItem item = mItems.get(position);
         // do something
-        Toast.makeText(getActivity(), item.title, Toast.LENGTH_SHORT).show();
+        String string = item.getFancyTitle() + ": " + item.getItemDesc();
+        Toast.makeText(getActivity(), "Copied to clipboard: " + string, Toast.LENGTH_SHORT).show();
+        ClipboardManager clipboard = (ClipboardManager)getActivity().getSystemService(Activity.CLIPBOARD_SERVICE);
+        clipboard.setText(string);
     }
 
     class StatsItem implements Comparable<StatsItem> {
@@ -242,13 +244,13 @@ public class StatsFragment extends ListFragment {
             }
             else if (this.title.contains("TimeIn"))
             {
-                double daysSince = TimeDisplay.threadAge(this.getTime());
+                double daysSince = TimeDisplay.threadAgeInHours(this.getTime()) / 24d;
                 daysSince = Math.ceil(daysSince);
                 int perDay = (int)(this.getNum() / daysSince);
                 this.desc = TimeDisplay.secondsToNiceTime(this.getNum()) + ", " + TimeDisplay.secondsToNiceTime(perDay) + "/day, since " + TimeDisplay.getNiceTimeSince(time, true);
             }
             else {
-                double daysSince = TimeDisplay.threadAge(this.getTime());
+                double daysSince = TimeDisplay.threadAgeInHours(this.getTime()) / 24d;
                 daysSince = Math.ceil(daysSince);
                 double perDay = this.getNum() / daysSince;
                 BigDecimal perDayF = new BigDecimal(String.valueOf(perDay)).setScale(1, BigDecimal.ROUND_HALF_UP);
@@ -658,7 +660,7 @@ public class StatsFragment extends ListFragment {
         }
 
         edit.putInt("statsItem" + itemName + cloudUsername, prefs.getInt("statsItem" + itemName + cloudUsername, 0) + by);
-        edit.commit();
+        edit.apply();
     }
     public static String getCloudUsername(Context con)
     {
@@ -695,6 +697,6 @@ public class StatsFragment extends ListFragment {
         if (max > prefs.getInt("statsItem" + itemName + cloudUsername, 0)) {
             edit.putInt("statsItem" + itemName + cloudUsername, max);
         }
-        edit.commit();
+        edit.apply();
     }
 }

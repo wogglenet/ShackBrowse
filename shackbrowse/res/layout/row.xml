@@ -68,8 +68,8 @@
 		     	 android:id="@+id/textPostedTime"
 		     	 android:layout_width="0dp"
 		     	 android:layout_weight="1"
-		     	 android:gravity="right|center_vertical"
-                 android:layout_gravity="center_vertical"
+		     	 android:gravity="right|top"
+                 android:layout_gravity="top"
 		     	 android:layout_height="wrap_content"
 		     	 android:maxLines="1"
 	 	 	   	 android:layout_alignParentRight="true"
@@ -78,7 +78,9 @@
 		         android:textColor="@color/timePosted"
 		         android:textSize="@dimen/postTimeSize"
 		         android:paddingLeft="5dip"
-		         android:paddingRight="1dip"
+		         android:paddingRight="0dip"
+                 android:paddingTop="0dp"
+                 android:translationY="-4dp"
 		     />
 	     </LinearLayout>
 	     <TextView
@@ -96,7 +98,7 @@
 	     />
 	     
 	     <ImageButton 
-            android:background="@android:color/transparent"
+
             android:layout_width="48dp"
             android:layout_height="40dp"
             android:scaleType="fitCenter"
@@ -104,11 +106,11 @@
             android:layout_gravity="center_vertical"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:paddingTop="7dp"
-            android:paddingRight="5dp"
-            android:paddingLeft="18dp"
-            android:paddingBottom="11dp"
-            
+            android:paddingTop="6dp"
+            android:paddingRight="4dp"
+            android:paddingLeft="25dp"
+            android:paddingBottom="16dp"
+             android:background="@android:color/transparent"
             android:layout_marginTop="0dp"
             android:layout_marginLeft="0dp"
             />

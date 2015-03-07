@@ -376,6 +376,10 @@ public class AppMenu extends ListFragment
 
 	                // zoom for preview.. needs to only be done ONCE, when holder is first created
 	                holder.text.setTextSize(TypedValue.COMPLEX_UNIT_PX, holder.text.getTextSize() * _zoom);
+                    holder.icon.setScaleX(_zoom);
+                    holder.icon.setScaleY(_zoom);
+                    holder.settings.setScaleX(_zoom);
+                    holder.settings.setScaleY(_zoom);
 	                
 	                vi.setTag(holder);
 	            }

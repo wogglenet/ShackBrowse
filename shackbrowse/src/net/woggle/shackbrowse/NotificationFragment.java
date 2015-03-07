@@ -414,21 +414,21 @@ public class NotificationFragment extends ListFragment
             holder.content.setText(PostFormatter.formatContent(n.getAuthor(), n.getBody(), null, false, true));
 
             /*
-            final double threadAge = TimeDisplay.threadAge(n.getTime());
+            final double threadAgeInHours = TimeDisplay.threadAgeInHours(n.getTime());
             // threadage > 8760 == one year. optimization to prevent getyear from being run on every thread
-        	if (threadAge > 8760f && !TimeDisplay.getYear(TimeDisplay.now()).equals(TimeDisplay.getYear(n.getTime())))
+        	if (threadAgeInHours > 8760f && !TimeDisplay.getYear(TimeDisplay.now()).equals(TimeDisplay.getYear(n.getTime())))
         		holder.posted.setText(TimeDisplay.convTime(n.getTime(), "MMM dd, yyyy h:mma zzz"));
         	else
         	{
-	            if ((!_showHoursSince) || (threadAge > 24f))
+	            if ((!_showHoursSince) || (threadAgeInHours > 24f))
 	            {
-	            	if (threadAge > 96f)
+	            	if (threadAgeInHours > 96f)
 	            		holder.posted.setText(TimeDisplay.convertTimeLong(n.getTime()));
 	            	else
 	            		holder.posted.setText(TimeDisplay.convertTime(n.getTime()));
 	            }
 	            else
-	            	holder.posted.setText(TimeDisplay.doubleThreadAgeToString(threadAge));
+	            	holder.posted.setText(TimeDisplay.doubleThreadAgeToString(threadAgeInHours));
         	}*/
             holder.posted.setText(TimeDisplay.getNiceTimeSince(n.getTime(), _showHoursSince));
           

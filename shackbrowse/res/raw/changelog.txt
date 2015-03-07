@@ -28,6 +28,14 @@ TODO
 * SEARCH GOOGLE BY TEXT SELECTION
 -->
 
+$ 5.1.2
+% v 5.1.2
+_ Mar 7, 2015
+* Slight performance improvement when writing stats. Will be noticed throughout app
+* Bug Fix: Font size preference fixes all over the app
+* Bug Fix: Some preferences not taking effect immediately
+* Bug Fix: Per day calculation in stats
+
 $ 5.1.1
 % v 5.1.1
 _ Mar 6, 2015

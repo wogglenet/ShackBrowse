@@ -1575,7 +1575,7 @@ public class ThreadViewFragment extends ListFragment
                 holder.preview.setTextSize(TypedValue.COMPLEX_UNIT_PX, holder.preview.getTextSize() * _zoom);
                 holder.previewLolCounts.setTextSize(TypedValue.COMPLEX_UNIT_PX, holder.previewLolCounts.getTextSize() * _zoom);
 
-                // holder.username.setTextSize(TypedValue.COMPLEX_UNIT_PX, holder.username.getTextSize() * _zoom);
+                // holder.previewUsername.setTextSize(TypedValue.COMPLEX_UNIT_PX, holder.previewUsername.getTextSize() * _zoom);
                 holder.postedtime.setTextSize(TypedValue.COMPLEX_UNIT_PX, holder.postedtime.getTextSize() * _zoom);
                  
                 
@@ -1679,25 +1679,25 @@ public class ThreadViewFragment extends ListFragment
 
                 holder.postedtime.setText(TimeDisplay.getNiceTimeSince(p.getPosted(), _showHoursSince));
                 /*
-            	final double threadAge = TimeDisplay.threadAge(p.getPosted());
+            	final double threadAgeInHours = TimeDisplay.threadAgeInHours(p.getPosted());
             	// set posted time
-                if (threadAge <= 24f && _showHoursSince)
+                if (threadAgeInHours <= 24f && _showHoursSince)
                 {
                     // this is actually the same as the final else below, but this is the most common result
-                    holder.postedtime.setText(TimeDisplay.doubleThreadAgeToString(threadAge));
+                    holder.postedtime.setText(TimeDisplay.doubleThreadAgeToString(threadAgeInHours));
                 }
                 else {
                     // check if this post is so old its not even the same year
                     // threadage > 8760 == one year. optimization to prevent getyear from being run on every thread
-                    if (threadAge > 8760f && !TimeDisplay.getYear(TimeDisplay.now()).equals(TimeDisplay.getYear(p.getPosted())))
+                    if (threadAgeInHours > 8760f && !TimeDisplay.getYear(TimeDisplay.now()).equals(TimeDisplay.getYear(p.getPosted())))
                     {
                         // older than one year
                         holder.postedtime.setText(TimeDisplay.convTime(p.getPosted(), "MMM dd, yyyy h:mma zzz"));
                     }
                     else
                     {
-                        if ((!_showHoursSince) || (threadAge > 24f)) {
-                            if (TimeDisplay.threadAge(p.getPosted()) > 96f) {
+                        if ((!_showHoursSince) || (threadAgeInHours > 24f)) {
+                            if (TimeDisplay.threadAgeInHours(p.getPosted()) > 96f) {
                                 // default readout for !showsince or > 96h, has month
                                 holder.postedtime.setText(TimeDisplay.convertTimeLong(p.getPosted()));
                             }
@@ -1707,7 +1707,7 @@ public class ThreadViewFragment extends ListFragment
                             }
                         } else {
                             // standard less than 24h with showtimesince... this will actually always be caught by the first if as an optimization
-                            holder.postedtime.setText(TimeDisplay.doubleThreadAgeToString(threadAge));
+                            holder.postedtime.setText(TimeDisplay.doubleThreadAgeToString(threadAgeInHours));
                         }
                     }
                 }
@@ -1809,7 +1809,7 @@ public class ThreadViewFragment extends ListFragment
         			holder.preview.setVisibility(View.GONE);
         			holder.previewLolCounts.setVisibility(View.GONE);
         			holder.postedtime.setVisibility(View.VISIBLE);
-                    holder.previewUsername.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.previewUserNameSizeBig));
+                    holder.previewUsername.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.previewUserNameSizeBig) * _zoom);
 
                     final TextView txtusr = holder.previewUsername;
                     holder.previewUsername.setOnClickListener(getUserNameClickListenerForPosition(position, holder.previewUsername));
@@ -1821,7 +1821,7 @@ public class ThreadViewFragment extends ListFragment
                     holder.previewUsername.setOnClickListener(null);
                     holder.previewUsername.setClickable(false);
         			holder.preview.setVisibility(View.VISIBLE);
-                    holder.previewUsername.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.previewUserNameSize));
+                    holder.previewUsername.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.previewUserNameSize) * _zoom);
         			holder.previewLolCounts.setVisibility(View.VISIBLE);
         			holder.postedtime.setVisibility(View.GONE);
             	}

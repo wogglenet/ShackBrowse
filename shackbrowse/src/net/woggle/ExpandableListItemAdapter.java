@@ -1,6 +1,11 @@
 package net.woggle;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
 import android.animation.LayoutTransition;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -9,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.animation.ScaleAnimation;
 import android.widget.AbsListView;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -20,9 +26,6 @@ import com.nhaarman.listviewanimations.ArrayAdapter;
 import com.nhaarman.listviewanimations.ListViewSetter;
 import com.nhaarman.listviewanimations.itemmanipulation.ExpandCollapseListener;
 import com.nhaarman.listviewanimations.util.AdapterViewUtil;
-import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.AnimatorListenerAdapter;
-import com.nineoldandroids.animation.ValueAnimator;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -54,6 +57,7 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
 
     private ExpandCollapseListener mExpandCollapseListener;
 	private int mOriginalUsernameHeight = 0;
+    private float mZoom = 1.0f;
 
     /**
      * Creates a new ExpandableListItemAdapter with an empty list.
@@ -82,6 +86,7 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         mDuration = (long) (mContext.getResources().getInteger(android.R.integer.config_shortAnimTime) * Float.parseFloat(prefs.getString("replyAnimationSpeed", "1.3")));
         mAnimSpeed = Float.parseFloat(prefs.getString("replyAnimationSpeed", "1.3"));
+        mZoom = Float.parseFloat(prefs.getString("fontZoom", "1.0"));
     }
 
     /**
@@ -462,7 +467,7 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
                 }
                 View firstTV = getTitleParent(firstPosition);
                 if (firstTV != null) {
-                    ExpandCollapseHelper.animateSwapTitle(firstTV, mResIds, true, (Post) getItem(firstPosition), mOriginalUsernameHeight, mDuration);
+                    ExpandCollapseHelper.animateSwapTitle(firstTV, mResIds, true, (Post) getItem(firstPosition), mOriginalUsernameHeight, mDuration, mZoom);
                 }
                 mExpandedIds.remove(firstId);
 
@@ -492,7 +497,7 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
             }
             View firstTV = getTitleParent(firstPosition);
             if (firstTV != null) {
-                ExpandCollapseHelper.animateSwapTitle(firstTV, mResIds, true, (Post) getItem(firstPosition), mOriginalUsernameHeight, mDuration);
+                ExpandCollapseHelper.animateSwapTitle(firstTV, mResIds, true, (Post) getItem(firstPosition), mOriginalUsernameHeight, mDuration, mZoom);
             }
             mExpandedIds.remove(firstId);
 
@@ -508,7 +513,7 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
             ExpandCollapseHelper.animateCollapsing(contentParent, mContext.getResources().getColor(R.color.selected_highlight_postbg), mContext.getResources().getColor(R.color.ics_background_start), mDuration);
             View firstTV = getTitleView(position);
             if (firstTV != null) {
-                ExpandCollapseHelper.animateSwapTitle(firstTV, mResIds, true, (Post) getItem(position), mOriginalUsernameHeight, mDuration);
+                ExpandCollapseHelper.animateSwapTitle(firstTV, mResIds, true, (Post) getItem(position), mOriginalUsernameHeight, mDuration, mZoom);
             }
             mExpandedIds.remove(id);
 
@@ -521,7 +526,7 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
             ExpandCollapseHelper.animateExpanding(contentParent, mAbsListView, mContext.getResources().getColor(R.color.selected_highlight_postbg), mContext.getResources().getColor(R.color.ics_background_start), mDuration);
             View firstTV = getTitleView(position);
             if (firstTV != null) {
-                ExpandCollapseHelper.animateSwapTitle(firstTV, mResIds, false, (Post) getItem(position), mOriginalUsernameHeight, mDuration);
+                ExpandCollapseHelper.animateSwapTitle(firstTV, mResIds, false, (Post) getItem(position), mOriginalUsernameHeight, mDuration, mZoom);
             }
             mExpandedIds.add(id);
 
@@ -620,7 +625,7 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
 
     private static class ExpandCollapseHelper {
     	
-    	public static void animateSwapTitle(final View view, final AnimationResIds resIds, boolean collapse, Post p, int oUNH, long duration)
+    	public static void animateSwapTitle(final View view, final AnimationResIds resIds, boolean collapse, Post p, int oUNH, long duration, float zoom)
     	{
 
     		final TextView tomove = (TextView) view.findViewById(resIds.userNameResId);
@@ -686,8 +691,15 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
                 else { loltag.setVisibility(View.GONE);
                 }
                 time.setVisibility(View.GONE);
-                tomove.setTextSize(TypedValue.COMPLEX_UNIT_PX, view.getContext().getResources().getDimension(R.dimen.previewUserNameSize));
-	            tohide.setVisibility(View.VISIBLE);
+                tomove.setTextSize(TypedValue.COMPLEX_UNIT_PX, view.getContext().getResources().getDimension(R.dimen.previewUserNameSize) * zoom);
+                /*
+                AnimatorSet set = new AnimatorSet();
+                ObjectAnimator sizeAnimX = ObjectAnimator.ofFloat(tomove, "scaleX", view.getContext().getResources().getDimension(R.dimen.previewUserNameSize) / view.getContext().getResources().getDimension(R.dimen.previewUserNameSizeBig));
+                ObjectAnimator sizeAnimY = ObjectAnimator.ofFloat(tomove, "scaleY", view.getContext().getResources().getDimension(R.dimen.previewUserNameSize) / view.getContext().getResources().getDimension(R.dimen.previewUserNameSizeBig));
+                set.playTogether(sizeAnimX,sizeAnimY);
+                set.setDuration(duration);
+                set.start(); */
+                tohide.setVisibility(View.VISIBLE);
     			bg.setChecked(false);
     		}
     		else
@@ -695,7 +707,7 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
                 loltag.setVisibility(View.GONE);
                 time.setVisibility(View.VISIBLE);
                 tohide.setVisibility(View.GONE);
-                tomove.setTextSize(TypedValue.COMPLEX_UNIT_PX, view.getContext().getResources().getDimension(R.dimen.previewUserNameSizeBig));
+                tomove.setTextSize(TypedValue.COMPLEX_UNIT_PX, view.getContext().getResources().getDimension(R.dimen.previewUserNameSizeBig) * zoom);
                 bg.setChecked(true);
 
 /*

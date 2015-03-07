@@ -81,6 +81,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.MaterialDialogCompat;
 
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
@@ -271,11 +272,7 @@ public class MainActivity extends ActionBarActivity
 		upgradeDonatorPreferences();
 				
 		// set up preferences
-		_analytics  = _prefs.getBoolean("analytics", true);
-		_zoom  = Float.parseFloat(_prefs.getString("fontZoom", "1.0"));
-		_showPinnedInTL  = _prefs.getBoolean("showPinnedInTL", true);
-		_swappedSplit  = _prefs.getBoolean("swappedSplit", false);
-		_enableDonatorFeatures = true;
+        reloadPrefs();
 		
 		// notifications registrator, works mostly automatically
 		
@@ -288,7 +285,7 @@ public class MainActivity extends ActionBarActivity
 				_appMenu.updateMenuUi();
 				System.out.println("PUSHREG: registered");
 			}
-			edit.commit();
+			edit.apply();
 		}
 
 		@Override
@@ -655,8 +652,10 @@ public class MainActivity extends ActionBarActivity
 	        	{
 	        		closeBrowser();
 	        	}
-	        	else if (_tviewFrame.isOpened() && !getDualPane())
-	        		_tviewFrame.closeLayer(true);
+	        	else if (_tviewFrame.isOpened() && !getDualPane()) {
+                    _tviewFrame.closeLayer(true);
+                    annoyThreadViewClose();
+                }
 	        	else if (_sresFrame.isOpened())
 	        		_sresFrame.closeLayer(true);
 	        	break;
@@ -1113,10 +1112,15 @@ public class MainActivity extends ActionBarActivity
                 .hide(_loadingSplash)
                 .commit();
 
+        // clean up for outgoing fragment
         if (_currentFragmentType == CONTENT_FRONTPAGE)
         {
             // kill weird ad crap running in background
             _fpBrowser.mWebview.loadData("", "text/html", null);
+        }
+        if (_currentFragmentType == CONTENT_PREFS)
+        {
+            reloadPrefs();
         }
 
 	    _currentFragmentType = type;
@@ -1216,7 +1220,7 @@ public class MainActivity extends ActionBarActivity
         // set pref that activity is not foreground. use by postqueueservice
         Editor ed = _prefs.edit();
 		ed.putBoolean("isAppForeground", true);
-		ed.commit();
+		ed.apply();
 
         mActivityAvailable = true;
 	}
@@ -1738,6 +1742,31 @@ public class MainActivity extends ActionBarActivity
         startActivity(i);
         return;
     }
+
+    public void reloadPrefs()
+    {
+        if (_prefs != null) {
+            _analytics = _prefs.getBoolean("analytics", true);
+            _zoom = Float.parseFloat(_prefs.getString("fontZoom", "1.0"));
+            _showPinnedInTL = _prefs.getBoolean("showPinnedInTL", true);
+            _swappedSplit = _prefs.getBoolean("swappedSplit", false);
+            _enableDonatorFeatures = true;
+            if (_threadView != null) {
+                if (_threadView._adapter != null) {
+                    _threadView._adapter.loadPrefs();
+                    _threadView._adapter.notifyDataSetChanged();
+                }
+            }
+            if (_threadList != null) {
+                if (_threadList._adapter != null) {
+                    _threadList._adapter.updatePrefs();
+                    _threadList._adapter.notifyDataSetChanged();
+                }
+            }
+            evaluateDualPane(getResources().getConfiguration());
+            _appMenu.updateMenuUi();
+        }
+    }
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     	System.out.println("MAINACTIVITY: activity result recv R_OK=" +Activity.RESULT_OK + " reqCodes: PostThread OTV PR" + ThreadListFragment.POST_NEW_THREAD + " " + ThreadListFragment.OPEN_THREAD_VIEW + " " + ThreadViewFragment.POST_REPLY + " data: " + requestCode + " " + resultCode);
     	if (requestCode == ThreadListFragment.OPEN_PREFS)
@@ -1753,37 +1782,6 @@ public class MainActivity extends ActionBarActivity
     		{
     			onPostResume = OnPostResume.OPEN_BROWSER_ZOOM_SETUP;
 		        return;
-    		}
-    		
-    		if (_prefs != null)
-    		{
-	    		_analytics  = _prefs.getBoolean("analytics", true);
-	    		_zoom  = Float.parseFloat(_prefs.getString("fontZoom", "1.0"));
-	    		_showPinnedInTL  = _prefs.getBoolean("showPinnedInTL", true);
-	    		_swappedSplit  = _prefs.getBoolean("swappedSplit", false);
-	    		_enableDonatorFeatures = true;
-    		}
-    		
-	    		evaluateDualPane(getResources().getConfiguration());
-	    	if (_threadView != null)
-	    	{
-	    		if (_threadView._adapter != null)
-	    		{
-		    		_threadView._adapter.loadPrefs();
-		    		_threadView._adapter.notifyDataSetChanged();
-	    		}
-	    		
-	    		/*
-	    		FragmentPagerAdapter a = (FragmentPagerAdapter) mPager.getAdapter();
-	    		ThreadListFragment TLfragment = (ThreadListFragment) a.instantiateItem(mPager, 1);
-	    		*/
-	    		if (_threadList._adapter != null)
-	    		{
-		    		_threadList._adapter.updatePrefs();
-		    		_threadList._adapter.notifyDataSetChanged();
-	    		}
-	    		
-	    		_appMenu.updateMenuUi();
     		}
     	}
     	if (requestCode == ThreadListFragment.POST_NEW_THREAD)
@@ -1807,20 +1805,6 @@ public class MainActivity extends ActionBarActivity
                 if (_threadView != null)
                 	_threadView.onActivityResult(requestCode, resultCode, data);
             }
-        }
-    	if (requestCode == ThreadViewFragment.POST_MESSAGE)
-    	{
-            if (resultCode == Activity.RESULT_OK)
-            {
-            	/*
-            	AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Message Sending");
-                builder.setMessage("ShackMessage queued for send.");
-                builder.setNegativeButton("OK", null);
-                builder.create().show();
-                */
-            }
-            
         }
 
     }
@@ -1878,6 +1862,7 @@ public class MainActivity extends ActionBarActivity
 		else if (getSliderOpen() && !getDualPane())
 		{
 			_tviewFrame.closeLayer(true);
+            annoyThreadViewClose();
 		}
 		else if (_sresFrame.isOpened())
 		{
@@ -2058,7 +2043,7 @@ public class MainActivity extends ActionBarActivity
             	editor.putString("limeUsers", result[0]);
                 editor.putString("goldLimeUsers", result[1]);
                 editor.putString("quadLimeUsers", result[2]);
-                editor.commit();
+                editor.apply();
             }
         }
 	}
@@ -2175,7 +2160,7 @@ public class MainActivity extends ActionBarActivity
                                         public void onClick(DialogInterface dialog, int id) {
                                             Editor edit = _prefs.edit();
                                             edit.putString("ignoreNewVersion", parts[1]);
-                                            edit.commit();
+                                            edit.apply();
                                         }
                                     });
                                 }
@@ -2375,7 +2360,7 @@ public class MainActivity extends ActionBarActivity
 		        	
 		        	Editor editor = _prefs.edit();
 		        	editor.putInt("GCMNoteCountReply", 0);
-		        	editor.commit();
+		        	editor.apply();
 					
 					if (extras.containsKey("notificationOpenRList"))
 					{
@@ -2417,7 +2402,7 @@ public class MainActivity extends ActionBarActivity
 		        			System.out.println("RESETTING VANIY COUNT");
 		        	Editor editor = _prefs.edit();
 		        	editor.putInt("GCMNoteCountVanity", 0);
-		        	editor.commit();
+		        	editor.apply();
 					
 					// open search
 					if (extras.containsKey("notificationOpenVList"))
@@ -2460,7 +2445,7 @@ public class MainActivity extends ActionBarActivity
 		        	String noteNLSID = Integer.toString(extras.getInt("notificationNLSID"));
 		        	Editor editor = _prefs.edit();
 		        	editor.putInt("GCMNoteCount" + extras.getString("notificationKeyword").hashCode(), 0);
-		        	editor.commit();
+		        	editor.apply();
 					
 					// open search
 					if (extras.containsKey("notificationOpenKList"))
@@ -2505,7 +2490,7 @@ public class MainActivity extends ActionBarActivity
 		        	// update local last seen
 		        	Editor editor = _prefs.edit();
 					editor.putString("GCMShackMsgLastClickedId", noteNLSID);
-					editor.commit();
+					editor.apply();
 					
 					// open msgs
 					runOnUiThread(new Runnable(){
@@ -2665,7 +2650,7 @@ public class MainActivity extends ActionBarActivity
 		{
 			Editor edit = _prefs.edit();
 			edit.putBoolean("enableDonatorFeatures", true);
-			edit.commit();
+			edit.apply();
 		}
 	}
 	
@@ -3370,5 +3355,22 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
+    public void annoyThreadViewClose()
+    {
+        if (!_prefs.getBoolean("seenTViewCloseAnnoyer", false)) {
+            new MaterialDialog.Builder(this)
+                    .title("Did you know?")
+                    .content("You can close the reply list by swiping it to the right in addition to the back button and the arrow at the top.")
+                    .positiveText("Confirm")
+                    .callback(new MaterialDialog.ButtonCallback() {
+                        @Override
+                        public void onPositive(MaterialDialog dialog) {
+                            super.onPositive(dialog);
+                            _prefs.edit().putBoolean("seenTViewCloseAnnoyer", true).apply();
+                        }
+                    })
+                    .show();
+        }
+    }
 
 }

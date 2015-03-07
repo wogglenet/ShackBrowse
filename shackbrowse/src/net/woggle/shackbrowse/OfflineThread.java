@@ -327,7 +327,7 @@ public class OfflineThread
          while( keys.hasMoreElements() ) {
 				Object key = keys.nextElement();
 				SavedThreadObj value = _threads.get(key);
-				if (TimeDisplay.threadAge(value._postTime) > 18d)
+				if (TimeDisplay.threadAgeInHours(value._postTime) > 18d)
 				{
 					_threads.remove(key);
 				}
