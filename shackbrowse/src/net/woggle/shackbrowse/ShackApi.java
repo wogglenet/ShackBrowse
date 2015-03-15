@@ -78,6 +78,7 @@ public class ShackApi
     static final String MARKREAD_URL = "https://www.shacknews.com/messages/read";
     static final String MOD_URL = "http://www.shacknews.com/mod_chatty.x";
     static final String POST_URL = "https://www.shacknews.com/api/chat/create/17.json";
+    static final String NEW_POST_URL = "http://www.shacknews.com/post_chatty.x";
     static final String MSG_POST_URL = "http://www.shacknews.com/messages/send";
     static final String LOL_URL = "http://www.lmnopc.com/greasemonkey/shacklol/report.php";
     static final String GET_LOL_URL = "http://lmnopc.com/greasemonkey/shacklol/api.php";

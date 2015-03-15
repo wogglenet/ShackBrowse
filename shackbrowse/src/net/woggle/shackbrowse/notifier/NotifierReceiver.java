@@ -117,8 +117,8 @@ public class NotifierReceiver extends BroadcastReceiver {
 				editor.putInt("GCMNoteCountReply", numNew);
 				editor.commit();
 
-                StatsFragment.statInc(context, "NotifiedReply", numNew);
-                StatsFragment.statInc(context, "Notifications", numNew);
+                StatsFragment.statInc(context, "NotifiedReply");
+                StatsFragment.statInc(context, "Notifications");
 			}
 			else if (data.getString("type").equalsIgnoreCase("vanity"))
 			{
@@ -185,8 +185,8 @@ public class NotifierReceiver extends BroadcastReceiver {
 				editor.putInt("GCMNoteCountVanity", numNew);
 				editor.commit();
 
-                StatsFragment.statInc(context, "NotifiedVanity", numNew);
-                StatsFragment.statInc(context, "Notifications", numNew);
+                StatsFragment.statInc(context, "NotifiedVanity");
+                StatsFragment.statInc(context, "Notifications");
 			}
 			else if (data.getString("type").equalsIgnoreCase("keyword"))
 			{
@@ -252,8 +252,8 @@ public class NotifierReceiver extends BroadcastReceiver {
 				editor.putInt("GCMNoteCount" + data.getString("keyword").hashCode(), numNew);
 				editor.commit();
 
-                StatsFragment.statInc(context, "NotifiedKeyword", numNew);
-                StatsFragment.statInc(context, "Notifications", numNew);
+                StatsFragment.statInc(context, "NotifiedKeyword");
+                StatsFragment.statInc(context, "Notifications");
 			}
 			else if (data.getString("type").equalsIgnoreCase("shackmsg"))
 			{
@@ -314,8 +314,8 @@ public class NotifierReceiver extends BroadcastReceiver {
 				editor.putString("GCMShackMsgLastNotifiedId", data.getString("id"));
 				editor.commit();
 
-                StatsFragment.statInc(context, "NotifiedShackMessage", numNew);
-                StatsFragment.statInc(context, "Notifications", numNew);
+                StatsFragment.statInc(context, "NotifiedShackMessage");
+                StatsFragment.statInc(context, "Notifications");
 			}
 		}
    }

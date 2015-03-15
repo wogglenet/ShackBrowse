@@ -89,5 +89,5 @@ if( propFile.canRead() ) {
 
 } else {
   println "RELEASE_BUILD: signing.properties not found"
-  android.buildTypes.release.signingProperties = null
+  android.buildTypes.release.signingConfig = null
 }

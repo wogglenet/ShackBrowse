@@ -28,6 +28,13 @@ TODO
 * SEARCH GOOGLE BY TEXT SELECTION
 -->
 
+$ 5.1.3
+% v 5.1.3
+_ Mar 12, 2015
+* Using a different method to post now, hopefully fewer doubleposts
+* Bug Fix: Bug with notification statistics counting
+* Crash Fix: replying to threads with deep subthreads
+
 $ 5.1.2
 % v 5.1.2
 _ Mar 7, 2015

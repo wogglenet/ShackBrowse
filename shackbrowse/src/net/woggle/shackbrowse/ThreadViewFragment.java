@@ -2002,11 +2002,11 @@ public class ThreadViewFragment extends ListFragment
 
 		private ImageView buildTreeBranches(Post t, int position, ImageView imageView)
         {
-        	StringBuilder depthStr = new StringBuilder(t.getDepthString());
+        	StringBuilder depthStr = new StringBuilder(t.getDepthStringFormatted());
 
         	if (depthStr.length() > 0)
         	{
-        		final String imageKey = t.getDepthString();
+        		final String imageKey = t.getDepthStringFormatted();
 
         	    final Bitmap bitmap = getBitmapFromMemCache(imageKey);
         	    if (bitmap == null) {
@@ -2032,7 +2032,7 @@ public class ThreadViewFragment extends ListFragment
         private Bitmap buildBranchesForPost(Post t)
         {
         	int bulletWidth = _bulletBlank.getWidth();
-        	StringBuilder depthStr = new StringBuilder(t.getDepthString());
+        	StringBuilder depthStr = new StringBuilder(t.getDepthStringFormatted());
         	
         	if (depthStr.length() > 0)
         	{
@@ -2061,7 +2061,7 @@ public class ThreadViewFragment extends ListFragment
 	            	
 	            	
 	        	}
-	        	addBitmapToMemoryCache(t.getDepthString(), big);
+	        	addBitmapToMemoryCache(t.getDepthStringFormatted(), big);
 	        	return big;
         	}
         	return null;
@@ -2460,7 +2460,7 @@ public class ThreadViewFragment extends ListFragment
 		        	}
 	        	}
 
-                posts.get(i).setDepthString(depthStr.toString());
+                posts.get(i).setDepthStringFormatted(depthStr.toString());
             }
             return posts;
         }
@@ -2472,8 +2472,8 @@ public class ThreadViewFragment extends ListFragment
             for (int i = 0; i < posts.size(); i++)
             {
             	Post p = posts.get(i);
-            	if (getBitmapFromMemCache(p.getDepthString()) == null)
-            		addBitmapToMemoryCache(p.getDepthString(), buildBranchesForPost(p));
+            	if (getBitmapFromMemCache(p.getDepthStringFormatted()) == null)
+            		addBitmapToMemoryCache(p.getDepthStringFormatted(), buildBranchesForPost(p));
             }
         }
 

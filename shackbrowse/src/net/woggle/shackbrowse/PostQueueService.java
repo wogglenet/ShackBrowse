@@ -65,10 +65,12 @@ public class PostQueueService extends IntentService {
 		int sent = 0;
 		long delay = 3000L;
 		System.out.println("POSTQU: RUNNING");
+
+        statMax(ctx, "MaximumItemsInQueue", plist.size());
+        System.out.println("POSTQU: SIZE " + plist.size());
+
 		while (plist.size() > 0)
 		{
-            statMax(ctx, "MaximumItemsInQueue", plist.size());
-			System.out.println("POSTQU: SIZE " + plist.size());
 			
 			PostQueueObj post = plist.get(0);
 			{
@@ -87,7 +89,7 @@ public class PostQueueService extends IntentService {
 								// quit now, no need to keep trying and failing with network error
 								return;
 							}
-	
+                            // possible source of bug
 							if (data != null && data.has("post_insert_id"))
 							{
 								// successful post
@@ -100,11 +102,11 @@ public class PostQueueService extends IntentService {
 									post.updateFinalId(ctx);
 									sent++;
 									System.out.println("POSTQU: SUCCESSFUL POST");
-									
+
 									pdb.open();
 									int remaining = pdb.getAllPostsInQueue(true).size();
 									pdb.close();
-									
+
 									// send info back to main app
 									Intent localIntent = new Intent(MainActivity.PQPSERVICESUCCESS)
 								            // Puts the status into the Intent
@@ -143,7 +145,7 @@ public class PostQueueService extends IntentService {
 									pdb.open();
 									int remaining = pdb.getAllPostsInQueue(true).size();
 									pdb.close();
-									
+
 									if (data.toString().toLowerCase().contains("Please wait a few minutes before trying to post again".toLowerCase()))
 									{
 										// PRL
@@ -154,7 +156,7 @@ public class PostQueueService extends IntentService {
 
 										System.out.println("POSTQU: PRL ERROR, BACKING OFF");
 										delay = (delay * 2);
-										
+
 										// send info back to main app
 										Intent localIntent = new Intent(MainActivity.PQPSERVICESUCCESS)
 									            // Puts the status into the Intent
@@ -164,7 +166,7 @@ public class PostQueueService extends IntentService {
 									            .putExtra("remaining", remaining);
 									    // Broadcasts the Intent to receivers in this app.
 									    LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
-									    
+
 										if (!prefs.getBoolean("isAppForeground", false))
 									    {
 									    	notify("Post PRL'd", "Will Retry. " + remaining + " posts in queue.", 58411, 0);
@@ -175,29 +177,31 @@ public class PostQueueService extends IntentService {
 										// banned, delete post
 										System.out.println("POSTQU: BANNED ERROR");
 										post.commitDelete(ctx);
-										
+
 										if (!prefs.getBoolean("isAppForeground", false))
 									    {
 									    	notify("Post Failure", "You've been banned.", 58412, 0);
 									    }
 									}
+                                    /*
 									if (data.toString().toLowerCase().contains("fixup_postbox_parent_for_remove(".toLowerCase()))
 									{
 										// server error
 										System.out.println("POSTQU: SERVER ERROR");
 										delay = (delay * 2);
-										
+
 										if (!prefs.getBoolean("isAppForeground", false))
 									    {
 									    	notify("Post Error", "Will Retry. " + remaining + " posts in queue.", 58413, 0);
 									    }
 									}
+									*/
 									if (data.toString().toLowerCase().contains("You must be logged in to post".toLowerCase()))
 									{
 										// login error, delete post
 										System.out.println("POSTQU: LOGON ERROR");
 										post.commitDelete(ctx);
-										
+
 										if (!prefs.getBoolean("isAppForeground", false))
 									    {
 									    	notify("Post Error", "Bad Login. Check shacknews credentials.", 58414, 0);
@@ -208,19 +212,23 @@ public class PostQueueService extends IntentService {
 										// login error, delete post
 										System.out.println("POSTQU: NUKE ERROR");
 										post.commitDelete(ctx);
-										
+
 										if (!prefs.getBoolean("isAppForeground", false))
 									    {
-									    	notify("Post Error", "Cannot post to nuked thread.", 58414, 0);
+									    	notify("Post Error", "Cannot post to nuked thread.", 58415, 0);
 									    }
 
                                         statInc(ctx, "PostedToNukedThread");
 									}
-									
+
 								}
 								else
 								{
+
+                                    notify("Post Error", "Error X48. Please report this to bradsh.", 58416, 0);
+
 									// unknown error, use exponential backoff
+                                    statInc(ctx, "PQPUnknownError");
 									delay = (delay * 2);
 								}
 							}

@@ -19,6 +19,7 @@ public class Post implements Comparable<Post> {
     private boolean _expanded;
     private HashMap<Integer, Boolean> _spoiled;
     private String _depthString;
+    private String _depthStringF;
 
     private Spannable _preview;
 	private ArrayList<String> imageUrls = new ArrayList<String>();
@@ -33,8 +34,11 @@ public class Post implements Comparable<Post> {
 	private boolean _isPolitical = false;
 	private boolean _isPQP = false;
     private boolean _isWorking = false;
-	
-    
+
+    /**
+     * gets the depth string representing the tree lines for this post, before the collapse icon is added
+     * @return String
+     */
     public String getDepthString()
     {
     	return _depthString;
@@ -42,6 +46,18 @@ public class Post implements Comparable<Post> {
     public void setDepthString(String depth)
     {
     	_depthString = depth;
+    }
+    /**
+     * gets the depth string representing the tree lines for this post, after the collapse icon is added
+     * @return String
+     */
+    public String getDepthStringFormatted()
+    {
+        return _depthStringF;
+    }
+    public void setDepthStringFormatted(String depth)
+    {
+        _depthStringF = depth;
     }
     /*
     public Bitmap getTreeBMP()
