@@ -47,12 +47,12 @@ public class PostQueueService extends IntentService {
 			pdb.cleanUpFinalizedPosts();
 			pdb.close();
 		}
-		else
+		else if (NetworkChangeReceiver.NetworkUtil.getConnectivityStatus(ctx) != NetworkChangeReceiver.NetworkUtil.TYPE_NOT_CONNECTED)
 		{
 			SystemClock.sleep(200);
 			doQueue();
 		}
-		
+		// if the device is not connected, dont bother trying to post
 		
 	}
 	public void doQueue()

@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.AbsListView;
 import android.widget.FrameLayout;
@@ -58,6 +59,8 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
     private ExpandCollapseListener mExpandCollapseListener;
 	private int mOriginalUsernameHeight = 0;
     private float mZoom = 1.0f;
+    private ValueAnimator mLastExpansionAnimation;
+    private ValueAnimator mLastCollapseAnimation;
 
     /**
      * Creates a new ExpandableListItemAdapter with an empty list.
@@ -458,13 +461,18 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
             	// hack to allow first post to remain open
             	if ((mLimit >= 2) && (mExpandedIds.size() > 1))
             		firstId = mExpandedIds.get(1);
-    	            
-    	
+
                 int firstPosition = findPositionForId(firstId);
+
+                // stop the current expansion animation if running
+    	        if ((mLastExpansionAnimation != null) && (mLastExpansionAnimation.isRunning()))
+                    mLastExpansionAnimation.cancel();
+
                 View firstEV = getContentParent(firstPosition);
                 if (firstEV != null) {
-                    ExpandCollapseHelper.animateCollapsing(firstEV, mContext.getResources().getColor(R.color.selected_highlight_postbg), mContext.getResources().getColor(R.color.ics_background_start), mDuration);
+                    mLastCollapseAnimation = ExpandCollapseHelper.animateCollapsing(firstEV, mContext.getResources().getColor(R.color.selected_highlight_postbg), mContext.getResources().getColor(R.color.ics_background_start), mDuration);
                 }
+
                 View firstTV = getTitleParent(firstPosition);
                 if (firstTV != null) {
                     ExpandCollapseHelper.animateSwapTitle(firstTV, mResIds, true, (Post) getItem(firstPosition), mOriginalUsernameHeight, mDuration, mZoom);
@@ -483,18 +491,25 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
         boolean isVisible = contentParent.getVisibility() == View.VISIBLE;
         boolean shouldCollapseOther = !isVisible && mLimit > 0 && mExpandedIds.size() >= mLimit;
         if (shouldCollapseOther) {
+
         	Long firstId = mExpandedIds.get(0);
         	
         	// hack to allow first post to remain open
         	if ((mLimit >= 2) && (mExpandedIds.size() > 1))
         		firstId = mExpandedIds.get(1);
-	            
-	
+
             int firstPosition = findPositionForId(firstId);
+
+            // stop the current expansion animation if running
+            if ((mLastExpansionAnimation != null) && (mLastExpansionAnimation.isRunning()))
+                mLastExpansionAnimation.cancel();
+	
+
             View firstEV = getContentParent(firstPosition);
             if (firstEV != null) {
-                ExpandCollapseHelper.animateCollapsing(firstEV, mContext.getResources().getColor(R.color.selected_highlight_postbg), mContext.getResources().getColor(R.color.ics_background_start),mDuration);
+                mLastCollapseAnimation = ExpandCollapseHelper.animateCollapsing(firstEV, mContext.getResources().getColor(R.color.selected_highlight_postbg), mContext.getResources().getColor(R.color.ics_background_start), mDuration);
             }
+
             View firstTV = getTitleParent(firstPosition);
             if (firstTV != null) {
                 ExpandCollapseHelper.animateSwapTitle(firstTV, mResIds, true, (Post) getItem(firstPosition), mOriginalUsernameHeight, mDuration, mZoom);
@@ -510,7 +525,7 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
         Long id = (Long) contentParent.getTag();
         int position = findPositionForId(id);
         if (isVisible) {
-            ExpandCollapseHelper.animateCollapsing(contentParent, mContext.getResources().getColor(R.color.selected_highlight_postbg), mContext.getResources().getColor(R.color.ics_background_start), mDuration);
+            mLastCollapseAnimation = ExpandCollapseHelper.animateCollapsing(contentParent, mContext.getResources().getColor(R.color.selected_highlight_postbg), mContext.getResources().getColor(R.color.ics_background_start), mDuration);
             View firstTV = getTitleView(position);
             if (firstTV != null) {
                 ExpandCollapseHelper.animateSwapTitle(firstTV, mResIds, true, (Post) getItem(position), mOriginalUsernameHeight, mDuration, mZoom);
@@ -523,7 +538,7 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
 
         } else {
             loadExpandedViewDataIntoView(position, getContentView(position));
-            ExpandCollapseHelper.animateExpanding(contentParent, mAbsListView, mContext.getResources().getColor(R.color.selected_highlight_postbg), mContext.getResources().getColor(R.color.ics_background_start), mDuration);
+            mLastExpansionAnimation = ExpandCollapseHelper.animateExpanding(contentParent, mAbsListView, mContext.getResources().getColor(R.color.selected_highlight_postbg), mContext.getResources().getColor(R.color.ics_background_start), mDuration);
             View firstTV = getTitleView(position);
             if (firstTV != null) {
                 ExpandCollapseHelper.animateSwapTitle(firstTV, mResIds, false, (Post) getItem(position), mOriginalUsernameHeight, mDuration, mZoom);
@@ -592,6 +607,7 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
         ViewGroup contentParent;
         View titleView;
         View contentView;
+        Animation currentAnim;
     }
     
     public static class AnimationResIds
@@ -731,7 +747,7 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
     		}
     	}
 
-        public static void animateCollapsing(final View view, int to, int from, long duration) {
+        public static ValueAnimator animateCollapsing(final View view, int to, int from, long duration) {
         	final View secondRow = ((RelativeLayout)((LinearLayout)(((FrameLayout)view).getChildAt(0))).getChildAt(0));
             
             int origHeight = view.getHeight();
@@ -747,12 +763,19 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
                 @Override
                 public void onAnimationEnd(final Animator animator) {
                     view.setVisibility(View.GONE);
+                    super.onAnimationEnd(animator);
+                }
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                    view.setVisibility(View.VISIBLE);
+                    super.onAnimationCancel(animation);
                 }
             });
             animator.start();
+            return animator;
         }
 
-        public static void animateExpanding(final View view, final AbsListView listView, int to, int from, final long duration) {
+        public static ValueAnimator animateExpanding(final View view, final AbsListView listView, int to, int from, final long duration) {
             view.setVisibility(View.VISIBLE);
 
             final View secondRow = ((RelativeLayout)((LinearLayout)(((FrameLayout)view).getChildAt(0))).getChildAt(0));
@@ -798,7 +821,23 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
                         }
                     }
             );
+
+            animator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+
+                    listView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            listView.invalidateViews();
+                        }
+                    });
+
+                    super.onAnimationEnd(animation);
+                }
+            });
             animator.start();
+            return animator;
         }
 
         private static View findDirectChild(final View view, final AbsListView listView) {
@@ -824,12 +863,31 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
                 @Override
                 public void onAnimationUpdate(final ValueAnimator valueAnimator) {
                     int value = (Integer) valueAnimator.getAnimatedValue();
-
                     ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
                     layoutParams.height = value;
                     view.setLayoutParams(layoutParams);
                 }
             });
+
+            animator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    int value = end;
+                    ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+                    layoutParams.height = value;
+                    view.setLayoutParams(layoutParams);
+                    super.onAnimationEnd(animation);
+                }
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                    int value = start;
+                    ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+                    layoutParams.height = value;
+                    view.setLayoutParams(layoutParams);
+                    super.onAnimationCancel(animation);
+                }
+            });
+
             return animator;
         }
     }

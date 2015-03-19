@@ -377,7 +377,8 @@ public class StatsFragment extends ListFragment {
             else if (localOnly == 0) {
                 try {
                     cloudJson = ShackApi.getCloudPinned(mCloudUserName);
-
+                    // watched should always exist. if it doesnt, fail the sync
+                    JSONArray watched = cloudJson.getJSONArray("watched");
                     stats = cloudJson.optJSONArray("stats");
                     if (stats == null)
                         stats = new JSONArray();

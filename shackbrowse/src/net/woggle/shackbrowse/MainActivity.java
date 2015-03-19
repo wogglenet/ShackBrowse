@@ -1184,7 +1184,13 @@ public class MainActivity extends ActionBarActivity
 		LocalBroadcastManager.getInstance(this).unregisterReceiver(mPQPServiceReceiver);
 		
 		// unreg ncr
-		unregisterReceiver(mNetworkConnectivityReceiver);
+        try {
+            unregisterReceiver(mNetworkConnectivityReceiver);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
 		
 		// set pref that activity is not foreground. for postqueueservice
 		Editor ed = _prefs.edit();
@@ -1606,7 +1612,7 @@ public class MainActivity extends ActionBarActivity
         FrameLayout contentframe = (FrameLayout)findViewById(R.id.content_frame);
 
         // doesnt slide in dual pane
-        if (!getDualPane() && contentframe.getVisibility() == View.VISIBLE)
+        if ((!getDualPane() && contentframe.getVisibility() == View.VISIBLE) || (!isTView && contentframe.getVisibility() == View.VISIBLE))
         {
            // System.out.println("X:" +x + " s" + (-1f - x) * 40f);
            contentframe.setTranslationX((1f - x) * (-.2f * contentframe.getWidth()));
@@ -1700,6 +1706,7 @@ public class MainActivity extends ActionBarActivity
     		}
 		}
         contentframe.setTranslationX(0f);
+        sres.setTranslationX(0f);
 
 		_dualPane = dualPane;
 		_threadView.updateThreadViewUi();

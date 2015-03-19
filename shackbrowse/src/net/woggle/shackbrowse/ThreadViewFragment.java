@@ -848,7 +848,7 @@ public class ThreadViewFragment extends ListFragment
         @Override
         protected void onPostExecute(Void result)
         {
-            if (_adapter != null && _adapter.getItem(pos) != null && _adapter.getItem(pos).getPostId() == postId)
+            if (_adapter != null && _adapter.getCount() >= pos && _adapter.getItem(pos) != null && _adapter.getItem(pos).getPostId() == postId)
             {
                 LolObj updLol = _adapter.getItem(pos).getLolObj();
                 if (updLol == null)
@@ -1946,10 +1946,22 @@ public class ThreadViewFragment extends ListFragment
 		    	                }
 		    	                if (item == 4)
 		    	                {
-		    	                	Intent i = new Intent(getActivity(), PreferenceView.class);
-		    		                i.putExtra("pscreenkey", "popupbrowser");
-		    		                startActivityForResult(i, ThreadListFragment.OPEN_PREFS);
-		    	                }
+		    	                	MaterialDialog.Builder build = new MaterialDialog.Builder(getActivity());
+                                    String[] descs = getActivity().getResources().getStringArray(R.array.preference_popupBrowser);
+                                    final String[] vals = getActivity().getResources().getStringArray(R.array.preference_popupBrowser_vals);
+                                    build.items(descs);
+                                    build.title(getActivity().getResources().getString(R.string.preference_popup_browser_title));
+                                    build.itemsCallbackSingleChoice(Integer.parseInt(_prefs.getString("usePopupBrowser2","1")), new MaterialDialog.ListCallback() {
+                                        @Override
+                                        public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
+                                            SharedPreferences.Editor edit = _prefs.edit();
+                                            edit.putString("usePopupBrowser2", vals[i]);
+                                            edit.apply();
+                                        }
+                                    });
+                                    build.show();
+
+                                }
 		    	                }});
 		    	        AlertDialog alert = builder.create();
 		    	        alert.setCanceledOnTouchOutside(true);

@@ -157,6 +157,9 @@ public class Post implements Comparable<Post> {
         		_depthString = "[";
         }
         else _depthString = "";
+
+        setDepthString(_depthString);
+        setDepthStringFormatted(_depthString);
     }
     
     public boolean getSeen()

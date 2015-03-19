@@ -16,6 +16,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.app.backup.BackupManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
@@ -23,6 +24,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -46,6 +48,7 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -69,9 +72,10 @@ public class PreferenceView extends PreferenceFragment
 	private boolean _Venabled;
 
 	private Preference _keyNotification;
+    private CheckBoxPreference mChattyPicsEnable;
 
 
-	@Override
+    @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -336,6 +340,29 @@ public class PreferenceView extends PreferenceFragment
 		    	return false;
 			}}
         );
+
+        mChattyPicsEnable = (CheckBoxPreference)findPreference("enableChattyPics");
+        mChattyPicsEnable.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                PackageManager pm = getActivity().getPackageManager();
+                ComponentName compName =  new ComponentName(getActivity().getApplicationContext(), PicUploader.class);
+                final Boolean checked = (Boolean)newValue;
+                pm.setComponentEnabledSetting(compName, checked ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED : PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+                return true;
+            }
+        });
+        PackageManager pm = getActivity().getPackageManager();
+        ComponentName compName =  new ComponentName(getActivity().getApplicationContext(), PicUploader.class);
+        if ((pm.getComponentEnabledSetting(compName) == PackageManager.COMPONENT_ENABLED_STATE_DEFAULT) || (pm.getComponentEnabledSetting(compName) == PackageManager.COMPONENT_ENABLED_STATE_ENABLED))
+        {
+            mChattyPicsEnable.setChecked(true);
+        }
+        else
+        {
+            mChattyPicsEnable.setChecked(false);
+        }
+
 /*
         _keyNotification = (Preference) findPreference("noteKeywords");
         _keyNotification.setOnPreferenceClickListener(new OnPreferenceClickListener(){

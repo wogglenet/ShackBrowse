@@ -25,7 +25,7 @@
     <string name="notesrefresh">Refresh Notification List</string>
     <string name="notesdel">Clear List</string>
 
-    <string name="statsdel">Clear Cloud Stats</string>
+    <string name="statsdel">Clear All Stats</string>
     
     <string name="msgSent">View Sent Messages</string>
     <string name="msgInbox">View Message Inbox</string>
@@ -231,7 +231,7 @@
     <string name="preference_analytics_summary">Allow some usage data to be sent to the developer</string>
     <string name="preference_analytics_title">Analytics Data</string>
     
-    <string name="preference_apiUrl_title">Shacknews API Provider</string>
+    <string name="preference_apiUrl_title">API Provider</string>
     <string name="preference_apiUrl_summary">Select from five servers</string>
     
     <string name="preference_ping">Ping APIs</string>

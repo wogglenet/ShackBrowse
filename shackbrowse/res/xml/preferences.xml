@@ -16,13 +16,14 @@
             android:defaultValue="0"
             />
         <ListPreference
-            android:key="appTheme"
-            android:title="@string/preference_theme"
-            android:entries="@array/preference_theme"
-            android:entryValues="@array/preference_theme_vals"
-            android:summary="@string/preference_theme_summary"
-            android:defaultValue="0"
+            android:key="apiUrl2"
+            android:title="@string/preference_apiUrl_title"
+            android:entries="@array/preference_apiUrl"
+            android:entryValues="@array/preference_apiUrl_vals"
+            android:summary="@string/preference_apiUrl_summary"
+            android:defaultValue="5"
             />
+
         <ListPreference
             android:key="splitView"
             android:title="@string/preference_splitView_title"
@@ -39,20 +40,21 @@
             android:summary="@string/preference_fontsize_summary"
             android:defaultValue="1.0"
             />
+        <ListPreference
+            android:key="appTheme"
+            android:title="@string/preference_theme"
+            android:entries="@array/preference_theme"
+            android:entryValues="@array/preference_theme_vals"
+            android:summary="@string/preference_theme_summary"
+            android:defaultValue="0"
+            />
         <CheckBoxPreference
             android:key="useVolumeButtons"
             android:title="@string/preference_use_volume_buttons_title"
             android:summary="@string/preference_use_volume_buttons_summary"
             android:defaultValue="true"
             />
-        <ListPreference
-            android:key="apiUrl2"
-            android:title="@string/preference_apiUrl_title"
-            android:entries="@array/preference_apiUrl"
-            android:entryValues="@array/preference_apiUrl_vals"
-            android:summary="@string/preference_apiUrl_summary"
-            android:defaultValue="5"
-            />
+
         <ListPreference
             android:key="usePopupBrowser2"
             android:title="@string/preference_popup_browser_title"
@@ -99,6 +101,12 @@
 	  	     android:summary="@string/preference_swappedsplit_summary"
 	  	     android:defaultValue="false"
 	  	     />
+      <CheckBoxPreference
+          android:key="enableChattyPics"
+          android:title="Enable Standalone ChattyPics Uploader"
+          android:summary="Enables or disables ability to share image files to the standalone chattypics uploader app packaged with Shack Browse"
+          android:defaultValue="false"
+          />
     <CheckBoxPreference
 	  	     android:key="getLols"
 	  	     android:title="@string/preference_getlols_title"
