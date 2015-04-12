@@ -52,7 +52,7 @@ public class NotifierReceiver extends BroadcastReceiver {
     		  AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent);
       */
 		Bundle data = intent.getExtras();
-		if (data != null)
+		if ((data != null) && (data.getString("type") != null))
 		{
 			if (data.getString("type").equalsIgnoreCase("reply"))
 			{

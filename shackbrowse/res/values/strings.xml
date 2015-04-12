@@ -314,6 +314,23 @@
     <string name="statsItemTimeInComposer">Time spent in composer</string>
     <string name="notTurnedOn">Disabled</string>
     <string name="statsopt">Opt Out</string>
+    <string name="compose_showextended">On</string>
+    <string name="compose_showextended_onlyportrait">Only In Portrait</string>
+    <string name="compose_forcepreview">Force Preview Setting</string>
+    <string name="compose_noshowextended">Off</string>
+    <string name="menu_compose_extendededit">Extended Editor Setting</string>
+    <string name="menu_compose_forcepreview_on">On</string>
+    <string name="menu_compose_forcepreview_onlyroot">Only For Root Posts</string>
+    <string name="menu_compose_forcepreview_off">Off</string>
+    <string name="compose_color">Color Text</string>
+    <string name="compose_bold">Bold</string>
+    <string name="compose_italic">Italic</string>
+    <string name="compose_uline">Underline</string>
+    <string name="compose_small">Small</string>
+    <string name="compose_spoiler">Spoiler</string>
+    <string name="compose_quote">Quote</string>
+    <string name="compose_strike">Strike</string>
+    <string name="menu_compose_settings">Settings</string>
     <!-- items in  the array will show up even when not yet registered -->
     <string-array name="statsItems">
         <item>statsItemAnnoyedByStartupZoomDialog</item>

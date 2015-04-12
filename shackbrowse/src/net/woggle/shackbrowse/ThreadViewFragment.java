@@ -2582,6 +2582,9 @@ public class ThreadViewFragment extends ListFragment
     			}
     		}
     		_adapter.notifyDataSetChanged();
+
+            setListAdapter(_adapter);
+            _adapter.setAbsListView(getListView());
     	}
     }
 

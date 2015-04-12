@@ -28,6 +28,13 @@ TODO
 * SEARCH GOOGLE BY TEXT SELECTION
 -->
 
+$ 5.1.4
+% v 5.1.4
+_ Apr 10, 2015
+* Extended editor in post composer
+* Rearranged some things in post composer
+* Bug Fix: A few crashes and some edge cases when the app was dormant and returned to after long periods of time
+
 $ 5.1.3
 % v 5.1.3
 _ Mar 19, 2015

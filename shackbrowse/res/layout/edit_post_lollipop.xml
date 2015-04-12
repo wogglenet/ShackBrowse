@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <net.woggle.EditTextSelectionSaved
+        android:id="@+id/textContent"
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:gravity="top"
+        android:hint="@string/reply_text_hint"
+        android:inputType="textCapSentences|textMultiLine|textLongMessage|textAutoCorrect"
+        android:imeOptions="flagNoExtractUi"
+        android:textSize="@dimen/editTextSize"
+        />
+    <LinearLayout
+        android:elevation="5dp"
+        android:id="@+id/editBarContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:gravity="right"
+        android:background="?attr/colorPrimary">
+        <android.support.v7.widget.ActionMenuView
+            android:id="@+id/editBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:minHeight="?attr/actionBarSize"
+            android:layout_gravity="right"
+            android:gravity="right"
+            />
+    </LinearLayout>
+</LinearLayout>

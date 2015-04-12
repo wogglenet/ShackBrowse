@@ -97,7 +97,6 @@ public class MainActivity extends ActionBarActivity
 	static final String PQPSERVICESUCCESS = "net.woggle.PQPServiceSuccess";
     FrameLayout mFrame;
     OfflineThread mOffline;
-    //PagerTabStrip mIndicator;
     
     public SearchResultFragment _searchResults;
     public ThreadViewFragment _threadView;
@@ -202,6 +201,13 @@ public class MainActivity extends ActionBarActivity
 		{
 			_searchResults = new SearchResultFragment();
 		}
+
+        if (fm.findFragmentByTag("pbfrag") != null)
+            mPBfragment = (PopupBrowserFragment) fm.findFragmentByTag("pbfrag");
+        else
+        {
+            mPBfragment = new PopupBrowserFragment();
+        }
 		
 		if (fm.findFragmentByTag(Integer.toString(CONTENT_THREADLIST)) != null)
 		{
@@ -262,13 +268,16 @@ public class MainActivity extends ActionBarActivity
 			ft = fm.beginTransaction();
 			ft.attach(_messageList);
 			ft.commit();
+
+
+            ft = fm.beginTransaction();
+            ft.attach(mPBfragment);
+            ft.commit();
+
 		}
-		
-		
-		
+
 		mShortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime) * 1;
 
-		
 		getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
 		// this is for upgraders, a check to upgrade donator prefs
@@ -278,7 +287,6 @@ public class MainActivity extends ActionBarActivity
         reloadPrefs();
 		
 		// notifications registrator, works mostly automatically
-		
 		OnGCMInteractListener GCMlistener = new OnGCMInteractListener(){@Override	public void networkResult(String res) {
 			// this allows the check mark to be placed when push notifications are automatically enabled if the setting has never been touched
 			Editor edit = _prefs.edit();
@@ -646,6 +654,8 @@ public class MainActivity extends ActionBarActivity
         {
         	nf = (NotificationFragment)getFragmentManager().findFragmentByTag(Integer.toString(CONTENT_NOTIFICATIONS));
         }
+
+        mPBfragment = (PopupBrowserFragment)getFragment("pbfrag");
         
         NotificationsDB ndb;
 		switch (item.getItemId())
@@ -748,7 +758,7 @@ public class MainActivity extends ActionBarActivity
 		                startActivityForResult(i, ThreadListFragment.OPEN_PREFS); */
 					}
 				};
-                closeBrowser(true,onEnd);
+                closeBrowser(true,onEnd, false);
                 break;
 	        case R.id.menu_browserChangeZoom:
 	        	if (mPopupBrowserOpen)
@@ -1232,6 +1242,10 @@ public class MainActivity extends ActionBarActivity
 		ed.apply();
 
         mActivityAvailable = true;
+
+        if (!mPopupBrowserOpen)
+            // make sure the browser is closed
+            closeBrowser(true, null, true);
 	}
 	
 	public void toggleMenu() {
@@ -2829,7 +2843,7 @@ public class MainActivity extends ActionBarActivity
 	public void showOnlyProgressBarFromPTRLibrary(boolean showOnlyProgressBarWithoutHeader)
 	{
 		// only do this hack if the PTR library did not start the refresh
-		if (!getRefresher().isRefreshing())
+		if (getRefresher() != null && !getRefresher().isRefreshing())
     	{
             // prevent unnecessary changes
             if (showOnlyProgressBarWithoutHeader != mSOPBFPTRL) {
@@ -2944,7 +2958,7 @@ public class MainActivity extends ActionBarActivity
 	    	args.putBoolean("showZoomSetup", true);
 		
 		mPBfragment = (PopupBrowserFragment)Fragment.instantiate(getApplicationContext(), PopupBrowserFragment.class.getName(), args );
-		ft.add(R.id.browser_frame, mPBfragment);
+		ft.add(R.id.browser_frame, mPBfragment, "pbfrag");
 		ft.attach(mPBfragment);
 		ft.commit();
 		
@@ -2959,6 +2973,8 @@ public class MainActivity extends ActionBarActivity
 		
 		if (!mBrowserIsClosing)
 		{
+            mPBfragment = (PopupBrowserFragment)getFragment("pbfrag");
+
 			// stop youtube playing
 			mPBfragment.mWebview.loadUrl("");
 			
@@ -2968,58 +2984,66 @@ public class MainActivity extends ActionBarActivity
 			ft.remove(mPBfragment);
 			ft.detach(mPBfragment);
 			ft.commit();
-			mPBfragment = null;
 			
 			// create new one
 			Bundle args = new Bundle();
 			args.putBoolean("showZoomSetup", true);
 			mPBfragment = (PopupBrowserFragment)Fragment.instantiate(getApplicationContext(), PopupBrowserFragment.class.getName(), args );
 			ft = fm.beginTransaction();
-			ft.add(R.id.browser_frame, mPBfragment);
+			ft.add(R.id.browser_frame, mPBfragment, "pbfrag");
 			ft.attach(mPBfragment);
 			ft.commit();
 		}		
 	}
-	
+
+    public Fragment getFragment(String tag)
+    {
+        FragmentManager fm = getFragmentManager();
+        return fm.findFragmentByTag(tag);
+    }
 	private void closeBrowser() {
-		closeBrowser(false, null);
+		closeBrowser(false, null, false);
 	}
-	private void closeBrowser(boolean immediate, final mAnimEnd onEnd) {
+	private void closeBrowser(boolean immediate, final mAnimEnd onEnd, final boolean quiet) {
 		
 		if (!mBrowserIsClosing)
 		{
+            mPBfragment = (PopupBrowserFragment)getFragment("pbfrag");
+
 			// stop youtube playing
-			mPBfragment.mWebview.loadUrl("");
+            if (mPBfragment != null) {
+                mPBfragment.mWebview.loadUrl("");
 
 
-			
-			// set up end call
-			mAnimEnd closeAction = new mAnimEnd(){
-				@Override
-				public void end() {
-					FragmentManager fm = getFragmentManager();
-					FragmentTransaction ft = fm.beginTransaction();
-					ft.remove(mPBfragment);
-					ft.detach(mPBfragment);
-					mBrowserIsClosing  = false;
-					ft.commit();
-					mPBfragment = null;
-					mPopupBrowserOpen = false;
-					setTitleContextually();
-					if (onEnd != null)
-						onEnd.end();
+                // set up end call
+                mAnimEnd closeAction = new mAnimEnd() {
+                    @Override
+                    public void end() {
+                        FragmentManager fm = getFragmentManager();
+                        FragmentTransaction ft = fm.beginTransaction();
+                        ft.remove(mPBfragment);
+                        ft.detach(mPBfragment);
+                        mBrowserIsClosing = false;
+                        ft.commit();
+                        mPopupBrowserOpen = false;
+                        if (!quiet)
+                            setTitleContextually();
 
-                    // setting this field first forces a refresh of the progress bar
-                    mSOPBFPTRL = true;
-                    showOnlyProgressBarFromPTRLibrary(false);
-				}
-			};
-			
-			mBrowserIsClosing  = true;
-			if (immediate)
-				closeAction.end();
-			else
-				new anim(mBrowserFrame).toInvisible().setEndCall(closeAction);
+                        if (onEnd != null)
+                            onEnd.end();
+
+                        // setting this field first forces a refresh of the progress bar
+                        mSOPBFPTRL = true;
+                        showOnlyProgressBarFromPTRLibrary(false);
+                    }
+                };
+
+                mBrowserIsClosing = true;
+                if (immediate)
+                    closeAction.end();
+                else
+                    new anim(mBrowserFrame).toInvisible().setEndCall(closeAction);
+            }
 		}		
 	}
 	

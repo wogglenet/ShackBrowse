@@ -38,10 +38,63 @@
 		  android:title="@string/compose_showParent"
 		  android:visible="true"
 		  android:orderInCategory="1" />
-	<item android:id="@+id/menu_compose_settings"
+
+    <item android:id="@+id/menu_compose_setting_submenu"
+        android:title="@string/menu_compose_settings"
         app:showAsAction="never"
-		  android:icon="@drawable/ic_action_action_settings"
-		  android:title="@string/settings"
-		  android:visible="false"
-		  android:orderInCategory="1" />
+        android:orderInCategory="80">
+        <menu>
+    <item android:id="@+id/menu_compose_extendededit_submenu"
+        android:title="@string/menu_compose_extendededit"
+        app:showAsAction="never"
+        android:orderInCategory="10" >
+        <menu>
+            <item android:id="@+id/menu_compose_showextended_on"
+                app:showAsAction="never"
+                android:checkable="true"
+                android:title="@string/compose_showextended"
+                android:visible="true"
+                android:orderInCategory="6" />
+            <item android:id="@+id/menu_compose_showextended_onlyportrait"
+                app:showAsAction="never"
+                android:title="@string/compose_showextended_onlyportrait"
+                android:visible="true"
+                android:checkable="true"
+                android:orderInCategory="7" />
+            <item android:id="@+id/menu_compose_showextended_off"
+                app:showAsAction="never"
+                android:title="@string/compose_noshowextended"
+                android:visible="true"
+                android:checkable="true"
+                android:orderInCategory="8" />
+        </menu>
+    </item>
+    <item android:id="@+id/menu_compose_forcepreview_submenu"
+        app:showAsAction="never"
+        android:title="@string/compose_forcepreview"
+        android:visible="true"
+        android:orderInCategory="11" >
+        <menu>
+            <item android:id="@+id/menu_compose_forcepreview_on"
+                app:showAsAction="never"
+                android:checkable="true"
+                android:title="@string/menu_compose_forcepreview_on"
+                android:visible="true"
+                android:orderInCategory="6" />
+            <item android:id="@+id/menu_compose_forcepreview_onlyroot"
+                app:showAsAction="never"
+                android:title="@string/menu_compose_forcepreview_onlyroot"
+                android:visible="true"
+                android:checkable="true"
+                android:orderInCategory="7" />
+            <item android:id="@+id/menu_compose_forcepreview_off"
+                app:showAsAction="never"
+                android:title="@string/menu_compose_forcepreview_off"
+                android:visible="true"
+                android:checkable="true"
+                android:orderInCategory="8" />
+        </menu>
+    </item>
+            </menu>
+    </item>
 </menu>

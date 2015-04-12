@@ -33,6 +33,11 @@ import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.internal.view.menu.MenuBuilder;
+import android.support.v7.internal.view.menu.MenuPresenter;
+import android.support.v7.widget.ActionMenuPresenter;
+import android.support.v7.widget.ActionMenuView;
+import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.CharacterStyle;
@@ -50,6 +55,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -66,8 +72,8 @@ public class ComposePostView extends ActionBarActivity {
 	static final long MAX_SIZE_LOGGED_IN = 6 * 1024 * 1024;
 	static final long MAX_SIZE_NOT_LOGGED_IN = 3 * 1024 * 1024;
 	
-	final String[] _tagLabels = { "r{red}r", "/[italics]/", "g{green}g", "b[bold]b", "b{blue}b", "q[quote]q", "y{yellow}y", "s[small]s", "e[olive]e", "_[underline]_",  "l[lime]l", "-[strike]-", "n[orange]n", "spoilo[er]o", "p[multisync]p"};	        
-    final String[] _tags = {      "r{...}r",       "/[...]/",         "g{...}g",          "b[...]b",      "b{...}b",      "q[...]q",          "y{...}y",          "s[...]s",          "e[...]e",          "_[...]_",    	        "l[...]l",            "-[...]-",	        "n[...]n",	        "o[...]o",	        "p[...]p"};
+	final String[] _tagLabels = { "r{red}r", "g{green}g", "b{blue}b", "y{yellow}y", "e[olive]e", "l[lime]l", "n[orange]n", "p[multisync]p", "/[italics]/", "b[bold]b",  "q[quote]q",  "s[small]s",  "_[underline]_",   "-[strike]-",  "spoilo[er]o"};
+    final String[] _tags = {      "r{...}r",  "g{...}g",   "b[...]b",  "y{...}y",  "e[...]e",  "l[...]l",  "n[...]n",	  "p[...]p",      "/[...]/",         "b{...}b",   "q[...]q",     "s[...]s",   "_[...]_",     "-[...]-",	   "o[...]o"};
 	
 	private boolean _isNewsItem = false;
     private int _replyToPostId = 0;
@@ -80,6 +86,7 @@ public class ComposePostView extends ActionBarActivity {
 	SharedPreferences _prefs;
 	private int _orientLock = 0;
 	private int _forcePostPreview = 1;
+    private int _extendedEditor = 1;
 	private boolean _messageMode = false;
 	protected boolean _preventDraftSave = false;
 	private String _parentAuthorForDraft = "";
@@ -93,6 +100,9 @@ public class ComposePostView extends ActionBarActivity {
 	private boolean _landscape = false;
     private int mThemeResId;
     private Long mLastResumeTime = 0L;
+    private boolean mEditBarEnabled;
+    private MenuBuilder ExtMenuBuilder;
+    private ActionMenuPresenter mPresenter;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -104,6 +114,18 @@ public class ComposePostView extends ActionBarActivity {
         mThemeResId = MainActivity.themeApplicator(this);
         
         _forcePostPreview  = Integer.parseInt(_prefs.getString("forcePostPreview", "1"));
+
+        _extendedEditor  = Integer.parseInt(_prefs.getString("extendedEditor", "1"));
+
+        // grab the post being replied to, if this is a reply
+        Bundle extras = getIntent().getExtras();
+        if (extras != null && extras.containsKey(MainActivity.THREAD_ID))
+        {
+            _replyToPostId = getIntent().getExtras().getInt(MainActivity.THREAD_ID);
+
+            if (extras.containsKey(MainActivity.IS_NEWS_ITEM))
+                _isNewsItem = extras.getBoolean(MainActivity.IS_NEWS_ITEM);
+        }
         
         // drafts
         _drafts = new Drafts(this);
@@ -113,13 +135,19 @@ public class ComposePostView extends ActionBarActivity {
         
         if (_orientLock == 2 || _orientLock == 4 || getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
         {
-        	setContentView(R.layout.edit_post);
+        	setContentView(R.layout.edit_post_lollipop);
+            _landscape  = true;
         }
         else
         {
-        	setContentView(R.layout.edit_post);
+        	setContentView(R.layout.edit_post_lollipop);
+            _landscape  = false;
         }
-        
+
+        buildActionMenuView();
+
+        decideEditBar();
+
         // home button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         
@@ -130,15 +158,7 @@ public class ComposePostView extends ActionBarActivity {
         
         editBox.setCustomSelectionActionModeCallback(new StyleCallback());
         
-        // grab the post being replied to, if this is a reply
-        Bundle extras = getIntent().getExtras();
-        if (extras != null && extras.containsKey(MainActivity.THREAD_ID))
-        {
-            _replyToPostId = getIntent().getExtras().getInt(MainActivity.THREAD_ID);
-            
-            if (extras.containsKey(MainActivity.IS_NEWS_ITEM))
-            	_isNewsItem = extras.getBoolean(MainActivity.IS_NEWS_ITEM);
-        }
+
         
         // check for message reply
         if (extras != null && extras.containsKey("mode"))
@@ -194,8 +214,92 @@ public class ComposePostView extends ActionBarActivity {
         }
         
 	}
-	
-	// HOME BUTTON
+
+    private void buildActionMenuView() {
+        //*
+        // * setup advanced edit bar
+        ActionMenuView actionMenuView = (ActionMenuView) findViewById(R.id.editBar);
+
+        final Context context = this;
+        MenuBuilder menuBuilder = new MenuBuilder(context);
+        menuBuilder.setCallback(new MenuBuilder.Callback() {
+            @Override
+            public boolean onMenuItemSelected(MenuBuilder menuBuilder, MenuItem menuItem) {
+                return onOptionsItemSelected(menuItem);
+            }
+
+            @Override
+            public void onMenuModeChange(MenuBuilder menuBuilder) {
+
+            }
+        });
+
+        // setup a actionMenuPresenter which will use up as much space as it can, even with width=wrap_content
+        mPresenter = new ActionMenuPresenter(context);
+        mPresenter.setCallback(new MenuPresenter.Callback() {
+            @Override
+            public void onCloseMenu(MenuBuilder menuBuilder, boolean b) {
+
+            }
+
+            @Override
+            public boolean onOpenSubMenu(MenuBuilder menuBuilder) {
+                prepMenuItems(menuBuilder);
+                return false;
+            }
+        });
+        mPresenter.setReserveOverflow(true);
+        mPresenter.setWidthLimit(getResources().getDisplayMetrics().widthPixels, true);
+        mPresenter.setItemLimit(Integer.MAX_VALUE);
+
+        // open a menu xml into the menubuilder
+        getMenuInflater().inflate(R.menu.editbar, menuBuilder);
+
+        // runs presenter.initformenu(mMenu) too, setting up presenter's mmenu ref...  this must be before setmenuview
+        menuBuilder.addMenuPresenter(mPresenter, this);
+
+        // runs menuview.initialize too, so menuview.mmenu = mpresenter.mmenu
+        actionMenuView.setPresenter(mPresenter);
+
+        mPresenter.updateMenuView(true);
+
+        ExtMenuBuilder = menuBuilder;
+
+
+        /*
+        end setup
+         */
+    }
+
+    // returns true if edit bar enabled
+    private boolean decideEditBar() {
+        if ((_landscape && (_extendedEditor == 1)) || (_extendedEditor == 0))
+            setEditBarEnabled(false);
+        else
+            setEditBarEnabled(true);
+        return !((_landscape && (_extendedEditor == 1)) || (_extendedEditor == 0));
+    }
+
+    private void setEditBarEnabled(boolean b) {
+        findViewById(R.id.editBarContainer).setVisibility(b ? View.VISIBLE : View.GONE);
+
+        if (b) {
+
+            mEditBarEnabled = true;
+            invalidateOptionsMenu();
+        }
+        else
+        {
+            mEditBarEnabled = false;
+            invalidateOptionsMenu();
+        }
+    }
+
+
+
+
+
+    // HOME BUTTON
 	@Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
@@ -216,9 +320,6 @@ public class ComposePostView extends ActionBarActivity {
         }
         switch(item.getItemId())
         {
-        	case R.id.menu_compose_settings:
-                showSettings();
-                break;
         	case R.id.menu_compose_markup:
                 openMarkupSelector(false);
                 break;
@@ -237,12 +338,62 @@ public class ComposePostView extends ActionBarActivity {
         	case R.id.menu_compose_preview:
         		showPreview();
         		break;
-            
+            case R.id.menu_compose_showextended_on:
+                _prefs.edit().putString("extendedEditor", "2").commit();
+                _extendedEditor = 2;
+                decideEditBar();
+                break;
+            case R.id.menu_compose_showextended_onlyportrait:
+                _prefs.edit().putString("extendedEditor", "1").commit();
+                _extendedEditor = 1;
+                decideEditBar();
+                break;
+            case R.id.menu_compose_showextended_off:
+                _prefs.edit().putString("extendedEditor", "0").commit();
+                _extendedEditor = 0;
+                decideEditBar();
+                break;
+            case R.id.menu_compose_forcepreview_on:
+                _prefs.edit().putString("forcePostPreview", "2").commit();
+                _forcePostPreview = 2;
+                break;
+            case R.id.menu_compose_forcepreview_onlyroot:
+                _prefs.edit().putString("forcePostPreview", "1").commit();
+                _forcePostPreview = 1;
+                break;
+            case R.id.menu_compose_forcepreview_off:
+                _prefs.edit().putString("forcePostPreview", "0").commit();
+                _forcePostPreview = 0;
+                break;
+            case R.id.menu_compose_bold:
+                applyMarkup(9);
+                break;
+            case R.id.menu_compose_italic:
+                applyMarkup(8);
+                break;
+            case R.id.menu_compose_small:
+                applyMarkup(11);
+                break;
+            case R.id.menu_compose_underline:
+                applyMarkup(12);
+                break;
+            case R.id.menu_compose_color:
+                openMarkupSelector(false,true);
+                break;
+            case R.id.menu_compose_strike:
+                applyMarkup(13);
+                break;
+            case R.id.menu_compose_quote:
+                applyMarkup(10);
+                break;
+            case R.id.menu_compose_spoiler:
+                applyMarkup(14);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
-	
-	public void setupButtonBindings(Bundle extras)
+
+    public void setupButtonBindings(Bundle extras)
 	{
 		if (extras == null)
 			extras = new Bundle();
@@ -293,21 +444,64 @@ public class ComposePostView extends ActionBarActivity {
     public boolean onPrepareOptionsMenu(Menu menu)
     {
         super.onPrepareOptionsMenu(menu);
-        _forcePostPreview  = Integer.parseInt(_prefs.getString("forcePostPreview", "1"));
-        
-        if (_replyToPostId == 0)
-        {
-        	menu.findItem(R.id.menu_compose_showParent).setVisible(false);
+
+        if (!mEditBarEnabled) {
+            hideMenuItems(menu, true);
+            prepMenuItems(menu);
+
         }
-        if (!LegacyFactory.getLegacy().hasCamera(this))
-        	menu.findItem(R.id.menu_compose_camera).setVisible(false);
+        else
+        {
+            hideMenuItems(menu, false);
+        }
+
 		return true;
     }
-    private void showSettings()
+
+    private void prepMenuItems(Menu menu) {
+        _forcePostPreview  = Integer.parseInt(_prefs.getString("forcePostPreview", "1"));
+        _extendedEditor  = Integer.parseInt(_prefs.getString("extendedEditor", "1"));
+
+        if (menu != null && menu.findItem(R.id.menu_compose_forcepreview_off) != null) {
+            menu.findItem(R.id.menu_compose_forcepreview_off).setChecked(false);
+            menu.findItem(R.id.menu_compose_forcepreview_on).setChecked(false);
+            menu.findItem(R.id.menu_compose_forcepreview_onlyroot).setChecked(false);
+            if (_forcePostPreview == 0)
+                menu.findItem(R.id.menu_compose_forcepreview_off).setChecked(true);
+            if (_forcePostPreview == 1)
+                menu.findItem(R.id.menu_compose_forcepreview_onlyroot).setChecked(true);
+            if (_forcePostPreview == 2)
+                menu.findItem(R.id.menu_compose_forcepreview_on).setChecked(true);
+        }
+
+        if (menu != null && menu.findItem(R.id.menu_compose_showextended_on) != null) {
+            menu.findItem(R.id.menu_compose_showextended_on).setChecked(false);
+            menu.findItem(R.id.menu_compose_showextended_onlyportrait).setChecked(false);
+            menu.findItem(R.id.menu_compose_showextended_off).setChecked(false);
+            if (_extendedEditor == 0)
+                menu.findItem(R.id.menu_compose_showextended_off).setChecked(true);
+            if (_extendedEditor == 1)
+                menu.findItem(R.id.menu_compose_showextended_onlyportrait).setChecked(true);
+            if (_extendedEditor == 2)
+                menu.findItem(R.id.menu_compose_showextended_on).setChecked(true);
+        }
+
+        if (menu != null && menu.findItem(R.id.menu_compose_showParent) != null) {
+            if (_replyToPostId == 0) {
+                menu.findItem(R.id.menu_compose_showParent).setVisible(false);
+            }
+            if (!LegacyFactory.getLegacy().hasCamera(this))
+                menu.findItem(R.id.menu_compose_camera).setVisible(false);
+        }
+    }
+
+    private void hideMenuItems(Menu menu, boolean visible)
     {
-        Intent i = new Intent(this, PreferenceView.class);
-        i.putExtra("pscreenkey", "postcomposer");
-        startActivityForResult(i, ThreadListFragment.OPEN_PREFS);
+        for(int i = 0; i < menu.size(); i++){
+
+            menu.getItem(i).setVisible(visible);
+
+        }
     }
     
     public void showParentPost()
@@ -489,6 +683,8 @@ public class ComposePostView extends ActionBarActivity {
     {
         super.onResume();
         mLastResumeTime = TimeDisplay.now();
+
+        _forcePostPreview = Integer.parseInt(_prefs.getString("forcePostPreview", "1"));
     }
 	
 	@Override
@@ -502,17 +698,22 @@ public class ComposePostView extends ActionBarActivity {
 		doOrientation();
 		if (((_orientLock == 0) && (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT)) || (_orientLock == 1) || (_orientLock == 3))
 		{
-			setContentView(R.layout.edit_post);
-			//getSupportActionBar().show();
+			//setContentView(R.layout.edit_post_lollipop);
 			_landscape  = false;
 		}
 		else
 		{
-			setContentView(R.layout.edit_post);
+			//setContentView(R.layout.edit_post_lollipop);
 			_landscape = true;
-			//getSupportActionBar().hide();
 		}
-		
+        //setContentView(R.layout.edit_post_lollipop);
+        if (decideEditBar())
+        {
+            buildActionMenuView();
+        }
+
+
+
 		setupButtonBindings(null);
 		
 		editBox = (EditText)findViewById(R.id.textContent);
@@ -521,8 +722,10 @@ public class ComposePostView extends ActionBarActivity {
         editBox.setCustomSelectionActionModeCallback(new StyleCallback());
 		editBox.requestFocus();
 	}
-	
-	@Override
+
+
+
+    @Override
     public void onStart()
     {
 		super.onStart();
@@ -570,41 +773,49 @@ public class ComposePostView extends ActionBarActivity {
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3) {
 
-            statInc(arg1.getContext(), "AppliedShackTag");
+            applyMarkup(which);
+			
+			
+		}		
+	};
 
-			if (_shackTagDialog != null)
-				_shackTagDialog.cancel();
-			
-			final String[] tags = _tags;
-			EditText edit = (EditText)findViewById(R.id.textContent);
-			
-			// check if text is selected. if so, apply tags. if no text selected, ask for text
-			int start = edit.getSelectionStart();
-	        int end = edit.getSelectionEnd();
-	        String seltext = edit.getText().toString().substring(start, end);
-			if (seltext.length() > 0)
-			{
-				String textToInsert = tags[which].substring(0, 2) + seltext + tags[which].substring(5);
-		        edit.getText().replace(Math.min(start, end), Math.max(start, end), textToInsert, 0, textToInsert.length());
-		        edit.setSelection(Math.min(start, end), Math.min(start, end) + textToInsert.length());
-			}
-			else
-			{
-				if (!_prefs.getBoolean("hasSeenMarkupTip", false))
-				{
-                    MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(ComposePostView.this);
-					builder.setTitle("Markup Button Tip");
-					builder.setMessage("You can long-press on a word to select the word in Android. Once a word is selected, you can hit the markup button and that markup will be applied. You can do this multiple times to easily add multiple markups to a text selection.");
-					builder.setNegativeButton("Never show this again", null);
-					builder.show();
-					
-					Editor editor = _prefs.edit();
-					editor.putBoolean("hasSeenMarkupTip", true);
-					editor.apply();
-				}
-				String textToInsert = tags[which].substring(0, 2) + tags[which].substring(5);
-		        edit.getText().replace(Math.min(start, end), Math.max(start, end), textToInsert, 0, textToInsert.length());
-		        edit.setSelection(Math.min(start, end) +2);
+    private void applyMarkup(int which) {
+
+        statInc(ComposePostView.this, "AppliedShackTag");
+
+        if (_shackTagDialog != null)
+            _shackTagDialog.cancel();
+
+        final String[] tags = _tags;
+        EditText edit = (EditText)findViewById(R.id.textContent);
+
+        // check if text is selected. if so, apply tags. if no text selected, ask for text
+        int start = edit.getSelectionStart();
+        int end = edit.getSelectionEnd();
+        String seltext = edit.getText().toString().substring(start, end);
+        if (seltext.length() > 0)
+        {
+            String textToInsert = tags[which].substring(0, 2) + seltext + tags[which].substring(5);
+            edit.getText().replace(Math.min(start, end), Math.max(start, end), textToInsert, 0, textToInsert.length());
+            edit.setSelection(Math.min(start, end), Math.min(start, end) + textToInsert.length());
+        }
+        else
+        {
+            if (!_prefs.getBoolean("hasSeenMarkupTip", false))
+            {
+                MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(ComposePostView.this);
+                builder.setTitle("Markup Button Tip");
+                builder.setMessage("You can long-press on a word to select the word in Android. Once a word is selected, you can hit the markup button and that markup will be applied. You can do this multiple times to easily add multiple markups to a text selection.");
+                builder.setNegativeButton("Never show this again", null);
+                builder.show();
+
+                Editor editor = _prefs.edit();
+                editor.putBoolean("hasSeenMarkupTip", true);
+                editor.apply();
+            }
+            String textToInsert = tags[which].substring(0, 2) + tags[which].substring(5);
+            edit.getText().replace(Math.min(start, end), Math.max(start, end), textToInsert, 0, textToInsert.length());
+            edit.setSelection(Math.min(start, end) +2);
 				/*
 				AlertDialog.Builder builder = new AlertDialog.Builder(ComposePostView.this);
 				builder.setTitle("Insert text into " + tags[which]);
@@ -615,15 +826,15 @@ public class ComposePostView extends ActionBarActivity {
 				final EditText input = new EditText(ComposePostView.this);
 				// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
 				input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
-		        
+
 				input.setText(edit.getText().toString().substring(start, end));
 				builder.setView(input);
 
 				// Set up the buttons
-				builder.setPositiveButton("OK", new DialogInterface.OnClickListener() { 
+				builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 				    @Override
 				    public void onClick(DialogInterface dialog, int which2) {
-				    	
+
 				        String textToInsert = tags[tagtype].substring(0, 2) + input.getText().toString() + tags[tagtype].substring(5);
 				        EditText edit = (EditText)findViewById(R.id.textContent);
 				        int start = edit.getSelectionStart();
@@ -640,12 +851,10 @@ public class ComposePostView extends ActionBarActivity {
 
 				builder.show();
 				*/
-			}
-			
-			
-		}		
-	};
-	public void postClick()
+        }
+    }
+
+    public void postClick()
 	{
 		if ((((_replyToPostId == 0) && (_forcePostPreview >= 1)) || (_forcePostPreview == 2)) && (!_messageMode))
         {
@@ -696,22 +905,36 @@ public class ComposePostView extends ActionBarActivity {
         // post in the background
         new PostTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, content);
 	}
-	
-	protected void openMarkupSelector(boolean andReselect) {
+
+    protected void openMarkupSelector(boolean andReselect)
+    {
+        openMarkupSelector(andReselect, false);
+    }
+
+
+    protected void openMarkupSelector(boolean andReselect, boolean justColors) {
         MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(ComposePostView.this);
         builder.setTitle("Select Shack Tag");
+        if (justColors)
+            builder.setTitle("Select Color");
         
         GridView grid = new GridView(ComposePostView.this);
-        grid.setNumColumns(3);
+        if (justColors) {
+            grid.setNumColumns(2);
+        }
+        else
+            grid.setNumColumns(3);
         grid.setHorizontalSpacing(2);
         grid.setVerticalSpacing(2);
         grid.setGravity(Gravity.CENTER);
         grid.setOnItemClickListener(onShackTagSelected);
+
         
         ArrayList<Spanned> itemList = new ArrayList<Spanned>();
         for (int i = 0; i < _tagLabels.length; i++)
         {
-        	itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML(_tagLabels[i]), null, true, true));
+            if ((justColors && (i < 8)) || (!justColors))
+        	    itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML(_tagLabels[i]), null, true, true));
         }
         ArrayAdapter<Spanned> adapter = new ArrayAdapter<Spanned>(ComposePostView.this,android.R.layout.simple_list_item_1, itemList);
         grid.setAdapter(adapter);

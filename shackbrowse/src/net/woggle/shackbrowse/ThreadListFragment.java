@@ -540,16 +540,19 @@ public class ThreadListFragment extends ListFragment
                 @Override
                 public void run() {
                     System.out.println("REFRESHL DOIN THINGS");
-                    getListView().clearChoices();
-                    _adapter.clear();
-                    _adapter.notifyDataSetChanged();
-                    _adapter.triggerLoadMore();
-                    _preventAutoLoad = false;
-                    if (_adapter.updatePrefs()) {
-                        System.out.println("zoom or other pref changed, redraw listview");
-                        getListView().invalidate();
+                    if (getListView() != null)
+                        getListView().clearChoices();
+                    if (_adapter != null) {
+                        _adapter.clear();
                         _adapter.notifyDataSetChanged();
+                        _adapter.triggerLoadMore();
+                        _preventAutoLoad = false;
+                        if (_adapter.updatePrefs()) {
+                            System.out.println("zoom or other pref changed, redraw listview");
+                            getListView().invalidate();
+                            _adapter.notifyDataSetChanged();
 
+                        }
                     }
                 }
             }, 500);
