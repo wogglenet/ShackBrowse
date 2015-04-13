@@ -73,7 +73,7 @@ public class ComposePostView extends ActionBarActivity {
 	static final long MAX_SIZE_NOT_LOGGED_IN = 3 * 1024 * 1024;
 	
 	final String[] _tagLabels = { "r{red}r", "g{green}g", "b{blue}b", "y{yellow}y", "e[olive]e", "l[lime]l", "n[orange]n", "p[multisync]p", "/[italics]/", "b[bold]b",  "q[quote]q",  "s[small]s",  "_[underline]_",   "-[strike]-",  "spoilo[er]o"};
-    final String[] _tags = {      "r{...}r",  "g{...}g",   "b[...]b",  "y{...}y",  "e[...]e",  "l[...]l",  "n[...]n",	  "p[...]p",      "/[...]/",         "b{...}b",   "q[...]q",     "s[...]s",   "_[...]_",     "-[...]-",	   "o[...]o"};
+    final String[] _tags = {      "r{...}r",  "g{...}g",   "b{...}b",  "y{...}y",  "e[...]e",  "l[...]l",  "n[...]n",	  "p[...]p",      "/[...]/",         "b[...]b",   "q[...]q",     "s[...]s",   "_[...]_",     "-[...]-",	   "o[...]o"};
 	
 	private boolean _isNewsItem = false;
     private int _replyToPostId = 0;
