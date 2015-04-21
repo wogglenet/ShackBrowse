@@ -145,6 +145,7 @@ public class AppMenu extends ListFragment
     		        if (verified) {
     		        	_adapter.add(new MenuItems(0, "Queued Posts", 10, R.drawable.ic_action_image_add_to_photos));
     		        }
+                    _adapter.add(new MenuItems(0, "Open Post by ID" , 13, R.drawable.ic_action_action_search));
 
                     informCheckedPosition();
     	        	getListView().setItemChecked(mCheckedPosition, true);
@@ -301,6 +302,12 @@ public class AppMenu extends ListFragment
         {
             ((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_STATS);
             trackM("openStat");
+            //mCheckedPosition = position;
+        }
+        if (mid == 13)
+        {
+            ((MainActivity)getActivity()).openThreadByIDDialog();
+            trackM("openByID");
             //mCheckedPosition = position;
         }
         updateMenuUi();

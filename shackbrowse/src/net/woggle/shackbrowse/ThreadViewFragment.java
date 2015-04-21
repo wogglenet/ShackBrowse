@@ -253,12 +253,7 @@ public class ThreadViewFragment extends ListFragment
         else    
         {
        		// user rotated the screen, try to go back to where they where
-       		if (_listState != null)
-       			getListView().onRestoreInstanceState(_listState);
-       		
-       		getListView().setSelectionFromTop(_listPosition,  _itemPosition);
-       		if (_itemChecked != ListView.INVALID_POSITION)
-       			expandAndCheckPostWithoutAnimation(_itemChecked);
+       		restoreListState();
         }
        	
        	// pull to fresh integration
@@ -380,6 +375,17 @@ public class ThreadViewFragment extends ListFragment
 	    	View itemView = listView.getChildAt(0);
 	    	_itemPosition = itemView == null ? 0 : itemView.getTop(); 
     	}
+    }
+    public void restoreListState()
+    {
+        if (_viewAvailable) {
+            if (_listState != null)
+                getListView().onRestoreInstanceState(_listState);
+
+            getListView().setSelectionFromTop(_listPosition, _itemPosition);
+            if (_itemChecked != ListView.INVALID_POSITION)
+                expandAndCheckPostWithoutAnimation(_itemChecked);
+        }
     }
     public void ensurePostSelectedAndDisplayed ()
     {
@@ -2558,6 +2564,13 @@ public class ThreadViewFragment extends ListFragment
             }
         }
     }
+
+    @Override
+    public void onPause()
+    {
+        saveListState();
+        super.onPause();
+    }
     
     @Override
 	public void onResume()
@@ -2585,6 +2598,7 @@ public class ThreadViewFragment extends ListFragment
 
             setListAdapter(_adapter);
             _adapter.setAbsListView(getListView());
+            restoreListState();
     	}
     }
 

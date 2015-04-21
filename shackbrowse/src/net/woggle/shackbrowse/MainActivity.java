@@ -1740,8 +1740,27 @@ public class MainActivity extends ActionBarActivity
         display.getMetrics(displaymetrics);
 		return (displaymetrics.widthPixels);
 	}
-    
-    
+
+    public void openThreadByIDDialog() {
+        MainActivity _context = this;
+        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(_context);
+        builder.setTitle("Enter Thread ID");
+        final View view = _context.getLayoutInflater().inflate(R.layout.dialog_openthreadid, null);
+        final EditText tid = (EditText) view.findViewById(R.id.openIDText);
+        final TextView header = (TextView) view.findViewById(R.id.openIDHeader);
+        header.setText("/chatty?id=");
+        builder.setView(view);
+        builder.setPositiveButton("Open", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                openThreadViewAndSelect(Integer.parseInt(tid.getText().toString()));
+            }
+        });
+        builder.setNegativeButton("Cancel", null);
+        AlertDialog d = builder.create();
+        d.show();
+    }
+
+
     static private class OnPostResume
     {
 		static final int DO_NOTHING = 0;

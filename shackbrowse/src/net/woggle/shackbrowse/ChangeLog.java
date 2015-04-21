@@ -12,6 +12,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -178,8 +179,11 @@ public class ChangeLog {
         }
 
         protected void startDonation() {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.woggle.net"));
+            context.startActivity(browserIntent);
+            /*
         	Intent i = new Intent(context, DonateActivity.class);
-            context.startActivity(i);
+            context.startActivity(i); */
 		}
 
 		private void updateVersionInPreferences() {
