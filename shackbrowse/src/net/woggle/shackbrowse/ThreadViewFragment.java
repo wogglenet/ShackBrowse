@@ -13,10 +13,13 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LightingColorFilter;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -66,6 +69,8 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.MaterialDialogCompat;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.nhaarman.listviewanimations.itemmanipulation.ExpandCollapseListener;
 
 import net.woggle.CheckableTableLayout;
@@ -79,6 +84,9 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.ListIterator;
+import java.util.Random;
+
+
 
 import static net.woggle.shackbrowse.StatsFragment.statInc;
 import static net.woggle.shackbrowse.StatsFragment.statMax;
@@ -1097,6 +1105,9 @@ public class ThreadViewFragment extends ListFragment
         private String _donatorQuadList = "";
         boolean _showModTools = false;
 		private boolean _showHoursSince = true;
+		private boolean _hideLinks = true;
+		private int _embedImages = 1;
+		private boolean _linkButtons = true;
         private String _userName = "";
 		private String _OPuserName = "";
         private HashMap<String, HashMap<String, LolObj>> _shackloldata = new HashMap<String, HashMap<String, LolObj>>();
@@ -1118,6 +1129,7 @@ public class ThreadViewFragment extends ListFragment
 		private Bitmap _bulletBranchNew;
 		private LruCache<String, Bitmap> mMemoryCache;
 		private boolean _fastScroll = true;
+		private NetworkInfo mWifi;
 
         public ExpandCollapseListener mExpandCollapseListener = new ExpandCollapseListener() {
             @Override
@@ -1143,7 +1155,8 @@ public class ThreadViewFragment extends ListFragment
             }
         };
 
-        public View.OnClickListener getUserNameClickListenerForPosition(int pos, View v)
+
+		public View.OnClickListener getUserNameClickListenerForPosition(int pos, View v)
         {
             final String unamefinal = getItem(pos).getUserName();
             return new View.OnClickListener() {
@@ -1245,6 +1258,9 @@ public class ThreadViewFragment extends ListFragment
             _zoom = Float.parseFloat(_prefs.getString("fontZoom", "1.0"));
             _showModTools = _prefs.getBoolean("showModTools", false);
             _showHoursSince  = _prefs.getBoolean("showHoursSince", true);
+			_hideLinks = _prefs.getBoolean("hideLinksWhenEmbed", true);
+			_embedImages = Integer.parseInt(_prefs.getString("embedImages", "1"));
+			_linkButtons = _prefs.getBoolean("showLinkOptionsButton", true);
             _fastScroll   = _prefs.getBoolean("fastScroll", true);
             _donatorList = _prefs.getString("limeUsers", "");
             _donatorGoldList = _prefs.getString("goldLimeUsers", "");
@@ -1275,7 +1291,11 @@ public class ThreadViewFragment extends ListFragment
 	        		}
     			});
     		}
-            
+
+			// check for wifi connection
+			ConnectivityManager connManager = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+			mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
             // calculate sizes for deep threads
             Display display = ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
             DisplayMetrics displaymetrics = new DisplayMetrics();
@@ -1341,9 +1361,7 @@ public class ThreadViewFragment extends ListFragment
 
                 holder.expandedView.setBackgroundColor(getResources().getColor(R.color.selected_highlight_postbg));
 
-                // set content text color
-                holder.content.setTextColor(getResources().getColor(R.color.nonpreview_post_text_color));
-                holder.content.setText(applyExtLink((Spannable) applyHighlight(p.getFormattedContent()), holder.content), BufferType.SPANNABLE);
+
 
                 // set lol tags
                 if (p.getLolObj() != null) {
@@ -1352,6 +1370,12 @@ public class ThreadViewFragment extends ListFragment
                     holder.expLolCounts.setText("");
                 }
 
+
+				Spannable postTextContent = (Spannable) applyHighlight(p.getFormattedContent());
+				/*
+				// set content text color
+				holder.content.setTextColor(getResources().getColor(R.color.nonpreview_post_text_color));
+				holder.content.setText(applyExtLink((Spannable) applyHighlight(p.getFormattedContent()), holder.content), BufferType.SPANNABLE);
 
                 // links stuff
                 holder.content.setLinkTextColor(getResources().getColor(R.color.linkColor));
@@ -1408,7 +1432,7 @@ public class ThreadViewFragment extends ListFragment
                 });
 
                 // open all images button
-                final CustomURLSpan[] urlSpans = ((SpannableString) holder.content.getText()).getSpans(0, holder.content.getText().length(), CustomURLSpan.class);
+                final CustomURLSpan[] urlSpans = ((SpannableString) postTextContent).getSpans(0, postTextContent.length(), CustomURLSpan.class);
                 if (urlSpans.length > 1) {
                     String _href;
                     ArrayList<String> hrefs = new ArrayList<String>();
@@ -1546,6 +1570,85 @@ public class ThreadViewFragment extends ListFragment
                     holder.buttonOther.setVisibility(View.VISIBLE);
                     holder.buttonReply.setVisibility(View.VISIBLE);
                 }
+
+
+				// dont bother recreating views
+				holder.postContent.removeAllViews();
+
+				boolean doEmbed = (_embedImages == 1 && mWifi.isConnected()) || _embedImages == 2;
+				boolean removeLinks = (_hideLinks && doEmbed);
+				ArrayList<PostClip> choppedPost = postTextChopper(postTextContent, removeLinks);
+				System.out.println("POSTCLIPS :" + choppedPost.size() + " " + choppedPost.get(0).text.toString());
+				for (int i = choppedPost.size() -1; i >= 0; i--) {
+					PostClip postClip = choppedPost.get(i);
+					if (postClip.text.toString().trim().length() > 0) {
+						TextView postText = new TextView(getContext());
+
+						if (_linkButtons && !removeLinks)
+							postClip.text = (Spannable) applyExtLink(postClip.text, postText);
+
+						postText.setTextColor(getResources().getColor(R.color.nonpreview_post_text_color));
+						// debug
+						//Random color = new Random();
+						//postText.setBackgroundColor(Color.argb(255, color.nextInt(255), color.nextInt(255), color.nextInt(255)));
+						postText.setText(postClip.text, BufferType.SPANNABLE);
+						postText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+						postText.setTextSize(TypedValue.COMPLEX_UNIT_PX, postText.getTextSize() * _zoom);
+
+						// links stuff
+						postText.setLinkTextColor(getResources().getColor(R.color.linkColor));
+						postText.setTextIsSelectable(true);
+						postText.setMovementMethod(new CustomLinkMovementMethod());
+						StyleCallback cb = new StyleCallback();
+						cb.setTextView(postText);
+						postText.setCustomSelectionActionModeCallback(cb);
+
+
+						holder.postContent.addView(postText, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+					}
+					// embed images test
+
+					Display display = getActivity().getWindowManager().getDefaultDisplay();
+					Point size = new Point();
+					display.getSize(size);
+					int width = Math.round(size.x * 1.0f);
+
+					if ((postClip.image != null) && (doEmbed)) {
+						ImageView image = new ImageView(getContext());
+						final String url = postClip.image.getURL().trim();
+
+						// Picasso.with(getContext()).setIndicatorsEnabled(true);
+
+
+						//WebCachedImageView wciv = new WebCachedImageView(getContext());
+						//wciv.setImageUrl();
+						System.out.println("EMBED:" + PopupBrowserFragment.imageUrlFixer(url));
+
+						image.setOnClickListener(new View.OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								((MainActivity)v.getContext()).openBrowser(url);
+							}
+						});
+						//Random ncolor = new Random();
+						//image.setBackgroundColor(Color.argb(255, ncolor.nextInt(255), ncolor.nextInt(255), ncolor.nextInt(255)));
+						 holder.postContent.addView(image, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+						// holder.postContent.addView(image, 1, new LinearLayout.LayoutParams(width, width));
+
+						Glide.with(getActivity())
+								.load(PopupBrowserFragment.imageUrlFixer(url))
+								.override(width, width)
+								.fitCenter()
+								.diskCacheStrategy(DiskCacheStrategy.ALL)
+								.placeholder(R.drawable.ic_action_image_photo)
+								.error(R.drawable.ic_action_content_flag)
+								.into(image);
+
+						// PhotoViewAttacher mAttacher = new PhotoViewAttacher(image);
+
+
+					}
+				}
             }
         }
         protected View createView(int position, View convertView, ViewGroup parent, boolean isExpanded)
@@ -1608,7 +1711,9 @@ public class ThreadViewFragment extends ListFragment
 
                 
                 // expanded items
-                holder.content = (TextView)convertView.findViewById(R.id.textContent);
+                // holder.content = (TextView)convertView.findViewById(R.id.textContent);
+
+				holder.postContent = (LinearLayout)convertView.findViewById(R.id.postContent);
                 
                 holder.loading = (ProgressBar)convertView.findViewById(R.id.tview_loadSpinner);
                 
@@ -1620,7 +1725,7 @@ public class ThreadViewFragment extends ListFragment
                 holder.buttonLol = (ImageButton)convertView.findViewById(R.id.buttonPostLOL);
                 
                 // zoom for expanded
-                holder.content.setTextSize(TypedValue.COMPLEX_UNIT_PX, holder.content.getTextSize() * _zoom);
+                // holder.content.setTextSize(TypedValue.COMPLEX_UNIT_PX, holder.content.getTextSize() * _zoom);
                 holder.expLolCounts.setTextSize(TypedValue.COMPLEX_UNIT_PX, holder.expLolCounts.getTextSize() * _zoom);
                 /*
                 holder.buttonReply.setTextSize(TypedValue.COMPLEX_UNIT_PX, holder.buttonReply.getTextSize() * _zoom);
@@ -1845,7 +1950,48 @@ public class ThreadViewFragment extends ListFragment
 
             return convertView;
         }
-        
+
+		class PostClip
+		{
+			public Spannable text = null;
+			public CustomURLSpan image = null;
+			PostClip (Spannable ptext) { text = ptext; }
+			PostClip (CustomURLSpan pimage) { image = pimage; }
+			PostClip (Spannable ptext, CustomURLSpan pimage)
+			{
+				text = ptext;
+				image = pimage;
+			}
+		}
+		private ArrayList<PostClip> postTextChopper(Spannable text, boolean removeLinks) {
+			// this thing chops up posts that have image links into sets up preceeding text and image link following it.
+			CustomURLSpan[] list = text.getSpans(0, text.length(), CustomURLSpan.class);
+			ArrayList<PostClip> returnItem = new ArrayList<PostClip>();
+			int startClip = 0;
+
+			for (int i = list.length -1; i >= 0; i--) {
+				CustomURLSpan target = list[i];
+				if (PopupBrowserFragment.isImage(target.getURL().trim())) {
+					if (text.subSequence(startClip, text.getSpanEnd(target)).toString().length() > 0) {
+						if (removeLinks) {
+							Spannable tempTxt = ((Spannable) text.subSequence(startClip, text.getSpanStart(target)));
+							tempTxt.removeSpan(target);
+							returnItem.add(0, new PostClip(tempTxt, target));
+						}
+						else
+							returnItem.add(0,new PostClip((Spannable) text.subSequence(startClip, text.getSpanEnd(target)), target));
+					}
+					startClip = text.getSpanEnd(target);
+				}
+			}
+			if (text.length() - startClip > 0)
+			{
+				if (text.subSequence(startClip, text.length()).toString().length() > 0)
+					returnItem.add(0,new PostClip((Spannable)text.subSequence(startClip, text.length())));
+			}
+			return returnItem;
+		}
+
         private CharSequence applyExtLink(Spannable text, TextView t) {
         	// this thing puts little world buttons at the end of links to provide link actions
         	CustomURLSpan[] list = text.getSpans(0, text.length(), CustomURLSpan.class);
@@ -2326,6 +2472,7 @@ public class ThreadViewFragment extends ListFragment
 			public TextView previewLolCounts;
 			public View expandedView;
 			public CheckableTableLayout previewView;
+			public LinearLayout postContent;
 			
             TextView content;
             TextView preview;
@@ -2596,6 +2743,7 @@ public class ThreadViewFragment extends ListFragment
     		}
     		_adapter.notifyDataSetChanged();
 
+            saveListState();
             setListAdapter(_adapter);
             _adapter.setAbsListView(getListView());
             restoreListState();

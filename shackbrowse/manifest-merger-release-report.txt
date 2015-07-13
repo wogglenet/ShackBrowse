@@ -87,6 +87,8 @@ MERGED from com.github.navasmdc:MaterialDesign:1.4:11:5
 		ADDED from AndroidManifest.xml:23:18
 	android:hardwareAccelerated
 		ADDED from AndroidManifest.xml:23:50
+	android:largeHeap
+		ADDED from AndroidManifest.xml:23:189
 	android:backupAgent
 		ADDED from AndroidManifest.xml:23:155
 activity#net.woggle.shackbrowse.MainActivity

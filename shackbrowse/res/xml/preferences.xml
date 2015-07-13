@@ -8,13 +8,14 @@
         android:title="@string/preferences_notifications"
         android:summary="@string/preferences_notifications_summary" />
         <ListPreference
-            android:key="APP_DEFAULTPANE"
-            android:title="@string/preference_APP_DEFAULTPANE"
-            android:entries="@array/preference_APP_DEFAULTPANE"
-            android:entryValues="@array/preference_APP_DEFAULTPANE_vals"
-            android:summary="@string/preference_APP_DEFAULTPANE_summary"
-            android:defaultValue="0"
+            android:key="embedImages"
+            android:title="@string/preference_embedimages"
+            android:entries="@array/preference_embedimages"
+            android:entryValues="@array/preference_embedimages_vals"
+            android:summary="@string/preference_embedimages_summary"
+            android:defaultValue="1"
             />
+
         <ListPreference
             android:key="apiUrl2"
             android:title="@string/preference_apiUrl_title"
@@ -83,6 +84,14 @@
             android:entryValues="@array/preference_forcepostpreview_vals"
             android:summary="@string/preference_forcepostpreview_summary"
             android:defaultValue="1"
+            />
+        <ListPreference
+            android:key="APP_DEFAULTPANE"
+            android:title="@string/preference_APP_DEFAULTPANE"
+            android:entries="@array/preference_APP_DEFAULTPANE"
+            android:entryValues="@array/preference_APP_DEFAULTPANE_vals"
+            android:summary="@string/preference_APP_DEFAULTPANE_summary"
+            android:defaultValue="0"
             />
 </PreferenceCategory>
     <PreferenceCategory android:title="@string/preferences_uncommon" ></PreferenceCategory>
@@ -176,6 +185,18 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:key="tview" android:title="@string/preferences_threadview" android:summary="@string/preferences_threadview_summary">
+        <CheckBoxPreference
+            android:key="hideLinksWhenEmbed"
+            android:title="@string/preference_hidelinks_title"
+            android:summary="@string/preference_hidelinks_summary"
+            android:defaultValue="true"
+            />
+        <CheckBoxPreference
+            android:key="showLinkOptionsButton"
+            android:title="@string/preference_showlinkbutton_title"
+            android:summary="@string/preference_showlinkbutton_summary"
+            android:defaultValue="true"
+            />
 	    <CheckBoxPreference
 	  	     android:key="swipeDismiss"
 	  	     android:title="@string/preference_swipedismiss_title"

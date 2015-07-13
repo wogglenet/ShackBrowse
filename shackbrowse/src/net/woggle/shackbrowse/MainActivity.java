@@ -37,6 +37,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -150,6 +151,8 @@ public class MainActivity extends ActionBarActivity
     private boolean mActivityAvailable = false;
     protected int mThemeResId = R.style.AppTheme;
     private Long mLastResumeTime = TimeDisplay.now();
+	protected boolean isBeta = false;
+	protected String mVersion = "none";
 
     public PullToRefreshAttacher getRefresher()
 	{
@@ -169,6 +172,18 @@ public class MainActivity extends ActionBarActivity
 
         // app open stat
         StatsFragment.statInc(this, "AppOpenedFresh");
+
+		// get version data
+		// check if is beta or not
+		String thisversion;
+		try {
+			thisversion = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+		} catch (PackageManager.NameNotFoundException e) {
+			// TODO Auto-generated catch block
+			thisversion = "unknown";
+		}
+		mVersion = thisversion;
+		isBeta = thisversion.toLowerCase().contains("beta");
 
 		// enforce overflow menu
 		try {
@@ -583,12 +598,17 @@ public class MainActivity extends ActionBarActivity
 		}
 		else if (mPopupBrowserOpen)
 		{
-			boolean browserZoomMode = false;
+			boolean browserZoomMode = false; boolean browserPhotoMode = false;
 	        if ((mPBfragment != null) && (mPBfragment.mState == mPBfragment.SHOW_ZOOM_CONTROLS))
-	        	browserZoomMode = true;
+				browserZoomMode = true;
+
+			if ((mPBfragment != null) && (mPBfragment.mState == mPBfragment.SHOW_PHOTO_VIEW))
+				browserPhotoMode = true;
 	        
-	        if (!browserZoomMode)
+	        if (!browserZoomMode && !browserPhotoMode)
 	        	getSupportActionBar().setTitle(getResources().getString(R.string.browser_title));
+			else if (browserPhotoMode)
+				getSupportActionBar().setTitle(getResources().getString(R.string.browser_photo_title));
 	        else
 	        	getSupportActionBar().setTitle(getResources().getString(R.string.browserZoom_title));
 			mDrawerToggle.setDrawerIndicatorEnabled(false);
@@ -1033,6 +1053,8 @@ public class MainActivity extends ActionBarActivity
 		if (type == CONTENT_THREADLIST)
 		{
 			mTitle = "Latest Chatty";
+			if (isBeta)
+				mTitle = "Beta " + mVersion;
 			fragment = _threadList;
 		}
 		if (type == CONTENT_MESSAGES)
@@ -2171,13 +2193,8 @@ public class MainActivity extends ActionBarActivity
             		}
             		if ((parts[0].equals("f") || parts[0].equals("u")) && (parts.length > 1))
             		{
-            			String thisversion;
-						try {
-							thisversion = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-						} catch (NameNotFoundException e) {
-							// TODO Auto-generated catch block
-							thisversion = "eeeee";
-						}
+            			String thisversion = mVersion;
+
             			if (!parts[1].toLowerCase().contains(thisversion.toLowerCase()))
             			{
             				// opt out
@@ -2968,13 +2985,18 @@ public class MainActivity extends ActionBarActivity
 
 	public void openBrowser(String... hrefs) { StatsFragment.statInc(this, "PopUpBrowserOpened"); openBrowser(false, hrefs); }
 	public void openBrowserZoomAdjust() { openBrowser(true, (String[])null); }
-	private void openBrowser(boolean showZoomSetup, String... hrefs) {
+	private void openBrowser(boolean showZoomSetup, String... hrefs) { openBrowser(false, false, hrefs); }
+	public void openBrowserPhotoView(String... hrefs) { openBrowser(true, false, hrefs); }
+	private void openBrowser(boolean showPhotoView, boolean showZoomSetup, String... hrefs) {
 		FragmentManager fm = getFragmentManager();
 		FragmentTransaction ft = fm.beginTransaction();
 		Bundle args = new Bundle();
 		args.putStringArray("hrefs", hrefs);
 		if (showZoomSetup)
 	    	args.putBoolean("showZoomSetup", true);
+
+		if (showPhotoView)
+			args.putBoolean("showPhotoView", true);
 		
 		mPBfragment = (PopupBrowserFragment)Fragment.instantiate(getApplicationContext(), PopupBrowserFragment.class.getName(), args );
 		ft.add(R.id.browser_frame, mPBfragment, "pbfrag");

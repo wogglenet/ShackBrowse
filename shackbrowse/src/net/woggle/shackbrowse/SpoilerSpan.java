@@ -43,7 +43,7 @@ public class SpoilerSpan extends ClickableSpan
             
             // so hacky i have nightmares at night
             
-            ListView lv = (ListView)(widget.getParent().getParent().getParent().getParent().getParent());
+            ListView lv = (ListView)(widget.getParent().getParent().getParent().getParent().getParent().getParent());
             Post post = (Post)lv.getAdapter().getItem(lv.getPositionForView(widget));
             post.setSpoiled(idInPost, true);
             ((ThreadViewFragment.PostLoadingAdapter)((ListAdapter)lv.getAdapter())).notifyDataSetChanged();

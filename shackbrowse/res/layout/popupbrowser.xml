@@ -13,6 +13,14 @@
 	    android:layout_weight="1"
 	    android:orientation="vertical"
 	/>
+	<ImageView
+		android:id="@+id/popup_photoView"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1"
+		android:orientation="vertical"
+		android:visibility="gone"
+		/>
 	<LinearLayout
 	    android:id="@+id/popup_zoomcont"
 	    android:layout_width="match_parent"

@@ -28,11 +28,19 @@ TODO
 * SEARCH GOOGLE BY TEXT SELECTION
 -->
 
+$ 5.2.0Beta
+% v 5.2.0Beta
+_ Jul 20, 2015
+* Embed some images in posts with lazy-load auto-embedder
+* Option to disable auto-embed based on wifi status. Default: Wifi embed only
+* Option to hide link options icon
+* Option to control whether embedded images have their link text hidden
+
 $ 5.1.5
 % v 5.1.5
 _ Apr 20, 2015
 * Can open threads by id in navigation menu
-* Bug Fix: Thread scroll on app resume
+* Bug Fix: Thread scroll on app resume, not selecting post after posted
 * Bug Fix: Donate button
 * Bug Fix: Frontpage
 

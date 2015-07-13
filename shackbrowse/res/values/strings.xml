@@ -331,6 +331,13 @@
     <string name="compose_quote">Quote</string>
     <string name="compose_strike">Strike</string>
     <string name="menu_compose_settings">Settings</string>
+    <string name="browser_photo_title">Photo View</string>
+    <string name="preference_embedimages">Embed Images in Posts</string>
+    <string name="preference_embedimages_summary">Some images and GIFs can be loaded inline with the post when it is opened. Default: Only on Wi-Fi.</string>
+    <string name="preference_hidelinks_title">Hide Embedded Image Links</string>
+    <string name="preference_hidelinks_summary">Hides the link text when criteria are met to auto-embed and display certain images inline in an opened post.</string>
+    <string name="preference_showlinkbutton_title">Show Link Option Button</string>
+    <string name="preference_showlinkbutton_summary">Show the link secondary options button icon next to links. Gives options to copy url, share link, and open externally. Auto disabled on some links when hidden by auto-embedded images.</string>
     <!-- items in  the array will show up even when not yet registered -->
     <string-array name="statsItems">
         <item>statsItemAnnoyedByStartupZoomDialog</item>

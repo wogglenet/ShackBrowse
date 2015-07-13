@@ -35,7 +35,7 @@
         <item>there\'s no way a dog, even a pit could take me down</item>
         <item>CHECK YOUR FILTERS</item>
         <item>Oblivion with guns</item>
-        <item>2014, the year of linux</item>
+        <item>2015, the year of linux</item>
         <item>2018</item>
         <item>U breadloaf</item>
         <item>I AM FIREBONE</item>
@@ -170,6 +170,16 @@
 		<item>5</item>
 		<item>2</item>
 	</string-array>
+    <string-array name="preference_embedimages">
+        <item>Never</item>
+        <item>Only on Wi-Fi</item>
+        <item>Always</item>
+    </string-array>
+    <string-array name="preference_embedimages_vals">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
 		<string-array name="preference_orientLock">
 		<item>System orientation or lock</item>
 		<item>Lock to Portrait</item>

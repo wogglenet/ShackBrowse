@@ -21,9 +21,15 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.webkit.WebSettings.ZoomDensity;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
+
 
 public class PopupBrowserFragment extends Fragment {
 	
@@ -41,6 +47,7 @@ public class PopupBrowserFragment extends Fragment {
 	final static public String TEST_IMAGE = "arrows.png";
 	public static final int BROWSER = 100;
 	public static final int SHOW_ZOOM_CONTROLS = 200;
+	public static final int SHOW_PHOTO_VIEW = 300;
 
 	@Override
     public void onCreate(Bundle savedInstanceState)
@@ -137,6 +144,10 @@ public class PopupBrowserFragment extends Fragment {
         {
         	showZoomSetup();
         }
+		else if (args.containsKey("showPhotoView"))
+		{
+			showPhotoView(hrefs);
+		}
         else
         	open(hrefs);
     }
@@ -236,7 +247,38 @@ public class PopupBrowserFragment extends Fragment {
 			return false;
 		}
 	}
-	
+
+	private void showPhotoView(String... hrefs)
+	{
+		mState = SHOW_PHOTO_VIEW;
+
+		_href = hrefs[0];
+		_hrefs = hrefs;
+		_href = _href.trim();
+		final String url = _href;
+
+		mWebview.setVisibility(View.GONE);
+		ImageView image = (ImageView)getActivity().findViewById(R.id.popup_photoView);
+		image.setVisibility(View.VISIBLE);
+
+		getActivity().findViewById(R.id.popup_seekbar).setVisibility(View.GONE);
+		getActivity().findViewById(R.id.popup_seekbarfine).setVisibility(View.GONE);
+		getActivity().findViewById(R.id.popup_zoomcont).setVisibility(View.GONE);
+
+		Glide.with(getActivity())
+				.load(PopupBrowserFragment.imageUrlFixer(url))
+				.fitCenter()
+				.diskCacheStrategy(DiskCacheStrategy.ALL)
+				.placeholder(R.drawable.ic_action_image_photo)
+				.error(R.drawable.ic_action_content_flag)
+				.into(image);
+
+
+		((MainActivity)getActivity()).setTitleContextually();
+		if (getActivity() != null)
+			((MainActivity)getActivity()).showOnlyProgressBarFromPTRLibrary(false);
+	}
+
 	private void showZoomSetup()
 	{
 		mState = SHOW_ZOOM_CONTROLS;
