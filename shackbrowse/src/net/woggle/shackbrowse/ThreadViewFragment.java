@@ -53,6 +53,7 @@ import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -134,10 +135,10 @@ public class ThreadViewFragment extends ListFragment
 	private PullToRefreshLayout ptrLayout;
 	private SharedPreferences _prefs;
 	private boolean _isSelectPostIdAfterLoadingIdaPQPId = false;
+	private boolean _showThreadExpired = false;
 
 
-
-    public int getPostId()
+	public int getPostId()
     {
         return _rootPostId;
     }
@@ -275,7 +276,8 @@ public class ThreadViewFragment extends ListFragment
 			public void onRefreshStarted(View view) {
 				refreshThreadReplies();
 			}});
-       	
+
+
         
        	updateThreadViewUi();
     }
@@ -351,6 +353,43 @@ public class ThreadViewFragment extends ListFragment
 	    		
 	    		// update options menu
 	    		((MainActivity)getActivity()).invalidateOptionsMenu();
+
+				// update thread expired
+				if (_showThreadExpired && _prefs.getBoolean("showThreadExpiredAlert", true)) {
+					getView().findViewById(R.id.tview_thread_expired).setVisibility(View.VISIBLE);
+					getView().findViewById(R.id.tview_button_te_ok).setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(getActivity());
+							builder.setTitle("Expired Thread");
+							final View v2 = v;
+							LayoutInflater annoyInflater = LayoutInflater.from(getActivity());
+							View annoyLayout = annoyInflater.inflate(R.layout.dialog_nevershowagain, null);
+							final CheckBox dontShowAgain = (CheckBox) annoyLayout.findViewById(R.id.skip);
+							((TextView)annoyLayout.findViewById(R.id.annoy_text)).setText("If you post in this thread, it may not be seen by anyone, as the thread is no longer in the latest chatty thread list.");
+							((TextView)annoyLayout.findViewById(R.id.skip)).setText("Don't show the alert anymore");
+							builder.setView(annoyLayout)
+									// Set the action buttons
+									.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+										@Override
+										public void onClick(DialogInterface dialog, int id) {
+											if (dontShowAgain.isChecked()) {
+												SharedPreferences.Editor edit = _prefs.edit();
+												edit.putBoolean("showThreadExpiredAlert", false);
+												edit.commit();
+											}
+											v2.getRootView().findViewById(R.id.tview_thread_expired).setVisibility(View.GONE);
+										}
+									});
+
+							AlertDialog dialog = builder.create();//AlertDialog dialog; create like this outside onClick
+							dialog.show();
+
+						}
+					});
+				}
+				else
+					getView().findViewById(R.id.tview_thread_expired).setVisibility(View.GONE);
     		}
     	}
     }
@@ -1463,76 +1502,76 @@ public class ThreadViewFragment extends ListFragment
 
                 final ImageButton btnothr = holder.buttonOther;
                 holder.buttonOther.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        PopupMenu extpop = new PopupMenu(getContext(), btnothr);
-                        SubMenu sub = extpop.getMenu().addSubMenu(Menu.NONE, 0, Menu.NONE, unamefinal + " Actions");
-                        sub.add(Menu.NONE, 3, Menu.NONE, "Shack Message " + unamefinal);
-                        sub.add(Menu.NONE, 4, Menu.NONE, "Search for posts by " + unamefinal);
-                        sub.add(Menu.NONE, 16, Menu.NONE, "Highlight " + unamefinal + " in thread");
-                        SubMenu sub2 = extpop.getMenu().addSubMenu(Menu.NONE, 1, Menu.NONE, "Share/Copy Post");
-                        sub2.add(Menu.NONE, 5, Menu.NONE, "Copy Post Text");
-                        if (_messageId == 0) {
-                            // not a message
-                            sub2.add(Menu.NONE, 6, Menu.NONE, "Copy URL of Post");
-                            sub2.add(Menu.NONE, 7, Menu.NONE, "Share Link to Post");
-                        }
-                        SubMenu sub3 = extpop.getMenu().addSubMenu(Menu.NONE, 2, Menu.NONE, "LOLtag Post");
-                        sub3.add(Menu.NONE, 8, Menu.NONE, "lol");
-                        sub3.add(Menu.NONE, 9, Menu.NONE, "inf");
-                        sub3.add(Menu.NONE, 10, Menu.NONE, "unf");
-                        sub3.add(Menu.NONE, 11, Menu.NONE, "ugh");
-                        sub3.add(Menu.NONE, 12, Menu.NONE, "wtf");
-                        sub3.add(Menu.NONE, 13, Menu.NONE, "tag");
-                        extpop.getMenu().add(Menu.NONE, 14, Menu.NONE, "Check LOL Taggers");
-                        if ((_showModTools) && (_rootPostId != 0)) {
-                            extpop.getMenu().add(Menu.NONE, 15, Menu.NONE, "Mod Tools");
-                        }
-                        extpop.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-                            @Override
-                            public boolean onMenuItemClick(MenuItem item) {
-                                if (item.getItemId() <= 2)
-                                    return false;
-                                switch (item.getItemId()) {
-                                    case 3:
-                                        shackmessageTo(unamefinal);
-                                        break;
-                                    case 4:
-                                        searchForPosts(unamefinal);
-                                        break;
-                                    case 5:
-                                        copyPostText(pos);
-                                        break;
-                                    case 6:
-                                        copyURL(pos);
-                                        break;
-                                    case 7:
-                                        shareURL(pos);
-                                        break;
-                                    case 8:
-                                    case 9:
-                                    case 10:
-                                    case 11:
-                                    case 12:
-                                    case 13:
-                                        lolPost((String) item.getTitle(), pos);
-                                        break;
-                                    case 14:
-                                        new GetTaggersTask().execute(_adapter.getItem(pos).getPostId());
-                                        break;
-                                    case 15:
-                                        modChoose(pos);
-                                        break;
-                                    case 16:
-                                        ((MainActivity) getActivity()).openHighlighter(unamefinal);
-                                        break;
-                                }
-                                return true;
-                            }
-                        });
-                        extpop.show();
-                    }
-                });
+					@Override
+					public void onClick(View v) {
+						PopupMenu extpop = new PopupMenu(getContext(), btnothr);
+						SubMenu sub = extpop.getMenu().addSubMenu(Menu.NONE, 0, Menu.NONE, unamefinal + " Actions");
+						sub.add(Menu.NONE, 3, Menu.NONE, "Shack Message " + unamefinal);
+						sub.add(Menu.NONE, 4, Menu.NONE, "Search for posts by " + unamefinal);
+						sub.add(Menu.NONE, 16, Menu.NONE, "Highlight " + unamefinal + " in thread");
+						SubMenu sub2 = extpop.getMenu().addSubMenu(Menu.NONE, 1, Menu.NONE, "Share/Copy Post");
+						sub2.add(Menu.NONE, 5, Menu.NONE, "Copy Post Text");
+						if (_messageId == 0) {
+							// not a message
+							sub2.add(Menu.NONE, 6, Menu.NONE, "Copy URL of Post");
+							sub2.add(Menu.NONE, 7, Menu.NONE, "Share Link to Post");
+						}
+						SubMenu sub3 = extpop.getMenu().addSubMenu(Menu.NONE, 2, Menu.NONE, "LOLtag Post");
+						sub3.add(Menu.NONE, 8, Menu.NONE, "lol");
+						sub3.add(Menu.NONE, 9, Menu.NONE, "inf");
+						sub3.add(Menu.NONE, 10, Menu.NONE, "unf");
+						sub3.add(Menu.NONE, 11, Menu.NONE, "ugh");
+						sub3.add(Menu.NONE, 12, Menu.NONE, "wtf");
+						sub3.add(Menu.NONE, 13, Menu.NONE, "tag");
+						extpop.getMenu().add(Menu.NONE, 14, Menu.NONE, "Check LOL Taggers");
+						if ((_showModTools) && (_rootPostId != 0)) {
+							extpop.getMenu().add(Menu.NONE, 15, Menu.NONE, "Mod Tools");
+						}
+						extpop.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+							@Override
+							public boolean onMenuItemClick(MenuItem item) {
+								if (item.getItemId() <= 2)
+									return false;
+								switch (item.getItemId()) {
+									case 3:
+										shackmessageTo(unamefinal);
+										break;
+									case 4:
+										searchForPosts(unamefinal);
+										break;
+									case 5:
+										copyPostText(pos);
+										break;
+									case 6:
+										copyURL(pos);
+										break;
+									case 7:
+										shareURL(pos);
+										break;
+									case 8:
+									case 9:
+									case 10:
+									case 11:
+									case 12:
+									case 13:
+										lolPost((String) item.getTitle(), pos);
+										break;
+									case 14:
+										new GetTaggersTask().execute(_adapter.getItem(pos).getPostId());
+										break;
+									case 15:
+										modChoose(pos);
+										break;
+									case 16:
+										((MainActivity) getActivity()).openHighlighter(unamefinal);
+										break;
+								}
+								return true;
+							}
+						});
+						extpop.show();
+					}
+				});
 
 
                 // donator lol button
@@ -1578,7 +1617,7 @@ public class ThreadViewFragment extends ListFragment
 				boolean doEmbed = (_embedImages == 1 && mWifi.isConnected()) || _embedImages == 2;
 				boolean removeLinks = (_hideLinks && doEmbed);
 				ArrayList<PostClip> choppedPost = postTextChopper(postTextContent, removeLinks);
-				System.out.println("POSTCLIPS :" + choppedPost.size() + " " + choppedPost.get(0).text.toString());
+
 				for (int i = choppedPost.size() -1; i >= 0; i--) {
 					PostClip postClip = choppedPost.get(i);
 					if (postClip.text.toString().trim().length() > 0) {
@@ -1971,7 +2010,7 @@ public class ThreadViewFragment extends ListFragment
 
 			for (int i = list.length -1; i >= 0; i--) {
 				CustomURLSpan target = list[i];
-				if (PopupBrowserFragment.isImage(target.getURL().trim())) {
+				if (PopupBrowserFragment.isImage(target.getURL().trim(),false)) {
 					if (text.subSequence(startClip, text.getSpanEnd(target)).toString().length() > 0) {
 						if (removeLinks) {
 							Spannable tempTxt = ((Spannable) text.subSequence(startClip, text.getSpanStart(target)));
@@ -2408,6 +2447,13 @@ public class ThreadViewFragment extends ListFragment
                 if (_adapter.getItem(0) != null)
                 {
                     _rootPostId = _adapter.getItem(0).getPostId();
+
+					if (TimeDisplay.threadAgeInHours(_adapter.getItem(0).getPosted()) > 18d)
+					{
+						_showThreadExpired = true;
+					}
+					else
+						_showThreadExpired = false;
                 }
             }
 
@@ -2435,10 +2481,11 @@ public class ThreadViewFragment extends ListFragment
 
 
     		// select posts for _selectpostidafterloading
-            setListAdapter(this);
+			setListAdapter(this);
             ensurePostSelectedAndDisplayed();
 
-            System.out.println("TIMER: EPS: " + (TimeDisplay.now() - timer)); timer = TimeDisplay.now();
+
+			System.out.println("TIMER: EPS: " + (TimeDisplay.now() - timer)); timer = TimeDisplay.now();
             updateThreadViewUi();
             System.out.println("TIMER: updUI: " + (TimeDisplay.now() - timer)); timer = TimeDisplay.now();
     	}
@@ -2765,6 +2812,8 @@ public class ThreadViewFragment extends ListFragment
 	            	post.setIsPQP(false);
 	            	post.setPosted(TimeDisplay.now());
 	            	found = true;
+					// this updates blue dot and increases reply count in thread list
+					((MainActivity)getActivity()).attemptToUpdateReplyCountInThreadListTo(_rootPostId, length, true);
 	            	break;
 	            }
 	        }

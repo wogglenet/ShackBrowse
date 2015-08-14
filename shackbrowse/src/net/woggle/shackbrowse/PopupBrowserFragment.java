@@ -227,13 +227,17 @@ public class PopupBrowserFragment extends Fragment {
         }
         mWebview.setTag("webview_tag");
 	}
-	
+
 	public static boolean isImage (String _href)
+	{
+		return isImage(_href, true);
+	}
+	public static boolean isImage (String _href, boolean allowGif)
 	{
 		if (
 				(
                  ((_href.length() >= 4) && (_href.trim().substring(_href.length() - 4).contentEquals(".jpg")))
-        	|| ((_href.length() >= 4) && (_href.trim().substring(_href.length() - 4).contentEquals(".gif")))
+        	|| ((_href.length() >= 4) && allowGif && (_href.trim().substring(_href.length() - 4).contentEquals(".gif")))
         	|| ((_href.length() >= 4) && (_href.trim().substring(_href.length() - 4).contentEquals(".png")))
         	|| ((_href.length() >= 5) && (_href.trim().substring(_href.length() - 5).contentEquals(".jpeg")))
 				)

@@ -122,7 +122,10 @@ public class Thread implements Parcelable {
     {
         return _replied;
     }
-
+    public void setReplied(boolean set)
+    {
+        _replied = set;
+    }
     public Spannable getPreview(boolean showTags, boolean stripNewLines)
     {
         if (_preview == null)

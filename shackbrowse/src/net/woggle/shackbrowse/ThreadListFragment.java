@@ -86,7 +86,7 @@ public class ThreadListFragment extends ListFragment
     private Parcelable _listState = null;
     private int _listPosition = 0;
     private int _itemPosition = 0;
-    private int _itemChecked = ListView.INVALID_POSITION;
+    protected int _itemChecked = ListView.INVALID_POSITION;
     
     private String POST_COUNT_CACHE_FILENAME = "post_count.cache";
     final static int POST_CACHE_HISTORY = 500;

@@ -28,13 +28,16 @@ TODO
 * SEARCH GOOGLE BY TEXT SELECTION
 -->
 
-$ 5.2.0Beta
-% v 5.2.0Beta
-_ Jul 20, 2015
-* Embed some images in posts with lazy-load auto-embedder
+$ 5.2.0Beta4
+% v 5.2.0Beta4
+_ Aug 14, 2015
+* Expired threads display a large red banner at the bottom which can be disabled
+* Blue dot indicator and replies number in thread list immediately updates when you post a reply
+* Embed some images (no GIFs) in posts with lazy-load auto-embedder
 * Option to disable auto-embed based on wifi status. Default: Wifi embed only
 * Option to hide link options icon
 * Option to control whether embedded images have their link text hidden
+* Bug Fix: Crash on blank posts
 
 $ 5.1.5
 % v 5.1.5

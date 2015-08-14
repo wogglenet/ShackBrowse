@@ -1483,6 +1483,35 @@ public class MainActivity extends ActionBarActivity
 		if (_threadList._adapter != null)
 			_threadList._adapter.notifyDataSetChanged();
     }
+
+	public void attemptToUpdateReplyCountInThreadListTo(int rootId, int replies, boolean replied)
+	{
+		if (_threadList._adapter != null)
+		{
+			System.out.println("UpdateReplies: TRYING" + rootId);
+			int checkIndexFirst = _threadList._itemChecked + 1; // should almost always work, will be faster than looping
+			if (_threadList._adapter.getItem(checkIndexFirst).getThreadId() == rootId)
+			{
+				_threadList._adapter.getItem(checkIndexFirst).setReplyCount(replies);
+				_threadList._adapter.getItem(checkIndexFirst).setReplied(replied);
+				System.out.println("UpdateReplies: FOUND INDEX THE EASY WAY");
+			}
+			else {
+				int count = _threadList._adapter.getCount();
+				for (int i = 0; i < count; i++) {
+					if (_threadList._adapter.getItem(i).getThreadId() == rootId) {
+						_threadList._adapter.getItem(i).setReplyCount(replies);
+						_threadList._adapter.getItem(i).setReplied(replied);
+						System.out.println("UpdateReplies: FOUND INDEX THE HARD WAY");
+						break;
+					}
+				}
+			}
+			// its possible neither of these will be successful for instance if the threadview is in an old thread. awell.
+			_threadList._adapter.notifyDataSetChanged();
+		}
+
+	}
     
     public void markFavoriteAsRead(int _rootPostId, int count) {
         if ((mOffline != null) && (mOffline.containsThreadId(_rootPostId)))
@@ -2624,7 +2653,7 @@ public class MainActivity extends ActionBarActivity
 	// seen posts
 	class Seen 
 	{
-		private static final int SEEN_HISTORY = 1000;
+		private static final int SEEN_HISTORY = 2000;
 		private String SEEN_FILE = "seendb.cache";
 		private Hashtable<Integer, Integer> _seenTable = null;
 		Seen ()
@@ -2985,7 +3014,7 @@ public class MainActivity extends ActionBarActivity
 
 	public void openBrowser(String... hrefs) { StatsFragment.statInc(this, "PopUpBrowserOpened"); openBrowser(false, hrefs); }
 	public void openBrowserZoomAdjust() { openBrowser(true, (String[])null); }
-	private void openBrowser(boolean showZoomSetup, String... hrefs) { openBrowser(false, false, hrefs); }
+	private void openBrowser(boolean showZoomSetup, String... hrefs) { openBrowser(false, showZoomSetup, hrefs); }
 	public void openBrowserPhotoView(String... hrefs) { openBrowser(true, false, hrefs); }
 	private void openBrowser(boolean showPhotoView, boolean showZoomSetup, String... hrefs) {
 		FragmentManager fm = getFragmentManager();
