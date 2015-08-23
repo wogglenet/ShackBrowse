@@ -53,6 +53,8 @@ import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -354,42 +356,62 @@ public class ThreadViewFragment extends ListFragment
 	    		// update options menu
 	    		((MainActivity)getActivity()).invalidateOptionsMenu();
 
+
+				// expired thread banner
+				// adapter exists, item 0 exists, and not in message mode
+				if (_adapter != null && _adapter.getCount() != 0 && _adapter.getItem(0) != null && _messageId == 0) {
+					if (TimeDisplay.threadAgeInHours(_adapter.getItem(0).getPosted()) > 18d) {
+						_showThreadExpired = true;
+					} else
+						_showThreadExpired = false;
+				}
 				// update thread expired
 				if (_showThreadExpired && _prefs.getBoolean("showThreadExpiredAlert", true)) {
-					getView().findViewById(R.id.tview_thread_expired).setVisibility(View.VISIBLE);
+					expandView(getView().findViewById(R.id.tview_thread_expired));
 					getView().findViewById(R.id.tview_button_te_ok).setOnClickListener(new View.OnClickListener() {
 						@Override
 						public void onClick(View v) {
-							MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(getActivity());
-							builder.setTitle("Expired Thread");
-							final View v2 = v;
-							LayoutInflater annoyInflater = LayoutInflater.from(getActivity());
-							View annoyLayout = annoyInflater.inflate(R.layout.dialog_nevershowagain, null);
-							final CheckBox dontShowAgain = (CheckBox) annoyLayout.findViewById(R.id.skip);
-							((TextView)annoyLayout.findViewById(R.id.annoy_text)).setText("If you post in this thread, it may not be seen by anyone, as the thread is no longer in the latest chatty thread list.");
-							((TextView)annoyLayout.findViewById(R.id.skip)).setText("Don't show the alert anymore");
-							builder.setView(annoyLayout)
-									// Set the action buttons
-									.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-										@Override
-										public void onClick(DialogInterface dialog, int id) {
-											if (dontShowAgain.isChecked()) {
-												SharedPreferences.Editor edit = _prefs.edit();
-												edit.putBoolean("showThreadExpiredAlert", false);
-												edit.commit();
+							if (_prefs.getBoolean("showThreadExpiredOkDialog", true)) {
+								MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(getActivity());
+								builder.setTitle("Expired Thread");
+								final View v2 = v;
+								LayoutInflater annoyInflater = LayoutInflater.from(getActivity());
+								View annoyLayout = annoyInflater.inflate(R.layout.dialog_nevershowagain, null);
+								final CheckBox dontShowAgain = (CheckBox) annoyLayout.findViewById(R.id.skip);
+								final CheckBox dontShowAgain2 = (CheckBox) annoyLayout.findViewById(R.id.skip2);
+								dontShowAgain2.setVisibility(View.VISIBLE);
+								((TextView) annoyLayout.findViewById(R.id.annoy_text)).setText("If you post in this thread, it may not be seen by anyone, as the thread is no longer in the latest chatty thread list.");
+								((TextView) annoyLayout.findViewById(R.id.skip)).setText("Don't show the alert banner");
+								((TextView) annoyLayout.findViewById(R.id.skip2)).setText("Don't show this dialog when I dismiss the banner");
+								builder.setView(annoyLayout)
+										// Set the action buttons
+										.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+											@Override
+											public void onClick(DialogInterface dialog, int id) {
+												if (dontShowAgain2.isChecked()) {
+													SharedPreferences.Editor edit = _prefs.edit();
+													edit.putBoolean("showThreadExpiredOkDialog", false);
+													edit.commit();
+												}
+												if (dontShowAgain.isChecked()) {
+													SharedPreferences.Editor edit = _prefs.edit();
+													edit.putBoolean("showThreadExpiredAlert", false);
+													edit.commit();
+												}
+												collapseView(v2.getRootView().findViewById(R.id.tview_thread_expired));
 											}
-											v2.getRootView().findViewById(R.id.tview_thread_expired).setVisibility(View.GONE);
-										}
-									});
+										});
 
-							AlertDialog dialog = builder.create();//AlertDialog dialog; create like this outside onClick
-							dialog.show();
-
+								AlertDialog dialog = builder.create();//AlertDialog dialog; create like this outside onClick
+								dialog.show();
+							}
+							else
+								collapseView(getView().findViewById(R.id.tview_thread_expired));
 						}
 					});
 				}
 				else
-					getView().findViewById(R.id.tview_thread_expired).setVisibility(View.GONE);
+					collapseView(getView().findViewById(R.id.tview_thread_expired));
     		}
     	}
     }
@@ -2448,12 +2470,14 @@ public class ThreadViewFragment extends ListFragment
                 {
                     _rootPostId = _adapter.getItem(0).getPostId();
 
+					/*
 					if (TimeDisplay.threadAgeInHours(_adapter.getItem(0).getPosted()) > 18d)
 					{
 						_showThreadExpired = true;
 					}
 					else
 						_showThreadExpired = false;
+						*/
                 }
             }
 
@@ -2875,5 +2899,65 @@ public class ThreadViewFragment extends ListFragment
 
 	    public void onDestroyActionMode(ActionMode mode) {
 	    }
+	}
+
+	public static void expandView(final View v) {
+		if (v.getVisibility() == View.VISIBLE)
+			return;
+
+		v.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+		final int targetHeight = v.getMeasuredHeight();
+
+		// Older versions of android (pre API 21) cancel animations for views with a height of 0.
+		v.getLayoutParams().height = 1;
+		v.setVisibility(View.VISIBLE);
+		Animation a = new Animation()
+		{
+			@Override
+			protected void applyTransformation(float interpolatedTime, Transformation t) {
+				v.getLayoutParams().height = interpolatedTime == 1
+						? LinearLayout.LayoutParams.WRAP_CONTENT
+						: (int)(targetHeight * interpolatedTime);
+				v.requestLayout();
+			}
+
+			@Override
+			public boolean willChangeBounds() {
+				return true;
+			}
+		};
+
+		// 1dp/ms
+		a.setDuration((int)(targetHeight / v.getContext().getResources().getDisplayMetrics().density) *4);
+		v.startAnimation(a);
+	}
+
+	public static void collapseView(final View v) {
+		if (v.getVisibility() == View.GONE)
+			return;
+
+		final int initialHeight = v.getMeasuredHeight();
+
+		Animation a = new Animation()
+		{
+			@Override
+			protected void applyTransformation(float interpolatedTime, Transformation t) {
+				if(interpolatedTime == 1){
+					v.setVisibility(View.GONE);
+				}else{
+					v.getLayoutParams().height = initialHeight - (int)(initialHeight * interpolatedTime);
+					v.requestLayout();
+				}
+			}
+
+			@Override
+			public boolean willChangeBounds() {
+				return true;
+			}
+		};
+
+		// 1dp/ms
+		a.setDuration((int)(initialHeight / v.getContext().getResources().getDisplayMetrics().density) *4);
+		v.startAnimation(a);
 	}
 }
