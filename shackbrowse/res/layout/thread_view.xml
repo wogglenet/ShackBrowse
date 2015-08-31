@@ -6,13 +6,55 @@
     android:orientation="vertical"
     android:background="@drawable/bg_app_ics"
 	>
+	<LinearLayout
+		android:id="@+id/tview_thread_expired"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:visibility="gone"
+		android:background="@color/modtag_nws"
+		android:orientation="horizontal" >
+
+		<TextView
+			android:layout_width="0dp"
+			android:layout_weight="1"
+			android:layout_height="wrap_content"
+			android:fontFamily="sans-serif"
+			android:text="Expired Thread"
+			android:textSize="18dp"
+			android:paddingLeft="14dp"
+			android:paddingRight="14dp"
+			android:textColor="#ffffff"
+			android:gravity="left|center_vertical" />
+		<View
+			android:layout_width="1dp"
+			android:layout_height="match_parent"
+			android:layout_marginTop="4dp"
+			android:layout_marginBottom="4dp"
+			android:background="?android:attr/dividerVertical"
+			android:layout_alignParentTop="true"/>
+		<Button
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:drawableLeft="@drawable/ic_action_action_done"
+			android:gravity="center_vertical"
+			android:text="Ok"
+			android:fontFamily="sans-serif-light"
+			android:id="@+id/tview_button_te_ok"
+			android:textSize="18dp"
+			android:background="?android:attr/selectableItemBackground"
+			android:paddingLeft="10dp"
+			android:paddingRight="10dp"
+			android:textAllCaps="true"
+			android:layout_alignParentRight="true"
+			/>
+	</LinearLayout>
 	<net.woggle.shackbrowse.PullToRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ptr_layout"
-               android:layout_width="fill_parent"
-    		   android:layout_height="0dp"
-				android:layout_weight="1"
-    		   android:visibility="gone"
+        android:layout_width="fill_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1"
+    	android:visibility="gone"
     >
     <ListView android:id="@android:id/list"
                android:layout_width="fill_parent"
@@ -21,53 +63,12 @@
                android:orientation="vertical"
                />
     </net.woggle.shackbrowse.PullToRefreshLayout>
-		<LinearLayout
-			android:id="@+id/tview_thread_expired"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:visibility="gone"
-			android:background="@color/modtag_nws"
-			android:orientation="horizontal" >
-
-			<TextView
-				android:layout_width="0dp"
-				android:layout_weight="1"
-				android:layout_height="wrap_content"
-				android:fontFamily="sans-serif"
-				android:text="Expired Thread"
-				android:textSize="18dp"
-				android:paddingLeft="14dp"
-				android:paddingRight="14dp"
-				android:textColor="#ffffff"
-				android:gravity="left|center_vertical" />
-			<View
-				android:layout_width="1dp"
-				android:layout_height="match_parent"
-				android:layout_marginTop="4dp"
-				android:layout_marginBottom="4dp"
-				android:background="?android:attr/dividerVertical"
-				android:layout_alignParentTop="true"/>
-			<Button
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:drawableLeft="@drawable/ic_action_action_done"
-				android:gravity="center_vertical"
-				android:text="OK"
-				android:fontFamily="sans-serif-light"
-				android:textAllCaps="true"
-				android:id="@+id/tview_button_te_ok"
-				android:textSize="18dp"
-				android:background="?android:attr/selectableItemBackground"
-				android:paddingLeft="10dp"
-				android:paddingRight="10dp"
-				android:layout_alignParentRight="true"
-				/>
-		</LinearLayout>
     <RelativeLayout 
      android:id="@+id/tview_FSLoad"
      android:visibility="gone"
-     android:layout_width="match_parent"
-     android:layout_height="match_parent"
+		android:layout_width="fill_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1"
         >
 			<ProgressBar
 			style="@style/WidgetThrobber"
@@ -76,11 +77,12 @@
 			android:layout_centerInParent="true"
 			/>
     </RelativeLayout>
-      <RelativeLayout 
+	<RelativeLayout
        android:id="@+id/tview_FSIcon"
        android:visibility="gone"
-       android:layout_width="match_parent"
-       android:layout_height="match_parent"
+		android:layout_width="fill_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1"
           >
           <LinearLayout
                 android:layout_width="wrap_content"
@@ -125,5 +127,6 @@
 	                android:padding="15dp"
 	                android:layout_gravity="center"/>
             </LinearLayout>
-      </RelativeLayout>
+	</RelativeLayout>
+
 </LinearLayout>

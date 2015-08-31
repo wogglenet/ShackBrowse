@@ -111,7 +111,7 @@ public class CustomURLSpan extends CustomClickableSpan implements OnLongClickLis
         	|| href.contains("://shacknews.com/chatty?id=")
         	|| href.contains("://www.shacknews.com/laryn.x?id=")
         	|| href.contains("://shacknews.com/laryn.x?id=")
-            || href.contains("shacknews.com/article")
+            || (href.contains("shacknews.com/article") && ((_useBrowser == 1) || (_useBrowser == 0)))
         	)
         {
             if (href.contains("shacknews.com/article"))

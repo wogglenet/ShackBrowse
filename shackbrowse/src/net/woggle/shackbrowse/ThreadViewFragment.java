@@ -54,6 +54,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
+import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Transformation;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
@@ -358,12 +359,14 @@ public class ThreadViewFragment extends ListFragment
 
 
 				// expired thread banner
+				_showThreadExpired = false;
+				final boolean noCollapseAnim = !((MainActivity)getActivity()).getDualPane();
+
 				// adapter exists, item 0 exists, and not in message mode
 				if (_adapter != null && _adapter.getCount() != 0 && _adapter.getItem(0) != null && _messageId == 0) {
 					if (TimeDisplay.threadAgeInHours(_adapter.getItem(0).getPosted()) > 18d) {
 						_showThreadExpired = true;
-					} else
-						_showThreadExpired = false;
+					}
 				}
 				// update thread expired
 				if (_showThreadExpired && _prefs.getBoolean("showThreadExpiredAlert", true)) {
@@ -398,7 +401,7 @@ public class ThreadViewFragment extends ListFragment
 													edit.putBoolean("showThreadExpiredAlert", false);
 													edit.commit();
 												}
-												collapseView(v2.getRootView().findViewById(R.id.tview_thread_expired));
+												collapseView(v2.getRootView().findViewById(R.id.tview_thread_expired), false);
 											}
 										});
 
@@ -406,12 +409,12 @@ public class ThreadViewFragment extends ListFragment
 								dialog.show();
 							}
 							else
-								collapseView(getView().findViewById(R.id.tview_thread_expired));
+								collapseView(getView().findViewById(R.id.tview_thread_expired), false);
 						}
 					});
 				}
 				else
-					collapseView(getView().findViewById(R.id.tview_thread_expired));
+					collapseView(getView().findViewById(R.id.tview_thread_expired), noCollapseAnim);
     		}
     	}
     }
@@ -1174,6 +1177,7 @@ public class ThreadViewFragment extends ListFragment
         private HashMap<String, HashMap<String, LolObj>> _shackloldata = new HashMap<String, HashMap<String, LolObj>>();
         
         private Bitmap _bulletBlank;
+		private Bitmap _bulletSpacer;
         private Bitmap _bulletEnd;
         private Bitmap _bulletExtendPast;
         private Bitmap _bulletBranch;
@@ -1215,6 +1219,7 @@ public class ThreadViewFragment extends ListFragment
                 }
             }
         };
+
 
 
 		public View.OnClickListener getUserNameClickListenerForPosition(int pos, View v)
@@ -1653,7 +1658,7 @@ public class ThreadViewFragment extends ListFragment
 						//Random color = new Random();
 						//postText.setBackgroundColor(Color.argb(255, color.nextInt(255), color.nextInt(255), color.nextInt(255)));
 						postText.setText(postClip.text, BufferType.SPANNABLE);
-						postText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+						postText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
 						postText.setTextSize(TypedValue.COMPLEX_UNIT_PX, postText.getTextSize() * _zoom);
 
 						// links stuff
@@ -1673,6 +1678,10 @@ public class ThreadViewFragment extends ListFragment
 					Point size = new Point();
 					display.getSize(size);
 					int width = Math.round(size.x * 1.0f);
+					if (((MainActivity)getActivity()).getDualPane())
+					{
+						width = Math.round((2f / 3f) * width);
+					}
 
 					if ((postClip.image != null) && (doEmbed)) {
 						ImageView image = new ImageView(getContext());
@@ -1688,7 +1697,26 @@ public class ThreadViewFragment extends ListFragment
 						image.setOnClickListener(new View.OnClickListener() {
 							@Override
 							public void onClick(View v) {
-								((MainActivity)v.getContext()).openBrowser(url);
+								SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(v.getContext());
+								statInc(v.getContext(), "ClickedLink");
+								int _useBrowser = Integer.parseInt(prefs.getString("usePopupBrowser2", "1"));
+								if (_useBrowser != 3)
+									((MainActivity) v.getContext()).openBrowser(url);
+								else {
+									Uri u = Uri.parse(url);
+									if (u.getScheme() == null) {
+										u = Uri.parse("http://" + url);
+									}
+									Intent i = new Intent(Intent.ACTION_VIEW, u);
+									v.getContext().startActivity(i);
+								}
+							}
+						});
+						image.setOnLongClickListener(new View.OnLongClickListener() {
+							@Override
+							public boolean onLongClick(View v) {
+								showLinkOptionsMenu(url, v.getContext());
+								return false;
 							}
 						});
 						//Random ncolor = new Random();
@@ -2123,62 +2151,7 @@ public class ThreadViewFragment extends ListFragment
                         });
                         hrefpop.show();
                         */
-                        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(activ);
-		    			builder.setTitle(href);
-		    	        final CharSequence[] items = { "Open Externally", "Open in Popup Browser","Copy URL","Share Link", "Change Default Action"};
-		    	        builder.setItems(items, new DialogInterface.OnClickListener() {
-		    	            public void onClick(DialogInterface dialog, int item) {
-		    	                if (item == 2)
-		    	                {
-		    	                	ClipboardManager clipboard = (ClipboardManager)activ.getSystemService(Activity.CLIPBOARD_SERVICE);
-		    	                	clipboard.setText(href);
-		    	                	Toast.makeText(activ, href, Toast.LENGTH_SHORT).show();
-		    	                }
-		    	                if (item == 3)
-		    	                {
-		    	                	Intent sendIntent = new Intent();
-		    	            	    sendIntent.setAction(Intent.ACTION_SEND);
-		    	            	    sendIntent.putExtra(Intent.EXTRA_TEXT, href);
-		    	            	    sendIntent.setType("text/plain");
-		    	            	    activ.startActivity(Intent.createChooser(sendIntent, "Share Link"));
-		    	                }
-		    	                if (item == 0)
-		    	                {
-		    	                	Uri u = Uri.parse(href);
-		    	                	if (u.getScheme() == null)
-		    	                	{
-		    	                		u = Uri.parse("http://" + href);
-		    	                	}
-		    	                	Intent i = new Intent(Intent.ACTION_VIEW,
-		    	             		       u);
-		    	             		activ.startActivity(i);
-		    	                }
-		    	                if (item == 1)
-		    	                {
-		    	                	((MainActivity)activ).openBrowser(href);
-		    	                }
-		    	                if (item == 4)
-		    	                {
-		    	                	MaterialDialog.Builder build = new MaterialDialog.Builder(getActivity());
-                                    String[] descs = getActivity().getResources().getStringArray(R.array.preference_popupBrowser);
-                                    final String[] vals = getActivity().getResources().getStringArray(R.array.preference_popupBrowser_vals);
-                                    build.items(descs);
-                                    build.title(getActivity().getResources().getString(R.string.preference_popup_browser_title));
-                                    build.itemsCallbackSingleChoice(Integer.parseInt(_prefs.getString("usePopupBrowser2","1")), new MaterialDialog.ListCallback() {
-                                        @Override
-                                        public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
-                                            SharedPreferences.Editor edit = _prefs.edit();
-                                            edit.putString("usePopupBrowser2", vals[i]);
-                                            edit.apply();
-                                        }
-                                    });
-                                    build.show();
-
-                                }
-		    	                }});
-		    	        AlertDialog alert = builder.create();
-		    	        alert.setCanceledOnTouchOutside(true);
-		    	        alert.show();
+                        showLinkOptionsMenu(href, activ);
 
 		    		}
 				};
@@ -2186,6 +2159,66 @@ public class ThreadViewFragment extends ListFragment
         	}
         	
 			return builder;
+		}
+
+		private void showLinkOptionsMenu(final String href, final Context activ)
+		{
+			MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(activ);
+			builder.setTitle(href);
+			final CharSequence[] items = { "Open Externally", "Open in Popup Browser","Copy URL","Share Link", "Change Default Action"};
+			builder.setItems(items, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int item) {
+					if (item == 2)
+					{
+						ClipboardManager clipboard = (ClipboardManager)activ.getSystemService(Activity.CLIPBOARD_SERVICE);
+						clipboard.setText(href);
+						Toast.makeText(activ, href, Toast.LENGTH_SHORT).show();
+					}
+					if (item == 3)
+					{
+						Intent sendIntent = new Intent();
+						sendIntent.setAction(Intent.ACTION_SEND);
+						sendIntent.putExtra(Intent.EXTRA_TEXT, href);
+						sendIntent.setType("text/plain");
+						activ.startActivity(Intent.createChooser(sendIntent, "Share Link"));
+					}
+					if (item == 0)
+					{
+						Uri u = Uri.parse(href);
+						if (u.getScheme() == null)
+						{
+							u = Uri.parse("http://" + href);
+						}
+						Intent i = new Intent(Intent.ACTION_VIEW,
+								u);
+						activ.startActivity(i);
+					}
+					if (item == 1)
+					{
+						((MainActivity)activ).openBrowser(href);
+					}
+					if (item == 4)
+					{
+						MaterialDialog.Builder build = new MaterialDialog.Builder(getActivity());
+						String[] descs = getActivity().getResources().getStringArray(R.array.preference_popupBrowser);
+						final String[] vals = getActivity().getResources().getStringArray(R.array.preference_popupBrowser_vals);
+						build.items(descs);
+						build.title(getActivity().getResources().getString(R.string.preference_popup_browser_title));
+						build.itemsCallbackSingleChoice(Integer.parseInt(_prefs.getString("usePopupBrowser2","1")), new MaterialDialog.ListCallback() {
+							@Override
+							public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
+								SharedPreferences.Editor edit = _prefs.edit();
+								edit.putString("usePopupBrowser2", vals[i]);
+								edit.apply();
+							}
+						});
+						build.show();
+
+					}
+				}});
+			AlertDialog alert = builder.create();
+			alert.setCanceledOnTouchOutside(true);
+			alert.show();
 		}
 
 		private CharSequence applyHighlight(String preview)
@@ -2229,11 +2262,11 @@ public class ThreadViewFragment extends ListFragment
         {
         	StringBuilder depthStr = new StringBuilder(t.getDepthStringFormatted());
 
-        	if (depthStr.length() > 0)
-        	{
+        	//if (depthStr.length() > 0)
+        	//{
         		final String imageKey = t.getDepthStringFormatted();
 
-        	    final Bitmap bitmap = getBitmapFromMemCache(imageKey);
+        	    final Bitmap bitmap = getBitmapFromMemCache("x" + imageKey);
         	    if (bitmap == null) {
         	    	System.out.println("HAD TO REBUILD CACHE");
         	    	imageView.setImageBitmap(buildBranchesForPost(t));
@@ -2242,12 +2275,8 @@ public class ThreadViewFragment extends ListFragment
 	        	{
 	        		imageView.setImageBitmap(bitmap);
 	        	}
-        	}
-        	else
-        	{
-                // this is to enforce row height, otherwise the view will collapse and look weird on root posts which do not have bullets
-        		imageView.setImageResource(R.drawable.bullet_spacer);
-        	}
+
+
         	imageView.forceLayout();
         	imageView.setAdjustViewBounds(true);
         	return imageView;
@@ -2258,12 +2287,17 @@ public class ThreadViewFragment extends ListFragment
         {
         	int bulletWidth = _bulletBlank.getWidth();
         	StringBuilder depthStr = new StringBuilder(t.getDepthStringFormatted());
-        	
-        	if (depthStr.length() > 0)
-        	{
-	        	Bitmap big = Bitmap.createBitmap(bulletWidth * depthStr.length(), _bulletBlank.getHeight(), Bitmap.Config.ARGB_4444);
-	        	Canvas canvas = new Canvas(big);
-	        	
+
+			Bitmap big;
+			if (depthStr.length() > 0)
+				big = Bitmap.createBitmap(bulletWidth * depthStr.length(), _bulletBlank.getHeight(), Bitmap.Config.ARGB_4444);
+			else
+				big = Bitmap.createBitmap(_bulletSpacer.getWidth(), _bulletBlank.getHeight(), Bitmap.Config.ARGB_4444);
+
+			Canvas canvas = new Canvas(big);
+
+			if (depthStr.length() > 0)
+			{
 	        	for (int i = 0; i < depthStr.length(); i++)
 	        	{
 	        		
@@ -2286,9 +2320,14 @@ public class ThreadViewFragment extends ListFragment
 	            	
 	            	
 	        	}
-	        	addBitmapToMemoryCache(t.getDepthStringFormatted(), big);
+	        	addBitmapToMemoryCache("x"+t.getDepthStringFormatted(), big);
 	        	return big;
         	}
+			else
+			{
+				canvas.drawBitmap(_bulletSpacer, 0, 0, null);
+				addBitmapToMemoryCache("x", big);
+			}
         	return null;
         }
         
@@ -2306,6 +2345,7 @@ public class ThreadViewFragment extends ListFragment
         
         private void createAllBullets()
         {
+			_bulletSpacer = createBullet(R.drawable.bullet_spacer);
         	_bulletBlank = createBullet(R.drawable.bullet_blank);
         	_bulletEnd = createBullet(R.drawable.bullet_end);
         	_bulletExtendPast = createBullet(R.drawable.bullet_extendpast);
@@ -2708,8 +2748,8 @@ public class ThreadViewFragment extends ListFragment
             for (int i = 0; i < posts.size(); i++)
             {
             	Post p = posts.get(i);
-            	if (getBitmapFromMemCache(p.getDepthStringFormatted()) == null)
-            		addBitmapToMemoryCache(p.getDepthStringFormatted(), buildBranchesForPost(p));
+            	if (getBitmapFromMemCache("x" + p.getDepthStringFormatted()) == null)
+            		addBitmapToMemoryCache("x" + p.getDepthStringFormatted(), buildBranchesForPost(p));
             }
         }
 
@@ -2928,13 +2968,19 @@ public class ThreadViewFragment extends ListFragment
 		};
 
 		// 1dp/ms
-		a.setDuration((int)(targetHeight / v.getContext().getResources().getDisplayMetrics().density) *4);
+		a.setDuration((int)(targetHeight / v.getContext().getResources().getDisplayMetrics().density) *6);
+		a.setInterpolator(new DecelerateInterpolator(1.0f));
 		v.startAnimation(a);
 	}
 
-	public static void collapseView(final View v) {
+	public static void collapseView(final View v, boolean instantly) {
 		if (v.getVisibility() == View.GONE)
 			return;
+
+		if (instantly) {
+			v.setVisibility(View.GONE);
+			return;
+		}
 
 		final int initialHeight = v.getMeasuredHeight();
 
@@ -2957,7 +3003,8 @@ public class ThreadViewFragment extends ListFragment
 		};
 
 		// 1dp/ms
-		a.setDuration((int)(initialHeight / v.getContext().getResources().getDisplayMetrics().density) *4);
+		a.setDuration((int)(initialHeight / v.getContext().getResources().getDisplayMetrics().density) *6);
+		a.setInterpolator(new DecelerateInterpolator(1.0f));
 		v.startAnimation(a);
 	}
 }

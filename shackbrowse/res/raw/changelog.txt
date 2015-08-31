@@ -28,15 +28,23 @@ TODO
 * SEARCH GOOGLE BY TEXT SELECTION
 -->
 
-$ 5.2.0Beta5
-% v 5.2.0Beta5
-_ Aug 19, 2015
-* Expired threads display a large animated red banner at the bottom which can be disabled
+$ 5.2.1
+% v 5.2.1
+_ Aug 27, 2015
+* Can long click embedded images for options menu
+* Bug Fix: Fixed clipping issue with large font zoom on root post username
+* Bug Fix: Different font sizes for post text on some devices
+* Bug Fix: Article links and embedded images obey link preference
+
+$ 5.2.0
+% v 5.2.0
+_ Aug 26, 2015
+* Expired threads display a large animated red banner at the top which can be disabled
 * Blue dot indicator and replies number in thread list immediately updates when you post a reply
 * Embed some images (no GIFs) in posts with lazy-load auto-embedder
 * Option to disable auto-embed based on wifi status. Default: Wifi embed only
-* Option to hide link options icon
-* Option to control whether embedded images have their link text hidden
+* Option to hide link options icon. Default: Hide
+* Option to control whether embedded images have their link text hidden. Default: Hide
 * Bug Fix: Crash on blank posts
 
 $ 5.1.5
