@@ -28,6 +28,12 @@ TODO
 * SEARCH GOOGLE BY TEXT SELECTION
 -->
 
+$ 5.2.2
+% v 5.2.2
+_ Oct 11, 2015
+* Samsung Multi-window support added
+* Bug Fix: Crash when posting to the last thread in the thread list
+
 $ 5.2.1
 % v 5.2.1
 _ Aug 27, 2015

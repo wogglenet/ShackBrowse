@@ -1490,7 +1490,7 @@ public class MainActivity extends ActionBarActivity
 		{
 			System.out.println("UpdateReplies: TRYING" + rootId);
 			int checkIndexFirst = _threadList._itemChecked + 1; // should almost always work, will be faster than looping
-			if (_threadList._adapter.getItem(checkIndexFirst).getThreadId() == rootId)
+			if (_threadList._adapter.getCount() > checkIndexFirst && _threadList._adapter.getItem(checkIndexFirst).getThreadId() == rootId)
 			{
 				_threadList._adapter.getItem(checkIndexFirst).setReplyCount(replies);
 				_threadList._adapter.getItem(checkIndexFirst).setReplied(replied);
