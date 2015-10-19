@@ -183,7 +183,7 @@ public class DonateActivity extends ActionBarActivity {
 	        }
 	        else
 	        {
-	        	((Button)findViewById(R.id.donateUnlockButton)).setText("Lime Settings Locked");
+	        	((Button)findViewById(R.id.donateUnlockButton)).setText("No Lime Found in List");
                 ((Button)findViewById(R.id.donateUnlockButton)).setEnabled(false);
 	        }
     	}
@@ -212,7 +212,7 @@ public class DonateActivity extends ActionBarActivity {
         
         ((CheckBox)findViewById(R.id.donateDisableLimeDisplay)).setChecked(!_prefs.getBoolean("displayLimes", true));
 
-        ((TextView)findViewById(R.id.donatorText)).setText(Html.fromHtml("Original donators may access their lime setting here. THERE ARE NO DONATOR FEATURES ANYMORE. All previous donator features besides the lime icon are now available to all. It is no longer possible to donate other than through the <a href='http://www.woggle.net'>woggle</a> website."));
+        ((TextView)findViewById(R.id.donatorText)).setText(Html.fromHtml("Although it used to be possible to unlock donator features here, all donator features have now been made public and unlocked! If you had donated in the past, you may access the ability to turn off your donator indicator icon above if your name is found in the <a href='http://woggle.net/shackbrowsedonators/list'>online donator list</a>. <br />This app utilizes APIs run on the woggle.net server. For more info on other woggle projects including the API, visit <a href='http://www.woggle.net'>woggle.net</a>."));
         ((TextView)findViewById(R.id.donatorText)).setMovementMethod(LinkMovementMethod.getInstance());
     }
 

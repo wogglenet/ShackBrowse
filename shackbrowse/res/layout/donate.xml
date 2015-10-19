@@ -37,7 +37,7 @@
     <TextView 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Shack Browse is developed by bradsh. It was created from Droid Chatty source code, although little of the Droid Chatty source now remains. The source is available by request."
+        android:text="Shack Browse is developed by bradsh. It was created from Droid Chatty source code, although little of the Droid Chatty source now remains. The source is available by request, or on the GitHub website."
         android:textSize="14sp" 
         android:paddingLeft="10dip"
         android:paddingRight="10dip"

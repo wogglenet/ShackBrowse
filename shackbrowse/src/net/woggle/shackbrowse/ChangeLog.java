@@ -166,7 +166,7 @@ public class ChangeLog {
                                                 }
                                         });
                 }*/
-                builder.setNeutralButton("Donate",
+                builder.setNeutralButton("App Info",
                         new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
                                 	updateVersionInPreferences();
@@ -179,8 +179,8 @@ public class ChangeLog {
         }
 
         protected void startDonation() {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.woggle.net"));
-            context.startActivity(browserIntent);
+                Intent i = new Intent(context, DonateActivity.class);
+                ((MainActivity)context).startActivityForResult(i, ThreadListFragment.OPEN_PREFS);
             /*
         	Intent i = new Intent(context, DonateActivity.class);
             context.startActivity(i); */
