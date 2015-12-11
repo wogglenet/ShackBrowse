@@ -28,6 +28,11 @@ TODO
 * SEARCH GOOGLE BY TEXT SELECTION
 -->
 
+$ 5.2.3
+% v 5.2.3
+_ Dec 11, 2015
+* Bug Fix: Crash in Android 6.0 devices when selecting text and tapping outside selected text
+
 $ 5.2.2
 % v 5.2.2
 _ Oct 11, 2015

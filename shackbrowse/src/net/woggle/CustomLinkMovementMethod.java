@@ -29,7 +29,7 @@ public class CustomLinkMovementMethod extends LinkMovementMethod {
 
     @Override
     public void initialize(TextView widget, Spannable text) {
-        Selection.setSelection(text, text.length());
+            Selection.setSelection(text, 0);
     }
 
     @Override
@@ -37,10 +37,10 @@ public class CustomLinkMovementMethod extends LinkMovementMethod {
        if ((dir & (View.FOCUS_FORWARD | View.FOCUS_DOWN)) != 0) {
            if (view.getLayout() == null) {
                // This shouldn't be null, but do something sensible if it is.
-               Selection.setSelection(text, text.length());
+                Selection.setSelection(text, text.length());
            }
        } else {
-           Selection.setSelection(text, text.length());
+            Selection.setSelection(text, text.length());
        }
     }
 	
@@ -107,6 +107,7 @@ public class CustomLinkMovementMethod extends LinkMovementMethod {
                 } else if (action == MotionEvent.ACTION_DOWN) {
                     // Selection.setSelection(buffer, buffer.getSpanStart(link[0]), buffer.getSpanEnd(link[0]));
                     lastClickTime = System.currentTimeMillis();
+
                 }
                 return true;
             }

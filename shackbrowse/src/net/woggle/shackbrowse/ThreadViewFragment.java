@@ -80,6 +80,7 @@ import com.nhaarman.listviewanimations.itemmanipulation.ExpandCollapseListener;
 import net.woggle.CheckableTableLayout;
 import net.woggle.CustomLinkMovementMethod;
 import net.woggle.ExpandableListItemAdapter;
+import net.woggle.FixedTextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -1648,7 +1649,7 @@ public class ThreadViewFragment extends ListFragment
 				for (int i = choppedPost.size() -1; i >= 0; i--) {
 					PostClip postClip = choppedPost.get(i);
 					if (postClip.text.toString().trim().length() > 0) {
-						TextView postText = new TextView(getContext());
+						FixedTextView postText = new FixedTextView(getContext());
 
 						if (_linkButtons && !removeLinks)
 							postClip.text = (Spannable) applyExtLink(postClip.text, postText);
