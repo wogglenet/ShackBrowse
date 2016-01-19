@@ -340,6 +340,8 @@
     <string name="preference_showlinkbutton_summary">Show the link secondary options button icon next to links. Gives options to copy url, share link, and open externally. Auto disabled on some links when hidden by auto-embedded images.</string>
     <string name="preference_threadexpired_title">Show Expired Thread Alert</string>
     <string name="preference_threadexpired_summary">Shows a red bar on the bottom of expired threads</string>
+    <string name="preference_uct_title">Use Chrome Tabs</string>
+    <string name="preference_uct_summary">If Chrome is installed, this will cause Chrome Tabs to be used as the popup browser when possible</string>
     <!-- items in  the array will show up even when not yet registered -->
     <string-array name="statsItems">
         <item>statsItemAnnoyedByStartupZoomDialog</item>

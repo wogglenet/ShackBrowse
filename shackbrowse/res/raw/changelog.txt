@@ -28,6 +28,18 @@ TODO
 * SEARCH GOOGLE BY TEXT SELECTION
 -->
 
+$ 5.3.0
+% v 5.3.0
+_ Jan 18, 2016
+* Chrome Tabs for browser (major enhancement for built-in web browser)
+* WinChatty NuSearch is now used if you have a v2 API selected. Older APIs use shack search
+* Support undoing your LOL (just LOL it again, instead of an error you now undo it)
+* Support for older chatty URLs
+* No longer possible to close a post by clicking the header
+* Can copy username of a post to clipboard
+* Bug Fix: Custom LOLs weren't being shown correctly in search. Custom LOL is still unsupported generally
+* Bug Fix: Stats not working with cloud sync/cloud sync not working (data corruption event on server, corrupted data is now handled correctly)
+
 $ 5.2.3
 % v 5.2.3
 _ Dec 11, 2015

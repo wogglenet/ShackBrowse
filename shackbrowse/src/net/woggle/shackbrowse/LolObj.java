@@ -49,11 +49,17 @@ public class LolObj {
 	public void setWtf(int val) { _wtf = val; }
 	public void setUgh(int val) { _ugh = val; }
     public void incLol() { _lol = _lol+1; }
-    public void incInf() { _inf = _inf+1; }
-    public void incUnf() { _unf = _unf+1; }
-    public void incTag() { _tag = _tag+1; }
-    public void incWtf() { _wtf = _wtf+1; }
-    public void incUgh() { _ugh = _ugh+1; }
+	public void incInf() { _inf = _inf+1; }
+	public void incUnf() { _unf = _unf+1; }
+	public void incTag() { _tag = _tag+1; }
+	public void incWtf() { _wtf = _wtf+1; }
+	public void incUgh() { _ugh = _ugh+1; }
+	public void decLol() { _lol = _lol-1; }
+	public void decInf() { _inf = _inf-1; }
+	public void decUnf() { _unf = _unf-1; }
+	public void decTag() { _tag = _tag-1; }
+	public void decWtf() { _wtf = _wtf-1; }
+	public void decUgh() { _ugh = _ugh-1; }
 	public void clear () { _lol = 0; _inf = 0; _unf = 0; _tag = 0; _wtf = 0; _ugh = 0; }
 	public SpannedString getTagSpan()
 	{

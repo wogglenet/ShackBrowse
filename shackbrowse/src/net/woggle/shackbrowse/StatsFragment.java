@@ -321,7 +321,7 @@ public class StatsFragment extends ListFragment {
 
         @Override
         protected ArrayList<StatsItem> doInBackground(String... params) {
-            JSONObject cloudJson;
+            JSONObject cloudJson = new JSONObject();
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
             int localOnly = prefs.getInt("optOutFromStats", 0);
             ArrayList<StatsItem> remoteStatList = new ArrayList<StatsItem>();
@@ -377,8 +377,14 @@ public class StatsFragment extends ListFragment {
             else if (localOnly == 0) {
                 try {
                     cloudJson = ShackApi.getCloudPinned(mCloudUserName);
-                    // watched should always exist. if it doesnt, fail the sync
-                    JSONArray watched = cloudJson.getJSONArray("watched");
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+                try {
+                    // watched should always exist. if it doesnt, data may be corrupted server side
+                    JSONArray watched = cloudJson.optJSONArray("watched");
                     stats = cloudJson.optJSONArray("stats");
                     if (stats == null)
                         stats = new JSONArray();

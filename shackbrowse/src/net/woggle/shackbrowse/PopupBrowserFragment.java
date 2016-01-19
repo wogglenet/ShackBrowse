@@ -252,6 +252,7 @@ public class PopupBrowserFragment extends Fragment {
 		}
 	}
 
+	// DEPRECATED
 	private void showPhotoView(String... hrefs)
 	{
 		mState = SHOW_PHOTO_VIEW;
@@ -300,53 +301,53 @@ public class PopupBrowserFragment extends Fragment {
 		((SeekBar)getActivity().findViewById(R.id.popup_seekbarfine)).setProgress(fineZoom);
 		
 		((SeekBar)getActivity().findViewById(R.id.popup_seekbar)).setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-			
+
 			@Override
 			public void onStopTrackingTouch(SeekBar seekBar) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void onStartTrackingTouch(SeekBar seekBar) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 				coarseZoom = (progress);
-				mAttemptZoom = ((coarseZoom * 150) + (fineZoom * 3)) +1;
+				mAttemptZoom = ((coarseZoom * 150) + (fineZoom * 3)) + 1;
 				Editor edit = mPrefs.edit();
 				edit.putString("browserImageZoom5", Integer.toString(mAttemptZoom));
 				edit.commit();
 				open(true, TEST_IMAGE);
-				
+
 			}
 		});
 		((SeekBar)getActivity().findViewById(R.id.popup_seekbarfine)).setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-			
+
 			@Override
 			public void onStopTrackingTouch(SeekBar seekBar) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void onStartTrackingTouch(SeekBar seekBar) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 				fineZoom = (progress);
-				mAttemptZoom = ((coarseZoom * 150) + (fineZoom * 3)) +1;
+				mAttemptZoom = ((coarseZoom * 150) + (fineZoom * 3)) + 1;
 				Editor edit = mPrefs.edit();
 				edit.putString("browserImageZoom5", Integer.toString(mAttemptZoom));
 				edit.commit();
 				open(true, TEST_IMAGE);
-				
+
 			}
 		});
 		
@@ -395,11 +396,12 @@ public class PopupBrowserFragment extends Fragment {
         return _href;
 	}
 
-	public void openExternal() {
+	public void openExternal() { openExternal(_href); }
+	public void openExternal(String href) {
 		if (getActivity() != null)
 		{
 			Intent i = new Intent(Intent.ACTION_VIEW, 
-	  		       Uri.parse(_href));
+	  		       Uri.parse(href));
 	  		getActivity().startActivity(i);
 		}
 	}
@@ -408,9 +410,7 @@ public class PopupBrowserFragment extends Fragment {
 	{
 		if (getActivity() != null)
 		{
-			ClipboardManager clipboard = (ClipboardManager)((MainActivity)getActivity()).getSystemService(Activity.CLIPBOARD_SERVICE);
-			clipboard.setText(getHREFText());
-	    	Toast.makeText(getActivity(), getHREFText(), Toast.LENGTH_SHORT).show();
+			((MainActivity)getActivity()).copyText(getHREFText());
 		}
 	}
 	public void shareURL()

@@ -396,11 +396,17 @@ public class OfflineThread
  	{
 		@Override
 		protected JSONArray doInBackground(String... params) {
-			JSONObject cloudJson;
+			JSONObject cloudJson = new JSONObject();
 			
 			JSONArray watched = new JSONArray();
 			try {
 				cloudJson = ShackApi.getCloudPinned(getCloudUsername());
+			}
+			catch (Exception e)
+			{
+
+			}
+			try {
 				watched = cloudJson.getJSONArray("watched");
 				
 				System.out.println("OFFLINETHREAD: CLOUDTOLOCAL: watched#: " + watched.length());
@@ -460,19 +466,12 @@ public class OfflineThread
 	            // and save
 	            flushThreadsToDiskTask();
 	            if (_verbose) _verboseMsg = "Sync Success";
-				
-			} catch (ClientProtocolException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				verboseError();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				verboseError();
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				verboseError();
+				// if this happens, data on server may be corrupt. delete it.
+
 			}
 			
 			_activity.runOnUiThread(new Runnable(){
@@ -505,9 +504,17 @@ public class OfflineThread
 				Object key = keys.nextElement();
 				watched.put(key);
             }
-			
+
+			JSONObject cloudJson = new JSONObject();
 			try {
-				JSONObject cloudJson = ShackApi.getCloudPinned(getCloudUsername());
+				cloudJson = ShackApi.getCloudPinned(getCloudUsername());
+			}
+			catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				verboseError();
+			}
+			try {
 				cloudJson.put("watched",watched);
 				String result = ShackApi.putCloudPinned(cloudJson, getCloudUsername());
 				System.out.println("OFFLINETHREAD: LOCALTOCLOUD: watched#: " + watched.length());

@@ -19,6 +19,8 @@ import java.util.regex.Pattern;
 import net.woggle.shackbrowse.ChangeLog.onChangeLogCloseListener;
 import net.woggle.shackbrowse.NetworkNotificationServers.OnGCMInteractListener;
 import net.woggle.shackbrowse.PullToRefreshAttacher.Options;
+import net.woggle.shackbrowse.customtab.CustomTabActivityHelper;
+import net.woggle.shackbrowse.customtab.CustomTabsHelper;
 import net.woggle.shackbrowse.notifier.NotifierReceiver;
 
 import org.json.JSONObject;
@@ -28,6 +30,7 @@ import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -38,9 +41,10 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
-import android.graphics.Color;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
@@ -54,12 +58,14 @@ import android.preference.PreferenceManager;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
+import android.text.ClipboardManager;
 import android.text.Editable;
 import android.text.InputType;
 import android.util.DisplayMetrics;
@@ -96,6 +102,7 @@ import static net.woggle.shackbrowse.StatsFragment.statInc;
 public class MainActivity extends ActionBarActivity
 {
 	static final String PQPSERVICESUCCESS = "net.woggle.PQPServiceSuccess";
+	static final String CHROMETABRECV = "net.woggle.shackbrowse.CHROMETABRECV";
     FrameLayout mFrame;
     OfflineThread mOffline;
     
@@ -105,6 +112,7 @@ public class MainActivity extends ActionBarActivity
     int _splitView = 1;
     boolean _dualPane = false;
 	private int _orientLock = 0;
+	protected boolean mUseChromeTab = true;
 	SharedPreferences _prefs;
 	private ArrayList<Integer> _threadIdBackStack = new ArrayList<Integer>();
 
@@ -153,8 +161,11 @@ public class MainActivity extends ActionBarActivity
     private Long mLastResumeTime = TimeDisplay.now();
 	protected boolean isBeta = false;
 	protected String mVersion = "none";
+	CustomTabActivityHelper mCustomTabActivityHelper;
+	private Bitmap mChromeTabShareIcon;
+	private String mChromeTabCurrentUrl;
 
-    public PullToRefreshAttacher getRefresher()
+	public PullToRefreshAttacher getRefresher()
 	{
 		return mPullToRefreshAttacher;
 	}
@@ -196,7 +207,14 @@ public class MainActivity extends ActionBarActivity
 	    } catch (Exception ex) {
 	        // Ignore
 	    }
-		
+
+		mCustomTabActivityHelper = new CustomTabActivityHelper();
+		if (mUseChromeTab)
+		{
+			Resources resources = getResources();
+			mChromeTabShareIcon = BitmapFactory.decodeResource(resources, R.drawable.ic_action_social_share);
+		}
+
 		this.setContentView(R.layout.main_splitview);
 		
 		// set up persistent fragments
@@ -1211,7 +1229,10 @@ public class MainActivity extends ActionBarActivity
 		super.onPause();
 		
 		mOffline.endCloudUpdates();
-		
+
+		if (mUseChromeTab)
+			mCustomTabActivityHelper.unbindCustomTabsService(this);
+
 		// unregister receiver for pqpservice
 		LocalBroadcastManager.getInstance(this).unregisterReceiver(mPQPServiceReceiver);
 		
@@ -1244,13 +1265,16 @@ public class MainActivity extends ActionBarActivity
         mLastResumeTime = TimeDisplay.now();
 
 		mOffline.startCloudUpdates();
+
+		if (mUseChromeTab)
+			mCustomTabActivityHelper.bindCustomTabsService(this);
 		
 		// register to receive information from PQPService
 		IntentFilter filter = new IntentFilter(PQPSERVICESUCCESS);
         mPQPServiceReceiver = new PQPServiceReceiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(
-        		mPQPServiceReceiver,
-                filter);
+				mPQPServiceReceiver,
+				filter);
         
         // connectivity changes
         mNetworkConnectivityReceiver = new NetworkConnectivityReceiver();
@@ -1858,6 +1882,7 @@ public class MainActivity extends ActionBarActivity
             _zoom = Float.parseFloat(_prefs.getString("fontZoom", "1.0"));
             _showPinnedInTL = _prefs.getBoolean("showPinnedInTL", true);
             _swappedSplit = _prefs.getBoolean("swappedSplit", false);
+			mUseChromeTab = _prefs.getBoolean("useChromeTab", true);
             _enableDonatorFeatures = true;
             if (_threadView != null) {
                 if (_threadView._adapter != null) {
@@ -3017,26 +3042,64 @@ public class MainActivity extends ActionBarActivity
 	private void openBrowser(boolean showZoomSetup, String... hrefs) { openBrowser(false, showZoomSetup, hrefs); }
 	public void openBrowserPhotoView(String... hrefs) { openBrowser(true, false, hrefs); }
 	private void openBrowser(boolean showPhotoView, boolean showZoomSetup, String... hrefs) {
-		FragmentManager fm = getFragmentManager();
-		FragmentTransaction ft = fm.beginTransaction();
-		Bundle args = new Bundle();
-		args.putStringArray("hrefs", hrefs);
-		if (showZoomSetup)
-	    	args.putBoolean("showZoomSetup", true);
+		// chrome tab garbage
+		String packageName = CustomTabsHelper.getPackageNameToUse(this);
 
-		if (showPhotoView)
-			args.putBoolean("showPhotoView", true);
-		
-		mPBfragment = (PopupBrowserFragment)Fragment.instantiate(getApplicationContext(), PopupBrowserFragment.class.getName(), args );
-		ft.add(R.id.browser_frame, mPBfragment, "pbfrag");
-		ft.attach(mPBfragment);
-		ft.commit();
-		
-		new anim(mBrowserFrame).toVisible();
-		
-	    mPopupBrowserOpen  = true;
-	    
-	    setTitleContextually();
+		if ((hrefs.length <= 1) && (!showZoomSetup) && mUseChromeTab && (packageName != null))
+		{
+			// If we cant find a package name, it means there's no browser that // supports Chrome Custom Tabs installed. So, we fallback to the
+			// webview
+
+			CustomTabsIntent.Builder intentBuilder = new CustomTabsIntent.Builder();
+
+			int toolbarColor;
+			if (mThemeResId == R.style.AppThemeDark)
+			{
+				toolbarColor = getResources().getColor(R.color.gnushackdark);
+			}
+			else {
+				toolbarColor = getResources().getColor(R.color.SBdark);
+			}
+
+
+			intentBuilder.setToolbarColor(toolbarColor);
+			intentBuilder.setShowTitle(true);
+			mChromeTabCurrentUrl = hrefs[0];
+
+			if (mChromeTabShareIcon != null) {
+				Intent actionIntent = new Intent(Intent.ACTION_SEND);
+				actionIntent.setType("text/plain");
+				actionIntent.putExtra(Intent.EXTRA_TEXT, hrefs[0]);
+				intentBuilder.setActionButton(mChromeTabShareIcon, "Share",PendingIntent.getActivity(getApplicationContext(), 0, actionIntent, 0));
+			}
+
+				intentBuilder.setStartAnimations(this, R.anim.slide_in_right, R.anim.slide_out_left);
+				intentBuilder.setExitAnimations(this, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+
+			CustomTabActivityHelper.openCustomTab(this, intentBuilder.build(), Uri.parse(hrefs[0]));
+		}
+		else {
+			FragmentManager fm = getFragmentManager();
+			FragmentTransaction ft = fm.beginTransaction();
+			Bundle args = new Bundle();
+			args.putStringArray("hrefs", hrefs);
+			if (showZoomSetup)
+				args.putBoolean("showZoomSetup", true);
+
+			if (showPhotoView)
+				args.putBoolean("showPhotoView", true);
+
+			mPBfragment = (PopupBrowserFragment) Fragment.instantiate(getApplicationContext(), PopupBrowserFragment.class.getName(), args);
+			ft.add(R.id.browser_frame, mPBfragment, "pbfrag");
+			ft.attach(mPBfragment);
+			ft.commit();
+
+			new anim(mBrowserFrame).toVisible();
+
+			mPopupBrowserOpen = true;
+
+			setTitleContextually();
+		}
 	}
 	
 	private void restartBrowserWithZoom() {
@@ -3276,19 +3339,19 @@ public class MainActivity extends ActionBarActivity
         	{
         		if ((ext.getInt("remaining") > 0) || (ext.getBoolean("isMessage")))
         			Toast.makeText(context.getApplicationContext(), (ext.getBoolean("isMessage") ? "Sent ShackMessage" : "Posted reply") + " successfully." + ((ext.getInt("remaining") > 0) ? "(" + ext.getInt("remaining") + " remaining in queue)" : ""), Toast.LENGTH_SHORT).show();
-	        	System.out.println("POSTQU: MAINACTIVITY RECV SIGNAL");
+				System.out.println("POSTQU: MAINACTIVITY RECV SIGNAL");
 	        	if (_threadView != null)
 	        		_threadView.updatePQPostIdToFinal(Integer.parseInt(Long.toString(ext.getLong("PQPId"))),ext.getInt("finalId"));
         	}
         }
     }
-	
+
 	public class NetworkConnectivityReceiver extends BroadcastReceiver {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			// TODO Auto-generated method stub
-			
+
 		}
 		
 	}
@@ -3490,5 +3553,11 @@ public class MainActivity extends ActionBarActivity
                     .show();
         }
     }
+	public void copyText(String text)
+	{
+		ClipboardManager clipboard = (ClipboardManager)getSystemService(Activity.CLIPBOARD_SERVICE);
+		clipboard.setText(text);
+		Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+	}
 
 }

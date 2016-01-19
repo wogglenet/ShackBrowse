@@ -133,7 +133,7 @@ public class ThreadViewFragment extends ListFragment
 	boolean _autoFaveOnLoad = false;
 	int _messageId = 0;
 	String _messageSubject;
-	private AsyncTask<String, Void, Void> _curTask;
+	private AsyncTask<String, Void, Integer> _curTask;
 	protected boolean _showFavSaved = false;
 	protected boolean _showUnFavSaved = false;
 	private PullToRefreshLayout ptrLayout;
@@ -896,15 +896,16 @@ public class ThreadViewFragment extends ListFragment
         _progressDialog = MaterialProgressDialog.show(getActivity(), "Please wait", "Laying down the ban hammer...");
     }
     
-    class LolTask extends AsyncTask<String, Void, Void>
+    class LolTask extends AsyncTask<String, Void, Integer>
     {
         Exception _exception;
         private int pos;
         private int postId;
         private String tag;
+		private int response = 0;
 
         @Override
-        protected Void doInBackground(String... params)
+        protected Integer doInBackground(String... params)
         {
             String userName = params[0];
             tag = params[1];
@@ -913,7 +914,7 @@ public class ThreadViewFragment extends ListFragment
 
             try
             {
-                ShackApi.tagPost(postId, tag, userName);
+                response = ShackApi.tagPost(postId, tag, userName);
             }
             catch (Exception ex)
             {
@@ -921,11 +922,11 @@ public class ThreadViewFragment extends ListFragment
                 _exception = ex;
             }
             
-            return null;
+            return response;
         }
         
         @Override
-        protected void onPostExecute(Void result)
+        protected void onPostExecute(Integer result)
         {
             if (_adapter != null && _adapter.getCount() >= pos && _adapter.getItem(pos) != null && _adapter.getItem(pos).getPostId() == postId)
             {
@@ -933,14 +934,26 @@ public class ThreadViewFragment extends ListFragment
                 if (updLol == null)
                     updLol = new LolObj();
 
-                if (tag.equalsIgnoreCase("lol")) { updLol.incLol(); statInc(getActivity(), "GaveALOLTag"); statInc(getActivity(), "GaveALOLTaglol"); }
-                if (tag.equalsIgnoreCase("tag")) { updLol.incTag(); statInc(getActivity(), "GaveALOLTag"); statInc(getActivity(), "GaveALOLTagtag"); }
-                if (tag.equalsIgnoreCase("ugh")) { updLol.incUgh(); statInc(getActivity(), "GaveALOLTag"); statInc(getActivity(), "GaveALOLTagugh"); }
-                if (tag.equalsIgnoreCase("wtf")) { updLol.incWtf(); statInc(getActivity(), "GaveALOLTag"); statInc(getActivity(), "GaveALOLTagwtf"); }
-                if (tag.equalsIgnoreCase("inf")) { updLol.incInf(); statInc(getActivity(), "GaveALOLTag"); statInc(getActivity(), "GaveALOLTaginf"); }
-                if (tag.equalsIgnoreCase("unf")) { updLol.incUnf(); statInc(getActivity(), "GaveALOLTag"); statInc(getActivity(), "GaveALOLTagunf"); }
+				if (response == 1)
+				{
+					if (tag.equalsIgnoreCase("lol")) { updLol.incLol(); statInc(getActivity(), "GaveALOLTag"); statInc(getActivity(), "GaveALOLTaglol"); }
+					if (tag.equalsIgnoreCase("tag")) { updLol.incTag(); statInc(getActivity(), "GaveALOLTag"); statInc(getActivity(), "GaveALOLTagtag"); }
+					if (tag.equalsIgnoreCase("ugh")) { updLol.incUgh(); statInc(getActivity(), "GaveALOLTag"); statInc(getActivity(), "GaveALOLTagugh"); }
+					if (tag.equalsIgnoreCase("wtf")) { updLol.incWtf(); statInc(getActivity(), "GaveALOLTag"); statInc(getActivity(), "GaveALOLTagwtf"); }
+					if (tag.equalsIgnoreCase("inf")) { updLol.incInf(); statInc(getActivity(), "GaveALOLTag"); statInc(getActivity(), "GaveALOLTaginf"); }
+					if (tag.equalsIgnoreCase("unf")) { updLol.incUnf(); statInc(getActivity(), "GaveALOLTag"); statInc(getActivity(), "GaveALOLTagunf"); }
+				}
+				if (response == -1)
+				{
+					if (tag.equalsIgnoreCase("lol")) { updLol.decLol(); statInc(getActivity(), "RemovedALOLTag"); statInc(getActivity(), "RemovedALOLTaglol"); }
+					if (tag.equalsIgnoreCase("tag")) { updLol.decTag(); statInc(getActivity(), "RemovedALOLTag"); statInc(getActivity(), "RemovedALOLTagtag"); }
+					if (tag.equalsIgnoreCase("ugh")) { updLol.decUgh(); statInc(getActivity(), "RemovedALOLTag"); statInc(getActivity(), "RemovedALOLTagugh"); }
+					if (tag.equalsIgnoreCase("wtf")) { updLol.decWtf(); statInc(getActivity(), "RemovedALOLTag"); statInc(getActivity(), "RemovedALOLTagwtf"); }
+					if (tag.equalsIgnoreCase("inf")) { updLol.decInf(); statInc(getActivity(), "RemovedALOLTag"); statInc(getActivity(), "RemovedALOLTaginf"); }
+					if (tag.equalsIgnoreCase("unf")) { updLol.decUnf(); statInc(getActivity(), "RemovedALOLTag"); statInc(getActivity(), "RemovedALOLTagunf"); }
+				}
 
-                updLol.genTagSpan(getActivity());
+				updLol.genTagSpan(getActivity());
                 _adapter.getItem(pos).setLolObj(updLol);
                 _adapter.getItem(pos).setIsWorking(false);
                 _adapter.notifyDataSetChanged();
@@ -1233,6 +1246,7 @@ public class ThreadViewFragment extends ListFragment
                     usrpop.getMenu().add(Menu.NONE, 0, Menu.NONE, "Shack Message " + unamefinal);
                     usrpop.getMenu().add(Menu.NONE, 1, Menu.NONE, "Search for posts by " + unamefinal);
                     usrpop.getMenu().add(Menu.NONE, 2, Menu.NONE, "Highlight " + unamefinal + " in thread");
+					usrpop.getMenu().add(Menu.NONE, 3, Menu.NONE, "Copy " + unamefinal + " to clipboard");
 
                     usrpop.setOnMenuItemClickListener(new OnMenuItemClickListener(){
                         @Override
@@ -1243,6 +1257,8 @@ public class ThreadViewFragment extends ListFragment
                                 searchForPosts(unamefinal);
                             if (item.getItemId() == 2)
                                 ((MainActivity)getActivity()).openHighlighter(unamefinal);
+							if (item.getItemId() == 3)
+								copyString(unamefinal);
                             return true;
                         }});
                     usrpop.show();
@@ -1335,7 +1351,7 @@ public class ThreadViewFragment extends ListFragment
             _displayLimes  = _prefs.getBoolean("displayLimes", true);
             // "enableDonatorFeatures"
             _displayLolButton  = true;
-            setDurationPref();
+            setupPref();
             
             // fast scroll on mega threads
         	if (getActivity () != null)

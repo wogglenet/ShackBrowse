@@ -764,7 +764,7 @@ public class ShackApi
         return posts;
     }
     
-    public static void tagPost(int postId, String tag, String userName) throws Exception
+    public static int tagPost(int postId, String tag, String userName) throws Exception
     {
     	BasicResponseHandler response_handler = new BasicResponseHandler();
         DefaultHttpClient client = new DefaultHttpClient();
@@ -796,8 +796,31 @@ public class ShackApi
         */
     	
         // see if it did work
-        if (!content.contains("ok"))
-            throw new Exception(content);
+        if (!content.contains("ok")) {
+            if (content.contains("already tagged"))
+            {
+                values.add(new BasicNameValuePair("action", "untag"));
+                e = new UrlEncodedFormEntity(values,"UTF-8");
+                post.setEntity(e);
+
+                content = client.execute(post, response_handler);
+                if (!content.contains("ok"))
+                {
+                    throw new Exception("Error untagging: " + content);
+                }
+                else
+                {
+                    return -1;
+                }
+            }
+            else{
+                throw new Exception(content);
+            }
+        }
+        else
+        {
+            return 1;
+        }
     }
     
     private static void orderPosts(ArrayList<Post> posts, ArrayList<Post> ordered_posts, HashMap<Integer,Integer> parents, int current_parent, int level) {

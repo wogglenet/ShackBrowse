@@ -482,16 +482,18 @@ public class SearchResultFragment extends ListFragment
 	            holder.lolcount.setText(Integer.toString(t.getExtra()));
 	            if (t.getType() == SearchResult.TYPE_LOL)
 	            	holder.lolcount.setBackgroundResource(R.color.shacktag_lol);
-	            if (t.getType() == SearchResult.TYPE_TAG)
+	            else if (t.getType() == SearchResult.TYPE_TAG)
 	            	holder.lolcount.setBackgroundResource(R.color.shacktag_tag);
-	            if (t.getType() == SearchResult.TYPE_INF)
+				else if (t.getType() == SearchResult.TYPE_INF)
 	            	holder.lolcount.setBackgroundResource(R.color.shacktag_inf);
-	            if (t.getType() == SearchResult.TYPE_UNF)
+				else if (t.getType() == SearchResult.TYPE_UNF)
 	            	holder.lolcount.setBackgroundResource(R.color.shacktag_unf);
-	            if (t.getType() == SearchResult.TYPE_WTF)
+				else if (t.getType() == SearchResult.TYPE_WTF)
 	            	holder.lolcount.setBackgroundResource(R.color.shacktag_wtf);
-	            if (t.getType() == SearchResult.TYPE_UGH)
+				else if (t.getType() == SearchResult.TYPE_UGH)
 	            	holder.lolcount.setBackgroundResource(R.color.shacktag_ugh);
+				else
+					holder.lolcount.setBackgroundResource(R.color.nonpreview_post_text_color);
             }
             else
             	holder.lolcount.setVisibility(View.GONE);

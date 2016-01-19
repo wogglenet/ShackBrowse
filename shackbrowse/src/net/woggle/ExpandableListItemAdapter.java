@@ -61,6 +61,7 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
     private float mZoom = 1.0f;
     private ValueAnimator mLastExpansionAnimation;
     private ValueAnimator mLastCollapseAnimation;
+    private boolean mEnablePostCollapseOnClick = false;
 
     /**
      * Creates a new ExpandableListItemAdapter with an empty list.
@@ -80,16 +81,17 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
     public ExpandableListItemAdapter(final Context context, final List<T> items) {
         super(items);
         mContext = context;
-        setDurationPref();
+        setupPref();
 
         mExpandedIds = new ArrayList<Long>();
     }
 
-    public void setDurationPref() {
+    public void setupPref() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         mDuration = (long) (mContext.getResources().getInteger(android.R.integer.config_shortAnimTime) * Float.parseFloat(prefs.getString("replyAnimationSpeed", "1.3")));
         mAnimSpeed = Float.parseFloat(prefs.getString("replyAnimationSpeed", "1.3"));
         mZoom = Float.parseFloat(prefs.getString("fontZoom", "1.0"));
+        mEnablePostCollapseOnClick = prefs.getBoolean("allowPostCollapseOnClick", false);
     }
 
     /**
@@ -525,17 +527,18 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
         Long id = (Long) contentParent.getTag();
         int position = findPositionForId(id);
         if (isVisible) {
-            mLastCollapseAnimation = ExpandCollapseHelper.animateCollapsing(contentParent, mContext.getResources().getColor(R.color.selected_highlight_postbg), mContext.getResources().getColor(R.color.ics_background_start), mDuration);
-            View firstTV = getTitleView(position);
-            if (firstTV != null) {
-                ExpandCollapseHelper.animateSwapTitle(firstTV, mResIds, true, (Post) getItem(position), mOriginalUsernameHeight, mDuration, mZoom);
-            }
-            mExpandedIds.remove(id);
+            if (mEnablePostCollapseOnClick) {
+                mLastCollapseAnimation = ExpandCollapseHelper.animateCollapsing(contentParent, mContext.getResources().getColor(R.color.selected_highlight_postbg), mContext.getResources().getColor(R.color.ics_background_start), mDuration);
+                View firstTV = getTitleView(position);
+                if (firstTV != null) {
+                    ExpandCollapseHelper.animateSwapTitle(firstTV, mResIds, true, (Post) getItem(position), mOriginalUsernameHeight, mDuration, mZoom);
+                }
+                mExpandedIds.remove(id);
 
-            if (mExpandCollapseListener != null) {
-                mExpandCollapseListener.onItemCollapsed(position);
+                if (mExpandCollapseListener != null) {
+                    mExpandCollapseListener.onItemCollapsed(position);
+                }
             }
-
         } else {
             loadExpandedViewDataIntoView(position, getContentView(position));
             mLastExpansionAnimation = ExpandCollapseHelper.animateExpanding(contentParent, mAbsListView, mContext.getResources().getColor(R.color.selected_highlight_postbg), mContext.getResources().getColor(R.color.ics_background_start), mDuration);

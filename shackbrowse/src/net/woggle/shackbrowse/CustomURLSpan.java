@@ -32,7 +32,6 @@ public class CustomURLSpan extends CustomClickableSpan implements OnLongClickLis
 		this.href = addHttp(href);
 	}
 	public static Dialog dialog;
-	private static WebView _wb;
 	
 	public String getURL()
 	{
@@ -109,8 +108,12 @@ public class CustomURLSpan extends CustomClickableSpan implements OnLongClickLis
         if (
         	href.contains("://www.shacknews.com/chatty?id=")
         	|| href.contains("://shacknews.com/chatty?id=")
-        	|| href.contains("://www.shacknews.com/laryn.x?id=")
-        	|| href.contains("://shacknews.com/laryn.x?id=")
+        	|| href.contains("://www.shacknews.com/chatty/laryn.x?id=")
+        	|| href.contains("://shacknews.com/chatty/laryn.x?id=")
+			|| href.contains("://www.shacknews.com/chatty/ja.zz?id=")
+			|| href.contains("://shacknews.com/chatty/ja.zz?id=")
+			|| href.contains("://www.shacknews.com/chatty/funk.y?id=")
+			|| href.contains("://shacknews.com/chatty/funk.y?id=")
             || (href.contains("shacknews.com/article") && ((_useBrowser == 1) || (_useBrowser == 0)))
         	)
         {
