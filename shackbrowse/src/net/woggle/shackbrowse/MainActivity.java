@@ -68,6 +68,7 @@ import android.support.v7.widget.SearchView;
 import android.text.ClipboardManager;
 import android.text.Editable;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -82,6 +83,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebView;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -164,6 +166,8 @@ public class MainActivity extends ActionBarActivity
 	CustomTabActivityHelper mCustomTabActivityHelper;
 	private Bitmap mChromeTabShareIcon;
 	private String mChromeTabCurrentUrl;
+	private String mBrowserPageTitle;
+	private String mBrowserPageSubTitle;
 
 	public PullToRefreshAttacher getRefresher()
 	{
@@ -216,6 +220,9 @@ public class MainActivity extends ActionBarActivity
 		}
 
 		this.setContentView(R.layout.main_splitview);
+
+		WebView wbv = new WebView(this);
+		wbv.clearCache(true);
 		
 		// set up persistent fragments
 		FragmentManager fm = getFragmentManager();
@@ -608,7 +615,7 @@ public class MainActivity extends ActionBarActivity
     }
 
     protected void setTitleContextually() {
-        
+		getSupportActionBar().setSubtitle(null);
 		if (mDrawerLayout.isDrawerOpen(_menuFrame))
 		{
         	getSupportActionBar().setTitle(mDrawerTitle);
@@ -623,12 +630,24 @@ public class MainActivity extends ActionBarActivity
 			if ((mPBfragment != null) && (mPBfragment.mState == mPBfragment.SHOW_PHOTO_VIEW))
 				browserPhotoMode = true;
 	        
-	        if (!browserZoomMode && !browserPhotoMode)
-	        	getSupportActionBar().setTitle(getResources().getString(R.string.browser_title));
-			else if (browserPhotoMode)
+	        if (!browserZoomMode && !browserPhotoMode) {
+				if (!TextUtils.isEmpty(mBrowserPageTitle) && !TextUtils.isEmpty(mBrowserPageSubTitle)) {
+					getSupportActionBar().setTitle(mBrowserPageTitle);
+					getSupportActionBar().setSubtitle(mBrowserPageSubTitle);
+				}
+				else if (!TextUtils.isEmpty(mBrowserPageTitle)) {
+					getSupportActionBar().setTitle(mBrowserPageTitle);
+				}
+				else {
+					getSupportActionBar().setTitle(getResources().getString(R.string.browser_title));
+				}
+			}
+			else if (browserPhotoMode) {
 				getSupportActionBar().setTitle(getResources().getString(R.string.browser_photo_title));
-	        else
-	        	getSupportActionBar().setTitle(getResources().getString(R.string.browserZoom_title));
+			}
+	        else {
+				getSupportActionBar().setTitle(getResources().getString(R.string.browserZoom_title));
+			}
 			mDrawerToggle.setDrawerIndicatorEnabled(false);
 		}
 		else if (_tviewFrame.isOpened() && (_currentFragmentType == CONTENT_MESSAGES) && !getDualPane())
@@ -3045,7 +3064,7 @@ public class MainActivity extends ActionBarActivity
 		// chrome tab garbage
 		String packageName = CustomTabsHelper.getPackageNameToUse(this);
 
-		if ((hrefs.length <= 1) && (!showZoomSetup) && mUseChromeTab && (packageName != null))
+		if ((hrefs != null) && (hrefs.length <= 1) && (!showZoomSetup) && mUseChromeTab && (packageName != null))
 		{
 			// If we cant find a package name, it means there's no browser that // supports Chrome Custom Tabs installed. So, we fallback to the
 			// webview
@@ -3134,6 +3153,18 @@ public class MainActivity extends ActionBarActivity
         FragmentManager fm = getFragmentManager();
         return fm.findFragmentByTag(tag);
     }
+	public void setBrowserTitle(String title)
+	{
+		if (!title.contentEquals("about:blank")) {
+			mBrowserPageTitle = title;
+			setTitleContextually();
+		}
+	}
+	public void setBrowserSubTitle(String title)
+	{
+		mBrowserPageSubTitle = title;
+		setTitleContextually();
+	}
 	private void closeBrowser() {
 		closeBrowser(false, null, false);
 	}
@@ -3142,11 +3173,12 @@ public class MainActivity extends ActionBarActivity
 		if (!mBrowserIsClosing)
 		{
             mPBfragment = (PopupBrowserFragment)getFragment("pbfrag");
+			mBrowserPageTitle = "";
+			mBrowserPageSubTitle = "";
 
 			// stop youtube playing
             if (mPBfragment != null) {
-                mPBfragment.mWebview.loadUrl("");
-
+                mPBfragment.mWebview.loadUrl("about:blank");
 
                 // set up end call
                 mAnimEnd closeAction = new mAnimEnd() {

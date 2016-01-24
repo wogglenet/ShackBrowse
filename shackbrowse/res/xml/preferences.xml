@@ -64,16 +64,16 @@
             android:summary="@string/preference_popup_browser_summary"
             android:defaultValue="1"
             />
-        <CheckBoxPreference
-            android:key="useChromeTab"
-            android:title="@string/preference_uct_title"
-            android:summary="@string/preference_uct_summary"
-            android:defaultValue="true"
-            />
         <Preference
             android:key="openBrowserImageZoom"
             android:title="@string/preference_bIZ_title"
             android:summary="@string/preference_bIZ_summary"
+            />
+        <CheckBoxPreference
+            android:key="useChromeTab"
+            android:title="@string/preference_uct_title"
+            android:summary="@string/preference_uct_summary"
+            android:defaultValue="false"
             />
         <ListPreference
             android:key="replyAnimationSpeed"
@@ -209,6 +209,12 @@
 	  	     android:summary="@string/preference_swipedismiss_summary"
 	  	     android:defaultValue="true"
 	  	     />
+        <CheckBoxPreference
+            android:key="allowPostCollapseOnClick"
+            android:title="@string/preference_acr_title"
+            android:summary="@string/preference_acr_summary"
+            android:defaultValue="false"
+            />
         <CheckBoxPreference
             android:key="showThreadExpiredAlert"
             android:title="@string/preference_threadexpired_title"

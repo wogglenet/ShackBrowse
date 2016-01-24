@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.ClipboardManager;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.webkit.WebSettings.ZoomDensity;
@@ -85,17 +87,19 @@ public class PopupBrowserFragment extends Fragment {
         mWebview.getSettings().setBuiltInZoomControls(true);
 		mWebview.getSettings().setDisplayZoomControls(true);
         mWebview.getSettings().setJavaScriptEnabled(true);
-        mWebview.setBackgroundColor(0x00000000);
+		mWebview.getSettings().setDomStorageEnabled(true);
+		mWebview.getSettings().setDatabaseEnabled(true);
+		mWebview.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
+
+		mWebview.setBackgroundColor(0x00000000);
         if (getActivity() != null)
     		((MainActivity)getActivity()).showOnlyProgressBarFromPTRLibrary(true);
         
         mWebview.setWebChromeClient(new WebChromeClient() {
-            public void onProgressChanged(WebView view, int progress)   
-            {
-            	if ((getActivity() != null) && (progress > 9) && (progress < 100))
-            	{
-            		((MainActivity)getActivity()).showOnlyProgressBarFromPTRLibraryDeterminate(true, progress);
-            	}
+			public void onProgressChanged(WebView view, int progress) {
+				if ((getActivity() != null) && (progress > 9) && (progress < 100)) {
+					((MainActivity) getActivity()).showOnlyProgressBarFromPTRLibraryDeterminate(true, progress);
+				}
             	/*
             	if (pb != null && progress < 100)
             	{
@@ -106,24 +110,30 @@ public class PopupBrowserFragment extends Fragment {
             		pb.setProgress(progress);
             	}
             	*/
-            	System.out.println("prog:" + progress);
-            	if (progress >= 100)
-            	{
-            		if (getActivity() != null)
-            			((MainActivity)getActivity()).showOnlyProgressBarFromPTRLibrary(false);
-            	}
-            	if (progress >= 50)
-            	{
-            		// way to tell if showing image or not
-            		if (!view.getSettings().getUserAgentString().contentEquals("nothing"))
-            			view.setBackgroundColor(Color.WHITE);
-            	}
-            }
+				System.out.println("prog:" + progress);
+				if (progress >= 100) {
+					if (getActivity() != null)
+						((MainActivity) getActivity()).showOnlyProgressBarFromPTRLibrary(false);
+				}
+				if (progress >= 50) {
+					// way to tell if showing image or not
+					if (!view.getSettings().getUserAgentString().contentEquals("nothing"))
+						view.setBackgroundColor(Color.WHITE);
+				}
+			}
+
+			@Override
+			public void onReceivedTitle(WebView view, String title) {
+				super.onReceivedTitle(view, title);
+				if (!TextUtils.isEmpty(title)) {
+					if (getActivity() != null)
+						((MainActivity)getActivity()).setBrowserTitle(title);
+				}
+			}
         });
         
         mWebview.setWebViewClient(new WebViewClient() { @Override public boolean shouldOverrideUrlLoading(WebView view,String _href) { return false; } });
-        
-        mWebview.getSettings().setDefaultZoom(ZoomDensity.FAR);
+
         mWebview.getSettings().setUseWideViewPort(true);
         mWebview.getSettings().setLoadWithOverviewMode(true);
         
@@ -224,6 +234,10 @@ public class PopupBrowserFragment extends Fragment {
         else
         {
             mWebview.loadUrl(_href);
+			if (getActivity() != null)
+			{
+				((MainActivity)getActivity()).setBrowserSubTitle(_href);
+			}
         }
         mWebview.setTag("webview_tag");
 	}
@@ -236,10 +250,10 @@ public class PopupBrowserFragment extends Fragment {
 	{
 		if (
 				(
-                 ((_href.length() >= 4) && (_href.trim().substring(_href.length() - 4).contentEquals(".jpg")))
-        	|| ((_href.length() >= 4) && allowGif && (_href.trim().substring(_href.length() - 4).contentEquals(".gif")))
-        	|| ((_href.length() >= 4) && (_href.trim().substring(_href.length() - 4).contentEquals(".png")))
-        	|| ((_href.length() >= 5) && (_href.trim().substring(_href.length() - 5).contentEquals(".jpeg")))
+                 ((_href.length() >= 4) && (_href.trim().substring(_href.length() - 4).toLowerCase().contentEquals(".jpg")))
+        	|| ((_href.length() >= 4) && allowGif && (_href.trim().substring(_href.length() - 4).toLowerCase().contentEquals(".gif")))
+        	|| ((_href.length() >= 4) && (_href.trim().substring(_href.length() - 4).toLowerCase().contentEquals(".png")))
+        	|| ((_href.length() >= 5) && (_href.trim().substring(_href.length() - 5).toLowerCase().contentEquals(".jpeg")))
 				)
         	
         	)

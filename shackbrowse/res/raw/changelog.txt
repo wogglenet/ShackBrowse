@@ -28,6 +28,16 @@ TODO
 * SEARCH GOOGLE BY TEXT SELECTION
 -->
 
+$ 5.3.1
+% v 5.3.1
+_ Jan 24, 2015
+* Popup Browser now loads imgur albums correctly
+* Popup Browser now clears cache occasionally to prevent errors/crashes
+* Option to allow collapsing posts by clicking on them. You guys are weird.
+* Chrome Tabs are no longer default on
+* Bug Fix: Crash on zoom adjust
+* Bug Fix: Inline images not recognizing UPPERCASE EXTENSIONS
+
 $ 5.3.0
 % v 5.3.0
 _ Jan 18, 2016

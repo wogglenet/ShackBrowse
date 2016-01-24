@@ -52,15 +52,17 @@ ADDED from AndroidManifest.xml:17:1
 uses-sdk
 ADDED from AndroidManifest.xml:20:1
 MERGED from com.android.support:appcompat-v7:21.0.3:15:5
-MERGED from com.android.support:support-v4:21.0.3:15:5
+MERGED from com.android.support:support-v4:23.1.0:20:5
 MERGED from com.google.android.gms:play-services:6.5.87:18:5
-MERGED from com.android.support:support-v4:21.0.3:15:5
+MERGED from com.android.support:support-v4:23.1.0:20:5
 MERGED from com.github.castorflex.smoothprogressbar:library:0.5.2:2:5
-MERGED from com.android.support:support-v4:21.0.3:15:5
+MERGED from com.android.support:support-v4:23.1.0:20:5
 MERGED from com.afollestad:material-dialogs:0.6.2.4:8:5
 MERGED from com.android.support:appcompat-v7:21.0.3:15:5
-MERGED from com.android.support:support-v4:21.0.3:15:5
+MERGED from com.android.support:support-v4:23.1.0:20:5
 MERGED from com.github.navasmdc:MaterialDesign:1.4:7:5
+MERGED from com.android.support:customtabs:23.1.0:20:5
+MERGED from com.android.support:support-v4:23.1.0:20:5
 	android:targetSdkVersion
 		ADDED from AndroidManifest.xml:20:38
 	android:minSdkVersion
@@ -68,15 +70,17 @@ MERGED from com.github.navasmdc:MaterialDesign:1.4:7:5
 application
 ADDED from AndroidManifest.xml:23:5
 MERGED from com.android.support:appcompat-v7:21.0.3:16:5
-MERGED from com.android.support:support-v4:21.0.3:16:5
+MERGED from com.android.support:support-v4:23.1.0:22:5
 MERGED from com.google.android.gms:play-services:6.5.87:20:5
-MERGED from com.android.support:support-v4:21.0.3:16:5
+MERGED from com.android.support:support-v4:23.1.0:22:5
 MERGED from com.github.castorflex.smoothprogressbar:library:0.5.2:4:5
-MERGED from com.android.support:support-v4:21.0.3:16:5
+MERGED from com.android.support:support-v4:23.1.0:22:5
 MERGED from com.afollestad:material-dialogs:0.6.2.4:12:5
 MERGED from com.android.support:appcompat-v7:21.0.3:16:5
-MERGED from com.android.support:support-v4:21.0.3:16:5
+MERGED from com.android.support:support-v4:23.1.0:22:5
 MERGED from com.github.navasmdc:MaterialDesign:1.4:11:5
+MERGED from com.android.support:customtabs:23.1.0:22:5
+MERGED from com.android.support:support-v4:23.1.0:22:5
 	android:allowBackup
 		ADDED from com.github.navasmdc:MaterialDesign:1.4:11:18
 	android:label
@@ -232,73 +236,73 @@ ADDED from AndroidManifest.xml:87:17
 	android:name
 		ADDED from AndroidManifest.xml:87:25
 service#net.woggle.shackbrowse.PostQueueService
-ADDED from AndroidManifest.xml:92:6
+ADDED from AndroidManifest.xml:98:6
 	android:enabled
-		ADDED from AndroidManifest.xml:92:15
+		ADDED from AndroidManifest.xml:98:15
 	android:name
-		ADDED from AndroidManifest.xml:92:38
+		ADDED from AndroidManifest.xml:98:38
 receiver#net.woggle.shackbrowse.NetworkChangeReceiver
-ADDED from AndroidManifest.xml:95:6
+ADDED from AndroidManifest.xml:103:6
 	android:label
-		ADDED from AndroidManifest.xml:97:13
+		ADDED from AndroidManifest.xml:105:13
 	android:name
-		ADDED from AndroidManifest.xml:96:13
-intent-filter#android.net.conn.CONNECTIVITY_CHANGE+android.net.wifi.WIFI_STATE_CHANGED
-ADDED from AndroidManifest.xml:98:13
-action#android.net.conn.CONNECTIVITY_CHANGE
-ADDED from AndroidManifest.xml:99:17
-	android:name
-		ADDED from AndroidManifest.xml:99:25
-action#android.net.wifi.WIFI_STATE_CHANGED
-ADDED from AndroidManifest.xml:100:17
-	android:name
-		ADDED from AndroidManifest.xml:100:25
-meta-data#com.google.android.gms.version
-ADDED from AndroidManifest.xml:103:9
-MERGED from com.google.android.gms:play-services:6.5.87:21:9
-	android:name
-		ADDED from AndroidManifest.xml:103:20
-	android:value
 		ADDED from AndroidManifest.xml:104:13
-uses-library#com.sec.android.app.multiwindow
-ADDED from AndroidManifest.xml:107:9
-	android:required
-		ADDED from AndroidManifest.xml:107:23
+intent-filter#android.net.conn.CONNECTIVITY_CHANGE+android.net.wifi.WIFI_STATE_CHANGED
+ADDED from AndroidManifest.xml:106:13
+action#android.net.conn.CONNECTIVITY_CHANGE
+ADDED from AndroidManifest.xml:107:17
 	android:name
-		ADDED from AndroidManifest.xml:107:48
-meta-data#com.samsung.android.sdk.multiwindow.multiinstance.enable
-ADDED from AndroidManifest.xml:108:9
+		ADDED from AndroidManifest.xml:107:25
+action#android.net.wifi.WIFI_STATE_CHANGED
+ADDED from AndroidManifest.xml:108:17
 	android:name
-		ADDED from AndroidManifest.xml:109:13
-	android:value
-		ADDED from AndroidManifest.xml:110:13
-meta-data#com.sec.android.support.multiwindow
+		ADDED from AndroidManifest.xml:108:25
+meta-data#com.google.android.gms.version
 ADDED from AndroidManifest.xml:111:9
+MERGED from com.google.android.gms:play-services:6.5.87:21:9
 	android:name
 		ADDED from AndroidManifest.xml:111:20
 	android:value
-		ADDED from AndroidManifest.xml:111:71
-meta-data#com.sec.android.multiwindow.DEFAULT_SIZE_W
-ADDED from AndroidManifest.xml:112:9
-	android:resource
-		ADDED from AndroidManifest.xml:112:78
-	android:name
-		ADDED from AndroidManifest.xml:112:20
-meta-data#com.sec.android.multiwindow.DEFAULT_SIZE_H
-ADDED from AndroidManifest.xml:113:9
-	android:resource
-		ADDED from AndroidManifest.xml:113:78
-	android:name
-		ADDED from AndroidManifest.xml:113:20
-meta-data#com.sec.android.multiwindow.MINIMUM_SIZE_W
-ADDED from AndroidManifest.xml:114:9
-	android:resource
-		ADDED from AndroidManifest.xml:114:78
-	android:name
-		ADDED from AndroidManifest.xml:114:20
-meta-data#com.sec.android.multiwindow.MINIMUM_SIZE_H
+		ADDED from AndroidManifest.xml:112:13
+uses-library#com.sec.android.app.multiwindow
 ADDED from AndroidManifest.xml:115:9
-	android:resource
-		ADDED from AndroidManifest.xml:115:78
+	android:required
+		ADDED from AndroidManifest.xml:115:23
 	android:name
-		ADDED from AndroidManifest.xml:115:20
+		ADDED from AndroidManifest.xml:115:48
+meta-data#com.samsung.android.sdk.multiwindow.multiinstance.enable
+ADDED from AndroidManifest.xml:116:9
+	android:name
+		ADDED from AndroidManifest.xml:117:13
+	android:value
+		ADDED from AndroidManifest.xml:118:13
+meta-data#com.sec.android.support.multiwindow
+ADDED from AndroidManifest.xml:119:9
+	android:name
+		ADDED from AndroidManifest.xml:119:20
+	android:value
+		ADDED from AndroidManifest.xml:119:71
+meta-data#com.sec.android.multiwindow.DEFAULT_SIZE_W
+ADDED from AndroidManifest.xml:120:9
+	android:resource
+		ADDED from AndroidManifest.xml:120:78
+	android:name
+		ADDED from AndroidManifest.xml:120:20
+meta-data#com.sec.android.multiwindow.DEFAULT_SIZE_H
+ADDED from AndroidManifest.xml:121:9
+	android:resource
+		ADDED from AndroidManifest.xml:121:78
+	android:name
+		ADDED from AndroidManifest.xml:121:20
+meta-data#com.sec.android.multiwindow.MINIMUM_SIZE_W
+ADDED from AndroidManifest.xml:122:9
+	android:resource
+		ADDED from AndroidManifest.xml:122:78
+	android:name
+		ADDED from AndroidManifest.xml:122:20
+meta-data#com.sec.android.multiwindow.MINIMUM_SIZE_H
+ADDED from AndroidManifest.xml:123:9
+	android:resource
+		ADDED from AndroidManifest.xml:123:78
+	android:name
+		ADDED from AndroidManifest.xml:123:20

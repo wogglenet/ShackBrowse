@@ -122,10 +122,10 @@
     <string name="preference_pushrepl_summary">Notification when someone replies to your post.</string>
     
     <string name="preference_pushvan_title">Vanity</string>
-    <string name="preference_pushvan_summary">Notification when someone posts your name. Donator feature.</string>
+    <string name="preference_pushvan_summary">Notification when someone posts your name.</string>
     
     <string name="preference_pushkey_title">Keywords</string>
-    <string name="preference_pushkey_summary">Notification when someone posts a keyword. Donator feature.</string>
+    <string name="preference_pushkey_summary">Notification when someone posts a keyword.</string>
     
     <string name="preferences_appwide">App-wide Options</string>
     <string name="preferences_appwide_summary">Splitview mode, Orientation lock, Font sizes, Favorites pane, Shack[LOL], Volume nav, API, Analytics opt-out</string>
@@ -236,9 +236,6 @@
     
     <string name="preference_ping">Ping APIs</string>
     
-    <string name="preference_donate">Donate</string>
-    <string name="preference_donate_summary">Donate or access donator features</string>
-    
     <string name="changelog_full_title">Change Log</string>
     <string name="changelog_title">What\'s New</string>
     <string name="changelog_ok_button">OK</string>
@@ -342,6 +339,8 @@
     <string name="preference_threadexpired_summary">Shows a red bar on the bottom of expired threads</string>
     <string name="preference_uct_title">Use Chrome Tabs</string>
     <string name="preference_uct_summary">If Chrome is installed, this will cause Chrome Tabs to be used as the popup browser when possible</string>
+    <string name="preference_acr_title">Allow Reply Collapse</string>
+    <string name="preference_acr_summary">Allows you to click on the header of a post to collapse it after you opened it, except the root post, which has +1 resistance to collapse.</string>
     <!-- items in  the array will show up even when not yet registered -->
     <string-array name="statsItems">
         <item>statsItemAnnoyedByStartupZoomDialog</item>
