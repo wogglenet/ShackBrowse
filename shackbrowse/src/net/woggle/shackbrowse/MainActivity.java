@@ -114,7 +114,7 @@ public class MainActivity extends ActionBarActivity
     int _splitView = 1;
     boolean _dualPane = false;
 	private int _orientLock = 0;
-	protected boolean mUseChromeTab = true;
+	protected boolean mUseChromeTab = false;
 	SharedPreferences _prefs;
 	private ArrayList<Integer> _threadIdBackStack = new ArrayList<Integer>();
 
@@ -213,11 +213,6 @@ public class MainActivity extends ActionBarActivity
 	    }
 
 		mCustomTabActivityHelper = new CustomTabActivityHelper();
-		if (mUseChromeTab)
-		{
-			Resources resources = getResources();
-			mChromeTabShareIcon = BitmapFactory.decodeResource(resources, R.drawable.ic_action_social_share);
-		}
 
 		this.setContentView(R.layout.main_splitview);
 
@@ -325,6 +320,12 @@ public class MainActivity extends ActionBarActivity
 				
 		// set up preferences
         reloadPrefs();
+
+		if (mUseChromeTab)
+		{
+			Resources resources = getResources();
+			mChromeTabShareIcon = BitmapFactory.decodeResource(resources, R.drawable.ic_action_social_share);
+		}
 		
 		// notifications registrator, works mostly automatically
 		OnGCMInteractListener GCMlistener = new OnGCMInteractListener(){@Override	public void networkResult(String res) {
@@ -1901,7 +1902,7 @@ public class MainActivity extends ActionBarActivity
             _zoom = Float.parseFloat(_prefs.getString("fontZoom", "1.0"));
             _showPinnedInTL = _prefs.getBoolean("showPinnedInTL", true);
             _swappedSplit = _prefs.getBoolean("swappedSplit", false);
-			mUseChromeTab = _prefs.getBoolean("useChromeTab", true);
+			mUseChromeTab = _prefs.getBoolean("useChromeTab", false);
             _enableDonatorFeatures = true;
             if (_threadView != null) {
                 if (_threadView._adapter != null) {
@@ -3085,15 +3086,19 @@ public class MainActivity extends ActionBarActivity
 			intentBuilder.setShowTitle(true);
 			mChromeTabCurrentUrl = hrefs[0];
 
-			if (mChromeTabShareIcon != null) {
-				Intent actionIntent = new Intent(Intent.ACTION_SEND);
-				actionIntent.setType("text/plain");
-				actionIntent.putExtra(Intent.EXTRA_TEXT, hrefs[0]);
-				intentBuilder.setActionButton(mChromeTabShareIcon, "Share",PendingIntent.getActivity(getApplicationContext(), 0, actionIntent, 0));
+			if (mChromeTabShareIcon == null) {
+				Resources resources = getResources();
+				mChromeTabShareIcon = BitmapFactory.decodeResource(resources, R.drawable.ic_action_social_share);
 			}
 
-				intentBuilder.setStartAnimations(this, R.anim.slide_in_right, R.anim.slide_out_left);
-				intentBuilder.setExitAnimations(this, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+			Intent actionIntent = new Intent(Intent.ACTION_SEND);
+			actionIntent.setType("text/plain");
+			actionIntent.putExtra(Intent.EXTRA_TEXT, hrefs[0]);
+			intentBuilder.setActionButton(mChromeTabShareIcon, "Share",PendingIntent.getActivity(getApplicationContext(), 0, actionIntent, 0));
+
+
+			intentBuilder.setStartAnimations(this, R.anim.slide_in_right, R.anim.slide_out_left);
+			intentBuilder.setExitAnimations(this, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
 
 			CustomTabActivityHelper.openCustomTab(this, intentBuilder.build(), Uri.parse(hrefs[0]));
 		}
