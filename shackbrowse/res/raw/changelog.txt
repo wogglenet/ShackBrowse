@@ -30,8 +30,10 @@ TODO
 
 $ 5.3.2
 % v 5.3.2
-_ Jan 24, 2015
+_ Mar 19, 2015
 * Backup Agent disabled. I think this may have been screwing up notifications on reinstalls
+* Updated list of mods and employees for name highlighting
+* ChromeTab share button removed since it didn't work anyway. I've had a lot of issues with this API and ChromeTabs now default off. Use only if you absolutely need to.
 * Bug Fix: Some chatty links not loading in app
 
 $ 5.3.1

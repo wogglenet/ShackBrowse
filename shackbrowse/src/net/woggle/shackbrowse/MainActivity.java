@@ -3085,7 +3085,7 @@ public class MainActivity extends ActionBarActivity
 			intentBuilder.setToolbarColor(toolbarColor);
 			intentBuilder.setShowTitle(true);
 			mChromeTabCurrentUrl = hrefs[0];
-
+/*
 			if (mChromeTabShareIcon == null) {
 				Resources resources = getResources();
 				mChromeTabShareIcon = BitmapFactory.decodeResource(resources, R.drawable.ic_action_social_share);
@@ -3099,7 +3099,7 @@ public class MainActivity extends ActionBarActivity
 
 			intentBuilder.setStartAnimations(this, R.anim.slide_in_right, R.anim.slide_out_left);
 			intentBuilder.setExitAnimations(this, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-
+*/
 			CustomTabActivityHelper.openCustomTab(this, intentBuilder.build(), Uri.parse(hrefs[0]));
 		}
 		else {
