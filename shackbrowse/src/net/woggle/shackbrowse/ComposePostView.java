@@ -1,6 +1,8 @@
 package net.woggle.shackbrowse;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -10,6 +12,7 @@ import net.woggle.shackbrowse.legacy.LegacyFactory;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
@@ -17,6 +20,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -29,9 +33,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.internal.view.menu.MenuBuilder;
 import android.support.v7.internal.view.menu.MenuPresenter;
@@ -58,6 +65,7 @@ import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.MaterialDialogCompat;
@@ -68,6 +76,8 @@ public class ComposePostView extends ActionBarActivity {
 
 	protected static final int SELECT_IMAGE = 0;
 	protected static final int TAKE_PICTURE = 1;
+    protected static final int SELECT_IMAGE_KITKAT = 3;
+    protected static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 50;
 	
 	static final long MAX_SIZE_LOGGED_IN = 6 * 1024 * 1024;
 	static final long MAX_SIZE_NOT_LOGGED_IN = 3 * 1024 * 1024;
@@ -182,7 +192,7 @@ public class ComposePostView extends ActionBarActivity {
         if (extras != null && extras.containsKey("preImage"))
         {
 	        Uri selectedImage = (Uri)extras.getParcelable("preImage");
-	        String realPath = getRealPathFromURI(selectedImage);
+	        String realPath = getPath(this, selectedImage);
 	        uploadImage(realPath);
         }
         
@@ -297,8 +307,29 @@ public class ComposePostView extends ActionBarActivity {
 
 
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                    photoPickerIntent.setType("image/*");
+                    startActivityForResult(photoPickerIntent, SELECT_IMAGE);
+                } else {
 
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+        }
+    }
     // HOME BUTTON
 	@Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -327,7 +358,60 @@ public class ComposePostView extends ActionBarActivity {
                 postClick();
                 break;
         	case R.id.menu_compose_picture:
-        		startActivityForResult(new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI), SELECT_IMAGE);
+                System.out.println("TEST2:");
+                if (Build.VERSION.SDK_INT <19){
+                    System.out.println("TEST5:");
+                    Intent intent = new Intent();
+                    intent.setType("image/jpeg");
+                    intent.setAction(Intent.ACTION_GET_CONTENT);
+                    startActivityForResult(Intent.createChooser(intent,
+                            "Select Image"), SELECT_IMAGE);
+
+                }else{
+
+                    if (Build.VERSION.SDK_INT >= 23){
+                        System.out.println("TEST7:");
+                        // Here, thisActivity is the current activity
+                        if (ContextCompat.checkSelfPermission(this,
+                                android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                                != PackageManager.PERMISSION_GRANTED) {
+
+                            // Should we show an explanation?
+                            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                                    android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+
+                                // Show an expanation to the user *asynchronously* -- don't block
+                                // this thread waiting for the user's response! After the user
+                                // sees the explanation, try again to request the permission.
+
+                            } else {
+
+                                // No explanation needed, we can request the permission.
+
+                                ActivityCompat.requestPermissions(this,
+                                        new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},
+                                        MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+
+                                // MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE is an
+                                // app-defined int constant. The callback method gets the
+                                // result of the request.
+                            }
+                        }else{
+                            ActivityCompat.requestPermissions(this,
+                                    new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},
+                                    MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+                        }
+                    }else {
+                        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                        photoPickerIntent.setType("image/*");
+                        startActivityForResult(photoPickerIntent, SELECT_IMAGE);
+                    }
+/*
+                    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    intent.addCategory(Intent.CATEGORY_OPENABLE);
+                    intent.setType("image/jpeg");
+                    startActivityForResult(intent, SELECT_IMAGE_KITKAT); */
+                }
         		break;
         	case R.id.menu_compose_camera:
         		openCameraSelector();
@@ -1025,12 +1109,30 @@ public class ComposePostView extends ActionBarActivity {
         	invalidateOptionsMenu();
         }
         
-        if (requestCode == SELECT_IMAGE)
+        if (requestCode == SELECT_IMAGE || requestCode == SELECT_IMAGE_KITKAT)
         {
             if (resultCode == Activity.RESULT_OK)
             {
-                Uri selectedImage = data.getData();
-                String realPath = getRealPathFromURI(selectedImage);
+                if (null == data) return;
+                Uri originalUri = null;
+
+                if (requestCode == SELECT_IMAGE) {
+                    originalUri = data.getData();
+                }
+                else if (requestCode == SELECT_IMAGE_KITKAT) {
+                    originalUri = data.getData();
+
+                    final int takeFlags = data.getFlags()
+                            & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+                    // Check for the freshest data.
+                    //noinspection ResourceType
+                    getContentResolver().takePersistableUriPermission(originalUri, takeFlags);
+                }
+
+
+
+                String realPath = getPath(this, originalUri);
                 uploadImage(realPath);
             } 
         }
@@ -1043,22 +1145,9 @@ public class ComposePostView extends ActionBarActivity {
             }
         }
 	}
-	
-	// convert the image URI to the direct file system path of the image file
-    public String getRealPathFromURI(Uri contentUri) {
 
-        String [] proj= { MediaStore.Images.Media.DATA };
-        Cursor cursor = managedQuery(contentUri, proj, null, null, null);
-        if (cursor != null)
-        {
-	        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-	        cursor.moveToFirst();
-	
-	        return cursor.getString(column_index);
-        }
-        else
-        	return contentUri.getPath();
-}
+
+
 	
 	void uploadImage(String imageLocation)
 	{
@@ -1247,7 +1336,19 @@ public class ComposePostView extends ActionBarActivity {
             final int MAXIMUM_SIZE = 1600;
             
             // get the original image
-            Bitmap original = BitmapFactory.decodeFile(path);
+            // Bitmap original = BitmapFactory.decodeFile(path);
+
+            Bitmap original=null;
+            File f= new File(path);
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            try {
+                original = BitmapFactory.decodeStream(new FileInputStream(f), null, options);
+            } catch (FileNotFoundException e) {
+                System.out.println("404 ERROR");
+                e.printStackTrace();
+            }
+
             float scale = Math.min((float)MAXIMUM_SIZE / original.getWidth(), (float)MAXIMUM_SIZE / original.getHeight());
             
             // work around for older devices that don't support EXIF
@@ -1264,14 +1365,14 @@ public class ComposePostView extends ActionBarActivity {
             File newFile = getFileStreamPath(file.getName());
             
             // save the image
-            FileOutputStream f = new FileOutputStream(newFile);
+            FileOutputStream f2 = new FileOutputStream(newFile);
             try
             {
-                resized.compress(CompressFormat.JPEG, 97, f);
+                resized.compress(CompressFormat.JPEG, 97, f2);
             }
             finally
             {
-                f.close();
+                f2.close();
             }
             
             return newFile.getAbsolutePath();
@@ -1408,4 +1509,146 @@ public class ComposePostView extends ActionBarActivity {
 	    public void onDestroyActionMode(ActionMode mode) {
 	    }
 	}
+
+    /**
+     * Get a file path from a Uri. This will get the the path for Storage Access
+     * Framework Documents, as well as the _data field for the MediaStore and
+     * other file-based ContentProviders.
+     *
+     * @param context The context.
+     * @param uri The Uri to query.
+     * @author paulburke
+     */
+    public static String getPath(final Context context, final Uri uri) {
+
+        final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+
+        // DocumentProvider
+        if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+            // ExternalStorageProvider
+            if (isExternalStorageDocument(uri)) {
+                final String docId = DocumentsContract.getDocumentId(uri);
+                final String[] split = docId.split(":");
+                final String type = split[0];
+
+                if ("primary".equalsIgnoreCase(type)) {
+                    return Environment.getExternalStorageDirectory() + "/" + split[1];
+                }
+
+                // TODO handle non-primary volumes
+            }
+            // DownloadsProvider
+            else if (isDownloadsDocument(uri)) {
+
+                final String id = DocumentsContract.getDocumentId(uri);
+                final Uri contentUri = ContentUris.withAppendedId(
+                        Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
+
+                return getDataColumn(context, contentUri, null, null);
+            }
+            // MediaProvider
+            else if (isMediaDocument(uri)) {
+                final String docId = DocumentsContract.getDocumentId(uri);
+                final String[] split = docId.split(":");
+                final String type = split[0];
+
+                Uri contentUri = null;
+                if ("image".equals(type)) {
+                    contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                } else if ("video".equals(type)) {
+                    contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+                } else if ("audio".equals(type)) {
+                    contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+                }
+
+                final String selection = "_id=?";
+                final String[] selectionArgs = new String[] {
+                        split[1]
+                };
+
+                return getDataColumn(context, contentUri, selection, selectionArgs);
+            }
+        }
+        // MediaStore (and general)
+        else if ("content".equalsIgnoreCase(uri.getScheme())) {
+
+            // Return the remote address
+            if (isGooglePhotosUri(uri))
+                return uri.getLastPathSegment();
+
+            return getDataColumn(context, uri, null, null);
+        }
+        // File
+        else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            return uri.getPath();
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the value of the data column for this Uri. This is useful for
+     * MediaStore Uris, and other file-based ContentProviders.
+     *
+     * @param context The context.
+     * @param uri The Uri to query.
+     * @param selection (Optional) Filter used in the query.
+     * @param selectionArgs (Optional) Selection arguments used in the query.
+     * @return The value of the _data column, which is typically a file path.
+     */
+    public static String getDataColumn(Context context, Uri uri, String selection,
+                                       String[] selectionArgs) {
+
+        Cursor cursor = null;
+        final String column = "_data";
+        final String[] projection = {
+                column
+        };
+
+        try {
+            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs,
+                    null);
+            if (cursor != null && cursor.moveToFirst()) {
+                final int index = cursor.getColumnIndexOrThrow(column);
+                return cursor.getString(index);
+            }
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return null;
+    }
+
+
+    /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is ExternalStorageProvider.
+     */
+    public static boolean isExternalStorageDocument(Uri uri) {
+        return "com.android.externalstorage.documents".equals(uri.getAuthority());
+    }
+
+    /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is DownloadsProvider.
+     */
+    public static boolean isDownloadsDocument(Uri uri) {
+        return "com.android.providers.downloads.documents".equals(uri.getAuthority());
+    }
+
+    /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is MediaProvider.
+     */
+    public static boolean isMediaDocument(Uri uri) {
+        return "com.android.providers.media.documents".equals(uri.getAuthority());
+    }
+
+    /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is Google Photos.
+     */
+    public static boolean isGooglePhotosUri(Uri uri) {
+        return "com.google.android.apps.photos.content".equals(uri.getAuthority());
+    }
 }

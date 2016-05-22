@@ -28,6 +28,11 @@ TODO
 * SEARCH GOOGLE BY TEXT SELECTION
 -->
 
+$ 5.3.3
+% v 5.3.3
+_ May 21, 2015
+* New document chooser for uploading images, should fix bugs
+
 $ 5.3.2
 % v 5.3.2
 _ Mar 19, 2015
