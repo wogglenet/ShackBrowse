@@ -270,4 +270,10 @@
         android:key="versionName"
         android:title="@string/preference_version_title"
         android:summary="@string/preference_version_summary" />
+	<CheckBoxPreference
+		android:key="analytics"
+		android:title="@string/preference_analytics_title"
+		android:summary="@string/preference_analytics_summary"
+		android:defaultValue="true"
+		/>
 </PreferenceScreen>

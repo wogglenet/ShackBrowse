@@ -27,12 +27,14 @@
             android:summary="@string/preference_pushkey_summary"
             android:dependency="noteEnabled"
             />
+        <!--
         <CheckBoxPreference
             android:key="SMCheckOnCellNotification"
             android:title="@string/preference_smcheckcell_title"
             android:summary="@string/preference_smcheckcell_summary"
             android:defaultValue="false"
             />
+            -->
         <ListPreference
             android:key="PeriodicNetworkServicePeriod"
             android:title="@string/preference_periodicnetworkservice_title"

@@ -96,7 +96,7 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.MaterialDialogCompat;
 import com.google.android.gms.gcm.GcmNetworkManager;
-import com.google.android.gms.gcm.PeriodicTask;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressDrawable;
@@ -171,6 +171,8 @@ public class MainActivity extends ActionBarActivity
 	private String mBrowserPageTitle;
 	private String mBrowserPageSubTitle;
 	private GcmNetworkManager mGcmNetworkManager;
+
+	private FirebaseAnalytics mFirebaseAnalytics;
 
 	public PullToRefreshAttacher getRefresher()
 	{
@@ -569,19 +571,25 @@ public class MainActivity extends ActionBarActivity
 		});
         
         _sresFrame.setSlidingEnabled(true);
+
+		// analytics
+		// Obtain the FirebaseAnalytics instance.
+		mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         
         // default content setting
         setContentTo(Integer.parseInt(_prefs.getString("APP_DEFAULTPANE", Integer.toString(CONTENT_THREADLIST))));
         
         // check for wifi connection
-        ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        //ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        //NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         // check for shack messages
-        if ((mWifi.isConnected() || _prefs.getBoolean("SMCheckOnCellNotification", false))) {
-	        ShackMessageCheck SMC = new ShackMessageCheck(this);
-	        SMC.frugalSMCheck();
-        }
-        
+		// if ((mWifi.isConnected() || _prefs.getBoolean("SMCheckOnCellNotification", true))) {
+
+		// above changed. Now just checking. only 10k with json API
+        ShackMessageCheck SMC = new ShackMessageCheck(this);
+        SMC.frugalSMCheck();
+
+
         // check versions
         new VersionTask().execute();
         
@@ -1227,7 +1235,6 @@ public class MainActivity extends ActionBarActivity
         setTitleContextually();
 
         _appMenu.updateMenuUi();
-		trackScreen(mTitle);
 	    
 	}
 
@@ -1820,8 +1827,7 @@ public class MainActivity extends ActionBarActivity
 
 		_dualPane = dualPane;
 		_threadView.updateThreadViewUi();
-		
-		track("ui_action", "dual_pane", Boolean.toString(dualPane));
+
 		if (_appMenu != null)
 			_appMenu.updateMenuUi();
 	}
@@ -2252,23 +2258,32 @@ public class MainActivity extends ActionBarActivity
 	/*
 	 * Analytics
 	 */
-	
+
+
 	public void track (String category, String action, String label)
 	{
 		_analytics  = _prefs.getBoolean("analytics", true);
 		if (_analytics)
 		{
 			System.out.println("ANALYTICS: track " + category + action + label);
-			// myTracker.sendEvent(category, action, label, null);
+			Bundle bundle = new Bundle();
+			bundle.putString(FirebaseAnalytics.Param.ITEM_ID, category);
+			bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, action);
+			bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "track");
+			mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SEARCH, bundle);
+
 		}
 	}
-	public void trackScreen (String screen)
+	public void trackScreen (String name)
 	{
 		_analytics  = _prefs.getBoolean("analytics", true);
 		if (_analytics)
 		{
-			System.out.println("ANALYTICS: screen " + screen);
-			// myTracker.sendView(screen);
+			System.out.println("ANALYTICS: screen " + name);
+			Bundle bundle = new Bundle();
+			bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, name);
+			bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "track");
+			mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 		}
 	}
 	

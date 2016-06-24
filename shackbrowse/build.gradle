@@ -28,7 +28,8 @@ dependencies {
     compile 'com.android.support:customtabs:24.0.0'
     compile 'com.android.support:appcompat-v7:24.0.0'
     compile 'com.android.support:support-v4:24.0.0'
-    compile 'com.evernote:android-job:1.0.7'
+    compile 'com.google.firebase:firebase-core:9.0.2'
+    compile 'com.google.firebase:firebase-crash:9.0.2'
 }
 
 android {
@@ -109,3 +110,5 @@ if (propFile.canRead()) {
     println "RELEASE_BUILD: signing.properties not found"
     android.buildTypes.release.signingConfig = null
 }
+
+apply plugin: 'com.google.gms.google-services'

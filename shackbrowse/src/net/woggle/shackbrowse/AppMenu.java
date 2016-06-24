@@ -191,7 +191,7 @@ public class AppMenu extends ListFragment
     }
     public void trackM(String label)
     {
-    	((MainActivity)getActivity()).track("ui_action3", "fakeActionBarClick", label);
+    	((MainActivity)getActivity()).track("ui_menu", "click", label);
     }
   
     @Override
@@ -616,12 +616,7 @@ public class AppMenu extends ListFragment
 	
 	public void setupBasicSearchList(MenuAdapter _adapter) {
 		System.out.println("Setting up search list");
-		
 		Bundle args = new Bundle();
-		args.putString("author", "Shacknews");
-		_adapter.add(new MenuItems(new PremadeSearch("News Posts", 0, args, false)));
-		
-		args = new Bundle();
 		args.putString("userNameField", "parentAuthor");
 		args.putString("parentAuthor", "");
 		_adapter.add(new MenuItems(new PremadeSearch(getResources().getString(R.string.search_repliestome), 0, args, true)));
@@ -668,6 +663,10 @@ public class AppMenu extends ListFragment
 		args.putString("tag", "tag");
 		args.putInt("days", 365);
 		_adapter.add(new MenuItems(new PremadeSearch("Posts I TAG'd", 1, args, true)));
+
+		args = new Bundle();
+		args.putString("author", "Shacknews");
+		_adapter.add(new MenuItems(new PremadeSearch("News Posts", 0, args, false)));
 		
 		args = new Bundle();
 		args.putString("terms", "*");

@@ -640,6 +640,7 @@ public class StatsFragment extends ListFragment {
     {
         statInc(con, itemName, 1);
     }
+
     public static void statInc(Context con, String itemName, int by)
     {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(con);
