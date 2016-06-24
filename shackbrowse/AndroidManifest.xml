@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
       package="net.woggle.shackbrowse"
-      android:versionCode="400"
-      android:versionName="5.3.3">
+      android:versionCode="402"
+      android:versionName="5.4.0">
 <uses-permission android:name="android.permission.INTERNET"></uses-permission>
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /><uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 <uses-permission android:name="android.permission.VIBRATE" />
+<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /> <!-- used for periodic network service -->
 
 <!--  PUSH NOTIFICATIONS -->
 <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -17,7 +20,7 @@
 <uses-permission android:name="net.woggle.shackbrowse.permission.C2D_MESSAGE" />
 
 
-<uses-sdk android:minSdkVersion="15" android:targetSdkVersion="23"></uses-sdk>
+<uses-sdk android:minSdkVersion="16" android:targetSdkVersion="24"></uses-sdk>
 
 
     <application android:theme="@style/AppTheme" android:hardwareAccelerated="true" android:icon="@drawable/ic_launcher" android:label="@string/app_name" android:largeHeap="true">
@@ -98,6 +101,16 @@
     	<service android:enabled="true" android:name="net.woggle.shackbrowse.PostQueueService" />
 
 
+        <!-- used for widget and for shackmessage updates -->
+        <service android:name=".PeriodicNetworkService"
+                 android:exported="true"
+                 android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
+            <intent-filter>
+                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
+            </intent-filter>
+        </service>
+
+
 
     	<!-- For starting postqueueservice when network becomes available -->
     	<receiver
@@ -122,5 +135,4 @@
         <meta-data android:name="com.sec.android.multiwindow.MINIMUM_SIZE_W" android:resource="@dimen/app_minimumsize_w" />
         <meta-data android:name="com.sec.android.multiwindow.MINIMUM_SIZE_H" android:resource="@dimen/app_minimumsize_h" />
     </application>
-    
 </manifest>

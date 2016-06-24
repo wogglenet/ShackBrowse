@@ -126,8 +126,10 @@ public class PopupBrowserFragment extends Fragment {
 			public void onReceivedTitle(WebView view, String title) {
 				super.onReceivedTitle(view, title);
 				if (!TextUtils.isEmpty(title)) {
-					if (getActivity() != null)
-						((MainActivity)getActivity()).setBrowserTitle(title);
+					if (getActivity() != null) {
+						((MainActivity) getActivity()).setBrowserTitle(title);
+						_href = view.getUrl();
+					}
 				}
 			}
         });

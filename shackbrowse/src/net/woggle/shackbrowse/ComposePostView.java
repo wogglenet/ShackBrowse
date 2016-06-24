@@ -40,11 +40,6 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.internal.view.menu.MenuBuilder;
-import android.support.v7.internal.view.menu.MenuPresenter;
-import android.support.v7.widget.ActionMenuPresenter;
-import android.support.v7.widget.ActionMenuView;
-import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.CharacterStyle;
@@ -57,15 +52,17 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Interpolator;
+import android.view.animation.OvershootInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.MaterialDialogCompat;
@@ -111,8 +108,6 @@ public class ComposePostView extends ActionBarActivity {
     private int mThemeResId;
     private Long mLastResumeTime = 0L;
     private boolean mEditBarEnabled;
-    private MenuBuilder ExtMenuBuilder;
-    private ActionMenuPresenter mPresenter;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -153,8 +148,6 @@ public class ComposePostView extends ActionBarActivity {
         	setContentView(R.layout.edit_post_lollipop);
             _landscape  = false;
         }
-
-        buildActionMenuView();
 
         decideEditBar();
 
@@ -225,61 +218,6 @@ public class ComposePostView extends ActionBarActivity {
         
 	}
 
-    private void buildActionMenuView() {
-        //*
-        // * setup advanced edit bar
-        ActionMenuView actionMenuView = (ActionMenuView) findViewById(R.id.editBar);
-
-        final Context context = this;
-        MenuBuilder menuBuilder = new MenuBuilder(context);
-        menuBuilder.setCallback(new MenuBuilder.Callback() {
-            @Override
-            public boolean onMenuItemSelected(MenuBuilder menuBuilder, MenuItem menuItem) {
-                return onOptionsItemSelected(menuItem);
-            }
-
-            @Override
-            public void onMenuModeChange(MenuBuilder menuBuilder) {
-
-            }
-        });
-
-        // setup a actionMenuPresenter which will use up as much space as it can, even with width=wrap_content
-        mPresenter = new ActionMenuPresenter(context);
-        mPresenter.setCallback(new MenuPresenter.Callback() {
-            @Override
-            public void onCloseMenu(MenuBuilder menuBuilder, boolean b) {
-
-            }
-
-            @Override
-            public boolean onOpenSubMenu(MenuBuilder menuBuilder) {
-                prepMenuItems(menuBuilder);
-                return false;
-            }
-        });
-        mPresenter.setReserveOverflow(true);
-        mPresenter.setWidthLimit(getResources().getDisplayMetrics().widthPixels, true);
-        mPresenter.setItemLimit(Integer.MAX_VALUE);
-
-        // open a menu xml into the menubuilder
-        getMenuInflater().inflate(R.menu.editbar, menuBuilder);
-
-        // runs presenter.initformenu(mMenu) too, setting up presenter's mmenu ref...  this must be before setmenuview
-        menuBuilder.addMenuPresenter(mPresenter, this);
-
-        // runs menuview.initialize too, so menuview.mmenu = mpresenter.mmenu
-        actionMenuView.setPresenter(mPresenter);
-
-        mPresenter.updateMenuView(true);
-
-        ExtMenuBuilder = menuBuilder;
-
-
-        /*
-        end setup
-         */
-    }
 
     // returns true if edit bar enabled
     private boolean decideEditBar() {
@@ -294,7 +232,6 @@ public class ComposePostView extends ActionBarActivity {
         findViewById(R.id.editBarContainer).setVisibility(b ? View.VISIBLE : View.GONE);
 
         if (b) {
-
             mEditBarEnabled = true;
             invalidateOptionsMenu();
         }
@@ -358,60 +295,7 @@ public class ComposePostView extends ActionBarActivity {
                 postClick();
                 break;
         	case R.id.menu_compose_picture:
-                System.out.println("TEST2:");
-                if (Build.VERSION.SDK_INT <19){
-                    System.out.println("TEST5:");
-                    Intent intent = new Intent();
-                    intent.setType("image/jpeg");
-                    intent.setAction(Intent.ACTION_GET_CONTENT);
-                    startActivityForResult(Intent.createChooser(intent,
-                            "Select Image"), SELECT_IMAGE);
-
-                }else{
-
-                    if (Build.VERSION.SDK_INT >= 23){
-                        System.out.println("TEST7:");
-                        // Here, thisActivity is the current activity
-                        if (ContextCompat.checkSelfPermission(this,
-                                android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                                != PackageManager.PERMISSION_GRANTED) {
-
-                            // Should we show an explanation?
-                            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                                    android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
-
-                                // Show an expanation to the user *asynchronously* -- don't block
-                                // this thread waiting for the user's response! After the user
-                                // sees the explanation, try again to request the permission.
-
-                            } else {
-
-                                // No explanation needed, we can request the permission.
-
-                                ActivityCompat.requestPermissions(this,
-                                        new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},
-                                        MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
-
-                                // MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE is an
-                                // app-defined int constant. The callback method gets the
-                                // result of the request.
-                            }
-                        }else{
-                            ActivityCompat.requestPermissions(this,
-                                    new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},
-                                    MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
-                        }
-                    }else {
-                        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-                        photoPickerIntent.setType("image/*");
-                        startActivityForResult(photoPickerIntent, SELECT_IMAGE);
-                    }
-/*
-                    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                    intent.addCategory(Intent.CATEGORY_OPENABLE);
-                    intent.setType("image/jpeg");
-                    startActivityForResult(intent, SELECT_IMAGE_KITKAT); */
-                }
+                openPictureSelector();
         		break;
         	case R.id.menu_compose_camera:
         		openCameraSelector();
@@ -449,32 +333,59 @@ public class ComposePostView extends ActionBarActivity {
                 _prefs.edit().putString("forcePostPreview", "0").commit();
                 _forcePostPreview = 0;
                 break;
-            case R.id.menu_compose_bold:
-                applyMarkup(9);
-                break;
-            case R.id.menu_compose_italic:
-                applyMarkup(8);
-                break;
-            case R.id.menu_compose_small:
-                applyMarkup(11);
-                break;
-            case R.id.menu_compose_underline:
-                applyMarkup(12);
-                break;
-            case R.id.menu_compose_color:
-                openMarkupSelector(false,true);
-                break;
-            case R.id.menu_compose_strike:
-                applyMarkup(13);
-                break;
-            case R.id.menu_compose_quote:
-                applyMarkup(10);
-                break;
-            case R.id.menu_compose_spoiler:
-                applyMarkup(14);
-                break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void openPictureSelector()
+    {
+        if (Build.VERSION.SDK_INT < 19)
+        {
+            Intent intent = new Intent();
+            intent.setType("image/jpeg");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent, "Select Image"), SELECT_IMAGE);
+        }
+        else
+        {
+            if (Build.VERSION.SDK_INT >= 23)
+            {
+                // Here, thisActivity is the current activity
+                if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+                {
+                    // Should we show an explanation?
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.READ_EXTERNAL_STORAGE))
+                    {
+
+                        // Show an expanation to the user *asynchronously* -- don't block
+                        // this thread waiting for the user's response! After the user
+                        // sees the explanation, try again to request the permission.
+
+                    }
+                    else
+                    {
+
+                        // No explanation needed, we can request the permission.
+
+                        ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+
+                        // MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE is an
+                        // app-defined int constant. The callback method gets the
+                        // result of the request.
+                    }
+                }
+                else
+                {
+                    ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+                }
+            }
+            else
+            {
+                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                photoPickerIntent.setType("image/*");
+                startActivityForResult(photoPickerIntent, SELECT_IMAGE);
+            }
+        }
     }
 
     public void setupButtonBindings(Bundle extras)
@@ -515,6 +426,42 @@ public class ComposePostView extends ActionBarActivity {
         	mParentPostContent = postContent;
         	_showViewPost  = true;
         }
+
+        findViewById(R.id.composeButtonPost).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+	            // Pivots indicate where the animation begins from
+	            float pivotX = view.getPivotX() + view.getTranslationX();
+	            float pivotY = view.getPivotY() + view.getTranslationY();
+
+	            // Animate FAB shrinking
+	            ScaleAnimation anim = new ScaleAnimation(1, 0, 1, 0, pivotX, pivotY);
+	            anim.setDuration(200);
+	            anim.setInterpolator(new DecelerateInterpolator());
+	            view.startAnimation(anim);
+
+                postClick();
+	            // Only use scale animation if FAB is visible
+            }
+        });
+        findViewById(R.id.composeButtonCamera).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openCameraSelector();
+            }
+        });
+        findViewById(R.id.composeButtonPicture).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openPictureSelector();
+            }
+        });
+        findViewById(R.id.composeButtonMarkup).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openMarkupSelector(false);
+            }
+        });
 	}
 	
 	@Override
@@ -528,25 +475,19 @@ public class ComposePostView extends ActionBarActivity {
     public boolean onPrepareOptionsMenu(Menu menu)
     {
         super.onPrepareOptionsMenu(menu);
+        prepMenuItems(menu, !mEditBarEnabled);
 
-        if (!mEditBarEnabled) {
-            hideMenuItems(menu, true);
-            prepMenuItems(menu);
-
-        }
-        else
-        {
-            hideMenuItems(menu, false);
-        }
 
 		return true;
     }
 
-    private void prepMenuItems(Menu menu) {
+    private void prepMenuItems(Menu menu, boolean showPostAsAction)
+    {
         _forcePostPreview  = Integer.parseInt(_prefs.getString("forcePostPreview", "1"));
         _extendedEditor  = Integer.parseInt(_prefs.getString("extendedEditor", "1"));
 
-        if (menu != null && menu.findItem(R.id.menu_compose_forcepreview_off) != null) {
+        if (menu != null && menu.findItem(R.id.menu_compose_forcepreview_off) != null)
+        {
             menu.findItem(R.id.menu_compose_forcepreview_off).setChecked(false);
             menu.findItem(R.id.menu_compose_forcepreview_on).setChecked(false);
             menu.findItem(R.id.menu_compose_forcepreview_onlyroot).setChecked(false);
@@ -558,7 +499,8 @@ public class ComposePostView extends ActionBarActivity {
                 menu.findItem(R.id.menu_compose_forcepreview_on).setChecked(true);
         }
 
-        if (menu != null && menu.findItem(R.id.menu_compose_showextended_on) != null) {
+        if (menu != null && menu.findItem(R.id.menu_compose_showextended_on) != null)
+        {
             menu.findItem(R.id.menu_compose_showextended_on).setChecked(false);
             menu.findItem(R.id.menu_compose_showextended_onlyportrait).setChecked(false);
             menu.findItem(R.id.menu_compose_showextended_off).setChecked(false);
@@ -570,23 +512,31 @@ public class ComposePostView extends ActionBarActivity {
                 menu.findItem(R.id.menu_compose_showextended_on).setChecked(true);
         }
 
-        if (menu != null && menu.findItem(R.id.menu_compose_showParent) != null) {
-            if (_replyToPostId == 0) {
+        if (menu != null && menu.findItem(R.id.menu_compose_showParent) != null)
+        {
+            if (_replyToPostId == 0)
+            {
                 menu.findItem(R.id.menu_compose_showParent).setVisible(false);
             }
             if (!LegacyFactory.getLegacy().hasCamera(this))
                 menu.findItem(R.id.menu_compose_camera).setVisible(false);
         }
-    }
 
-    private void hideMenuItems(Menu menu, boolean visible)
-    {
-        for(int i = 0; i < menu.size(); i++){
-
-            menu.getItem(i).setVisible(visible);
-
+        if (menu != null && menu.findItem(R.id.menu_compose_post) != null)
+        {
+            /*
+            menu.findItem(R.id.menu_compose_post).setShowAsAction(showPostAsAction ? MenuItem.SHOW_AS_ACTION_ALWAYS : MenuItem.SHOW_AS_ACTION_NEVER);
+            menu.findItem(R.id.menu_compose_camera).setShowAsAction(showPostAsAction ? MenuItem.SHOW_AS_ACTION_IF_ROOM : MenuItem.SHOW_AS_ACTION_NEVER);
+            menu.findItem(R.id.menu_compose_picture).setShowAsAction(showPostAsAction ? MenuItem.SHOW_AS_ACTION_IF_ROOM : MenuItem.SHOW_AS_ACTION_NEVER);
+            menu.findItem(R.id.menu_compose_markup).setShowAsAction(showPostAsAction ? MenuItem.SHOW_AS_ACTION_ALWAYS : MenuItem.SHOW_AS_ACTION_NEVER);
+            */
+            menu.findItem(R.id.menu_compose_post).setVisible(showPostAsAction);
+            menu.findItem(R.id.menu_compose_camera).setVisible(showPostAsAction);
+            menu.findItem(R.id.menu_compose_picture).setVisible(showPostAsAction);
+            menu.findItem(R.id.menu_compose_markup).setVisible(showPostAsAction);
         }
     }
+
     
     public void showParentPost()
     {
@@ -793,7 +743,7 @@ public class ComposePostView extends ActionBarActivity {
         //setContentView(R.layout.edit_post_lollipop);
         if (decideEditBar())
         {
-            buildActionMenuView();
+
         }
 
 

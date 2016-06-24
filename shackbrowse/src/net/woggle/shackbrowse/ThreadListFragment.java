@@ -17,13 +17,13 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Stack;
 
 import net.woggle.CheckableLinearLayout;
 import net.woggle.SwipeDismissListViewTouchListener;
 import net.woggle.SwipeDismissListViewTouchListener.DismissCallbacks;
 import net.woggle.shackbrowse.MainActivity.mAnimEnd;
 
-import org.apache.http.client.ClientProtocolException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -75,6 +75,7 @@ import android.widget.AbsListView.OnScrollListener;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.MaterialDialogCompat;
+import com.gc.materialdesign.views.ButtonFlat;
 
 import static net.woggle.shackbrowse.StatsFragment.statInc;
 
@@ -103,6 +104,7 @@ public class ThreadListFragment extends ListFragment
     protected boolean _viewAvailable = false;
     private boolean _silentLoad = false;
 	protected boolean _firstLoad = true;
+	private long _lastThreadGetTime = 0L;
     boolean _filtering = false;
     protected MaterialDialog _progressDialog;
     
@@ -120,25 +122,13 @@ public class ThreadListFragment extends ListFragment
 
 	private ArrayList<Integer> mCollapsed;
 
-	private Thread mUndoAbleCollapse = null;
 
 	private boolean mUndoBarClosing = false;
+	private boolean mSnackBarOpen = false;
+	private boolean mSnackBarStuckOpen = false;
+	private Stack<SnackBarQueueItem> mSnackBarQueue = new Stack<SnackBarQueueItem>();
+	private long _lastResumeTimeAndPrompt = 0L;
 
-	private int mUndoAbleCollapsePos;
-
-	private Handler mUndoCloseHandler = new Handler();
-
-	private Runnable mUndoBarRunnable = new Runnable(){
-		@Override
-		public void run() {
-			closeUndoBar();
-	}};
-
-    public void setTurboAPIAllowed (boolean set)
-    {
-    	mTurboAPIAllowed = set;
-    }
-    
 	// handle collapsed saving
 	public void onPause()
 	{
@@ -153,6 +143,37 @@ public class ThreadListFragment extends ListFragment
 	public void onResume()
 	{
 		reloadCollapsed();
+
+		// snackbar for old thread data, prevent multiople fires in less than 20 seconds
+		if (SNKVERBOSE) System.out.println("SNK ONRESUME"+(System.currentTimeMillis() - _lastResumeTimeAndPrompt) + " " + _lastResumeTimeAndPrompt);
+		if ((((System.currentTimeMillis() - _lastResumeTimeAndPrompt) > 20000L) && (_lastResumeTimeAndPrompt > 0L)) &&  (TimeDisplay.threadAgeInHours(_lastThreadGetTime) > 3d))
+		{
+			/*
+			SnackBar snackbar = new SnackBar(getActivity(), "Your threads are out of date by 3 or more hours", "Refresh", new View.OnClickListener()
+			{
+				@Override
+				public void onClick(View view)
+				{
+					refreshThreads();
+				}
+			});
+			snackbar.setDismissTimer(4000);
+			snackbar.setColorButton(getResources().getColor(R.color.SBmed));
+			snackbar.show();
+			*/
+			if (SNKVERBOSE) System.out.println("SNK: OPEN ONRESUME REFRESH");
+			_lastResumeTimeAndPrompt = System.currentTimeMillis();
+			openSnackBar("Your threads are out of date by 3 or more hours", "Refresh", new View.OnClickListener()
+			{
+				@Override
+				public void onClick(View view)
+				{
+					refreshThreads();
+				}
+			});
+
+		}
+
 		super.onResume();
 	}
 	
@@ -180,6 +201,7 @@ public class ThreadListFragment extends ListFragment
         	System.out.println(" FIXING ANIMS");
         	getListView().setVisibility(View.VISIBLE);
         }
+
         super.onStart();
     }
     
@@ -289,7 +311,7 @@ public class ThreadListFragment extends ListFragment
        	if (savedInstanceState == null)
        		showLoadingView();
 
-
+	    _lastResumeTimeAndPrompt = System.currentTimeMillis();
     }
     
     @Override
@@ -385,6 +407,11 @@ public class ThreadListFragment extends ListFragment
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 				if (_adapter != null)
 				{
+					if (mSnackBarOpen)
+					{
+						if (SNKVERBOSE) System.out.println("SNK: CLOSE SCROLL");
+						closeSnackBar(false);
+					}
 					if (++firstVisibleItem + visibleItemCount > (int)(totalItemCount * .9)) {
 						// make sure we did not open via external intent, and we are not currently loading, and last call was successful
 						if (
@@ -399,11 +426,8 @@ public class ThreadListFragment extends ListFragment
 						{
 						    // if so, download more content
 							System.out.println("THREADLISTFRAG: reached 3/4 down, loading more: " + _adapter.getCount() +"]"+ totalItemCount + (_filtering) + _adapter._pageNumber + ((_adapter._pageNumber == 0) && (totalItemCount == 0)) + ((_adapter._pageNumber > 0) && (totalItemCount > 0)));
-	
-							if (_adapter.getCount() > 0)
-								_silentLoad = true;
-							else
-								_silentLoad = false;
+
+							_silentLoad = _adapter.getCount() > 0;
 							
 							_adapter.triggerLoadMore();
 						}
@@ -431,7 +455,7 @@ public class ThreadListFragment extends ListFragment
 
     public void collapseAtPosition (int position)
     {
-    	Thread t = (Thread) getListView().getItemAtPosition(position);
+    	final Thread t = (Thread) getListView().getItemAtPosition(position);
     	if (t != null)
     	{
             statInc(getActivity(), "PostCollapsed");
@@ -441,46 +465,130 @@ public class ThreadListFragment extends ListFragment
 			_adapter.notifyDataSetChanged();
     	}
     }
-    public void openUndoBar(Thread t, int pos)
-    {
-    	mUndoAbleCollapse = t;
-    	mUndoAbleCollapsePos = pos;
-    	mUndoBarClosing = false;
-    	if (mUndoBarRunnable != null)
-    	{
-    		mUndoCloseHandler.removeCallbacks(mUndoBarRunnable);
-    	}
-    	View undoBar = getActivity().findViewById(R.id.tlist_undoBar);
-    	MainActivity.anim anim = ((MainActivity)getActivity()).new anim(undoBar).toVisible();
-    	getActivity().findViewById(R.id.buttonUndo).setOnClickListener(new View.OnClickListener(){
+
+
+
+	public void openUndoBar(final Thread t, final int pos)
+	{
+		if (SNKVERBOSE) System.out.println("SNK: OPEN TCOLAPSE");
+		openSnackBar(t.getUserName() + " Thread Collapsed", "Undo", new View.OnClickListener()
+		{
 			@Override
-			public void onClick(View v) {
-				undoCollapse();
-		}});
-    	mUndoCloseHandler.postDelayed(mUndoBarRunnable, 4000);
-    }
-    public void undoCollapse()
+			public void onClick(View view)
+			{
+				undoCollapse(t, pos);
+			}
+		});
+	}
+	
+	class SnackBarQueueItem
+	{
+		String mPrompt;
+		String mButton;
+		View.OnClickListener mOnc;
+		SnackBarQueueItem(String prompt, String button, View.OnClickListener onc) { mPrompt = prompt; mButton = button; mOnc = onc; }
+	}
+
+	private static final boolean SNKVERBOSE = false;
+	private Handler mSnackBarCloseHandler = new Handler();
+	private Runnable mSnackBarCloseRunnable = new Runnable(){
+		@Override
+		public void run() {
+			if (SNKVERBOSE) System.out.println("SNK: CLOSE TIMEOUT");
+			closeSnackBar(true);
+		}};
+	private Handler mSnackBarStuckHandler = new Handler();
+	private Runnable mSnackBarStuckRunnable = new Runnable(){
+		@Override
+		public void run() {
+			mSnackBarStuckOpen = false;
+			if (SNKVERBOSE) System.out.println("SNK: NO LONGER STUCK");
+		}};
+
+	public void openSnackBar(SnackBarQueueItem snqi) { System.out.println("SNK: OPEN QUEUE"); openSnackBar(snqi.mPrompt, snqi.mButton, snqi.mOnc); }
+    public void openSnackBar(final String promptText, final String buttonText, final View.OnClickListener onc)
     {
-    	if (mUndoAbleCollapse != null)
+	    if (!mSnackBarOpen)
+	    {
+		    if (SNKVERBOSE) System.out.println("SNK: OPENING SET OPEN SET STUCK" + promptText);
+		    mUndoBarClosing = false;
+		    mSnackBarOpen = true;
+		    mSnackBarStuckOpen = true;
+
+		    // reset timers
+		    if (mSnackBarCloseRunnable != null)
+			    mSnackBarCloseHandler.removeCallbacks(mSnackBarCloseRunnable);
+		    if (mSnackBarStuckRunnable != null)
+			    mSnackBarStuckHandler.removeCallbacks(mSnackBarStuckRunnable);
+
+		    View undoBar = getActivity().findViewById(R.id.tlist_snackBar);
+		    ((TextView) getActivity().findViewById(R.id.tlist_snackBarText)).setText(promptText);
+		    ((ButtonFlat) getActivity().findViewById(R.id.tlist_snackBarButton)).setText(buttonText);
+		    MainActivity.anim anim = ((MainActivity) getActivity()).new anim(undoBar).toVisible();
+		    getActivity().findViewById(R.id.tlist_snackBarButton).setOnClickListener(onc);
+
+		    // make new timers
+		    mSnackBarCloseHandler.postDelayed(mSnackBarCloseRunnable, 6000);
+		    mSnackBarStuckHandler.postDelayed(mSnackBarStuckRunnable, 3000);
+	    }
+	    else
+	    {
+		    if (SNKVERBOSE) System.out.println("SNK: ALREADY OPEN CREATING QUEUE ITEM" + promptText);
+		    mSnackBarQueue.add(0, new SnackBarQueueItem(promptText,buttonText,onc));
+	    }
+    }
+    public void undoCollapse(Thread t, int pos)
+    {
+    	if (t != null)
     	{
             statInc(getActivity(), "PostUndoCollapsed");
-	    	removeCollapsed(mUndoAbleCollapse.getThreadId());
-	    	_adapter.insert(mUndoAbleCollapse, mUndoAbleCollapsePos);
+	    	removeCollapsed(t.getThreadId());
+	    	_adapter.insert(t, pos);
 	    	_adapter.notifyDataSetChanged();
-	    	closeUndoBar();
+		    if (SNKVERBOSE) System.out.println("SNK: CLOSE BUTTON");
+	    	closeSnackBar(true);
     	}
     }
-    public void closeUndoBar()
+    public void closeSnackBar(boolean override)
     {
-    	if (!mUndoBarClosing && getActivity() != null)
+	    if (SNKVERBOSE) System.out.println("SNK: CLOSE CHK ACTIVITY");
+    	if (getActivity() != null)
     	{
-	    	final View undoBar = getActivity().findViewById(R.id.tlist_undoBar);
-	    	mUndoBarClosing = true;
-	    	MainActivity.anim anim = ((MainActivity)getActivity()).new anim(undoBar).toInvisible().setEndCall(new mAnimEnd(){
-				@Override
-				public void end() {
-					mUndoAbleCollapse = null;
-				}});
+		    if (SNKVERBOSE) System.out.println("SNK: CLOSE ACT OK" + override + mSnackBarStuckOpen + mSnackBarOpen);
+		    if ((mSnackBarOpen) && ((!mSnackBarStuckOpen) || (override)))
+		    {
+			    if (SNKVERBOSE) System.out.println("SNK: CLOSE OK GO // NOT STUCK OR OVERRIDE");
+			    final View undoBar = getActivity().findViewById(R.id.tlist_snackBar);
+			    mUndoBarClosing = true;
+
+			    final View view = getActivity().getWindow().getDecorView();
+			    MainActivity.anim anim = ((MainActivity) getActivity()).new anim(undoBar).toInvisible().setEndCall(new mAnimEnd()
+			    {
+				    @Override
+				    public void end()
+				    {
+					    mUndoBarClosing = false;
+					    mSnackBarOpen = false;
+					    if (SNKVERBOSE) System.out.println("SNK: mSBO false");
+					    if (!mSnackBarQueue.isEmpty())
+					    {
+						    if (SNKVERBOSE) System.out.println("SNK: QUE SIZE" + mSnackBarQueue.size());
+						    view.postDelayed(new Runnable()
+						    {
+							    @Override
+							    public void run()
+							    {
+								    if (!mSnackBarQueue.isEmpty())
+								    {
+									    if (SNKVERBOSE) System.out.println("SNK: QUEUE OPEN");
+									    openSnackBar(mSnackBarQueue.pop());
+								    }
+							    }
+						    }, 300);
+					    }
+				    }
+			    });
+		    }
     	}
     }
     protected void toggleFavThread(Thread thread) {
@@ -1343,7 +1451,7 @@ public class ThreadListFragment extends ListFragment
         	if (getActivity() != null)
         	{
         		final MainActivity act = (MainActivity) getActivity();
-	        	if (set == true)
+	        	if (set)
 	        	{
 	        		act.runOnUiThread(new Runnable(){
 	            		@Override public void run()
@@ -1813,15 +1921,16 @@ public class ThreadListFragment extends ListFragment
 			}
 		}
 		
-        public ArrayList<Thread> getThreadData() throws ClientProtocolException, IOException, JSONException
+        public ArrayList<Thread> getThreadData() throws IOException, JSONException
         {
         	String userName = _prefs.getString("userName", "");
-            JSONObject json = ShackApi.getThreads(_pageNumber + 1, userName, this.getContext(), _prefs.getBoolean("useTurboAPI", true) && mTurboAPIAllowed );
+            JSONObject json = ShackApi.getThreads(_pageNumber + 1, userName, this.getContext(), _prefs.getBoolean("useTurboAPI", true));
         	
             // winchatty uses "rootPosts" instead of "comments" // get array of threads
             boolean is_winchatty = json.has("rootPosts");
             JSONArray comments = json.getJSONArray(is_winchatty ? "rootPosts" : "comments");
             _wasLastThreadGetSuccessful = comments.length() > 0;
+	        _lastThreadGetTime = System.currentTimeMillis();
             
             // process these threads and remove collapsed
             ArrayList<Thread> new_threads = ShackApi.processThreads(json, false, mCollapsed, getActivity());

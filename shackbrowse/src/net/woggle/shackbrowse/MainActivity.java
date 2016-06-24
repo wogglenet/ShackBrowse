@@ -95,6 +95,8 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.MaterialDialogCompat;
+import com.google.android.gms.gcm.GcmNetworkManager;
+import com.google.android.gms.gcm.PeriodicTask;
 
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressDrawable;
@@ -168,6 +170,7 @@ public class MainActivity extends ActionBarActivity
 	private String mChromeTabCurrentUrl;
 	private String mBrowserPageTitle;
 	private String mBrowserPageSubTitle;
+	private GcmNetworkManager mGcmNetworkManager;
 
 	public PullToRefreshAttacher getRefresher()
 	{
@@ -328,23 +331,26 @@ public class MainActivity extends ActionBarActivity
 		}
 		
 		// notifications registrator, works mostly automatically
-		OnGCMInteractListener GCMlistener = new OnGCMInteractListener(){@Override	public void networkResult(String res) {
-			// this allows the check mark to be placed when push notifications are automatically enabled if the setting has never been touched
-			Editor edit = _prefs.edit();
-			if (res.contains("ok"))
+		OnGCMInteractListener GCMlistener = new OnGCMInteractListener(){
+			@Override	public void networkResult(String res)
 			{
-				edit.putBoolean("noteEnabled", true);
-				_appMenu.updateMenuUi();
-				System.out.println("PUSHREG: registered");
+				// this allows the check mark to be placed when push notifications are automatically enabled if the setting has never been touched
+				Editor edit = _prefs.edit();
+				if (res.contains("ok"))
+				{
+					edit.putBoolean("noteEnabled", true);
+					_appMenu.updateMenuUi();
+					System.out.println("PUSHREG: registered");
+				}
+				edit.apply();
 			}
-			edit.apply();
-		}
 
-		@Override
-		public void userResult(JSONObject result) {
-			// TODO Auto-generated method stub
-			
-		}};
+			@Override
+			public void userResult(JSONObject result) {
+				// TODO Auto-generated method stub
+
+			}
+		};
 		_GCMAccess = new NetworkNotificationServers(this, GCMlistener);
 		// this pref is OPT OUT
 		if (!_prefs.contains("noteEnabled"))
@@ -360,7 +366,16 @@ public class MainActivity extends ActionBarActivity
 				_GCMAccess.updReplVan(_prefs.getBoolean("noteReplies", true),_prefs.getBoolean("noteVanity", false));
 			}
 		}
-		
+
+		// TODO: enable or disable based on preferences for widget and for SM autocheck
+		long updateInterval = Long.parseLong(_prefs.getString("PeriodicNetworkServicePeriod", "10800")); // DEFAULT 3 HR 10800L,  5 minutes 50-100mb, 10 minutes 25-50mb, 30mins 10-20mb, 1 hr 5-10mb, 3 hr 1-3mb, 6hr .5-1.5mb, 12hr .25-1mb
+		PeriodicNetworkService.ScheduleService(this, updateInterval);
+
+		// notification database pruning
+		NotificationsDB ndb = new NotificationsDB(this);
+		ndb.open();
+		ndb.pruneNotes();
+		ndb.close();
 		
 		
 		// seen
@@ -562,8 +577,9 @@ public class MainActivity extends ActionBarActivity
         ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         // check for shack messages
-        if (mWifi.isConnected() || _prefs.getBoolean("SMCheckOnCellNotification", false)) {
-        	new CheckForSMTask().execute();
+        if ((mWifi.isConnected() || _prefs.getBoolean("SMCheckOnCellNotification", false))) {
+	        ShackMessageCheck SMC = new ShackMessageCheck(this);
+	        SMC.frugalSMCheck();
         }
         
         // check versions
@@ -1216,21 +1232,6 @@ public class MainActivity extends ActionBarActivity
 	}
 
 
-	// used for sending fake notifications to the notifierreceiver. check for sms locally, then send notification!
-	private void sendSMBroadcast(String username, String text, int nlsid, boolean multiple, int howMany) {
-		NotifierReceiver receiver = new NotifierReceiver();
-		registerReceiver( receiver, new IntentFilter( "net.woggle.fakenotification" ) );
-		
-		Intent broadcast = new Intent();
-		broadcast.putExtra("type", "shackmsg");
-		broadcast.putExtra("username", (multiple) ? "multiple" : username);
-		broadcast.putExtra("text", (multiple) ? Integer.toString(howMany) : text);
-		broadcast.putExtra("nlsid", Integer.toString(nlsid));
-        broadcast.setAction("net.woggle.fakenotification");
-        sendBroadcast(broadcast);
-        
-       // unregisterReceiver(receiver);
-	}
 
 	protected void hideKeyboard() {
 		final InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -2078,80 +2079,7 @@ public class MainActivity extends ActionBarActivity
         }
         return super.dispatchKeyEvent(event);
     }
-	
-	/*
-	 * CHECK FOR SHACKMESSAGES
-	 */
-	class CheckForSMTask extends AsyncTask<String, Void, Integer>
-	{
-	    Exception _exception;
-	    String username;
-	    String text;
-	    int nlsid;
-	    
-        @Override
-        protected Integer doInBackground(String... params)
-        {
-            try
-            {
-            	boolean verified = _prefs.getBoolean("usernameVerified", false);
-                if (verified)
-                {
-	            	ArrayList<Message> msgs = ShackApi.getMessages(0, MainActivity.this);
-	            	int unreadCount = 0;
-	            	for (int i = 0; i < msgs.size(); i++)
-	            	{
-	            		if (msgs.get(i).getRead() == false)
-	            		{
-	            			if (unreadCount == 0)
-	            			{
-		            			username = msgs.get(i).getUserName();
-		            			text = msgs.get(i).getRawContent();
-		            			nlsid = msgs.get(i).getMessageId();
-	            			}
-	            			unreadCount++;
-	            		}
-	            	}
-	            	return unreadCount;
-            	}
-                return 0;
-            }
-            catch (Exception e)
-            {
-                Log.e("shackbrowse", "Error getting sms", e);
-                _exception = e;
-                return 0;
-            }
-        }
-        
-        @Override
-        protected void onPostExecute(Integer result)
-        {
-            if (_exception != null)
-            {
-            	System.out.println("SMget: err");
-                ErrorDialog.display(MainActivity.this, "Error", "Error getting SMs:\n" + _exception.getMessage());
-            }
-            else if (result == null)
-            {
-            	System.out.println("SMget: err");
-                ErrorDialog.display(MainActivity.this, "Error", "Unknown SM-related error.");
-            }
-            else
-            {
-            	int lastNotifiedId = Integer.parseInt(_prefs.getString("GCMShackMsgLastClickedId", "0"));
-            	if (nlsid > lastNotifiedId)
-            	{
-            		text = PostFormatter.formatContent("", text, null, false, false).toString();
-	            	if (result == 1)
-	            		sendSMBroadcast(username, text, nlsid, false, 1);
-	            	else if (result > 1)
-	            		sendSMBroadcast("multiple", "", nlsid, true, result);
-            	}
-            }
-        }
-	}
-	
+
 	/*
 	 * LIMES
 	 */

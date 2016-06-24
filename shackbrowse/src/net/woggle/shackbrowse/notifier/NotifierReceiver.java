@@ -56,7 +56,6 @@ public class NotifierReceiver extends BroadcastReceiver {
 		{
 			if (data.getString("type").equalsIgnoreCase("reply"))
 			{
-			  
 				NotificationCompat.Builder mBuilder =
 				        new NotificationCompat.Builder(context)
 				        .setSmallIcon(icon_res)
@@ -364,8 +363,9 @@ public class NotifierReceiver extends BroadcastReceiver {
 		NotificationManager mNotificationManager =
 		    (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 		
-		// prevents two noisy/vibey notifications within 30 seconds
-		if (System.currentTimeMillis() - prefs.getLong("lastNoisyNotificationMade", 0L) > 30000)
+		// prevents two noisy/vibey notifications within 30 seconds (now a pref)
+		long spamLimit = Long.parseLong(prefs.getString("limitVibrateSpamInMS", "30000"));
+		if (System.currentTimeMillis() - prefs.getLong("lastNoisyNotificationMade", 0L) > spamLimit)
 		{
 			notification.sound = Uri.parse(prefs.getString("notificationSound", "DEFAULT_SOUND"));
 		

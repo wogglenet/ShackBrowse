@@ -139,8 +139,8 @@
     <string name="preference_notesound_title">Sound</string>
     <string name="preference_notevibrate_title">Vibrate</string>
     <string name="preference_notecolor_title">LED Color</string>
-    <string name="preference_smcheckcell_title">Check SMs On Cell Network</string>
-    <string name="preference_smcheckcell_summary">If UNCHECKED, Shackmessages will only be checked on application start when connected to WiFi. Usually takes about 18k of data</string>
+    <string name="preference_smcheckcell_title">App Start Check SMs On Cell Network</string>
+    <string name="preference_smcheckcell_summary">If UNCHECKED, Shackmessages will only be checked on application start when connected to WiFi. Usually takes about 10k of data</string>
     
     <string name="preferences_threadlist">Thread List Options</string>
     <string name="preferences_threadlist_summary">Choose which data to show and how to show it, as well as cloud sync options and supercollapsed thread reset</string>
@@ -311,11 +311,11 @@
     <string name="statsItemTimeInComposer">Time spent in composer</string>
     <string name="notTurnedOn">Disabled</string>
     <string name="statsopt">Opt Out</string>
-    <string name="compose_showextended">On</string>
-    <string name="compose_showextended_onlyportrait">Only In Portrait</string>
+    <string name="compose_showextended">Off</string>
+    <string name="compose_showextended_onlyportrait">Only In Landscape</string>
     <string name="compose_forcepreview">Force Preview Setting</string>
-    <string name="compose_noshowextended">Off</string>
-    <string name="menu_compose_extendededit">Extended Editor Setting</string>
+    <string name="compose_noshowextended">On</string>
+    <string name="menu_compose_extendededit">Compact Editor Setting</string>
     <string name="menu_compose_forcepreview_on">On</string>
     <string name="menu_compose_forcepreview_onlyroot">Only For Root Posts</string>
     <string name="menu_compose_forcepreview_off">Off</string>
@@ -341,6 +341,10 @@
     <string name="preference_uct_summary">If Chrome is installed, this will cause Chrome Tabs to be used as the popup browser when possible</string>
     <string name="preference_acr_title">Allow Reply Collapse</string>
     <string name="preference_acr_summary">Allows you to click on the header of a post to collapse it after you opened it, except the root post, which has +1 resistance to collapse.</string>
+    <string name="preference_limitvibratespam_title">Annoyance Limit</string>
+    <string name="preference_limitvibratespam_summary">Limits the minimum time between two notifications that use vibrate and sound.</string>
+    <string name="preference_periodicnetworkservice_summary">Select how often to check for shackmessages in the background. Set to OFF to prevent this.</string>
+    <string name="preference_periodicnetworkservice_title">Background ShackMessage Check</string>
     <!-- items in  the array will show up even when not yet registered -->
     <string-array name="statsItems">
         <item>statsItemAnnoyedByStartupZoomDialog</item>

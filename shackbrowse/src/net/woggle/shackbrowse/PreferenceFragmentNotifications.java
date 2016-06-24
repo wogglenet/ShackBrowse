@@ -37,6 +37,8 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.MaterialDialogCompat;
+import com.google.android.gms.gcm.GcmNetworkManager;
+import com.google.android.gms.gcm.PeriodicTask;
 
 public class PreferenceFragmentNotifications extends PreferenceFragment
 {
@@ -65,6 +67,23 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
         _prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         addPreferencesFromResource(R.xml.preferences_notifications);
+
+        final Context fincon = getActivity();
+        Preference SMCheckInterval = (Preference)findPreference("PeriodicNetworkServicePeriod");
+        SMCheckInterval.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                int newInterval = Integer.parseInt((String)newValue);
+
+                long updateInterval = (long)newInterval; // DEFAULT 3 HR,  5 minutes 50-100mb, 10 minutes 25-50mb, 30mins 10-20mb, 1 hr 5-10mb, 3 hr 1-3mb, 6hr .5-1.5mb, 12hr .25-1mb
+
+                PeriodicNetworkService.ScheduleService(fincon, updateInterval);
+
+                return true;
+            }
+
+        });
 
         Preference testNote = (Preference) findPreference("pref_testnote");
         testNote.setOnPreferenceClickListener(new OnPreferenceClickListener(){

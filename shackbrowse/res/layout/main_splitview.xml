@@ -36,6 +36,44 @@
 	       android:layout_width="match_parent"
 	       android:layout_height="match_parent">
 	     </FrameLayout>
+	   <RelativeLayout
+		   android:id="@+id/tlist_snackBar"
+		   android:layout_width="fill_parent"
+		   android:layout_height="wrap_content"
+		   android:minHeight="56dp"
+		   android:visibility="gone"
+		   android:layout_alignParentBottom="true" >
+
+		   <RelativeLayout
+			   android:id="@+id/snackbar"
+			   android:layout_width="fill_parent"
+			   android:layout_height="wrap_content"
+			   android:background="@color/buttonBarBg"
+			   android:paddingBottom="18dp"
+			   android:paddingLeft="24dp"
+			   android:paddingRight="24dp"
+			   android:paddingTop="18dp"
+			   >
+
+			   <com.gc.materialdesign.views.ButtonFlat
+				   android:id="@+id/tlist_snackBarButton"
+				   android:layout_width="wrap_content"
+				   android:layout_height="wrap_content"
+				   android:layout_alignParentRight="true"
+				   android:layout_centerVertical="true"
+				   android:layout_marginLeft="24dp"
+				   android:text="ACTION" />
+
+			   <TextView
+				   android:id="@+id/tlist_snackBarText"
+				   android:layout_width="fill_parent"
+				   android:layout_height="wrap_content"
+				   android:layout_centerVertical="true"
+				   android:layout_toLeftOf="@id/tlist_snackBarButton"
+				   android:textColor="#FFF" />
+
+		   </RelativeLayout>
+	   </RelativeLayout>
    </RelativeLayout>
    <!-- The navigation drawer -->
    <FrameLayout

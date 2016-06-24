@@ -68,7 +68,7 @@ public class ShackApi
 {
 	private static final int connectionTimeOutSec = 25;
 	private static final int socketTimeoutSec = 35;
-    static final String USER_AGENT = "shackbrowse/4.0.5";
+    static final String USER_AGENT = "shackbrowse/5.4.0";
     
     static final String IMAGE_LOGIN_URL = "http://chattypics.com/users.php?act=login_go";
     static final String IMAGE_UPLOAD_URL = "http://chattypics.com/upload.php";
@@ -101,8 +101,9 @@ public class ShackApi
     static final String FAKE_NEWS_ID = "2";
     
     static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
-    
-    public static Integer tryParseInt(String text) {
+	static final String API_MESSAGES_URL = "https://www.shacknews.com/api/messages.json";
+
+	public static Integer tryParseInt(String text) {
     	try {
     		return Integer.valueOf(text);
     	} catch (NumberFormatException e) {
@@ -403,6 +404,50 @@ public class ShackApi
         
 		return result;
     }
+	static String getShackMessageAPIText(String userName, String password) throws Exception
+	{
+		List<NameValuePair> values = new ArrayList<NameValuePair>(); values.add(new BasicNameValuePair("get", "yes"));
+		UrlEncodedFormEntity e = new UrlEncodedFormEntity(values,"UTF-8");
+		userName = userName.trim();
+
+		URL post_url = new URL(API_MESSAGES_URL);
+		HttpsURLConnection con = (HttpsURLConnection) post_url.openConnection();
+		con.setReadTimeout(30000);
+		con.setRequestProperty("connection", "close");
+		con.setConnectTimeout(10000);
+		con.setChunkedStreamingMode(0);
+		con.setRequestProperty("User-Agent", USER_AGENT);
+		con.setRequestProperty("Authorization", "Basic " + android.util.Base64.encodeToString((userName + ":" + password).getBytes(), android.util.Base64.NO_WRAP));
+
+		// write our request
+		con.setDoOutput(true);
+		java.io.OutputStream os = con.getOutputStream();
+		String result = "";
+		try
+		{
+			e.writeTo(os);
+			os.flush();
+		}
+		finally
+		{
+			os.close();
+		}
+
+		// read the response
+		java.io.InputStream input = con.getInputStream();
+		try
+		{
+			result = readStream(input);
+		}
+		finally
+		{
+			input.close();
+		}
+
+		return result;
+	}
+
+
     
 /*
  * THREAD RELATED
@@ -997,7 +1042,7 @@ public class ShackApi
      * SHACK LOL stuff
      */
     
-    public static HashMap<String, HashMap<String, LolObj>> getLols (Activity activity) throws ClientProtocolException, IOException, JSONException
+    public static HashMap<String, HashMap<String, LolObj>> getLols (Context activity) throws ClientProtocolException, IOException, JSONException
     {
     	boolean _getLols = true;
     	if (activity != null)
@@ -1076,14 +1121,15 @@ public class ShackApi
         	{
         		System.out.println("connection timeout for LOLDATA");
         		lolTimedOut = true;
-        		final Context bcont = activity.getBaseContext();
+        		final Context bcont = activity.getApplicationContext();
+		        /*
         		activity.runOnUiThread(new Runnable(){
              		@Override public void run()
              		{
              			
              			Toast.makeText(bcont, "ShackLOL server timed out\nConsider disabling ShackLOL API in Preferences", Toast.LENGTH_SHORT).show();
              		}
-             	});
+             	});*/
         		
         		// cache it
     	        FileOutputStream output = activity.openFileOutput("shacklol.cache", Activity.MODE_PRIVATE);

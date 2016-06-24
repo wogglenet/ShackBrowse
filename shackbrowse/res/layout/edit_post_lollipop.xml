@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:materialdesign="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    android:layout_margin="5dp">
     <net.woggle.EditTextSelectionSaved
         android:id="@+id/textContent"
         android:layout_width="fill_parent"
@@ -13,23 +15,61 @@
         android:inputType="textCapSentences|textMultiLine|textLongMessage|textAutoCorrect"
         android:imeOptions="flagNoExtractUi"
         android:textSize="@dimen/editTextSize"
+        android:background="@android:color/transparent"
+
         />
-    <LinearLayout
+
+    <RelativeLayout
         android:elevation="5dp"
         android:id="@+id/editBarContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:gravity="right"
-        android:background="?attr/colorPrimary">
-        <android.support.v7.widget.ActionMenuView
-            android:id="@+id/editBar"
+        android:layout_height="wrap_content">
+        <com.gc.materialdesign.views.ButtonFloatSmall
+            android:elevation="10dp"
+            android:layout_alignParentRight="true"
+            android:id="@+id/composeButtonPost"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:minHeight="?attr/actionBarSize"
-            android:layout_gravity="right"
-            android:gravity="right"
+            android:background="@color/SBmed"
+            android:layout_margin="@dimen/fab_margin"
+            materialdesign:iconDrawable="@drawable/ic_action_content_send"
             />
-    </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/composeButtonPicture"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/ic_action_image_photo"
+            android:layout_centerVertical="true"
+            android:layout_height="@dimen/composeRowButtonHeight"
+            android:layout_width="@dimen/composeRowButtonWidth"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:scaleType="fitCenter"
+            android:background="?android:attr/selectableItemBackground"
+            />
+        <ImageButton
+            android:id="@+id/composeButtonCamera"
+            android:layout_toRightOf="@id/composeButtonPicture"
+            android:layout_height="@dimen/composeRowButtonHeight"
+            android:layout_width="@dimen/composeRowButtonWidth"
+            android:src="@drawable/ic_action_image_camera_alt"
+            android:paddingLeft="10dp"
+            android:scaleType="fitCenter"
+            android:paddingRight="10dp"
+            android:layout_centerVertical="true"
+            android:background="?android:attr/selectableItemBackground"
+            />
+        <ImageButton
+            android:id="@+id/composeButtonMarkup"
+            android:layout_toRightOf="@id/composeButtonCamera"
+            android:layout_height="@dimen/composeRowButtonHeight"
+            android:layout_width="@dimen/composeRowButtonWidth"
+            android:src="@drawable/ic_action_image_color_lens"
+            android:paddingLeft="10dp"
+            android:scaleType="fitCenter"
+            android:paddingRight="10dp"
+            android:layout_centerVertical="true"
+            android:background="?android:attr/selectableItemBackground"
+            />
+</RelativeLayout>
 </LinearLayout>

@@ -21,21 +21,39 @@
 <!--
 TODO
 * TODO NO NETWORK ICON
-* PHOTOS+ UPLOAD
-* INLINE PHOTOS
-* UPLOAD PHOTOS TO DROPBOX?
 * QUOTES FROM TEXT SELECTION
 * SEARCH GOOGLE BY TEXT SELECTION
+* NOTIFICATION SNOOZE
+* PERIODIC POLLING FOR SHACKMESSAGES WITH JOBSCHEDULER
+* WHITE MODE
+* OPTION TO REMOVE DEVICEID FROM ALL NOTIFICATIONS
+* WIDGET FOR TOP POSTS
+SERVER
+* STAR OUT SPOILER TEXT
+* NO NOTIFICATIONS FROM SELF
 -->
+
+$ 5.4.0
+% v 5.4.0
+_ Jun 24, 2016
+* Post composer redesigned
+* ShackMessage Polling (defaults to once per 3 hrs, using ~1mb data/mo)
+* Refresh prompt for old thread list on app resume, also updated collapse undo prompt
+* ChattyPics Uploader now allows backing out of the URL action dialog
+* Notification database auto-pruning to keep app size in check
+* Updated all libraries, Android N build target
+* Bug Fix: Regression allowing root post to have show parent preview in composer which caused crash
+* Bug Fix: Link options button disabled on all links instead of only images when auto-embed active
+* Bug Fix: Popup browser now opens current page when external browser opened instead of original link URL
 
 $ 5.3.3
 % v 5.3.3
-_ May 21, 2015
+_ May 21, 2016
 * New document chooser for uploading images, should fix bugs
 
 $ 5.3.2
 % v 5.3.2
-_ Mar 19, 2015
+_ Mar 19, 2016
 * Backup Agent disabled. I think this may have been screwing up notifications on reinstalls
 * Updated list of mods and employees for name highlighting
 * ChromeTab share button removed since it didn't work anyway. I've had a lot of issues with this API and ChromeTabs now default off. Use only if you absolutely need to.
@@ -43,7 +61,7 @@ _ Mar 19, 2015
 
 $ 5.3.1
 % v 5.3.1
-_ Jan 24, 2015
+_ Jan 24, 2016
 * Popup Browser now loads imgur albums correctly
 * Popup Browser now clears cache occasionally to prevent errors/crashes
 * Option to allow collapsing posts by clicking on them. You guys are weird.

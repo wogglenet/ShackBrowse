@@ -234,7 +234,7 @@ public class PicUploader extends ActionBarActivity {
                         MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(PicUploader.this);
             	        builder.setTitle("Image Uploaded");
             	        builder.setMessage("Do what with the image URL?");
-            	        builder.setCancelable(false);
+            	        builder.setCancelable(true);
             	        builder.setPositiveButton("New Root Shack Post", new DialogInterface.OnClickListener() {
             				public void onClick(DialogInterface dialog, int id) {
             					Intent sendIntent = new Intent();

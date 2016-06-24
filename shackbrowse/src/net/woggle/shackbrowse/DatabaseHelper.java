@@ -27,8 +27,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
   public static final String COLUMN_PRECIPIENT = "p_recipient";
   public static final String COLUMN_PFINALIZEDTIME = "p_finalizedtime";
 
+  public static final String TABLE_WIDGET = "widget";
+  public static final String COLUMN_WID = "w_id";
+  public static final String COLUMN_WTID = "w_tid";
+  public static final String COLUMN_WTEXT = "w_text";
+  public static final String COLUMN_WREPLIED = "w_replied";
+  public static final String COLUMN_WPOSTER = "w_poster";
+  public static final String COLUMN_WREPLYCOUNT = "w_replycount";
+  public static final String COLUMN_WPOSTEDTIME = "w_posted";
+  public static final String COLUMN_WMODERATION = "w_moderation";
+  public static final String COLUMN_WLOLOBJ = "w_lolobj";
+  public static final String COLUMN_WHOT = "w_hot";
+
   private static final String DATABASE_NAME = "shkbrs3.db";
-  private static final int DATABASE_VERSION = 9;
+  private static final int DATABASE_VERSION = 10;
 
   // Database creation sql statement
   private static final String DATABASE_CREATE = "create table "
@@ -45,6 +57,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       + " integer primary key autoincrement, " + COLUMN_PTEXT
       + " text not null, " + COLUMN_PREPLYTO + " integer, " + COLUMN_PFINALID + " integer, " + COLUMN_PISMESSAGE + " integer, " + COLUMN_PISNEWS + " integer, " + COLUMN_PSUBJECT + " text, " + COLUMN_PRECIPIENT + " text, " + COLUMN_PFINALIZEDTIME + " integer);";
 
+  private static final String DATABASE_CREATE3 =  "create table "
+          + TABLE_WIDGET + "(" + COLUMN_WID
+          + " integer primary key autoincrement, " + COLUMN_WTID + " integer, " + COLUMN_WTEXT
+          + " text not null, " + COLUMN_WREPLYCOUNT + " integer, " + COLUMN_WLOLOBJ + " text, " + COLUMN_WREPLIED + " integer, " + COLUMN_WPOSTEDTIME + " integer, " + COLUMN_WPOSTER + " text, " + COLUMN_WMODERATION + " text, " + COLUMN_WHOT + " integer);";
+
+  private static final String DATABASE_MAKEINDEX_FOR_DB3 = "CREATE INDEX widget_replycount_idx ON " + TABLE_WIDGET + " (" + COLUMN_WREPLYCOUNT + ");";
+  private static final String DATABASE_MAKEINDEX2_FOR_DB3 = "CREATE INDEX widget_hot_idx ON " + TABLE_WIDGET + " (" + COLUMN_WHOT + ");";
+
   public DatabaseHelper(Context context) {
     super(context, DATABASE_NAME, null, DATABASE_VERSION);
   }
@@ -53,6 +73,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
   public void onCreate(SQLiteDatabase database) {
     database.execSQL(DATABASE_CREATE);
     database.execSQL(DATABASE_CREATE2);
+    database.execSQL(DATABASE_CREATE3);
+    database.execSQL(DATABASE_MAKEINDEX_FOR_DB3);
+    database.execSQL(DATABASE_MAKEINDEX2_FOR_DB3);
   }
 
   @Override
@@ -60,11 +83,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     Log.w(DatabaseHelper.class.getName(),
         "Upgrading database from version " + oldVersion + " to "
             + newVersion + ", which will destroy all old data");
-    if (((oldVersion == 5) || (oldVersion == 6) || (oldVersion == 7)) && (newVersion == 8))
+    if ((oldVersion == 9) && (newVersion == 10))
     {
-    	// only postqueue needs update
-    	db.execSQL("DROP TABLE IF EXISTS " + TABLE_POSTQUEUE);
-    	db.execSQL(DATABASE_CREATE2);
+        db.execSQL(DATABASE_CREATE3);
+        db.execSQL(DATABASE_MAKEINDEX_FOR_DB3);
+        db.execSQL(DATABASE_MAKEINDEX2_FOR_DB3);
     }
     else
     {

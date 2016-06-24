@@ -1667,7 +1667,7 @@ public class ThreadViewFragment extends ListFragment
 					if (postClip.text.toString().trim().length() > 0) {
 						FixedTextView postText = new FixedTextView(getContext());
 
-						if (_linkButtons && !removeLinks)
+						if (_linkButtons && !((postClip.image != null) && (doEmbed)))
 							postClip.text = (Spannable) applyExtLink(postClip.text, postText);
 
 						postText.setTextColor(getResources().getColor(R.color.nonpreview_post_text_color));
