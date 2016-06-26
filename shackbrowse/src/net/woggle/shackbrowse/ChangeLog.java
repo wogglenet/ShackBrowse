@@ -12,7 +12,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -170,7 +169,7 @@ public class ChangeLog {
                         new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
                                 	updateVersionInPreferences();
-                                	startDonation();
+                                	startAppInfo();
                                 	if (mCLCL != null)
                                 		mCLCL.onClose();
                                 }
@@ -178,7 +177,7 @@ public class ChangeLog {
                 return builder.create();
         }
 
-        protected void startDonation() {
+        protected void startAppInfo() {
                 Intent i = new Intent(context, DonateActivity.class);
                 ((MainActivity)context).startActivityForResult(i, ThreadListFragment.OPEN_PREFS);
             /*

@@ -61,7 +61,7 @@ Source is available by request, although it is a nightmare. b{Questions}b, g{com
 
 $ 5.4.1
 % v 5.4.1
-_ Jun 24, 2016
+_ Jun 26, 2016
 * Only starred posts from last 18 hours show in latest chatty thread list, all others in Starred Posts section
 * Small UI tweaks
 * Frontpage articles load much faster
