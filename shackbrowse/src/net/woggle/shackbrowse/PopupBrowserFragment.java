@@ -311,6 +311,10 @@ public class PopupBrowserFragment extends Fragment {
 		
 		coarseZoom = Math.round(Math.round(Math.floor(mAttemptZoom / 150f)));
 		fineZoom = Math.round(Math.round(Math.floor((mAttemptZoom % 150) / 3)));
+		mAttemptZoom = ((coarseZoom * 150) + (fineZoom * 3)) + 1;
+		Editor edit = mPrefs.edit();
+		edit.putString("browserImageZoom5", Integer.toString(mAttemptZoom));
+		edit.commit();
 		
 		// move seekbars to their correct positions
 		((SeekBar)getActivity().findViewById(R.id.popup_seekbar)).setProgress(coarseZoom);

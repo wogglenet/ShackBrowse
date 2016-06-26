@@ -338,9 +338,9 @@ public class OfflineThread
  	
  	public JSONObject getThreadsAsJson()
  	{
- 		return getThreadsAsJson(false);
+ 		return getThreadsAsJson(false, false);
  	}
-	public JSONObject getThreadsAsJson(boolean asc)
+	public JSONObject getThreadsAsJson(boolean asc, boolean onlyLessThan18Hours)
  	{
  		JSONObject listJson = new JSONObject(); 
  		JSONArray array = new JSONArray();
@@ -354,6 +354,11 @@ public class OfflineThread
         int i = postIds.size() -1;
     	while ( i >= 0) {
 			SavedThreadObj value = _threads.get(postIds.get(i));
+		    if ((TimeDisplay.threadAgeInHours(value._postTime) > 18d) && (onlyLessThan18Hours))
+		    {
+			    i--;
+			    continue;
+		    }
 			// indicate that these are pinned
 			try {
 				value._threadJson.put("pinned", true);
@@ -465,7 +470,7 @@ public class OfflineThread
 	            _threads = _newthreads;
 	            // and save
 	            flushThreadsToDiskTask();
-	            if (_verbose) _verboseMsg = "Sync Success";
+	            if (_verbose) _verboseMsg = "Sync Success" + _threads.size() + " items";
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -518,7 +523,7 @@ public class OfflineThread
 				cloudJson.put("watched",watched);
 				String result = ShackApi.putCloudPinned(cloudJson, getCloudUsername());
 				System.out.println("OFFLINETHREAD: LOCALTOCLOUD: watched#: " + watched.length());
-				if ((_verbose) && (result != null)) _verboseMsg = "Sync Success";
+				if ((_verbose) && (result != null)) _verboseMsg = "Sync Success" + watched.length() + " items";
 				
 			} catch (ClientProtocolException e) {
 				// TODO Auto-generated catch block
@@ -593,7 +598,7 @@ public class OfflineThread
 				
 				cloudJson.put("watched",watched);
 				String result = ShackApi.putCloudPinned(cloudJson, getCloudUsername());
-				if ((_verbose) && (result != null)) _verboseMsg = "Sync Success";
+				if ((_verbose) && (result != null)) _verboseMsg = "Sync Success" + watched.length() + " items";
 					
 			} catch (ClientProtocolException e) {
 				// TODO Auto-generated catch block

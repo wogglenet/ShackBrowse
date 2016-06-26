@@ -157,35 +157,35 @@
     <string name="preference_threadview_postlols_title">User Mod Tags</string>
     <string name="preference_threadview_postlols_summary">Displays ThomW ShackLOL tags in the reply view. Must be enabled in appwide settings first.</string>
     
-    <string name="preference_swappedsplit_title">Swapped Split View</string>
+    <string name="preference_swappedsplit_title">Backwards Tablet View</string>
     <string name="preference_swappedsplit_summary">Swap left/right panes in split view</string>
     
     <string name="preference_clearcollapsed">Clear Collapsed</string>
     <string name="preference_clearcollapsed_summary">Clear list of collapsed and super-collapsed threads</string>
     
     <string name="preference_cloudsync_title">Cloud Sync</string>
-    <string name="preference_cloudsync_summary">Pinned threads will be synced to other Shack Browse devices. Must have verified login.</string>
+    <string name="preference_cloudsync_summary">Starred threads will be synced to other Shack Browse devices. Must have verified login.</string>
     
     <string name="preferences_options">Options</string>
-    <string name="preference_showpinned_title">Show Pinned Items</string>
-    <string name="preference_showpinned_summary">Show pinned items in the thread list.</string>
-    <string name="preference_scrollpast_title">Scroll Past Pinned</string>
-    <string name="preference_scrollpast_summary">Automatically scroll past pinned items when refreshing the thread list.</string>
+    <string name="preference_showpinned_title">Show Starred Items</string>
+    <string name="preference_showpinned_summary">Show starred items in the thread list. A list of starred items is always available in the starred posts app area.</string>
+    <string name="preference_scrollpast_title">Scroll Past Starred</string>
+    <string name="preference_scrollpast_summary">Automatically scroll past starred items when refreshing the thread list.</string>
     <string name="preference_tag_thread_list_title">Show Mod Tags</string>
     <string name="preference_tag_thread_list_summary">Show tagging information set by Shacknews moderators.</string>
     <string name="preference_shacktag_thread_list_title">Show Markup</string>
     <string name="preference_shacktag_thread_list_summary">Show or strip colorful shacktag markup from topic list preview text.</string>
     
-    <string name="preference_splitView_title">Use Split View</string>
-    <string name="preference_splitView_summary">Select in which orientations to use split view mode, if at all.</string>
+    <string name="preference_splitView_title">Use Tablet View</string>
+    <string name="preference_splitView_summary">Select whether to use split view (tablet mode) for portrait, landscape, neither or both. Good for tablets.</string>
     
     <string name="preference_newbranches_title">Show New Posts</string>
     <string name="preference_newbranches_summary">Show green tree branches next to posts that are new since the first time you loaded the thread.</string>
     
     <string name="preference_orientLock_title">Orientation Lock</string>
-    <string name="preference_orientLock_summary">Lock the application to an orientation.</string>
+    <string name="preference_orientLock_summary">Lock the application to portrait or landscape mode.</string>
     
-    <string name="preference_fontsize_title">Change Font Sizes</string>
+    <string name="preference_fontsize_title">Text Zoom</string>
     <string name="preference_fontsize_summary">Make text larger. REQUIRES an app restart.</string>
     
     <string name="preference_showusername_title">Show Username in Preview</string>
@@ -203,7 +203,7 @@
     <string name="preference_popup_browser_title">Default Link Action</string>
     <string name="preference_popup_browser_summary">Choose which links, if any, open internally in the popup browser.</string>
     
-    <string name="preference_bIZ_title">Auto-Zoom Images</string>
+    <string name="preference_bIZ_title">Setup Image Autozoom</string>
     <string name="preference_bIZ_summary">Attempt to fit images in the popup browser to your screen. Click to close settings and enter setup for this feature.</string>
     
     <string name="preference_swipecollapse_title">Swipe to Collapse</string>
@@ -338,13 +338,15 @@
     <string name="preference_threadexpired_title">Show Expired Thread Alert</string>
     <string name="preference_threadexpired_summary">Shows a red bar on the bottom of expired threads</string>
     <string name="preference_uct_title">Use Chrome Tabs</string>
-    <string name="preference_uct_summary">If Chrome is installed, this will cause Chrome Tabs to be used as the popup browser when possible</string>
+    <string name="preference_uct_summary">If Chrome is installed, this will cause Chrome Tabs to be used as the popup browser when possible. Links clicked on will show up in your Chrome history.</string>
     <string name="preference_acr_title">Allow Reply Collapse</string>
     <string name="preference_acr_summary">Allows you to click on the header of a post to collapse it after you opened it, except the root post, which has +1 resistance to collapse.</string>
     <string name="preference_limitvibratespam_title">Annoyance Limit</string>
     <string name="preference_limitvibratespam_summary">Limits the minimum time between two notifications that use vibrate and sound.</string>
     <string name="preference_periodicnetworkservice_summary">Select how often to check for shackmessages in the background. Set to OFF to prevent this.</string>
     <string name="preference_periodicnetworkservice_title">Background ShackMessage Check</string>
+    <string name="preference_onlyFavoritesFromLast18Hours_title">Only Recent Starred</string>
+    <string name="preference_onlyFavoritesFromLast18Hours_summary">Only starred threads from the last 18 hours will be shown at the top of the latestchatty list. Older starred threads will remain in the starred posts app area.</string>
     <!-- items in  the array will show up even when not yet registered -->
     <string-array name="statsItems">
         <item>statsItemAnnoyedByStartupZoomDialog</item>

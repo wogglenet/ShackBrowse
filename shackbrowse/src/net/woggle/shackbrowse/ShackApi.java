@@ -462,6 +462,15 @@ public class ShackApi
         // droid chatty api
     	return getJson(getBaseUrl(context).getUrl() + "page.php?page=" + Integer.toString(pageNumber) + "&user=" + URLEncoder.encode(userName, "UTF8"));
     }
+
+	public static JSONObject getAllThreads(String userName, Context context) throws ClientProtocolException, IOException, JSONException
+	{
+		// requires v2
+		if (getBaseUrl(context).isV2())
+			return getJson(getBaseUrl(context).getUrl() + "getChattyRootPosts?limit=1000&offset=0&username=" + URLEncoder.encode(userName, "UTF8"));
+		else
+			return getJson(WINCHATTYV2_API + "getChattyRootPosts?limit=1000&offset=0&username=" + URLEncoder.encode(userName, "UTF8"));
+	}
     
     public static JSONObject getThreads(int pageNumber, String userName, Context context) throws ClientProtocolException, IOException, JSONException
     {

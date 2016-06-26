@@ -9,9 +9,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -104,7 +106,7 @@ public class ThreadListFragment extends ListFragment
     protected boolean _viewAvailable = false;
     private boolean _silentLoad = false;
 	protected boolean _firstLoad = true;
-	private long _lastThreadGetTime = 0L;
+	long _lastThreadGetTime = 0L;
     boolean _filtering = false;
     protected MaterialDialog _progressDialog;
     
@@ -128,6 +130,8 @@ public class ThreadListFragment extends ListFragment
 	private boolean mSnackBarStuckOpen = false;
 	private Stack<SnackBarQueueItem> mSnackBarQueue = new Stack<SnackBarQueueItem>();
 	private long _lastResumeTimeAndPrompt = 0L;
+	private boolean mGetAllThreadsMode;
+	private String mSortMode = "usual";
 
 	// handle collapsed saving
 	public void onPause()
@@ -169,6 +173,7 @@ public class ThreadListFragment extends ListFragment
 				public void onClick(View view)
 				{
 					refreshThreads();
+					closeSnackBar(true);
 				}
 			});
 
@@ -237,6 +242,8 @@ public class ThreadListFragment extends ListFragment
        	
        	_prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
        	_swipecollapse = Integer.parseInt(_prefs.getString("swipeCollapse", "2"));
+	    mGetAllThreadsMode = _prefs.getBoolean("getAllThreadsMode", false);
+	    mSortMode = _prefs.getString("getSortMode", "usual");
        	// style things on the listview
        	
        	//this.getListView().setDivider(getActivity().getResources().getDrawable(R.drawable.divider));
@@ -412,7 +419,7 @@ public class ThreadListFragment extends ListFragment
 						if (SNKVERBOSE) System.out.println("SNK: CLOSE SCROLL");
 						closeSnackBar(false);
 					}
-					if (++firstVisibleItem + visibleItemCount > (int)(totalItemCount * .9)) {
+					if ((++firstVisibleItem + visibleItemCount > (int)(totalItemCount * .9)) && (!mGetAllThreadsMode)) {
 						// make sure we did not open via external intent, and we are not currently loading, and last call was successful
 						if (
 								(!_nextBackQuitsBecauseOpenedAppViaIntent)
@@ -1524,6 +1531,17 @@ public class ThreadListFragment extends ListFragment
             	_showPinnedInTL = _prefs.getBoolean("showPinnedInTL", true);
             	changed = true;
             }
+	        if (mGetAllThreadsMode != _prefs.getBoolean("getAllThreadsMode", false))
+	        {
+		        mGetAllThreadsMode = _prefs.getBoolean("getAllThreadsMode", false);
+		        changed = true;
+	        }
+	        if (mSortMode != _prefs.getString("getSortMode", "usual"))
+	        {
+	            mSortMode = _prefs.getString("getSortMode", "usual");
+		        changed = true;
+	        }
+
             return changed;
         }
         void setShowTags()
@@ -1887,7 +1905,7 @@ public class ThreadListFragment extends ListFragment
 				
 				ArrayList<Thread> ot_threads = null;
 				try {
-					ot_threads = ShackApi.processThreads(_offlineThread.getThreadsAsJson(true), true, getActivity());
+					ot_threads = ShackApi.processThreads(_offlineThread.getThreadsAsJson(true, true), true, getActivity());
 					
 					// replace cloud data
 					for (int i = 0; i < _adapter.getCount(); i++)
@@ -1924,17 +1942,59 @@ public class ThreadListFragment extends ListFragment
         public ArrayList<Thread> getThreadData() throws IOException, JSONException
         {
         	String userName = _prefs.getString("userName", "");
-            JSONObject json = ShackApi.getThreads(_pageNumber + 1, userName, this.getContext(), _prefs.getBoolean("useTurboAPI", true));
+
+	        JSONObject json;
+	        if (mGetAllThreadsMode)
+		        json = ShackApi.getAllThreads(userName, this.getContext());
+	        else
+                json = ShackApi.getThreads(_pageNumber + 1, userName, this.getContext(), _prefs.getBoolean("useTurboAPI", true));
         	
             // winchatty uses "rootPosts" instead of "comments" // get array of threads
             boolean is_winchatty = json.has("rootPosts");
             JSONArray comments = json.getJSONArray(is_winchatty ? "rootPosts" : "comments");
             _wasLastThreadGetSuccessful = comments.length() > 0;
 	        _lastThreadGetTime = System.currentTimeMillis();
-            
+
             // process these threads and remove collapsed
             ArrayList<Thread> new_threads = ShackApi.processThreads(json, false, mCollapsed, getActivity());
-        	
+
+	        mSortMode = "usual";
+	        // sort fresh threads
+	        if (mSortMode != "usual")
+	        {
+		        Collections.sort(new_threads, new Comparator<Thread>()
+		        {
+			        @Override
+			        public int compare(Thread t1, Thread t2)
+			        {
+				        if (mSortMode == "top")
+				        {
+					        if (t1.getReplyCount() > t2.getReplyCount())
+					        {
+						        return -1;
+					        }
+					        else if (t1.getReplyCount() == t2.getReplyCount())
+					        {
+						        return 0;
+					        }
+					        return 1;
+				        }
+				        else // hot
+				        {
+					        if ((long)((t1.getReplyCount() / TimeDisplay.threadAgeInHours(t1.getPosted())) * 100f) > (long)((t2.getReplyCount() / TimeDisplay.threadAgeInHours(t2.getPosted())) * 100f))
+					        {
+						        return -1;
+					        }
+					        else if ((long)((t1.getReplyCount() / TimeDisplay.threadAgeInHours(t1.getPosted())) * 100f) == (long)((t2.getReplyCount() / TimeDisplay.threadAgeInHours(t2.getPosted())) * 100f))
+					        {
+						        return 0;
+					        }
+					        return 1;
+				        }
+			        }
+		        });
+	        }
+
         	try
         	{
         		if (_getLols)
@@ -1965,7 +2025,7 @@ public class ThreadListFragment extends ListFragment
             	Iterator<Thread> iter = null;
 				try
 				{
-					ot_threads = ShackApi.processThreadsAndUpdReplyCounts(_offlineThread.getThreadsAsJson(true), getActivity());
+					ot_threads = ShackApi.processThreadsAndUpdReplyCounts(_offlineThread.getThreadsAsJson(true, _prefs.getBoolean("onlyFavoritesFromLast18Hours", true)), getActivity());
 				}
 				catch (Exception e)
 				{

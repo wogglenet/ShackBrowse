@@ -145,7 +145,8 @@ public class OfflineThreadFragment extends ThreadListFragment {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-             
+
+	         _lastThreadGetTime = System.currentTimeMillis();
              return new_threads;
         }
 	

@@ -99,7 +99,7 @@ public class FrontpageBrowserFragment extends Fragment {
         mWebview.setWebChromeClient(new WebChromeClient() {
                                  @Override
                                         public void onProgressChanged(WebView view, int progress) {
-                                            if ((progress > 88) && (mLoading == true))
+                                            if ((progress > 50) && (mLoading == true))
                                             {
                                                 if ((getActivity() != null) && (mSplashSuppress == false)) {
                                                     ((MainActivity) getActivity()).hideLoadingSplash();

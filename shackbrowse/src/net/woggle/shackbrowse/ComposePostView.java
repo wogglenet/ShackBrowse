@@ -52,6 +52,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.OvershootInterpolator;
@@ -433,11 +434,33 @@ public class ComposePostView extends ActionBarActivity {
 	            // Pivots indicate where the animation begins from
 	            float pivotX = view.getPivotX() + view.getTranslationX();
 	            float pivotY = view.getPivotY() + view.getTranslationY();
+	            final View v2 = view;
 
 	            // Animate FAB shrinking
 	            ScaleAnimation anim = new ScaleAnimation(1, 0, 1, 0, pivotX, pivotY);
-	            anim.setDuration(200);
+	            anim.setDuration(150);
 	            anim.setInterpolator(new DecelerateInterpolator());
+	            anim.setAnimationListener(new Animation.AnimationListener()
+	            {
+		            @Override
+		            public void onAnimationStart(Animation animation)
+		            {
+
+		            }
+
+		            @Override
+		            public void onAnimationEnd(Animation animation)
+		            {
+						v2.setVisibility(View.INVISIBLE);
+		            }
+
+		            @Override
+		            public void onAnimationRepeat(Animation animation)
+		            {
+
+		            }
+	            });
+
 	            view.startAnimation(anim);
 
                 postClick();
@@ -626,14 +649,14 @@ public class ComposePostView extends ActionBarActivity {
 		if (edit.length() > 1)
 		{
             MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(ComposePostView.this);
-	        builder.setTitle((!_messageMode) ? "Delete or Save Draft" : "Stay or Exit");
+	        builder.setTitle("Exit Composer");
 	        String whatDo = (_replyToPostId == 0) ? "create a new topic post" : "reply to this post";
 	        if (!_messageMode)
-	        	builder.setMessage("You have typed a post. If you save a draft, the next time you " + whatDo + ", your entered text will automatically be loaded. Otherwise, you may choose to delete this post entirely, or stay in the composer.");
+	        	builder.setMessage("You have typed a post. The next time you " + whatDo + ", your drafted post can be restored.");
 	        else
-	        	builder.setMessage("You have typed a post. You may choose to delete this post entirely and exit, or stay in the composer.");
+	        	builder.setMessage("You have typed a post. A draft will not be saved.");
 	        
-	        builder.setNegativeButton("Stay", new DialogInterface.OnClickListener(){
+	        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 			} });
@@ -643,7 +666,7 @@ public class ComposePostView extends ActionBarActivity {
 	        // message mode supports no drafts
 	        if (!_messageMode)
 	        {
-		        builder.setNeutralButton("Save and Exit", new DialogInterface.OnClickListener(){
+		        builder.setNeutralButton("Save Draft", new DialogInterface.OnClickListener(){
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
                         statInc(ctx, "DraftsSaved");
@@ -651,7 +674,7 @@ public class ComposePostView extends ActionBarActivity {
 						_preventDraftSave = false;
 						finish();
 				} });
-		        builder.setPositiveButton("Delete and Exit", new DialogInterface.OnClickListener(){
+		        builder.setPositiveButton("Discard", new DialogInterface.OnClickListener(){
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						// delete any drafts

@@ -130,7 +130,7 @@ public class AppMenu extends ListFragment
                                 ((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_NOTEPREFS);
                             }
                         }, R.drawable.ic_action_action_settings));
-    	        	_adapter.add(new MenuItems(0, "Favorites" , 8, R.drawable.ic_action_toggle_star));
+    	        	_adapter.add(new MenuItems(0, "Starred Posts" , 8, R.drawable.ic_action_toggle_star));
     	        	_adapter.add(new MenuItems(0, "Shack Messages" , 5, R.drawable.ic_action_communication_email));
     	        	_adapter.add(new MenuItems(0, "Settings" , 7, R.drawable.ic_action_action_settings));
     	        	_adapter.add(new MenuItems(0, "Advanced Search" , 6, R.drawable.ic_action_action_search));
@@ -191,7 +191,7 @@ public class AppMenu extends ListFragment
     }
     public void trackM(String label)
     {
-    	((MainActivity)getActivity()).track("ui_menu", "click", label);
+    	((MainActivity)getActivity()).track("ui_menu", label, "click");
     }
   
     @Override

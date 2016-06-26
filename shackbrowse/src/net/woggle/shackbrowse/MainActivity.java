@@ -1136,7 +1136,7 @@ public class MainActivity extends ActionBarActivity
 			}
 		if (type == CONTENT_FAVORITES)
 		{
-			mTitle = "Favorites";
+			mTitle = "Starred Posts";
 			fragment = (OfflineThreadFragment)Fragment.instantiate(getApplicationContext(), OfflineThreadFragment.class.getName(), new Bundle());
 		}
         if (type == CONTENT_PREFS)
@@ -2164,14 +2164,14 @@ public class MainActivity extends ActionBarActivity
                 if (mActivityAvailable) {
                     MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(MainActivity.this);
                     builder.setTitle("Woggle Offline");
-                    builder.setMessage("Woggle servers are down. ShackBrowse may not work properly. Try again later.");
+                    builder.setMessage("Woggle servers are down. ShackBrowse may not work properly. It is recommended you close the app and try again later.");
                     builder.setCancelable(false);
-                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    builder.setPositiveButton("Close App", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             finish();
                         }
                     });
-                    builder.setNegativeButton("Deal with brokenness", new DialogInterface.OnClickListener() {
+                    builder.setNegativeButton("Use Anyway", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                         }
                     });
@@ -2270,7 +2270,7 @@ public class MainActivity extends ActionBarActivity
 			bundle.putString(FirebaseAnalytics.Param.ITEM_ID, category);
 			bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, action);
 			bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "track");
-			mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SEARCH, bundle);
+			mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 
 		}
 	}
@@ -2281,8 +2281,9 @@ public class MainActivity extends ActionBarActivity
 		{
 			System.out.println("ANALYTICS: screen " + name);
 			Bundle bundle = new Bundle();
+			bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "screen");
 			bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, name);
-			bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "track");
+			bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "screen");
 			mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 		}
 	}
@@ -3258,7 +3259,7 @@ public class MainActivity extends ActionBarActivity
 	 */
 	public void annoyBrowserZoomDialog()
 	{
-		if ((!_prefs.contains("browserImageZoom5")) && (!_prefs.getBoolean("neverShowAutoZoomAnnoy", false)))
+		if ((!_prefs.contains("browserImageZoom5")) && (!_prefs.getBoolean("neverShowAutoZoomAnnoy2", false)))
 		{
             StatsFragment.statInc(this, "AnnoyedByStartupZoomDialog");
             MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(this);
@@ -3269,7 +3270,7 @@ public class MainActivity extends ActionBarActivity
 	        ((TextView)annoyLayout.findViewById(R.id.annoy_text)).setText("You don't seem to have set up image auto-zoom for the popup browser yet. Do so now?");
 		    builder.setView(annoyLayout)
 		    // Set the action buttons
-		    .setPositiveButton("Set It Up", new DialogInterface.OnClickListener() {
+		    .setPositiveButton("Set Up", new DialogInterface.OnClickListener() {
 		    	@Override
 		    	public void onClick(DialogInterface dialog, int id) {
 		    		openBrowserZoomAdjust();
@@ -3281,7 +3282,7 @@ public class MainActivity extends ActionBarActivity
 			    	if (dontShowAgain.isChecked())
 			    	{
 				    	Editor edit = _prefs.edit();
-				        edit.putBoolean("neverShowAutoZoomAnnoy", true);
+				        edit.putBoolean("neverShowAutoZoomAnnoy2", true);
 				        edit.commit();
 			    	}
 			    }
@@ -3412,6 +3413,7 @@ public class MainActivity extends ActionBarActivity
     {
         if (_currentFragmentType == CONTENT_FRONTPAGE) {
             // showOnlyProgressBarFromPTRLibrary(false);
+	        _articleViewer.open("about:blank");
             mArticleViewerIsOpen = false;
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction()
