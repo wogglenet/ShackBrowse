@@ -5,11 +5,19 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:layout_margin="5dp">
+    <LinearLayout
+                  android:orientation="vertical"
+                  android:layout_width="fill_parent"
+                  android:layout_height="0dip"
+                  android:layout_weight="1"
+
+                  android:layout_marginLeft="5dp"
+				  android:layout_marginRight="5dp">
+
     <net.woggle.EditTextSelectionSaved
         android:id="@+id/textContent"
         android:layout_width="fill_parent"
-        android:layout_height="0dip"
-        android:layout_weight="1"
+        android:layout_height="fill_parent"
         android:gravity="top"
         android:hint="@string/reply_text_hint"
         android:inputType="textCapSentences|textMultiLine|textLongMessage|textAutoCorrect"
@@ -18,6 +26,7 @@
         android:background="@android:color/transparent"
 
         />
+        </LinearLayout>
 
     <RelativeLayout
         android:elevation="5dp"

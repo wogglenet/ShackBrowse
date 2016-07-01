@@ -21,8 +21,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.SparseIntArray;
 import android.widget.Toast;
 
@@ -43,7 +45,23 @@ public class OfflineThread
 	public OfflineThread (Activity activity)
 	{
 		_activity = activity;
-		loadThreadsFromDiskTask();
+
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+
+		// allows for migration from disk based starred posts to DB based
+		if (!prefs.getBoolean("hasMigratedOldStarredPostsToDB", false))
+		{
+			oldDiskBasedLoadThreadsFromDiskTask();
+			flushThreadsToDiskTask();
+
+			SharedPreferences.Editor editor = prefs.edit();
+			editor.putBoolean("hasMigratedOldStarredPostsToDB", true);
+			editor.apply();
+		}
+		else
+		{
+			loadThreadsFromDiskTask();
+		}
 		
 		// start the periodic updater
 		endCloudUpdates();
@@ -89,19 +107,7 @@ public class OfflineThread
 			_threads.put(threadId, value);
 		}
     }
-	
-	public class SavedThreadObj
-	{
-		public int _rootId;
-		public long _postTime;
-		public JSONObject _threadJson;
-		public int previousReplyCount;
-		public SavedThreadObj (int rootId,long postTime,JSONObject postsJson)
-		{
-			_rootId = rootId; _postTime = postTime; _threadJson = postsJson;
-		}
-	}
-	
+
 	public boolean saveThread(int rootId, long postedTime, JSONObject json)
 	{
 		if (!_threads.containsKey(rootId))
@@ -146,62 +152,126 @@ public class OfflineThread
 			return false;
 		}
 	}
-	
- 	public Hashtable<Integer,SavedThreadObj> loadThreadsFromDiskTask()
+
+	public Hashtable<Integer,SavedThreadObj> loadThreadsFromDiskTask()
 	{
- 		_threads = new Hashtable<Integer,SavedThreadObj>();
- 		System.out.println("OFFLINETHREAD: reloading from disk");
- 		int i = 0;
- 		
-		 if ((_activity != null) && (_activity.getFileStreamPath(THREADCACHE_NAME).exists()))
-	     {
-	         // look at that, we got a file
-	         try {
-	             FileInputStream input = _activity.openFileInput(THREADCACHE_NAME);
-	             try
-	             {
-	                 DataInputStream in = new DataInputStream(input);
-	                 BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-	                 String line = reader.readLine();
-	                 
-	                 while (line != null)
-	                 {
-	                     if (line.length() > 0)
-	                     {
-	                    	 if ((line.indexOf(FIRST_TOKEN) > -1) && (line.indexOf(SECOND_TOKEN) > -1))
-	                    	 {
-	                    		 String rootId = line.substring(0, line.indexOf(FIRST_TOKEN));
-	                    		String postedTime = line.substring(line.indexOf(FIRST_TOKEN) + FIRST_TOKEN.length(), line.indexOf(SECOND_TOKEN));
-	                    		String json = line.substring(line.indexOf(SECOND_TOKEN) + SECOND_TOKEN.length());
-	                    		
-	                    		i++;
-	                    		_threads.put(Integer.valueOf(rootId), new SavedThreadObj(Integer.valueOf(rootId),Long.valueOf(postedTime), new JSONObject(json)));
-	                    		
-	                    	 }
-	                     }
-	                     	
-	                     line = reader.readLine();
-	                     
-	                 }
-	             } catch (NumberFormatException e) {
+		OfflineDB odb = new OfflineDB(_activity);
+		odb.open();
+		_threads = odb.getAllSavedThreads();
+		odb.close();
+
+		System.out.println("OFFLINETHREAD: loaded " + _threads.size() + " threads from disk");
+		return _threads;
+	}
+
+	public boolean flushThreadsToDiskTask()
+	{
+		boolean result = true;
+
+		OfflineDB odb = new OfflineDB(_activity);
+		odb.open();
+
+		odb.deleteAll();
+
+		Enumeration keys = _threads.keys();
+		while( keys.hasMoreElements() ) {
+			Object key = keys.nextElement();
+			SavedThreadObj value = _threads.get(key);
+
+			if (odb.createSavedThreadDBFromSavedThreadObj(value) == null)
+			{
+				result = false;
+			}
+		}
+		odb.close();
+
+		return result;
+	}
+
+	public boolean SaveThreadTask (SavedThreadObj thread)
+	{
+		boolean result = true;
+
+		OfflineDB odb = new OfflineDB(_activity);
+		odb.open();
+		if (odb.createSavedThreadDBFromSavedThreadObj(thread) == null)
+		{
+			result = false;
+		}
+		odb.close();
+
+		if (result)
+		{
+			_threads.put(thread._rootId, thread);
+		}
+		triggerLocalToCloud();
+		return result;
+	}
+	public void deleteAllThreadsTask()
+	{
+		_threads.clear();
+		OfflineDB odb = new OfflineDB(_activity);
+		odb.open();
+		odb.deleteAll();
+		odb.close();
+		triggerLocalToCloud();
+	}
+
+	public Hashtable<Integer,SavedThreadObj> oldDiskBasedLoadThreadsFromDiskTask()
+	{
+		_threads = new Hashtable<Integer,SavedThreadObj>();
+		System.out.println("OFFLINETHREAD: reloading from disk");
+		int i = 0;
+
+		if ((_activity != null) && (_activity.getFileStreamPath(THREADCACHE_NAME).exists()))
+		{
+			// look at that, we got a file
+			try {
+				FileInputStream input = _activity.openFileInput(THREADCACHE_NAME);
+				try
+				{
+					DataInputStream in = new DataInputStream(input);
+					BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+					String line = reader.readLine();
+
+					while (line != null)
+					{
+						if (line.length() > 0)
+						{
+							if ((line.indexOf(FIRST_TOKEN) > -1) && (line.indexOf(SECOND_TOKEN) > -1))
+							{
+								String rootId = line.substring(0, line.indexOf(FIRST_TOKEN));
+								String postedTime = line.substring(line.indexOf(FIRST_TOKEN) + FIRST_TOKEN.length(), line.indexOf(SECOND_TOKEN));
+								String json = line.substring(line.indexOf(SECOND_TOKEN) + SECOND_TOKEN.length());
+
+								i++;
+								_threads.put(Integer.valueOf(rootId), new SavedThreadObj(Integer.valueOf(rootId),Long.valueOf(postedTime), new JSONObject(json)));
+
+							}
+						}
+
+						line = reader.readLine();
+
+					}
+				} catch (NumberFormatException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-	             finally
-	             {
-	                 input.close();
-	             }
-	         }
-	         catch (IOException e) { e.printStackTrace(); }
-	     }
-		 System.out.println("OFFLINETHREAD: loaded " + i + " threads from disk");
-		 
-		 return _threads;
+				finally
+				{
+					input.close();
+				}
+			}
+			catch (IOException e) { e.printStackTrace(); }
+		}
+		System.out.println("OFFLINETHREAD: loaded " + i + " threads from disk");
+
+		return _threads;
 	}
-    
+    /*
  	public boolean SaveThreadTask (SavedThreadObj thread)
 	{
  		boolean result = true;
@@ -317,8 +387,9 @@ public class OfflineThread
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		*/
+		*//*
  	}
+	*/
  	public void deleteExpiredThreadsTask()
  	{
  		System.out.println("OFFLINETHREAD: deleting expired");

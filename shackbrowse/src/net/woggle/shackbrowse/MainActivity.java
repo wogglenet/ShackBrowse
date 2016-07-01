@@ -2267,27 +2267,13 @@ public class MainActivity extends ActionBarActivity
 		{
 			System.out.println("ANALYTICS: track " + category + action + label);
 			Bundle bundle = new Bundle();
-			bundle.putString(FirebaseAnalytics.Param.ITEM_ID, category);
-			bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, action);
-			bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "track");
+			bundle.putString(FirebaseAnalytics.Param.ITEM_ID, label);
+			bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, category);
+			bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, action);
 			mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 
 		}
 	}
-	public void trackScreen (String name)
-	{
-		_analytics  = _prefs.getBoolean("analytics", true);
-		if (_analytics)
-		{
-			System.out.println("ANALYTICS: screen " + name);
-			Bundle bundle = new Bundle();
-			bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "screen");
-			bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, name);
-			bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "screen");
-			mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
-		}
-	}
-	
 	/*
 	 * INTENTS (non-Javadoc)
 	 * @see android.support.v4.app.FragmentActivity#onNewIntent(android.content.Intent)
@@ -3060,7 +3046,7 @@ public class MainActivity extends ActionBarActivity
 			mPBfragment = (PopupBrowserFragment) Fragment.instantiate(getApplicationContext(), PopupBrowserFragment.class.getName(), args);
 			ft.add(R.id.browser_frame, mPBfragment, "pbfrag");
 			ft.attach(mPBfragment);
-			ft.commit();
+			ft.commitAllowingStateLoss();
 
 			new anim(mBrowserFrame).toVisible();
 
@@ -3388,7 +3374,7 @@ public class MainActivity extends ActionBarActivity
                     .show(_articleViewer)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     .hide(_fpBrowser)
-                    .commit();
+                    .commitAllowingStateLoss();
         }
         else if (_currentFragmentType == CONTENT_FRONTPAGE) {
             mArticleViewerIsOpen = true;
@@ -3401,7 +3387,7 @@ public class MainActivity extends ActionBarActivity
                     .show(_articleViewer)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     .hide(_fpBrowser)
-                    .commit();
+                    .commitAllowingStateLoss();
 
             _articleViewer.open(href);
         }

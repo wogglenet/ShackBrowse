@@ -24,10 +24,11 @@ TODO
 * QUOTES FROM TEXT SELECTION
 * SEARCH GOOGLE BY TEXT SELECTION
 * NOTIFICATION SNOOZE
-* PERIODIC POLLING FOR SHACKMESSAGES WITH JOBSCHEDULER
 * WHITE MODE
 * OPTION TO REMOVE DEVICEID FROM ALL NOTIFICATIONS
 * WIDGET FOR TOP POSTS
+
+
 SERVER
 * STAR OUT SPOILER TEXT
 * NO NOTIFICATIONS FROM SELF
@@ -58,6 +59,14 @@ _[b[Have g{Android}g but no Google Play?]b]_ Download the APK and enable APK ins
 
 Source is available by request, although it is a nightmare. b{Questions}b, g{comments}g, r{criticisms}r, and y{feature requests}y go below.
 -->
+
+$ 5.4.2
+% v 5.4.2
+_ July 1, 2016
+* Just in time for July 4, AMERICA shacktag macro!
+* Also rainbow and allcaps macros. Be careful using allcaps on existing shacktags
+* Database for starred posts instead of using flat file (more reliable)
+* Bug Fix: Disappearing post button with post preview
 
 $ 5.4.1
 % v 5.4.1

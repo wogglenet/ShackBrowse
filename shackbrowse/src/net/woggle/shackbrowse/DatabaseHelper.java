@@ -39,8 +39,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
   public static final String COLUMN_WLOLOBJ = "w_lolobj";
   public static final String COLUMN_WHOT = "w_hot";
 
+  public static final String TABLE_STARRED = "starred";
+  public static final String COLUMN_SID= "s_id";
+  public static final String COLUMN_STID = "s_root";
+  public static final String COLUMN_SJSON = "s_json";
+  public static final String COLUMN_SPOSTEDTIME = "s_posted";
+
   private static final String DATABASE_NAME = "shkbrs3.db";
-  private static final int DATABASE_VERSION = 10;
+  private static final int DATABASE_VERSION = 11;
 
   // Database creation sql statement
   private static final String DATABASE_CREATE = "create table "
@@ -65,6 +71,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
   private static final String DATABASE_MAKEINDEX_FOR_DB3 = "CREATE INDEX widget_replycount_idx ON " + TABLE_WIDGET + " (" + COLUMN_WREPLYCOUNT + ");";
   private static final String DATABASE_MAKEINDEX2_FOR_DB3 = "CREATE INDEX widget_hot_idx ON " + TABLE_WIDGET + " (" + COLUMN_WHOT + ");";
 
+  private static final String DATABASE_CREATE4 =  "create table "
+          + TABLE_STARRED + "(" + COLUMN_SID
+          + " integer primary key autoincrement, " + COLUMN_STID + " integer, " + COLUMN_SJSON
+          + " text not null, " + COLUMN_SPOSTEDTIME + " integer);";
+
+  private static final String DATABASE_MAKEINDEX_FOR_DB4 = "CREATE INDEX starred_threadid_idx ON " + TABLE_STARRED + " (" + COLUMN_STID + ");";
+
   public DatabaseHelper(Context context) {
     super(context, DATABASE_NAME, null, DATABASE_VERSION);
   }
@@ -74,8 +87,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     database.execSQL(DATABASE_CREATE);
     database.execSQL(DATABASE_CREATE2);
     database.execSQL(DATABASE_CREATE3);
+    database.execSQL(DATABASE_CREATE4);
     database.execSQL(DATABASE_MAKEINDEX_FOR_DB3);
     database.execSQL(DATABASE_MAKEINDEX2_FOR_DB3);
+    database.execSQL(DATABASE_MAKEINDEX_FOR_DB4);
   }
 
   @Override
@@ -83,11 +98,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     Log.w(DatabaseHelper.class.getName(),
         "Upgrading database from version " + oldVersion + " to "
             + newVersion + ", which will destroy all old data");
-    if ((oldVersion == 9) && (newVersion == 10))
+    if ((oldVersion == 10) && (newVersion == 11))
     {
-        db.execSQL(DATABASE_CREATE3);
-        db.execSQL(DATABASE_MAKEINDEX_FOR_DB3);
-        db.execSQL(DATABASE_MAKEINDEX2_FOR_DB3);
+      db.execSQL(DATABASE_CREATE4);
+      db.execSQL(DATABASE_MAKEINDEX_FOR_DB4);
+    }
+    else if ((oldVersion == 9) && (newVersion == 11))
+    {
+      db.execSQL(DATABASE_CREATE3);
+      db.execSQL(DATABASE_MAKEINDEX_FOR_DB3);
+      db.execSQL(DATABASE_MAKEINDEX2_FOR_DB3);
+      db.execSQL(DATABASE_CREATE4);
+      db.execSQL(DATABASE_MAKEINDEX_FOR_DB4);
     }
     else
     {

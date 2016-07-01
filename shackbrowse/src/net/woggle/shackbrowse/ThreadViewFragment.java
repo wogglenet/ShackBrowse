@@ -2078,7 +2078,8 @@ public class ThreadViewFragment extends ListFragment
 			for (int i = list.length -1; i >= 0; i--) {
 				CustomURLSpan target = list[i];
 				if (PopupBrowserFragment.isImage(target.getURL().trim(),false)) {
-					if (text.subSequence(startClip, text.getSpanEnd(target)).toString().length() > 0) {
+					System.out.println("CHOPPER" + (startClip) + " " +  text.getSpanEnd(target));
+					if ((text.subSequence(startClip, text.getSpanEnd(target)).toString().length() > 0)) {
 						if (removeLinks) {
 							Spannable tempTxt = ((Spannable) text.subSequence(startClip, text.getSpanStart(target)));
 							tempTxt.removeSpan(target);

@@ -608,6 +608,7 @@ public class ComposePostView extends ActionBarActivity {
 		@Override
 		public void onClick(DialogInterface dialog, int which) {
 			// TODO Auto-generated method stub
+			findViewById(R.id.composeButtonPost).setVisibility(View.VISIBLE);
 			
 		} });
         // handle force preview preference
@@ -823,7 +824,79 @@ public class ComposePostView extends ActionBarActivity {
 	}
 	
 	protected AlertDialog _shackTagDialog;
-	
+
+	protected void openMarkupSelector(boolean andReselect)
+	{
+		openMarkupSelector(andReselect, false);
+	}
+
+	protected void openMarkupSelector(boolean andReselect, boolean justColors) {
+		MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(ComposePostView.this);
+		builder.setTitle("Select Shack Tag");
+		if (justColors)
+			builder.setTitle("Select Color");
+
+		GridView grid = new GridView(ComposePostView.this);
+		if (justColors) {
+			grid.setNumColumns(2);
+		}
+		else
+			grid.setNumColumns(3);
+		grid.setHorizontalSpacing(2);
+		grid.setVerticalSpacing(2);
+		grid.setNumColumns(GridView.AUTO_FIT);
+		grid.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
+		grid.setGravity(Gravity.CENTER);
+		grid.setOnItemClickListener(onShackTagSelected);
+
+
+		ArrayList<Spanned> itemList = new ArrayList<Spanned>();
+		for (int i = 0; i < _tagLabels.length; i++)
+		{
+			if ((justColors && (i < 8)) || (!justColors))
+				itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML(_tagLabels[i]), null, true, true));
+		}
+		// AMERICA item
+		itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML("Macro: r{A}rMb{E}br{R}rIb{C}br{A}r"), null, true, true));
+		// RAINBOW
+		itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML("Macro: r{R}rg{A}gb{I}by{N}yl[B]ln[O]np[W]p"), null, true, true));
+		// ALLCAPS
+		itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML("Macro: ALLCAPS"), null, true, true));
+
+		ArrayAdapter<Spanned> adapter = new ArrayAdapter<Spanned>(ComposePostView.this,android.R.layout.simple_list_item_1, itemList);
+		grid.setAdapter(adapter);
+		builder.setView(grid);
+
+		builder.setNegativeButton("Close", new DialogInterface.OnClickListener(){
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+
+			} });
+		_shackTagDialog = builder.create();
+		_shackTagDialog.setCanceledOnTouchOutside(true);
+		_shackTagDialog.show();
+
+		if (andReselect)
+		{
+			_shackTagDialog.setOnDismissListener(new OnDismissListener(){
+
+				@Override
+				public void onDismiss(DialogInterface dialog) {
+					EditText et = (EditText)findViewById(R.id.textContent);
+					et.post(new Runnable(){
+
+						@Override
+						public void run() {
+							EditText et = (EditText)findViewById(R.id.textContent);
+							// completely retarded workaround to bring the contextual action mode actionbar back
+							et.setHapticFeedbackEnabled(false);
+							et.performLongClick();
+							et.setHapticFeedbackEnabled(true);
+						}});
+				}});
+		}
+	}
 
 	OnItemClickListener onShackTagSelected =	new OnItemClickListener()
 	{
@@ -852,9 +925,49 @@ public class ComposePostView extends ActionBarActivity {
         String seltext = edit.getText().toString().substring(start, end);
         if (seltext.length() > 0)
         {
-            String textToInsert = tags[which].substring(0, 2) + seltext + tags[which].substring(5);
-            edit.getText().replace(Math.min(start, end), Math.max(start, end), textToInsert, 0, textToInsert.length());
-            edit.setSelection(Math.min(start, end), Math.min(start, end) + textToInsert.length());
+	        String textToInsert = "";
+	        if (which > 14)
+	        {
+		        switch (which)
+		        {
+			        case 15:
+				        // AMERICA
+				        for (int i = 0; i < seltext.length(); i++)
+				        {
+					        String curTag = ""; String curOpenBracket = "{"; String curCloseBracket = "}";
+					        if ((i % 3) == 0) { curTag = "r"; curOpenBracket = "{"; curCloseBracket = "}"; }
+					        if ((i % 3) == 1) { curTag = ""; curOpenBracket = ""; curCloseBracket = ""; }
+					        if ((i % 3) == 2) { curTag = "b"; curOpenBracket = "{"; curCloseBracket = "}"; }
+					        textToInsert = textToInsert + curTag + curOpenBracket + seltext.charAt(i) + curCloseBracket + curTag;
+				        }
+				        break;
+			        case 16:
+				        // RAINBOW
+				        for (int i = 0; i < seltext.length(); i++)
+				        {
+					        String curTag = ""; String curOpenBracket = "{"; String curCloseBracket = "}";
+					        if ((i % 7) == 0) { curTag = "r"; curOpenBracket = "{"; curCloseBracket = "}"; }
+					        if ((i % 7) == 1) { curTag = "g"; curOpenBracket = "{"; curCloseBracket = "}"; }
+					        if ((i % 7) == 2) { curTag = "b"; curOpenBracket = "{"; curCloseBracket = "}"; }
+					        if ((i % 7) == 3) { curTag = "y"; curOpenBracket = "{"; curCloseBracket = "}"; }
+					        if ((i % 7) == 4) { curTag = "l"; curOpenBracket = "["; curCloseBracket = "]"; }
+					        if ((i % 7) == 5) { curTag = "n"; curOpenBracket = "["; curCloseBracket = "]"; }
+					        if ((i % 7) == 6) { curTag = "p"; curOpenBracket = "["; curCloseBracket = "]"; }
+					        textToInsert = textToInsert + curTag + curOpenBracket + seltext.charAt(i) + curCloseBracket + curTag;
+				        }
+				        break;
+			        case 17:
+				        // ALLCAPS
+				        textToInsert = seltext.toUpperCase();
+				        break;
+		        }
+	        }
+	        else
+	        {
+		        textToInsert = tags[which].substring(0, 2) + seltext + tags[which].substring(5);
+	        }
+	        edit.getText().replace(Math.min(start, end), Math.max(start, end), textToInsert, 0, textToInsert.length());
+	        edit.setSelection(Math.min(start, end), Math.min(start, end) + textToInsert.length());
         }
         else
         {
@@ -870,44 +983,20 @@ public class ComposePostView extends ActionBarActivity {
                 editor.putBoolean("hasSeenMarkupTip", true);
                 editor.apply();
             }
-            String textToInsert = tags[which].substring(0, 2) + tags[which].substring(5);
-            edit.getText().replace(Math.min(start, end), Math.max(start, end), textToInsert, 0, textToInsert.length());
-            edit.setSelection(Math.min(start, end) +2);
-				/*
-				AlertDialog.Builder builder = new AlertDialog.Builder(ComposePostView.this);
-				builder.setTitle("Insert text into " + tags[which]);
-
-				// make final
-				final int tagtype = which;
-				// Set up the input
-				final EditText input = new EditText(ComposePostView.this);
-				// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-				input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
-
-				input.setText(edit.getText().toString().substring(start, end));
-				builder.setView(input);
-
-				// Set up the buttons
-				builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-				    @Override
-				    public void onClick(DialogInterface dialog, int which2) {
-
-				        String textToInsert = tags[tagtype].substring(0, 2) + input.getText().toString() + tags[tagtype].substring(5);
-				        EditText edit = (EditText)findViewById(R.id.textContent);
-				        int start = edit.getSelectionStart();
-				        int end = edit.getSelectionEnd();
-				        edit.getText().replace(Math.min(start, end), Math.max(start, end), textToInsert, 0, textToInsert.length());
-				    }
-				});
-				builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-				    @Override
-				    public void onClick(DialogInterface dialog, int which) {
-				        dialog.cancel();
-				    }
-				});
-
-				builder.show();
-				*/
+	        if (which > 14)
+	        {
+		        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(ComposePostView.this);
+		        builder.setTitle("Cannot Apply");
+		        builder.setMessage("You must select text before applying text macros.");
+		        builder.setNegativeButton("OK", null);
+		        builder.show();
+	        }
+	        else
+	        {
+		        String textToInsert = tags[which].substring(0, 2) + tags[which].substring(5);
+		        edit.getText().replace(Math.min(start, end), Math.max(start, end), textToInsert, 0, textToInsert.length());
+		        edit.setSelection(Math.min(start, end) + 2);
+	        }
         }
     }
 
@@ -942,89 +1031,11 @@ public class ComposePostView extends ActionBarActivity {
 
             content = pad(content, 6, " ");
             statInc(this, "LessThanSixChars");
-            /* Old Behavior, make the user fix it
 
-
-	    	// posts must be 6 chars long
-	    	AlertDialog.Builder builder = new AlertDialog.Builder(ComposePostView.this);
-	        builder.setTitle("Post too short");
-	        builder.setMessage("Shacknews will not allow posts below 6 characters long.");
-	        builder.setNegativeButton("OK", new DialogInterface.OnClickListener(){
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-			} });
-	        AlertDialog alert = builder.create();
-	        alert.setCanceledOnTouchOutside(true);
-	        alert.show();
-            */
 	    }
 
         // post in the background
         new PostTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, content);
-	}
-
-    protected void openMarkupSelector(boolean andReselect)
-    {
-        openMarkupSelector(andReselect, false);
-    }
-
-
-    protected void openMarkupSelector(boolean andReselect, boolean justColors) {
-        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(ComposePostView.this);
-        builder.setTitle("Select Shack Tag");
-        if (justColors)
-            builder.setTitle("Select Color");
-        
-        GridView grid = new GridView(ComposePostView.this);
-        if (justColors) {
-            grid.setNumColumns(2);
-        }
-        else
-            grid.setNumColumns(3);
-        grid.setHorizontalSpacing(2);
-        grid.setVerticalSpacing(2);
-        grid.setGravity(Gravity.CENTER);
-        grid.setOnItemClickListener(onShackTagSelected);
-
-        
-        ArrayList<Spanned> itemList = new ArrayList<Spanned>();
-        for (int i = 0; i < _tagLabels.length; i++)
-        {
-            if ((justColors && (i < 8)) || (!justColors))
-        	    itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML(_tagLabels[i]), null, true, true));
-        }
-        ArrayAdapter<Spanned> adapter = new ArrayAdapter<Spanned>(ComposePostView.this,android.R.layout.simple_list_item_1, itemList);
-        grid.setAdapter(adapter);
-        builder.setView(grid);
-        builder.setNegativeButton("Close", new DialogInterface.OnClickListener(){
-		@Override
-		public void onClick(DialogInterface dialog, int which) {
-			// TODO Auto-generated method stub
-			
-		} });
-        _shackTagDialog = builder.create();
-        _shackTagDialog.setCanceledOnTouchOutside(true);
-        _shackTagDialog.show();
-        
-        if (andReselect)
-        {
-	        _shackTagDialog.setOnDismissListener(new OnDismissListener(){
-	
-				@Override
-				public void onDismiss(DialogInterface dialog) {
-					EditText et = (EditText)findViewById(R.id.textContent);
-					et.post(new Runnable(){
-	
-						@Override
-						public void run() {
-							EditText et = (EditText)findViewById(R.id.textContent);
-							// completely retarded workaround to bring the contextual action mode actionbar back
-							et.setHapticFeedbackEnabled(false);
-							et.performLongClick();
-							et.setHapticFeedbackEnabled(true);
-						}});
-				}});
-        }
 	}
 
 	public void openCameraSelector()
