@@ -436,9 +436,33 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
     @Override
     public void onActivityCreated(Bundle bundle)
     {
-        _progressDialog = MaterialProgressDialog.show(getActivity(), "Checking Notification Status", "Communicating with Shack Browse server...", true, true);
         _GCMAccess = new NetworkNotificationServers(getActivity(), mGCMlistener);
-        _GCMAccess.doUserInfoTask();
+
         super.onActivityCreated(bundle);
+    }
+
+    @Override public void onResume()
+    {
+
+        if (!_GCMAccess.checkPlayServices()) {
+            MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(getActivity());
+            builder.setTitle("No Play Services");
+            builder.setMessage("You need to have Google Play Services installed to receive notifications.");
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener()
+            {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i)
+                {
+                    ((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_PREFS);
+                }
+            });
+            builder.show();
+        }
+        else
+        {
+            _progressDialog = MaterialProgressDialog.show(getActivity(), "Checking Notification Status", "Communicating with Shack Browse server...", true, true);
+            _GCMAccess.doUserInfoTask();
+        }
+        super.onResume();
     }
 }

@@ -20,16 +20,17 @@ public class OfflineDB
 	private String[] allColumns = { DatabaseHelper.COLUMN_SID, DatabaseHelper.COLUMN_STID, DatabaseHelper.COLUMN_SJSON, DatabaseHelper.COLUMN_SPOSTEDTIME };
 
 	public OfflineDB(Context context) {
-		dbH = new DatabaseHelper(context);
+		dbH = DatabaseHelper.getHelper(context);
 	}
 
 	public void open() throws SQLException
 	{
-		database = dbH.getWritableDatabase();
+		database = dbH.openDatabase();
 	}
 
+
 	public void close() {
-		dbH.close();
+		dbH.closeDatabase();
 	}
 
 	public SavedThreadObj getSavedThread(int stId)

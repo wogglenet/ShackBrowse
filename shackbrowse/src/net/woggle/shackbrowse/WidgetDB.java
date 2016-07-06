@@ -20,16 +20,16 @@ public class WidgetDB {
 	private String[] allColumns = { DatabaseHelper.COLUMN_WID, DatabaseHelper.COLUMN_WTID, DatabaseHelper.COLUMN_WPOSTER, DatabaseHelper.COLUMN_WTEXT, DatabaseHelper.COLUMN_WREPLYCOUNT, DatabaseHelper.COLUMN_WREPLIED, DatabaseHelper.COLUMN_WMODERATION, DatabaseHelper.COLUMN_WLOLOBJ, DatabaseHelper.COLUMN_WPOSTEDTIME, DatabaseHelper.COLUMN_WHOT };
 
 	public WidgetDB(Context context) {
-		dbH = new DatabaseHelper(context);
+		dbH = DatabaseHelper.getHelper(context);
 	}
 
 	public void open() throws SQLException
 	{
-		database = dbH.getWritableDatabase();
+		database = dbH.openDatabase();
 	}
 
 	public void close() {
-		dbH.close();
+		dbH.closeDatabase();
 	}
 
 	public Thread getThread(int wId)

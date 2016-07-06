@@ -60,6 +60,14 @@ _[b[Have g{Android}g but no Google Play?]b]_ Download the APK and enable APK ins
 Source is available by request, although it is a nightmare. b{Questions}b, g{comments}g, r{criticisms}r, and y{feature requests}y go below.
 -->
 
+$ 5.4.3
+% v 5.4.3
+_ July 6, 2016
+* Bug Fix: Android N preview app crash on some threads (thanks Horn for providing thread ID to test with!)
+* Bug Fix: Fixed a bug where refresh threads snackbar appeared when it should not
+* Bug Fix: App crash due to database threading issue
+* Bug Fix: App crash opening external browser on certain images
+
 $ 5.4.2
 % v 5.4.2
 _ July 1, 2016

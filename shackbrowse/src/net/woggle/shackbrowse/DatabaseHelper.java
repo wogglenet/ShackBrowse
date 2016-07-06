@@ -7,6 +7,35 @@ import android.util.Log;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
+  private static DatabaseHelper instance;
+  private int mOpenCounter = 0;
+  private SQLiteDatabase mDatabase;
+
+  public static synchronized DatabaseHelper getHelper(Context context)
+  {
+    if (instance == null)
+      instance = new DatabaseHelper(context);
+
+    return instance;
+  }
+
+  public synchronized SQLiteDatabase openDatabase() {
+    mOpenCounter++;
+    if(mOpenCounter == 1) {
+      // Opening new database
+      mDatabase = getWritableDatabase();
+    }
+    return mDatabase;
+  }
+
+  public synchronized void closeDatabase() {
+    mOpenCounter--;
+    if(mOpenCounter == 0) {
+      // Closing database
+      mDatabase.close();
+    }
+  }
+
   public static final String TABLE_NOTES = "notes";
   public static final String COLUMN_NUNIQUE = "n_id";
   public static final String COLUMN_NTYPE = "n_type";

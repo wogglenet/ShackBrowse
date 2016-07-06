@@ -16,15 +16,15 @@ public class PostQueueDB {
 	private String[] allColumns = { DatabaseHelper.COLUMN_PID, DatabaseHelper.COLUMN_PREPLYTO, DatabaseHelper.COLUMN_PTEXT, DatabaseHelper.COLUMN_PFINALID, DatabaseHelper.COLUMN_PISMESSAGE, DatabaseHelper.COLUMN_PISNEWS, DatabaseHelper.COLUMN_PSUBJECT, DatabaseHelper.COLUMN_PRECIPIENT, DatabaseHelper.COLUMN_PFINALIZEDTIME };
 	
 	public PostQueueDB(Context context) {
-		dbHelper = new DatabaseHelper(context);
+		dbHelper = DatabaseHelper.getHelper(context);
 	}
 	
 	public void open() throws SQLException {
-		database = dbHelper.getWritableDatabase();
+		database = dbHelper.openDatabase();
 	}
 	
 	public void close() {
-		dbHelper.close();
+		dbHelper.closeDatabase();
 	}
 	
 	public PostQueueObj getPostQueueObj(int pqoId)

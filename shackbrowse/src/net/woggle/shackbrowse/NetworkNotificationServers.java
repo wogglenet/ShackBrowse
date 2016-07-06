@@ -51,7 +51,7 @@ public class NetworkNotificationServers
 	private OnGCMInteractListener _listener;
 		//private TextView mDisplay;
      
-     private boolean checkPlayServices() {
+     protected boolean checkPlayServices() {
          int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
          if (resultCode != ConnectionResult.SUCCESS) {
              if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {

@@ -50,6 +50,7 @@ public class PopupBrowserFragment extends Fragment {
 	public static final int BROWSER = 100;
 	public static final int SHOW_ZOOM_CONTROLS = 200;
 	public static final int SHOW_PHOTO_VIEW = 300;
+	private boolean mIsCustomView = false;
 
 	@Override
     public void onCreate(Bundle savedInstanceState)
@@ -128,7 +129,10 @@ public class PopupBrowserFragment extends Fragment {
 				if (!TextUtils.isEmpty(title)) {
 					if (getActivity() != null) {
 						((MainActivity) getActivity()).setBrowserTitle(title);
-						_href = view.getUrl();
+						if (!mIsCustomView)
+						{
+							_href = view.getUrl();
+						}
 					}
 				}
 			}
@@ -205,6 +209,7 @@ public class PopupBrowserFragment extends Fragment {
         	mWebview.getSettings().setUserAgentString("nothing");
         	//wb.setBackground(con.getResources().getDrawable(R.drawable.bg_app_ics));
             // wb.setBackgroundColor(con.getResources().getColor(R.color.webview_bg));
+	        mIsCustomView = true;
         	mWebview.loadData(html, "text/html", null);
         }
         // check for images, we scale for them
@@ -229,12 +234,19 @@ public class PopupBrowserFragment extends Fragment {
         	//wb.setBackground(con.getResources().getDrawable(R.drawable.bg_app_ics));
             // wb.setBackgroundColor(con.getResources().getColor(R.color.webview_bg));
         	if (isTest)
-        		mWebview.loadDataWithBaseURL("file:///android_asset/", data, "text/html", null, null);
+	        {
+		        mIsCustomView = true;
+		        mWebview.loadDataWithBaseURL("file:///android_asset/", data, "text/html", null, null);
+	        }
         	else
-        		mWebview.loadData(data, "text/html", null);
+	        {
+		        mIsCustomView = true;
+		        mWebview.loadData(data, "text/html", null);
+	        }
         }
         else
         {
+	        mIsCustomView = false;
             mWebview.loadUrl(_href);
 			if (getActivity() != null)
 			{
@@ -420,6 +432,10 @@ public class PopupBrowserFragment extends Fragment {
 	public void openExternal(String href) {
 		if (getActivity() != null)
 		{
+			if (!href.contains("http://"))
+			{
+				href = "http://" + href;
+			}
 			Intent i = new Intent(Intent.ACTION_VIEW, 
 	  		       Uri.parse(href));
 	  		getActivity().startActivity(i);

@@ -150,7 +150,16 @@ public class ThreadListFragment extends ListFragment
 
 		// snackbar for old thread data, prevent multiople fires in less than 20 seconds
 		if (SNKVERBOSE) System.out.println("SNK ONRESUME"+(System.currentTimeMillis() - _lastResumeTimeAndPrompt) + " " + _lastResumeTimeAndPrompt);
-		if ((((System.currentTimeMillis() - _lastResumeTimeAndPrompt) > 20000L) && (_lastResumeTimeAndPrompt > 0L)) &&  (TimeDisplay.threadAgeInHours(_lastThreadGetTime) > 3d))
+		if (
+				(((System.currentTimeMillis() - _lastResumeTimeAndPrompt) > 20000L)
+						&& (_lastResumeTimeAndPrompt > 0L))
+						&&  (TimeDisplay.threadAgeInHours(_lastThreadGetTime) > 3d)
+						&& (((MainActivity)getActivity())._currentFragmentType == MainActivity.CONTENT_THREADLIST)
+						&& (
+							(!(((MainActivity)getActivity()).getSliderOpen()) && !(((MainActivity)getActivity()).getDualPane()))
+									|| (((MainActivity)getActivity()).getDualPane())
+							)
+				)
 		{
 			/*
 			SnackBar snackbar = new SnackBar(getActivity(), "Your threads are out of date by 3 or more hours", "Refresh", new View.OnClickListener()

@@ -87,6 +87,9 @@ import org.json.JSONObject;
 
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.ListIterator;
 import java.util.Random;
@@ -2069,16 +2072,32 @@ public class ThreadViewFragment extends ListFragment
 				image = pimage;
 			}
 		}
-		private ArrayList<PostClip> postTextChopper(Spannable text, boolean removeLinks) {
+		private ArrayList<PostClip> postTextChopper(final Spannable text, boolean removeLinks) {
 			// this thing chops up posts that have image links into sets up preceeding text and image link following it.
 			CustomURLSpan[] list = text.getSpans(0, text.length(), CustomURLSpan.class);
+			ArrayList<CustomURLSpan> spanList = new ArrayList<CustomURLSpan>(Arrays.asList(list));
+
+			// bug fix for android n. getSpans no longer gives an ordered list. google is a bag of dicks
+			Collections.sort(spanList, new Comparator<CustomURLSpan>()
+			{
+				@Override
+				public int compare(CustomURLSpan t1, CustomURLSpan t2)
+				{
+					if (text.getSpanStart(t1) > text.getSpanStart(t2))
+						return 1;
+					else if (text.getSpanStart(t1) == text.getSpanStart(t2))
+						return 0;
+					return -1;
+				}
+			});
+
 			ArrayList<PostClip> returnItem = new ArrayList<PostClip>();
 			int startClip = 0;
 
-			for (int i = list.length -1; i >= 0; i--) {
-				CustomURLSpan target = list[i];
+			for (int i = 0; i < spanList.size(); i++)
+			{
+				CustomURLSpan target = spanList.get(i);
 				if (PopupBrowserFragment.isImage(target.getURL().trim(),false)) {
-					System.out.println("CHOPPER" + (startClip) + " " +  text.getSpanEnd(target));
 					if ((text.subSequence(startClip, text.getSpanEnd(target)).toString().length() > 0)) {
 						if (removeLinks) {
 							Spannable tempTxt = ((Spannable) text.subSequence(startClip, text.getSpanStart(target)));

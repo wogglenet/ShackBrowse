@@ -16,15 +16,15 @@ public class NotificationsDB {
 	private String[] allColumns = { DatabaseHelper.COLUMN_NUNIQUE, DatabaseHelper.COLUMN_NPOSTID, DatabaseHelper.COLUMN_NTYPE, DatabaseHelper.COLUMN_NBODY, DatabaseHelper.COLUMN_NAUTHOR, DatabaseHelper.COLUMN_NTIME, DatabaseHelper.COLUMN_NKW };
 	
 	public NotificationsDB(Context context) {
-		dbHelper = new DatabaseHelper(context);
+		dbHelper = DatabaseHelper.getHelper(context);
 	}
 	
 	public void open() throws SQLException {
-		database = dbHelper.getWritableDatabase();
+		database = dbHelper.openDatabase();
 	}
 	
 	public void close() {
-		dbHelper.close();
+		dbHelper.closeDatabase();
 	}
 	
 	public void createNote(NotificationObj note) {
