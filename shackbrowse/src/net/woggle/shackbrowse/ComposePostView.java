@@ -611,6 +611,14 @@ public class ComposePostView extends ActionBarActivity {
 			findViewById(R.id.composeButtonPost).setVisibility(View.VISIBLE);
 			
 		} });
+	    builder.setOnCancelListener(new DialogInterface.OnCancelListener()
+	    {
+		    @Override
+		    public void onCancel(DialogInterface dialogInterface)
+		    {
+			    findViewById(R.id.composeButtonPost).setVisibility(View.VISIBLE);
+		    }
+	    });
         // handle force preview preference
         if ((((_replyToPostId == 0) && (_forcePostPreview >= 1)) || (_forcePostPreview == 2)) && (!_messageMode))
         {

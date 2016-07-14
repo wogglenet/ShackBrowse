@@ -31,6 +31,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import java.lang.reflect.Field;
 
 
 public class PopupBrowserFragment extends Fragment {
@@ -172,9 +173,29 @@ public class PopupBrowserFragment extends Fragment {
     @Override
     public void onDetach()
     {
-    	if (getActivity() != null)
-    		((MainActivity)getActivity()).showOnlyProgressBarFromPTRLibrary(false);
+	    try
+	    {
+		    if (getActivity() != null)
+			    ((MainActivity) getActivity()).showOnlyProgressBarFromPTRLibrary(false);
+	    }
+	    catch (Exception e)
+	    {
+
+	    }
+
+
     	super.onDetach();
+
+		// supposed bug fix for Exception java.lang.IllegalStateException: Activity has been destroyed
+	    try {
+		    Field childFragmentManager = Fragment.class.getDeclaredField("mChildFragmentManager");
+		    childFragmentManager.setAccessible(true);
+		    childFragmentManager.set(this, null);
+	    } catch (NoSuchFieldException e) {
+		    throw new RuntimeException(e);
+	    } catch (IllegalAccessException e) {
+		    throw new RuntimeException(e);
+	    }
     }
     
     public void open(String... hrefs)

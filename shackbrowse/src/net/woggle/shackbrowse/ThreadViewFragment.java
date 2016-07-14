@@ -1387,10 +1387,12 @@ public class ThreadViewFragment extends ListFragment
             DisplayMetrics displaymetrics = new DisplayMetrics();
             display.getMetrics(displaymetrics);
             _maxWidth = (int) (displaymetrics.widthPixels * (.7));
-            createAllBullets();
+
         	_maxBullets = (int) Math.floor(_maxWidth / _bulletWidth);
         	// failsafe
         	if (_maxBullets < 8) _maxBullets = 8;
+
+	        createAllBullets();
         }
         
         @Override

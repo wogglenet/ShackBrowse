@@ -2733,7 +2733,8 @@ public class MainActivity extends ActionBarActivity
 	}
 	
 	protected void onSaveInstanceState(Bundle save) {
-		  super.onSaveInstanceState(save);
+		save.putString("WORKAROUND_FOR_BUG_19917_KEY", "WORKAROUND_FOR_BUG_19917_VALUE");
+		super.onSaveInstanceState(save);
 	}
 	
 	// what happens when new post button is clicked in threadlist fragment or from intent
@@ -3363,6 +3364,8 @@ public class MainActivity extends ActionBarActivity
     public void openInArticleViewer(String href)
     {
         StatsFragment.statInc(this, "ArticleOpened");
+
+
         if (_currentFragmentType != CONTENT_FRONTPAGE) {
             mArticleViewerIsOpen = true;
             _fpBrowser.mSplashSuppress = true;

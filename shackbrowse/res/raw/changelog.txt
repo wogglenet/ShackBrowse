@@ -50,6 +50,13 @@ e[*]e Bug Fix: Regression allowing root post to have show parent preview in comp
 e[*]e Bug Fix: Link options button disabled on all links instead of only images when auto-embed active
 e[*]e Bug Fix: Popup browser now opens current page when external browser opened instead of original link URL]s
 
+Source is available by request, although it is a nightmare. b{Questions}b, g{comments}g, r{criticisms}r, and y{feature requests}y go below.
+
+------
+
+q[b[n[F.A.Q.]n]b]q
+
+g{Where do I get it?}g
 s[_[b[On g{Android}g?]b]_ l[Shack Browse]l is available on Google Play: https://play.google.com/store/apps/details?id=net.woggle.shackbrowse
 b[_[Don't have Android?]_]b Shack Browse can be run in b{Google Chrome}b to see what the fuss is about:
 1b{.}b Install ARC Welder: https://chrome.google.com/webstore/detail/arc-welder/emfinbmielocnlhgmfkkmkngdoccbadn
@@ -57,8 +64,24 @@ b[_[Don't have Android?]_]b Shack Browse can be run in b{Google Chrome}b to see 
 3b{.}b Notifications probably won't work, but I have no idea
 _[b[Have g{Android}g but no Google Play?]b]_ Download the APK and enable APK installation from unknown sources in your settings: http://woggle.net/oldSB/?C=M;O=D]s
 
-Source is available by request, although it is a nightmare. b{Questions}b, g{comments}g, r{criticisms}r, and y{feature requests}y go below.
+r{Can I Donate?}r
+Yes, you can send me a beer with http://woggle.net/donate/ .. I have enough money to run the server for years at this point. But I do like beer.
+
+y{My Notificiations are jacked up.}y
+I screwed up the server a lot over the weekend. It's all fixed now. Try to re-enable them.
+
+l[Can I see the source?]l
+https://github.com/bradsh/ShackBrowse It is a mess. I am not a professional programmer nor do I have any degrees in computer science. I just wanted a shack app so I learned to program.
+
 -->
+
+$ 5.4.4
+% v 5.4.4
+_ July 14, 2016
+* Bug Fix: Bug where post button disppears
+* Bug Fix: Another attempt at reigning in refresh threads snackbar
+* Bug Fix: Crashes based on odd support library bugs
+* Bug Fix: Article viewer opens external links in browser now
 
 $ 5.4.3
 % v 5.4.3

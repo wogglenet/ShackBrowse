@@ -225,13 +225,18 @@ public class FrontpageBrowserFragment extends Fragment {
                             return true;
                         } else if ((uri.getHost().equalsIgnoreCase("www.shacknews.com") || uri.getHost().equalsIgnoreCase("shacknews.com")) && uri.getPath().toLowerCase().contains("article")) {
                             ((MainActivity) getActivity()).openInArticleViewer(uri.toString());
+
                     /*
                     if (getActivity() != null)
                         ((MainActivity)getActivity()).showOnlyProgressBarFromPTRLibrary(false);
                         */
                             return true;
                         }
-                        return false;
+                        else
+                        {
+                            openExternal(_href);
+                            return true;
+                        }
                     }
                 });
 
@@ -256,11 +261,11 @@ public class FrontpageBrowserFragment extends Fragment {
         super.onStop();
     }
 
-    public void openExternal() {
+    public void openExternal(String href) {
         if (getActivity() != null)
         {
             Intent i = new Intent(Intent.ACTION_VIEW,
-                    Uri.parse(mWebview.getUrl()));
+                    Uri.parse(href));
             getActivity().startActivity(i);
         }
     }

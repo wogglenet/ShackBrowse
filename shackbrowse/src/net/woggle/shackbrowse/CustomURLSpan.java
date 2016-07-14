@@ -119,7 +119,7 @@ public class CustomURLSpan extends CustomClickableSpan implements OnLongClickLis
             || (href.contains("shacknews.com/article") && ((_useBrowser == 1) || (_useBrowser == 0)))
         	)
         {
-            if (href.contains("shacknews.com/article"))
+            if (href.contains("shacknews.com/article")) // simple removal of article viewer
             {
                 if (((MainActivity)v.getContext()).getSliderOpen() && !((MainActivity)v.getContext()).getDualPane())
                 {
