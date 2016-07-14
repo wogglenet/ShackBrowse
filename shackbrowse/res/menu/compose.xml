@@ -8,6 +8,12 @@
 		  android:title="@string/compose_markup"
 		  android:visible="true"
 		  android:orderInCategory="1" />
+	<item android:id="@+id/menu_compose_macro"
+		  app:showAsAction="ifRoom"
+		  android:icon="@drawable/ic_action_editor_format_paint"
+		  android:title="@string/compose_macro"
+		  android:visible="true"
+		  android:orderInCategory="1" />
 	<item android:id="@+id/menu_compose_camera"
         app:showAsAction="ifRoom"
 		  android:icon="@drawable/ic_action_image_camera_alt"

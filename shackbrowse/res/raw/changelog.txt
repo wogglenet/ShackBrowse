@@ -78,6 +78,7 @@ https://github.com/bradsh/ShackBrowse It is a mess. I am not a professional prog
 $ 5.4.4
 % v 5.4.4
 _ July 14, 2016
+* Macros menu cleaned up
 * Bug Fix: Bug where post button disppears
 * Bug Fix: Another attempt at reigning in refresh threads snackbar
 * Bug Fix: Crashes based on odd support library bugs

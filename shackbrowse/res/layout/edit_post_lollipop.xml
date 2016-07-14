@@ -80,5 +80,17 @@
             android:layout_centerVertical="true"
             android:background="?android:attr/selectableItemBackground"
             />
+        <ImageButton
+            android:id="@+id/composeButtonMacros"
+            android:layout_toRightOf="@id/composeButtonMarkup"
+            android:layout_height="@dimen/composeRowButtonHeight"
+            android:layout_width="@dimen/composeRowButtonWidth"
+            android:src="@drawable/ic_action_editor_format_paint"
+            android:paddingLeft="10dp"
+            android:scaleType="fitCenter"
+            android:paddingRight="10dp"
+            android:layout_centerVertical="true"
+            android:background="?android:attr/selectableItemBackground"
+            />
 </RelativeLayout>
 </LinearLayout>

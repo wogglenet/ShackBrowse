@@ -6,4 +6,10 @@
           android:titleCondensed="Markup"
           android:icon="@drawable/ic_action_image_color_lens"
           android:title="@string/compose_markup" />
+    <item android:id="@+id/menu_compMacro"
+          app:showAsAction="always"
+          android:icon="@drawable/ic_action_editor_format_paint"
+          android:title="@string/compose_macro"
+          android:visible="true"
+          android:orderInCategory="1" />
 </menu>

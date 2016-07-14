@@ -347,6 +347,7 @@
     <string name="preference_periodicnetworkservice_title">Background ShackMessage Check</string>
     <string name="preference_onlyFavoritesFromLast18Hours_title">Only Recent Starred</string>
     <string name="preference_onlyFavoritesFromLast18Hours_summary">Only starred threads from the last 18 hours will be shown at the top of the latestchatty list. Older starred threads will remain in the starred posts app area.</string>
+    <string name="compose_macro">Apply Macro</string>
     <!-- items in  the array will show up even when not yet registered -->
     <string-array name="statsItems">
         <item>statsItemAnnoyedByStartupZoomDialog</item>

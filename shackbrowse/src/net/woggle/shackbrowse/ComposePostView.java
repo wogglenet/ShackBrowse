@@ -292,6 +292,9 @@ public class ComposePostView extends ActionBarActivity {
         	case R.id.menu_compose_markup:
                 openMarkupSelector(false);
                 break;
+	        case R.id.menu_compose_macro:
+		        openMarkupSelector(false,true);
+		        break;
         	case R.id.menu_compose_post:
                 postClick();
                 break;
@@ -485,6 +488,12 @@ public class ComposePostView extends ActionBarActivity {
                 openMarkupSelector(false);
             }
         });
+		findViewById(R.id.composeButtonMacros).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				openMarkupSelector(false, true);
+			}
+		});
 	}
 	
 	@Override
@@ -557,6 +566,7 @@ public class ComposePostView extends ActionBarActivity {
             menu.findItem(R.id.menu_compose_camera).setVisible(showPostAsAction);
             menu.findItem(R.id.menu_compose_picture).setVisible(showPostAsAction);
             menu.findItem(R.id.menu_compose_markup).setVisible(showPostAsAction);
+	        menu.findItem(R.id.menu_compose_macro).setVisible(showPostAsAction);
         }
     }
 
@@ -838,38 +848,49 @@ public class ComposePostView extends ActionBarActivity {
 		openMarkupSelector(andReselect, false);
 	}
 
-	protected void openMarkupSelector(boolean andReselect, boolean justColors) {
+	static final String MARKUPTITLE = "Select Shack Tag";
+	static final String MACROTITLE = "Select Macro";
+	boolean mIsMacroItem = false;
+	protected void openMarkupSelector(boolean andReselect, boolean macrosInstead) {
+		mIsMacroItem = macrosInstead;
+
 		MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(ComposePostView.this);
-		builder.setTitle("Select Shack Tag");
-		if (justColors)
-			builder.setTitle("Select Color");
+		builder.setTitle(MARKUPTITLE);
+		if (macrosInstead)
+			builder.setTitle(MACROTITLE);
 
 		GridView grid = new GridView(ComposePostView.this);
-		if (justColors) {
+		if (macrosInstead) {
 			grid.setNumColumns(2);
 		}
 		else
 			grid.setNumColumns(3);
 		grid.setHorizontalSpacing(2);
 		grid.setVerticalSpacing(2);
-		grid.setNumColumns(GridView.AUTO_FIT);
+		//grid.setNumColumns(GridView.AUTO_FIT);
 		grid.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
 		grid.setGravity(Gravity.CENTER);
+
 		grid.setOnItemClickListener(onShackTagSelected);
 
 
 		ArrayList<Spanned> itemList = new ArrayList<Spanned>();
-		for (int i = 0; i < _tagLabels.length; i++)
+		if (!macrosInstead)
 		{
-			if ((justColors && (i < 8)) || (!justColors))
+			for (int i = 0; i < _tagLabels.length; i++)
+			{
 				itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML(_tagLabels[i]), null, true, true));
+			}
 		}
-		// AMERICA item
-		itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML("Macro: r{A}rMb{E}br{R}rIb{C}br{A}r"), null, true, true));
-		// RAINBOW
-		itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML("Macro: r{R}rg{A}gb{I}by{N}yl[B]ln[O]np[W]p"), null, true, true));
-		// ALLCAPS
-		itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML("Macro: ALLCAPS"), null, true, true));
+		if (macrosInstead)
+		{
+			// AMERICA item
+			itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML("Macro: r{A}rMb{E}br{R}rIb{C}br{A}r"), null, true, true));
+			// RAINBOW
+			itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML("Macro: r{R}rg{A}gb{I}by{N}yl[B]ln[O]np[W]p"), null, true, true));
+			// ALLCAPS
+			itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML("Macro: ALLCAPS"), null, true, true));
+		}
 
 		ArrayAdapter<Spanned> adapter = new ArrayAdapter<Spanned>(ComposePostView.this,android.R.layout.simple_list_item_1, itemList);
 		grid.setAdapter(adapter);
@@ -910,10 +931,7 @@ public class ComposePostView extends ActionBarActivity {
 	{
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3) {
-
             applyMarkup(which);
-			
-			
 		}		
 	};
 
@@ -934,11 +952,11 @@ public class ComposePostView extends ActionBarActivity {
         if (seltext.length() > 0)
         {
 	        String textToInsert = "";
-	        if (which > 14)
+	        if (mIsMacroItem)
 	        {
 		        switch (which)
 		        {
-			        case 15:
+			        case 0:
 				        // AMERICA
 				        for (int i = 0; i < seltext.length(); i++)
 				        {
@@ -949,7 +967,7 @@ public class ComposePostView extends ActionBarActivity {
 					        textToInsert = textToInsert + curTag + curOpenBracket + seltext.charAt(i) + curCloseBracket + curTag;
 				        }
 				        break;
-			        case 16:
+			        case 1:
 				        // RAINBOW
 				        for (int i = 0; i < seltext.length(); i++)
 				        {
@@ -964,7 +982,7 @@ public class ComposePostView extends ActionBarActivity {
 					        textToInsert = textToInsert + curTag + curOpenBracket + seltext.charAt(i) + curCloseBracket + curTag;
 				        }
 				        break;
-			        case 17:
+			        case 2:
 				        // ALLCAPS
 				        textToInsert = seltext.toUpperCase();
 				        break;
@@ -991,7 +1009,7 @@ public class ComposePostView extends ActionBarActivity {
                 editor.putBoolean("hasSeenMarkupTip", true);
                 editor.apply();
             }
-	        if (which > 14)
+	        if (mIsMacroItem)
 	        {
 		        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(ComposePostView.this);
 		        builder.setTitle("Cannot Apply");
@@ -1469,12 +1487,16 @@ public class ComposePostView extends ActionBarActivity {
 	    	if (_landscape)
 	    	{
 	    		menu.findItem(R.id.menu_compMarkup).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS|MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+			    menu.findItem(R.id.menu_compMacro).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS|MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 	    		if (menu.findItem(android.R.id.selectAll) != null)
 	    			menu.findItem(android.R.id.selectAll).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM|MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+
+
 	    	}
 	    	else
 	    	{
 	    		menu.findItem(R.id.menu_compMarkup).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+			    menu.findItem(R.id.menu_compMacro).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 	    		if (menu.findItem(android.R.id.selectAll) != null)
 	    			menu.findItem(android.R.id.selectAll).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 	    	}
@@ -1491,9 +1513,12 @@ public class ComposePostView extends ActionBarActivity {
 
 	        switch(item.getItemId()) {
 
-	        case R.id.menu_compMarkup:
-	            openMarkupSelector(true);
-	            return true;
+		        case R.id.menu_compMarkup:
+		            openMarkupSelector(true);
+		            return true;
+		        case R.id.menu_compMacro:
+			        openMarkupSelector(true, true);
+			        return true;
 	        }
 	        return false;
 	    }
