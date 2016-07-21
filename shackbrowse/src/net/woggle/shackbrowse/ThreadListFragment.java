@@ -156,7 +156,10 @@ public class ThreadListFragment extends ListFragment
 			public void run()
 			{
 				if (
-						(((System.currentTimeMillis() - _lastResumeTimeAndPrompt) > 20000L)
+						(
+								(getActivity() != null)
+								&& (getActivity() instanceof MainActivity)
+								&& ((System.currentTimeMillis() - _lastResumeTimeAndPrompt) > 20000L)
 								&& (_lastResumeTimeAndPrompt > 0L))
 								&&  (TimeDisplay.threadAgeInHours(_lastThreadGetTime) > 3d)
 								&& (((MainActivity)getActivity())._currentFragmentType == MainActivity.CONTENT_THREADLIST)

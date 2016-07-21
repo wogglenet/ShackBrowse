@@ -75,7 +75,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
   public static final String COLUMN_SPOSTEDTIME = "s_posted";
 
   private static final String DATABASE_NAME = "shkbrs3.db";
-  private static final int DATABASE_VERSION = 11;
+  private static final int DATABASE_VERSION = 12;
 
   // Database creation sql statement
   private static final String DATABASE_CREATE = "create table "
@@ -114,7 +114,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
   @Override
   public void onCreate(SQLiteDatabase database) {
     database.execSQL(DATABASE_CREATE);
-    database.execSQL(DATABASE_CREATE2);
+    // database.execSQL(DATABASE_CREATE2); PQP table moved to another db due to locking and double post issues
     database.execSQL(DATABASE_CREATE3);
     database.execSQL(DATABASE_CREATE4);
     database.execSQL(DATABASE_MAKEINDEX_FOR_DB3);
@@ -127,22 +127,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     Log.w(DatabaseHelper.class.getName(),
         "Upgrading database from version " + oldVersion + " to "
             + newVersion + ", which will destroy all old data");
-    if ((oldVersion == 10) && (newVersion == 11))
+    if ((oldVersion == 11) && (newVersion == 12))
+    {
+      db.execSQL("DROP TABLE IF EXISTS " + TABLE_POSTQUEUE);
+    }
+    else if ((oldVersion == 10) && (newVersion == 12))
     {
       db.execSQL(DATABASE_CREATE4);
       db.execSQL(DATABASE_MAKEINDEX_FOR_DB4);
+      db.execSQL("DROP TABLE IF EXISTS " + TABLE_POSTQUEUE);
     }
-    else if ((oldVersion == 9) && (newVersion == 11))
+    else if ((oldVersion == 9) && (newVersion == 12))
     {
       db.execSQL(DATABASE_CREATE3);
       db.execSQL(DATABASE_MAKEINDEX_FOR_DB3);
       db.execSQL(DATABASE_MAKEINDEX2_FOR_DB3);
       db.execSQL(DATABASE_CREATE4);
       db.execSQL(DATABASE_MAKEINDEX_FOR_DB4);
+      db.execSQL("DROP TABLE IF EXISTS " + TABLE_POSTQUEUE);
     }
     else
     {
     	db.execSQL("DROP TABLE IF EXISTS " + TABLE_POSTQUEUE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_WIDGET);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_STARRED);
 	    db.execSQL("DROP TABLE IF EXISTS " + TABLE_NOTES);
 	    onCreate(db);
     }

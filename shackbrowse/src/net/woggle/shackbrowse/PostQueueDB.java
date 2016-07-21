@@ -12,11 +12,11 @@ import android.database.sqlite.SQLiteDatabase;
 public class PostQueueDB {
 	// Database fields
 	private SQLiteDatabase database;
-	private DatabaseHelper dbHelper;
+	private DatabaseHelperPQP dbHelper;
 	private String[] allColumns = { DatabaseHelper.COLUMN_PID, DatabaseHelper.COLUMN_PREPLYTO, DatabaseHelper.COLUMN_PTEXT, DatabaseHelper.COLUMN_PFINALID, DatabaseHelper.COLUMN_PISMESSAGE, DatabaseHelper.COLUMN_PISNEWS, DatabaseHelper.COLUMN_PSUBJECT, DatabaseHelper.COLUMN_PRECIPIENT, DatabaseHelper.COLUMN_PFINALIZEDTIME };
 	
 	public PostQueueDB(Context context) {
-		dbHelper = DatabaseHelper.getHelper(context);
+		dbHelper = DatabaseHelperPQP.getHelper(context);
 	}
 	
 	public void open() throws SQLException {

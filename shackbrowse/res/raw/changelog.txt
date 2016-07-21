@@ -68,12 +68,19 @@ r{Can I Donate?}r
 Yes, you can send me a beer with http://woggle.net/donate/ .. I have enough money to run the server for years at this point. But I do like beer.
 
 y{My Notificiations are jacked up.}y
-I screwed up the server a lot over the weekend. It's all fixed now. Try to re-enable them.
+Like anything good in tech, turn it off and on again. If that doesn't work, clear app data and then log back in, close the app, and open it again.
 
 l[Can I see the source?]l
 https://github.com/bradsh/ShackBrowse It is a mess. I am not a professional programmer nor do I have any degrees in computer science. I just wanted a shack app so I learned to program.
 
 -->
+
+$ 5.4.5
+% v 5.4.5
+_ July 20, 2016
+* PostQueue database moved to its own database to avoid threaded locking issues
+* Bug Fix: external browser bad link for https
+* Bug Fix: Hopefully many of the odd crashes that were due to database locking issues
 
 $ 5.4.4
 % v 5.4.4

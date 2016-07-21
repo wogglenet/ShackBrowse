@@ -179,7 +179,8 @@ public class ChangeLog {
 
         protected void startAppInfo() {
                 Intent i = new Intent(context, DonateActivity.class);
-                ((MainActivity)context).startActivityForResult(i, ThreadListFragment.OPEN_PREFS);
+                if (context instanceof MainActivity)
+                        ((MainActivity)context).startActivityForResult(i, ThreadListFragment.OPEN_PREFS);
             /*
         	Intent i = new Intent(context, DonateActivity.class);
             context.startActivity(i); */
