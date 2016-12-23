@@ -891,6 +891,8 @@ public class ComposePostView extends ActionBarActivity {
 			itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML("Macro: r{R}rg{A}gb{I}by{N}yl[B]ln[O]np[W]p"), null, true, true));
 			// ALLCAPS
 			itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML("Macro: ALLCAPS"), null, true, true));
+			// RAINBOW
+			itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML("Macro: r{C}rg{H}gr{R}rg{I}gr{S}rg{T}gr{M}rg{A}gr{S}r"), null, true, true));
 		}
 
 		ArrayAdapter<Spanned> adapter = new ArrayAdapter<Spanned>(ComposePostView.this,android.R.layout.simple_list_item_1, itemList);
@@ -986,6 +988,16 @@ public class ComposePostView extends ActionBarActivity {
 			        case 2:
 				        // ALLCAPS
 				        textToInsert = seltext.toUpperCase();
+				        break;
+			        case 3:
+				        // CHRISTMAS
+				        for (int i = 0; i < seltext.length(); i++)
+				        {
+					        String curTag = ""; String curOpenBracket = "{"; String curCloseBracket = "}";
+					        if ((i % 2) == 0) { curTag = "r"; curOpenBracket = "{"; curCloseBracket = "}"; }
+					        if ((i % 2) == 1) { curTag = "g"; curOpenBracket = "{"; curCloseBracket = "}"; }
+					        textToInsert = textToInsert + curTag + curOpenBracket + seltext.charAt(i) + curCloseBracket + curTag;
+				        }
 				        break;
 		        }
 	        }
