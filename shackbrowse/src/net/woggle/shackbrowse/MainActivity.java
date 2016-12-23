@@ -224,97 +224,7 @@ public class MainActivity extends ActionBarActivity
 		WebView wbv = new WebView(this);
 		wbv.clearCache(true);
 		
-		// set up persistent fragments
-		FragmentManager fm = getFragmentManager();
-		FragmentTransaction ft = fm.beginTransaction();
-					
-		if (fm.findFragmentByTag("tview") != null)
-		{
-			_threadView = (ThreadViewFragment) fm.findFragmentByTag("tview");
-		}
-		else
-			_threadView = new ThreadViewFragment();
-		
-		if (fm.findFragmentByTag("sres") != null)
-			_searchResults = (SearchResultFragment) fm.findFragmentByTag("sres");
-		else
-		{
-			_searchResults = new SearchResultFragment();
-		}
-
-        if (fm.findFragmentByTag("pbfrag") != null)
-            mPBfragment = (PopupBrowserFragment) fm.findFragmentByTag("pbfrag");
-        else
-        {
-            mPBfragment = new PopupBrowserFragment();
-        }
-		
-		if (fm.findFragmentByTag(Integer.toString(CONTENT_THREADLIST)) != null)
-		{
-			_threadList = (ThreadListFragment)fm.findFragmentByTag(Integer.toString(CONTENT_THREADLIST));
-		}
-		else
-		{
-			_threadList = new ThreadListFragment();
-		}
-
-        if (fm.findFragmentByTag(Integer.toString(CONTENT_FRONTPAGE)) != null)
-        {
-            _fpBrowser = (FrontpageBrowserFragment)fm.findFragmentByTag(Integer.toString(CONTENT_FRONTPAGE));
-        }
-        else
-        {
-            _fpBrowser = new FrontpageBrowserFragment();
-        }
-		
-		_messageList = new MessageFragment();
-
-        _loadingSplash = new LoadingSplashFragment();
-		
-		if (fm.findFragmentById(R.id.menu_frame) != null)
-			_appMenu = (AppMenu) fm.findFragmentById(R.id.menu_frame);
-		else
-		{
-			_appMenu = new AppMenu();
-			// menu setup
-	  		ft = getFragmentManager().beginTransaction();
-	  		ft.attach(_appMenu);
-	  		ft.replace(R.id.menu_frame, _appMenu, "appmenu");
-	  		ft.commit();
-		}
-					
-		if (savedInstanceState == null)
-		{
-			// only have to attach when starting new
-			ft = getFragmentManager().beginTransaction();
-			ft.replace(R.id.singleThread, _threadView, "tview");
-			ft.attach(_threadView);
-			ft.commit();
-			
-			ft = fm.beginTransaction();
-			ft.replace(R.id.searchResults, _searchResults, "sres");
-			ft.attach(_searchResults);
-			ft.commit();
-			
-			ft = fm.beginTransaction();
-			// ft.replace(R.id.content_frame, _threadList, Integer.toString(CONTENT_THREADLIST));
-			ft.attach(_threadList);
-			ft.commit();
-
-            ft = fm.beginTransaction();
-            ft.attach(_fpBrowser);
-            ft.commit();
-			
-			ft = fm.beginTransaction();
-			ft.attach(_messageList);
-			ft.commit();
-
-
-            ft = fm.beginTransaction();
-            ft.attach(mPBfragment);
-            ft.commit();
-
-		}
+		initFragments(savedInstanceState);
 
 		mShortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime) * 1;
 
@@ -615,7 +525,107 @@ public class MainActivity extends ActionBarActivity
         }
 	}
 
-    public static int themeApplicator(Activity context) {
+	public void onRestart()
+	{
+		super.onRestart();
+		System.out.println("ONRESTART");
+		initFragments(null);
+	}
+
+	private void initFragments(Bundle savedInstanceState)
+	{
+		// set up persistent fragments
+		FragmentManager fm = getFragmentManager();
+		FragmentTransaction ft = fm.beginTransaction();
+
+		if (fm.findFragmentByTag("tview") != null)
+		{
+			_threadView = (ThreadViewFragment) fm.findFragmentByTag("tview");
+		}
+		else
+			_threadView = new ThreadViewFragment();
+
+		if (fm.findFragmentByTag("sres") != null)
+			_searchResults = (SearchResultFragment) fm.findFragmentByTag("sres");
+		else
+		{
+			_searchResults = new SearchResultFragment();
+		}
+
+		if (fm.findFragmentByTag("pbfrag") != null)
+			mPBfragment = (PopupBrowserFragment) fm.findFragmentByTag("pbfrag");
+		else
+		{
+			mPBfragment = new PopupBrowserFragment();
+		}
+
+		if (fm.findFragmentByTag(Integer.toString(CONTENT_THREADLIST)) != null)
+		{
+			_threadList = (ThreadListFragment)fm.findFragmentByTag(Integer.toString(CONTENT_THREADLIST));
+		}
+		else
+		{
+			_threadList = new ThreadListFragment();
+		}
+
+		if (fm.findFragmentByTag(Integer.toString(CONTENT_FRONTPAGE)) != null)
+		{
+			_fpBrowser = (FrontpageBrowserFragment)fm.findFragmentByTag(Integer.toString(CONTENT_FRONTPAGE));
+		}
+		else
+		{
+			_fpBrowser = new FrontpageBrowserFragment();
+		}
+
+		_messageList = new MessageFragment();
+
+		_loadingSplash = new LoadingSplashFragment();
+
+		if (fm.findFragmentById(R.id.menu_frame) != null)
+			_appMenu = (AppMenu) fm.findFragmentById(R.id.menu_frame);
+		else
+		{
+			_appMenu = new AppMenu();
+			// menu setup
+			ft = getFragmentManager().beginTransaction();
+			ft.attach(_appMenu);
+			ft.replace(R.id.menu_frame, _appMenu, "appmenu");
+			ft.commit();
+		}
+
+		if (savedInstanceState == null)
+		{
+			// only have to attach when starting new
+			ft = getFragmentManager().beginTransaction();
+			ft.replace(R.id.singleThread, _threadView, "tview");
+			ft.attach(_threadView);
+			ft.commit();
+
+			ft = fm.beginTransaction();
+			ft.replace(R.id.searchResults, _searchResults, "sres");
+			ft.attach(_searchResults);
+			ft.commit();
+
+			ft = fm.beginTransaction();
+			// ft.replace(R.id.content_frame, _threadList, Integer.toString(CONTENT_THREADLIST));
+			ft.attach(_threadList);
+			ft.commit();
+
+			ft = fm.beginTransaction();
+			ft.attach(_fpBrowser);
+			ft.commit();
+
+			ft = fm.beginTransaction();
+			ft.attach(_messageList);
+			ft.commit();
+
+			ft = fm.beginTransaction();
+			ft.attach(mPBfragment);
+			ft.commit();
+		}
+	}
+
+	public static int themeApplicator(Activity context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String appTheme =  prefs.getString("appTheme", "0");
         int themeId;
@@ -1464,11 +1474,24 @@ public class MainActivity extends ActionBarActivity
 		
 		_lastOpenedThreadViewEpochSeconds = current;
 		hideKeyboard();
+
+
         ThreadViewFragment view = _threadView;
-        
-        
+
         if ((!view.isPostIdInAdapter(threadId) || expired) || (view._messageId != messageId))
         {
+	        // replace threadview with a new one? maybe fix bugs?
+	        /*
+	        _threadView = new ThreadViewFragment();
+
+	        FragmentTransaction ft = getFragmentManager().beginTransaction();
+	        ft.replace(R.id.singleThread, _threadView, "tview");
+	        ft.attach(_threadView);
+	        ft.commit();
+
+	        view = _threadView;
+	        */
+
         	view._rootPostId = threadId;
         	view._messageId = messageId;
         	view._selectPostIdAfterLoading = selectPostIdAfterLoading;
@@ -1482,8 +1505,14 @@ public class MainActivity extends ActionBarActivity
         	}
         	
         	if (post != null)
-        		view.loadPost(post);
-        	
+	        {
+
+		        if (view._adapter != null)
+		            view.loadPost(post);
+		        else
+			        view._loadPostAfterAdapterReady = post;
+	        }
+
             if (json != null)
             {
             	try {
@@ -1506,12 +1535,12 @@ public class MainActivity extends ActionBarActivity
         	this.resetThreadIdBackStack();
         }
         
-        _tviewFrame.post(new Runnable() {
+        _tviewFrame.postDelayed(new Runnable() {
             @Override
             public void run() {
                 _tviewFrame.openLayer(true);
             }
-        });
+        }, 100l);
         _appMenu.updateMenuUi();
 	}
 	
@@ -2422,8 +2451,10 @@ public class MainActivity extends ActionBarActivity
 	        	openSearch(args);
 	        	return true;
 	        }
+
+
 	        
-	        // notifications
+	        // INTRA-APP COMMS
 	        Bundle extras = intent.getExtras();
 	        if (extras != null)
 	        {
@@ -2431,6 +2462,7 @@ public class MainActivity extends ActionBarActivity
 	        	{
 	        	  Log.d ("wogglesb", key + " is a key in the bundle");
 	        	}
+
 	        	//  REPLY NOTIFICATIONS
 		        if ((extras.containsKey("notificationOpenRList")) || (extras.containsKey("notificationOpenId")))
 		        {
@@ -3034,26 +3066,29 @@ public class MainActivity extends ActionBarActivity
 			CustomTabActivityHelper.openCustomTab(this, intentBuilder.build(), Uri.parse(hrefs[0]));
 		}
 		else {
-			FragmentManager fm = getFragmentManager();
-			FragmentTransaction ft = fm.beginTransaction();
-			Bundle args = new Bundle();
-			args.putStringArray("hrefs", hrefs);
-			if (showZoomSetup)
-				args.putBoolean("showZoomSetup", true);
+			if (!isFinishing()) // attempted fix at very strange bug Exception java.lang.IllegalStateException: Activity has been destroyed on ft.commit
+			{
+				FragmentManager fm = getFragmentManager();
+				FragmentTransaction ft = fm.beginTransaction();
+				Bundle args = new Bundle();
+				args.putStringArray("hrefs", hrefs);
+				if (showZoomSetup)
+					args.putBoolean("showZoomSetup", true);
 
-			if (showPhotoView)
-				args.putBoolean("showPhotoView", true);
+				if (showPhotoView)
+					args.putBoolean("showPhotoView", true);
 
-			mPBfragment = (PopupBrowserFragment) Fragment.instantiate(getApplicationContext(), PopupBrowserFragment.class.getName(), args);
-			ft.add(R.id.browser_frame, mPBfragment, "pbfrag");
-			ft.attach(mPBfragment);
-			ft.commitAllowingStateLoss();
+				mPBfragment = (PopupBrowserFragment) Fragment.instantiate(getApplicationContext(), PopupBrowserFragment.class.getName(), args);
+				ft.add(R.id.browser_frame, mPBfragment, "pbfrag");
+				ft.attach(mPBfragment);
+				ft.commitAllowingStateLoss();
 
-			new anim(mBrowserFrame).toVisible();
+				new anim(mBrowserFrame).toVisible();
 
-			mPopupBrowserOpen = true;
+				mPopupBrowserOpen = true;
 
-			setTitleContextually();
+				setTitleContextually();
+			}
 		}
 	}
 	

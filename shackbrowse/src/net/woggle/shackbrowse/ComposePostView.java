@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,6 +40,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBarActivity;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -54,8 +56,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
-import android.view.animation.Interpolator;
-import android.view.animation.OvershootInterpolator;
 import android.view.animation.ScaleAnimation;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -89,7 +89,7 @@ public class ComposePostView extends ActionBarActivity {
 	
 	float _zoom = 1.0f;
 	
-	Uri _cameraImageLocation;
+	Uri _cameraImage;
 	
 	SharedPreferences _prefs;
 	private int _orientLock = 0;
@@ -109,8 +109,9 @@ public class ComposePostView extends ActionBarActivity {
     private int mThemeResId;
     private Long mLastResumeTime = 0L;
     private boolean mEditBarEnabled;
+	private String mCurrentPhotoPath;
 
-    @Override
+	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
         super.onCreate(savedInstanceState);
@@ -214,7 +215,7 @@ public class ComposePostView extends ActionBarActivity {
         {
             // we kinda need this
             if (savedInstanceState.containsKey("cameraImageLocation"))
-                _cameraImageLocation = Uri.parse(savedInstanceState.getString("cameraImageLocation"));
+                _cameraImage = Uri.parse(savedInstanceState.getString("cameraImageLocation"));
         }
         
 	}
@@ -737,8 +738,8 @@ public class ComposePostView extends ActionBarActivity {
 	{
 	    super.onSaveInstanceState(outState);
 	    
-	    if (_cameraImageLocation != null)
-    	    outState.putString("cameraImageLocation", _cameraImageLocation.toString());
+	    if (_cameraImage != null)
+    	    outState.putString("cameraImageLocation", _cameraImage.toString());
 	}
 	
 	@Override
@@ -1063,16 +1064,16 @@ public class ComposePostView extends ActionBarActivity {
         // post in the background
         new PostTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, content);
 	}
-
+	
 	public void openCameraSelector()
 	{
+
 		// store our image in a temp spot
 	    String state = Environment.getExternalStorageState();
 	    if (Environment.MEDIA_MOUNTED.equals(state))
 	    {
 	        // application directory, per Android Data Storage guidelines
-	        final String APP_DIRECTORY = "/Android/data/net.woggle.shackbrowse/files/";
-	        File app_dir = new File(Environment.getExternalStorageDirectory(), APP_DIRECTORY);
+	        File app_dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 	        
 	        // make sure the directory exists
 	        if (!app_dir.exists())
@@ -1085,15 +1086,32 @@ public class ComposePostView extends ActionBarActivity {
 	        }
 	        
 	        // our temp file for taking a picture, delete if we already have one
-		    File file = new File(app_dir, "shackbrowseUpload.jpg");
-		    if (file.exists())
-		        file.delete();
+		    File image = null;
+		    try
+		    {
+			    image = File.createTempFile(
+				    "shackbrowseUpload",  /* prefix */
+				    ".jpg",         /* suffix */
+				   app_dir     /* directory */
+		            );
+		    } catch (IOException e)
+		    {
+			    e.printStackTrace();
+		    }
+
+		    if (image.exists())
+		        image.delete();
 		    
-		    _cameraImageLocation = Uri.fromFile(file);
+		    // _cameraImage = Uri.fromFile(file);
+		    mCurrentPhotoPath = image.getAbsolutePath();
+
+		    _cameraImage = FileProvider.getUriForFile(ComposePostView.this,
+				    BuildConfig.APPLICATION_ID + ".provider",
+				    image);
 		    
 		    // start the camera
 		    Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		    i.putExtra(MediaStore.EXTRA_OUTPUT, _cameraImageLocation);
+		    i.putExtra(MediaStore.EXTRA_OUTPUT, _cameraImage);
 		    startActivityForResult(i, TAKE_PICTURE);
 	    }
 	    else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state))
@@ -1151,7 +1169,7 @@ public class ComposePostView extends ActionBarActivity {
             if (resultCode == Activity.RESULT_OK)
             {
                 // picture was taken, and resides at the location we specified
-                uploadImage(_cameraImageLocation.getPath());
+                uploadImage(mCurrentPhotoPath);
             }
         }
 	}

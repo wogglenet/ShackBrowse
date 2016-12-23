@@ -1126,7 +1126,7 @@ public class ShackApi
         	try {
         		newJson = getJson(GET_LOL_URL + "?special=getcounts");
         	}
-        	catch (JSONException e)
+        	catch (Exception e)
         	{
         		System.out.println("connection timeout for LOLDATA");
         		lolTimedOut = true;

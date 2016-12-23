@@ -186,6 +186,12 @@ public class PopupBrowserFragment extends Fragment {
 
     	super.onDetach();
 
+
+	    if (mWebview != null)
+	    {
+		    mWebview.removeAllViews();
+		    mWebview.destroy();
+	    }
     }
     
     public void open(String... hrefs)

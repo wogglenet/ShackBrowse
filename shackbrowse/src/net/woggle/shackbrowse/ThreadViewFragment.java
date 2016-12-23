@@ -144,6 +144,8 @@ public class ThreadViewFragment extends ListFragment
 	private boolean _isSelectPostIdAfterLoadingIdaPQPId = false;
 	private boolean _showThreadExpired = false;
 
+	public Post _loadPostAfterAdapterReady;
+
 
 	public int getPostId()
     {
@@ -264,6 +266,9 @@ public class ThreadViewFragment extends ListFragment
             		_itemPosition = 0;
             	}
         	}
+	        if (_loadPostAfterAdapterReady != null)
+		        loadPost(_loadPostAfterAdapterReady);
+
         	_adapter.triggerLoadMore();
         }
         else    

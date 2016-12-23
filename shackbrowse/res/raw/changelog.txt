@@ -75,6 +75,14 @@ https://github.com/bradsh/ShackBrowse It is a mess. I am not a professional prog
 
 -->
 
+$ 5.4.6
+% v 5.4.6
+_ Dec 23, 2016
+* Bug Fix: Support for Android 7 multi-window
+* Bug Fix: Attempt at fixing link click crash bug
+* Bug Fix: Camera fix for Android 7
+* Bug Fix: Less buggy with ThomW server failures
+
 $ 5.4.5
 % v 5.4.5
 _ July 20, 2016

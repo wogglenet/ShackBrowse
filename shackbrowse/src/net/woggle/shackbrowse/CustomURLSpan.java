@@ -167,6 +167,7 @@ public class CustomURLSpan extends CustomClickableSpan implements OnLongClickLis
         else if (((_useBrowser == 0) && (!href.contains("play.google"))) || ((_useBrowser == 1) && (!href.contains("youtu.be")) && (!href.contains("youtube")) && (!href.contains("play.google"))) || ((_useBrowser == 2) && (PopupBrowserFragment.isImage(href))))
         {
         	((MainActivity)v.getContext()).openBrowser(href);
+
         }
         else
         {
