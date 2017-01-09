@@ -75,6 +75,12 @@ https://github.com/bradsh/ShackBrowse It is a mess. I am not a professional prog
 
 -->
 
+$ 5.4.7
+% v 5.4.7
+_ Jan 9, 2017
+* Bug Fix: Black screen bug introduced in low ram devices last update
+* Bug Fix: New attempt at fixing link click crash bug
+
 $ 5.4.6
 % v 5.4.6
 _ Dec 23, 2016

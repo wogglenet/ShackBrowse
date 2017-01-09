@@ -525,13 +525,6 @@ public class MainActivity extends ActionBarActivity
         }
 	}
 
-	public void onRestart()
-	{
-		super.onRestart();
-		System.out.println("ONRESTART");
-		initFragments(null);
-	}
-
 	private void initFragments(Bundle savedInstanceState)
 	{
 		// set up persistent fragments
@@ -3066,7 +3059,7 @@ public class MainActivity extends ActionBarActivity
 			CustomTabActivityHelper.openCustomTab(this, intentBuilder.build(), Uri.parse(hrefs[0]));
 		}
 		else {
-			if (!isFinishing()) // attempted fix at very strange bug Exception java.lang.IllegalStateException: Activity has been destroyed on ft.commit
+			if (!isFinishing() && (!isDestroyed())) // attempted fix at very strange bug Exception java.lang.IllegalStateException: Activity has been destroyed on ft.commit
 			{
 				FragmentManager fm = getFragmentManager();
 				FragmentTransaction ft = fm.beginTransaction();

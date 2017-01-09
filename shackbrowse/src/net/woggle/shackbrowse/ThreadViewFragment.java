@@ -2,7 +2,6 @@ package net.woggle.shackbrowse;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
@@ -92,8 +91,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.ListIterator;
-import java.util.Random;
-
 
 
 import static net.woggle.shackbrowse.StatsFragment.statInc;
@@ -145,6 +142,7 @@ public class ThreadViewFragment extends ListFragment
 	private boolean _showThreadExpired = false;
 
 	public Post _loadPostAfterAdapterReady;
+	private MainActivity mMainActivity;
 
 
 	public int getPostId()
@@ -173,6 +171,19 @@ public class ThreadViewFragment extends ListFragment
     	_viewAvailable = false;
     	super.onDestroyView();
     }
+
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		System.out.println("ATTACHed!");
+		mMainActivity = (MainActivity)activity;
+	}
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		mMainActivity = null;
+	}
     
     public void loadPost(Post post)
     {        
@@ -192,17 +203,17 @@ public class ThreadViewFragment extends ListFragment
         getListView().setDividerHeight(0);
         
         //getListView().setBackgroundColor(getResources().getColor(R.color.collapsed_postbg));
-        _prefs = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
+        _prefs = PreferenceManager.getDefaultSharedPreferences(mMainActivity);
         
         if (_adapter == null)
         {
         	// first launch, try to set everything up
         	Bundle args = getArguments();
-        	String action = getActivity().getIntent().getAction();
-        	Uri uri = getActivity().getIntent().getData();
+        	String action = mMainActivity.getIntent().getAction();
+        	Uri uri = mMainActivity.getIntent().getData();
         	
         	// instantiate adapter
-        	_adapter = new PostLoadingAdapter(getActivity(), new ArrayList<Post>());
+        	_adapter = new PostLoadingAdapter(mMainActivity, new ArrayList<Post>());
         	setListAdapter(_adapter);
         	_adapter.setAbsListView(getListView());
             _adapter.setTitleViewOnClickListener(getTitleViewOnClickListener());
@@ -258,7 +269,7 @@ public class ThreadViewFragment extends ListFragment
             		String id = uri.getQueryParameter("id");
             		if (id == null)
             		{
-            			ErrorDialog.display(getActivity(), "Error", "Invalid URL Found");
+            			ErrorDialog.display(mMainActivity, "Error", "Invalid URL Found");
             			return;
             		}
                 
@@ -282,7 +293,7 @@ public class ThreadViewFragment extends ListFragment
         ptrLayout = (PullToRefreshLayout)getView().findViewById(R.id.ptr_layout);
 
         // Give the PullToRefreshAttacher to the PullToRefreshLayout, along with a refresh listener.
-        ptrLayout.setPullToRefreshAttacher(((MainActivity)getActivity()).getRefresher(), new PullToRefreshAttacher.OnRefreshListener(){
+        ptrLayout.setPullToRefreshAttacher(mMainActivity.getRefresher(), new PullToRefreshAttacher.OnRefreshListener(){
 
 			@Override
 			public void onRefreshStarted(View view) {
@@ -327,7 +338,7 @@ public class ThreadViewFragment extends ListFragment
 		            if ((_lastThreadJson != null) && (_adapter != null) && (_adapter.getCount() > 0) && (_adapter.getItem(0) != null))
 		    		{
 		    			// determine if checked
-		        		boolean set2 = ((MainActivity)getActivity()).mOffline.containsThreadId(ThreadViewFragment.this._rootPostId);
+		        		boolean set2 = mMainActivity.mOffline.containsThreadId(ThreadViewFragment.this._rootPostId);
 		        		
 		        		_showFavSaved = set2;
 		        		_showUnFavSaved = !set2;
@@ -339,7 +350,7 @@ public class ThreadViewFragment extends ListFragment
 		            }
 		            
 		            // enable PTR because we are not in message mode
-		            ((PullToRefreshLayout)getView().findViewById(R.id.ptr_layout)).setPullToRefreshAttacher(((MainActivity)getActivity()).getRefresher(), new PullToRefreshAttacher.OnRefreshListener(){
+		            ((PullToRefreshLayout)getView().findViewById(R.id.ptr_layout)).setPullToRefreshAttacher(mMainActivity.getRefresher(), new PullToRefreshAttacher.OnRefreshListener(){
 
 		    			@Override
 		    			public void onRefreshStarted(View view) {
@@ -364,12 +375,12 @@ public class ThreadViewFragment extends ListFragment
 	    		}
 	    		
 	    		// update options menu
-	    		((MainActivity)getActivity()).invalidateOptionsMenu();
+	    		mMainActivity.invalidateOptionsMenu();
 
 
 				// expired thread banner
 				_showThreadExpired = false;
-				final boolean noCollapseAnim = !((MainActivity)getActivity()).getDualPane();
+				final boolean noCollapseAnim = !mMainActivity.getDualPane();
 
 				// adapter exists, item 0 exists, and not in message mode
 				if (_adapter != null && _adapter.getCount() != 0 && _adapter.getItem(0) != null && _messageId == 0) {
@@ -384,10 +395,10 @@ public class ThreadViewFragment extends ListFragment
 						@Override
 						public void onClick(View v) {
 							if (_prefs.getBoolean("showThreadExpiredOkDialog", true)) {
-								MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(getActivity());
+								MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(mMainActivity);
 								builder.setTitle("Expired Thread");
 								final View v2 = v;
-								LayoutInflater annoyInflater = LayoutInflater.from(getActivity());
+								LayoutInflater annoyInflater = LayoutInflater.from(mMainActivity);
 								View annoyLayout = annoyInflater.inflate(R.layout.dialog_nevershowagain, null);
 								final CheckBox dontShowAgain = (CheckBox) annoyLayout.findViewById(R.id.skip);
 								final CheckBox dontShowAgain2 = (CheckBox) annoyLayout.findViewById(R.id.skip2);
@@ -432,7 +443,7 @@ public class ThreadViewFragment extends ListFragment
     {
     	Bundle args = new Bundle();
     	args.putString("author", term);
-    	((MainActivity)getActivity()).openSearch(args);
+    	mMainActivity.openSearch(args);
     }
     
     @Override
@@ -550,7 +561,7 @@ public class ThreadViewFragment extends ListFragment
         	
         	gtt.execute(_adapter.getItem(pos).getPostId());
 
-            statInc(getActivity(), "CheckedLOLTaggers");
+            statInc(mMainActivity, "CheckedLOLTaggers");
         }
     }
     class GetTaggersTask extends AsyncTask<Integer, Void, CharSequence> {
@@ -588,10 +599,10 @@ public class ThreadViewFragment extends ListFragment
         protected CharSequence doInBackground(Integer... params) {
         	
         	final Integer parm = params[0];
-        	getActivity().runOnUiThread(new Runnable(){
+        	mMainActivity.runOnUiThread(new Runnable(){
         		@Override public void run()
         		{
-        			mProgressDialog = MaterialProgressDialog.show(getActivity(), "Loading Taggers", "ThomW's server is a loose cannon", true, true, new OnCancelListener(){
+        			mProgressDialog = MaterialProgressDialog.show(mMainActivity, "Loading Taggers", "ThomW's server is a loose cannon", true, true, new OnCancelListener(){
     				@Override
     				public void onCancel(DialogInterface arg0) {
     					cancel(true);
@@ -631,18 +642,18 @@ public class ThreadViewFragment extends ListFragment
         @Override
         public void onPostExecute(final CharSequence txt)
         {
-        	if (getActivity () != null)
+        	if (mMainActivity != null)
     		{
-                statInc(getActivity(), "CheckedLOLTaggers");
-    			getActivity().runOnUiThread(new Runnable(){
+                statInc(mMainActivity, "CheckedLOLTaggers");
+    			mMainActivity.runOnUiThread(new Runnable(){
 	        		@Override public void run()
 	        		{
-                        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(getActivity());
+                        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(mMainActivity);
 	                    builder.setTitle("Taggers for post");
 	                    builder.setNegativeButton("OK", null);
 	                    
-				        ScrollView scrolly = new ScrollView(getActivity());
-				        TextView content = new TextView(getActivity());
+				        ScrollView scrolly = new ScrollView(mMainActivity);
+				        TextView content = new TextView(mMainActivity);
 				        content.setPadding(10, 10, 10, 10);
 				        content.setTextSize(TypedValue.COMPLEX_UNIT_SP, _adapter._zoom * getResources().getDimension(R.dimen.viewPostTextSize));
 				        scrolly.addView(content);
@@ -699,9 +710,9 @@ public class ThreadViewFragment extends ListFragment
     
     public void copyString(String string)
     {
-    	ClipboardManager clipboard = (ClipboardManager)getActivity().getSystemService(Activity.CLIPBOARD_SERVICE);
+    	ClipboardManager clipboard = (ClipboardManager)mMainActivity.getSystemService(Activity.CLIPBOARD_SERVICE);
     	clipboard.setText(string);
-    	Toast.makeText(getActivity(), string, Toast.LENGTH_SHORT).show();
+    	Toast.makeText(mMainActivity, string, Toast.LENGTH_SHORT).show();
     }
     
     public void refreshThreadReplies()
@@ -713,7 +724,7 @@ public class ThreadViewFragment extends ListFragment
     	 _refreshRestore = true;
 
         System.out.println("LASTEXP REFR" + _lastExpanded + " " + _selectPostIdAfterLoading);
-        statInc(getActivity(), "RefreshedPosts");
+        statInc(mMainActivity, "RefreshedPosts");
 
          _adapter.clear();
          _adapter.triggerLoadMore();
@@ -724,25 +735,25 @@ public class ThreadViewFragment extends ListFragment
     	if ((_lastThreadJson != null) && (_adapter != null) && (_adapter.getCount() > 0) && (_adapter.getItem(0) != null))
     	{
     		// false if UNsaved
-    		if(((MainActivity)getActivity()).mOffline.toggleThread(_adapter.getItem(0).getPostId(), _adapter.getItem(0).getPosted(), _lastThreadJson))
+    		if(mMainActivity.mOffline.toggleThread(_adapter.getItem(0).getPostId(), _adapter.getItem(0).getPosted(), _lastThreadJson))
     		{
-    			Toast.makeText(getActivity(), "Thread added to favorites", Toast.LENGTH_SHORT).show();
+    			Toast.makeText(mMainActivity, "Thread added to favorites", Toast.LENGTH_SHORT).show();
     			_showUnFavSaved = false;
     			_showFavSaved = true;
-                statInc(getActivity(), "FavoritedAThread");
+                statInc(mMainActivity, "FavoritedAThread");
     		}
     		else
     		{
-    			Toast.makeText(getActivity(), "Thread removed from favorites", Toast.LENGTH_SHORT).show();
+    			Toast.makeText(mMainActivity, "Thread removed from favorites", Toast.LENGTH_SHORT).show();
     			_showUnFavSaved = true;
     			_showFavSaved = false;
     		}
-    		((MainActivity)getActivity()).invalidateOptionsMenu();
-    		((MainActivity)getActivity()).mRefreshOfflineThreadsWoReplies();
+    		mMainActivity.invalidateOptionsMenu();
+    		mMainActivity.mRefreshOfflineThreadsWoReplies();
     	}
     	else
     	{
-    		Toast.makeText(getActivity(), "Error: could not save thread", Toast.LENGTH_SHORT).show();
+    		Toast.makeText(mMainActivity, "Error: could not save thread", Toast.LENGTH_SHORT).show();
     		System.out.println("TVIEW: no json to save thread with");
     	}
     }
@@ -754,7 +765,7 @@ public class ThreadViewFragment extends ListFragment
         boolean verified = _prefs.getBoolean("usernameVerified", false);
         if (!verified)
         {
-        	LoginForm login = new LoginForm(getActivity());
+        	LoginForm login = new LoginForm(mMainActivity);
         	login.setOnVerifiedListener(new LoginForm.OnVerifiedListener() {
 				@Override
 				public void onSuccess() {
@@ -770,21 +781,21 @@ public class ThreadViewFragment extends ListFragment
         else if (_messageId == 0)
         {
 	    	boolean isNewsItem = _adapter.getItem(0).getUserName().equalsIgnoreCase("shacknews");
-		    ((MainActivity)getActivity()).openComposerForReply(POST_REPLY, parentPost, isNewsItem);
+		    mMainActivity.openComposerForReply(POST_REPLY, parentPost, isNewsItem);
         }
         else if (_rootPostId == 0)
         {
-        	((MainActivity)getActivity()).openComposerForMessageReply(POST_MESSAGE, parentPost, "Re: " + _messageSubject);
+        	mMainActivity.openComposerForMessageReply(POST_MESSAGE, parentPost, "Re: " + _messageSubject);
         }
         else
         {
-        	 ErrorDialog.display(getActivity(), "Error", "Error determining message TYPE for reply.");
+        	 ErrorDialog.display(mMainActivity, "Error", "Error determining message TYPE for reply.");
         }
     }
     
     public void shackmessageTo (String username)
     {
-    	((MainActivity)getActivity()).openNewMessagePromptForSubject(username);
+    	mMainActivity.openNewMessagePromptForSubject(username);
     }
     
     public void lolChoose(int pos, final boolean isFromQuickLOL)
@@ -794,7 +805,7 @@ public class ThreadViewFragment extends ListFragment
         boolean verified = _prefs.getBoolean("usernameVerified", false);
         if (!verified)
         {
-        	LoginForm login = new LoginForm(getActivity());
+        	LoginForm login = new LoginForm(mMainActivity);
         	login.setOnVerifiedListener(new LoginForm.OnVerifiedListener() {
 				@Override
 				public void onSuccess() {
@@ -808,7 +819,7 @@ public class ThreadViewFragment extends ListFragment
         	return;
         }
 
-        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(getActivity());
+        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(mMainActivity);
         builder.setTitle("Choose LOL tag");
         final CharSequence[] items = { "lol","inf","unf","tag","wtf","ugh"};
         final CharSequence[] itemsQuick = { "See who tagged", "lol","inf","unf","tag","wtf","ugh"};
@@ -843,7 +854,7 @@ public class ThreadViewFragment extends ListFragment
         boolean verified = _prefs.getBoolean("usernameVerified", false);
         if (!verified)
         {
-        	LoginForm login = new LoginForm(getActivity());
+        	LoginForm login = new LoginForm(mMainActivity);
         	login.setOnVerifiedListener(new LoginForm.OnVerifiedListener() {
 				@Override
 				public void onSuccess() {
@@ -866,7 +877,7 @@ public class ThreadViewFragment extends ListFragment
     
     public void modChoose(final int pos)
     {
-        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(getActivity());
+        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(mMainActivity);
         builder.setTitle("Choose mod tag");
         final CharSequence[] items = { "interesting","nws","stupid","tangent","ontopic","political" };
         builder.setItems(items, new DialogInterface.OnClickListener() {
@@ -886,7 +897,7 @@ public class ThreadViewFragment extends ListFragment
         boolean verified = _prefs.getBoolean("usernameVerified", false);
         if (!verified)
         {
-        	LoginForm login = new LoginForm(getActivity());
+        	LoginForm login = new LoginForm(mMainActivity);
         	login.setOnVerifiedListener(new LoginForm.OnVerifiedListener() {
 				@Override
 				public void onSuccess() {
@@ -901,7 +912,7 @@ public class ThreadViewFragment extends ListFragment
         }
         
         new ModTask().execute(userName, password, moderation, Integer.toString(pos));
-        _progressDialog = MaterialProgressDialog.show(getActivity(), "Please wait", "Laying down the ban hammer...");
+        _progressDialog = MaterialProgressDialog.show(mMainActivity, "Please wait", "Laying down the ban hammer...");
     }
     
     class LolTask extends AsyncTask<String, Void, Integer>
@@ -944,30 +955,30 @@ public class ThreadViewFragment extends ListFragment
 
 				if (response == 1)
 				{
-					if (tag.equalsIgnoreCase("lol")) { updLol.incLol(); statInc(getActivity(), "GaveALOLTag"); statInc(getActivity(), "GaveALOLTaglol"); }
-					if (tag.equalsIgnoreCase("tag")) { updLol.incTag(); statInc(getActivity(), "GaveALOLTag"); statInc(getActivity(), "GaveALOLTagtag"); }
-					if (tag.equalsIgnoreCase("ugh")) { updLol.incUgh(); statInc(getActivity(), "GaveALOLTag"); statInc(getActivity(), "GaveALOLTagugh"); }
-					if (tag.equalsIgnoreCase("wtf")) { updLol.incWtf(); statInc(getActivity(), "GaveALOLTag"); statInc(getActivity(), "GaveALOLTagwtf"); }
-					if (tag.equalsIgnoreCase("inf")) { updLol.incInf(); statInc(getActivity(), "GaveALOLTag"); statInc(getActivity(), "GaveALOLTaginf"); }
-					if (tag.equalsIgnoreCase("unf")) { updLol.incUnf(); statInc(getActivity(), "GaveALOLTag"); statInc(getActivity(), "GaveALOLTagunf"); }
+					if (tag.equalsIgnoreCase("lol")) { updLol.incLol(); statInc(mMainActivity, "GaveALOLTag"); statInc(mMainActivity, "GaveALOLTaglol"); }
+					if (tag.equalsIgnoreCase("tag")) { updLol.incTag(); statInc(mMainActivity, "GaveALOLTag"); statInc(mMainActivity, "GaveALOLTagtag"); }
+					if (tag.equalsIgnoreCase("ugh")) { updLol.incUgh(); statInc(mMainActivity, "GaveALOLTag"); statInc(mMainActivity, "GaveALOLTagugh"); }
+					if (tag.equalsIgnoreCase("wtf")) { updLol.incWtf(); statInc(mMainActivity, "GaveALOLTag"); statInc(mMainActivity, "GaveALOLTagwtf"); }
+					if (tag.equalsIgnoreCase("inf")) { updLol.incInf(); statInc(mMainActivity, "GaveALOLTag"); statInc(mMainActivity, "GaveALOLTaginf"); }
+					if (tag.equalsIgnoreCase("unf")) { updLol.incUnf(); statInc(mMainActivity, "GaveALOLTag"); statInc(mMainActivity, "GaveALOLTagunf"); }
 				}
 				if (response == -1)
 				{
-					if (tag.equalsIgnoreCase("lol")) { updLol.decLol(); statInc(getActivity(), "RemovedALOLTag"); statInc(getActivity(), "RemovedALOLTaglol"); }
-					if (tag.equalsIgnoreCase("tag")) { updLol.decTag(); statInc(getActivity(), "RemovedALOLTag"); statInc(getActivity(), "RemovedALOLTagtag"); }
-					if (tag.equalsIgnoreCase("ugh")) { updLol.decUgh(); statInc(getActivity(), "RemovedALOLTag"); statInc(getActivity(), "RemovedALOLTagugh"); }
-					if (tag.equalsIgnoreCase("wtf")) { updLol.decWtf(); statInc(getActivity(), "RemovedALOLTag"); statInc(getActivity(), "RemovedALOLTagwtf"); }
-					if (tag.equalsIgnoreCase("inf")) { updLol.decInf(); statInc(getActivity(), "RemovedALOLTag"); statInc(getActivity(), "RemovedALOLTaginf"); }
-					if (tag.equalsIgnoreCase("unf")) { updLol.decUnf(); statInc(getActivity(), "RemovedALOLTag"); statInc(getActivity(), "RemovedALOLTagunf"); }
+					if (tag.equalsIgnoreCase("lol")) { updLol.decLol(); statInc(mMainActivity, "RemovedALOLTag"); statInc(mMainActivity, "RemovedALOLTaglol"); }
+					if (tag.equalsIgnoreCase("tag")) { updLol.decTag(); statInc(mMainActivity, "RemovedALOLTag"); statInc(mMainActivity, "RemovedALOLTagtag"); }
+					if (tag.equalsIgnoreCase("ugh")) { updLol.decUgh(); statInc(mMainActivity, "RemovedALOLTag"); statInc(mMainActivity, "RemovedALOLTagugh"); }
+					if (tag.equalsIgnoreCase("wtf")) { updLol.decWtf(); statInc(mMainActivity, "RemovedALOLTag"); statInc(mMainActivity, "RemovedALOLTagwtf"); }
+					if (tag.equalsIgnoreCase("inf")) { updLol.decInf(); statInc(mMainActivity, "RemovedALOLTag"); statInc(mMainActivity, "RemovedALOLTaginf"); }
+					if (tag.equalsIgnoreCase("unf")) { updLol.decUnf(); statInc(mMainActivity, "RemovedALOLTag"); statInc(mMainActivity, "RemovedALOLTagunf"); }
 				}
 
-				updLol.genTagSpan(getActivity());
+				updLol.genTagSpan(mMainActivity);
                 _adapter.getItem(pos).setLolObj(updLol);
                 _adapter.getItem(pos).setIsWorking(false);
                 _adapter.notifyDataSetChanged();
             }
             if (_exception != null)
-               ErrorDialog.display(getActivity(), "Error", "Error tagging post:\n" + _exception.getMessage()); 
+               ErrorDialog.display(mMainActivity, "Error", "Error tagging post:\n" + _exception.getMessage());
         }
     }
     
@@ -1003,9 +1014,9 @@ public class ThreadViewFragment extends ListFragment
         {
             _progressDialog.dismiss();
             if (_exception != null)
-                ErrorDialog.display(getActivity(), "Error", "Error occured modding post."); 
+                ErrorDialog.display(mMainActivity, "Error", "Error occured modding post.");
             else if (result != null)
-                ErrorDialog.display(getActivity(), "Moderation", result);
+                ErrorDialog.display(mMainActivity, "Moderation", result);
         }
     }
     
@@ -1058,7 +1069,7 @@ public class ThreadViewFragment extends ListFragment
                 if (_adapter.findPositionForId((Long)contentParent.getTag()) == 0)
                     return;
 
-                statInc(getActivity(), "OpenedPost");
+                statInc(mMainActivity, "OpenedPost");
 
                 if (_adapter.mAnimSpeed == 0f)
                 {
@@ -1264,7 +1275,7 @@ public class ThreadViewFragment extends ListFragment
                             if (item.getItemId() == 1)
                                 searchForPosts(unamefinal);
                             if (item.getItemId() == 2)
-                                ((MainActivity)getActivity()).openHighlighter(unamefinal);
+                                mMainActivity.openHighlighter(unamefinal);
 							if (item.getItemId() == 3)
 								copyString(unamefinal);
                             return true;
@@ -1362,14 +1373,14 @@ public class ThreadViewFragment extends ListFragment
             setupPref();
             
             // fast scroll on mega threads
-        	if (getActivity () != null)
+        	if (mMainActivity != null)
     		{
         		boolean set = false;
         		if ((getCount() > 300))
         			set = true;
         		final boolean set2 = set && _fastScroll;
         		
-    			getActivity().runOnUiThread(new Runnable(){
+    			mMainActivity.runOnUiThread(new Runnable(){
 	        		@Override public void run()
 	        		{
 	        			if (_viewAvailable)
@@ -1405,16 +1416,16 @@ public class ThreadViewFragment extends ListFragment
         {
         	super.setCurrentlyLoading(set);
         	
-    		if (getActivity () != null)
+    		if (mMainActivity != null)
     		{
-    			getActivity().runOnUiThread(new Runnable(){
+    			mMainActivity.runOnUiThread(new Runnable(){
 	        		@Override public void run()
 	        		{
 	        			if (_viewAvailable)
 	                	{
 	        	        	updateThreadViewUi();
 	        	        	
-	        	        	((MainActivity)getActivity()).showOnlyProgressBarFromPTRLibrary(set);
+	        	        	mMainActivity.showOnlyProgressBarFromPTRLibrary(set);
 	                	}
 	        		}
     			});
@@ -1427,7 +1438,7 @@ public class ThreadViewFragment extends ListFragment
 		public View getContentView(int position, View convertView, ViewGroup parent) {
 			if (convertView == null)
         	{
-	        		convertView = LayoutInflater.from(getActivity()).inflate(R.layout.thread_row_expanded, parent, false);
+	        		convertView = LayoutInflater.from(mMainActivity).inflate(R.layout.thread_row_expanded, parent, false);
         	}
             
             return createView(position, convertView, parent, true);
@@ -1437,7 +1448,7 @@ public class ThreadViewFragment extends ListFragment
 		public View getTitleView(int position, View convertView, ViewGroup parent) {
 			if (convertView == null)
         	{
-	        		convertView = LayoutInflater.from(getActivity()).inflate(R.layout.thread_row_preview, parent, false);
+	        		convertView = LayoutInflater.from(mMainActivity).inflate(R.layout.thread_row_preview, parent, false);
         	}
             
             return createView(position, convertView, parent, false);
@@ -1541,7 +1552,7 @@ public class ThreadViewFragment extends ListFragment
                     holder.buttonAllImages.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            ((MainActivity) getActivity()).openBrowser(hrefs3);
+                            mMainActivity.openBrowser(hrefs3);
                         }
                     });
                     if (hrefs2.length > 1)
@@ -1617,7 +1628,7 @@ public class ThreadViewFragment extends ListFragment
 										modChoose(pos);
 										break;
 									case 16:
-										((MainActivity) getActivity()).openHighlighter(unamefinal);
+										mMainActivity.openHighlighter(unamefinal);
 										break;
 								}
 								return true;
@@ -1701,11 +1712,11 @@ public class ThreadViewFragment extends ListFragment
 					}
 					// embed images test
 
-					Display display = getActivity().getWindowManager().getDefaultDisplay();
+					Display display = mMainActivity.getWindowManager().getDefaultDisplay();
 					Point size = new Point();
 					display.getSize(size);
 					int width = Math.round(size.x * 1.0f);
-					if (((MainActivity)getActivity()).getDualPane())
+					if (mMainActivity.getDualPane())
 					{
 						width = Math.round((2f / 3f) * width);
 					}
@@ -1728,7 +1739,7 @@ public class ThreadViewFragment extends ListFragment
 								statInc(v.getContext(), "ClickedLink");
 								int _useBrowser = Integer.parseInt(prefs.getString("usePopupBrowser2", "1"));
 								if (_useBrowser != 3)
-									((MainActivity) v.getContext()).openBrowser(url);
+									mMainActivity.openBrowser(url);
 								else {
 									Uri u = Uri.parse(url);
 									if (u.getScheme() == null) {
@@ -1742,7 +1753,7 @@ public class ThreadViewFragment extends ListFragment
 						image.setOnLongClickListener(new View.OnLongClickListener() {
 							@Override
 							public boolean onLongClick(View v) {
-								showLinkOptionsMenu(url, v.getContext());
+								showLinkOptionsMenu(url);
 								return false;
 							}
 						});
@@ -1751,7 +1762,7 @@ public class ThreadViewFragment extends ListFragment
 						 holder.postContent.addView(image, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 						// holder.postContent.addView(image, 1, new LinearLayout.LayoutParams(width, width));
 
-						Glide.with(getActivity())
+						Glide.with(mMainActivity)
 								.load(PopupBrowserFragment.imageUrlFixer(url))
 								.override(width, width)
 								.fitCenter()
@@ -2005,7 +2016,7 @@ public class ThreadViewFragment extends ListFragment
                         holder.previewLimeHolder.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                AnimationDrawable quad = (AnimationDrawable) getActivity().getResources().getDrawable(R.drawable.quaddamage);
+                                AnimationDrawable quad = (AnimationDrawable) mMainActivity.getResources().getDrawable(R.drawable.quaddamage);
                                 ((ImageView)v).setImageDrawable(quad);
                                 ((ImageView)v).setOnClickListener(null);
                                 v.setClickable(false);
@@ -2131,11 +2142,10 @@ public class ThreadViewFragment extends ListFragment
         	SpannableStringBuilder builder = new SpannableStringBuilder(text);
         	for (CustomURLSpan target : list)
         	{
-        		Drawable iSpan = getActivity().getResources().getDrawable(R.drawable.ic_action_action_launch);
+        		Drawable iSpan = mMainActivity.getResources().getDrawable(R.drawable.ic_action_action_launch);
         		iSpan.setBounds(0, 0, t.getLineHeight(),t.getLineHeight());
         		builder.insert(text.getSpanEnd(target), " o");
 				builder.setSpan(new ImageSpan(iSpan, DynamicDrawableSpan.ALIGN_BOTTOM) , text.getSpanEnd(target) +1, text.getSpanEnd(target)+2,   Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-				final Context activ = getContext();
 				final String href = target.getURL();
 				ClickableSpan clickspan = new ClickableSpan(){
 					@Override
@@ -2185,7 +2195,7 @@ public class ThreadViewFragment extends ListFragment
                                 }
                                 if (item.getItemId() == 4)
                                 {
-                                    Intent i = new Intent(getActivity(), PreferenceView.class);
+                                    Intent i = new Intent(mMainActivity, PreferenceView.class);
                                     i.putExtra("pscreenkey", "popupbrowser");
                                     startActivityForResult(i, ThreadListFragment.OPEN_PREFS);
                                     return true;
@@ -2195,7 +2205,7 @@ public class ThreadViewFragment extends ListFragment
                         });
                         hrefpop.show();
                         */
-                        showLinkOptionsMenu(href, activ);
+                        showLinkOptionsMenu(href);
 
 		    		}
 				};
@@ -2205,18 +2215,18 @@ public class ThreadViewFragment extends ListFragment
 			return builder;
 		}
 
-		private void showLinkOptionsMenu(final String href, final Context activ)
+		private void showLinkOptionsMenu(final String href)
 		{
-			MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(activ);
+			MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(mMainActivity);
 			builder.setTitle(href);
 			final CharSequence[] items = { "Open Externally", "Open in Popup Browser","Copy URL","Share Link", "Change Default Action"};
 			builder.setItems(items, new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int item) {
 					if (item == 2)
 					{
-						ClipboardManager clipboard = (ClipboardManager)activ.getSystemService(Activity.CLIPBOARD_SERVICE);
+						ClipboardManager clipboard = (ClipboardManager)mMainActivity.getSystemService(Activity.CLIPBOARD_SERVICE);
 						clipboard.setText(href);
-						Toast.makeText(activ, href, Toast.LENGTH_SHORT).show();
+						Toast.makeText(mMainActivity, href, Toast.LENGTH_SHORT).show();
 					}
 					if (item == 3)
 					{
@@ -2224,7 +2234,7 @@ public class ThreadViewFragment extends ListFragment
 						sendIntent.setAction(Intent.ACTION_SEND);
 						sendIntent.putExtra(Intent.EXTRA_TEXT, href);
 						sendIntent.setType("text/plain");
-						activ.startActivity(Intent.createChooser(sendIntent, "Share Link"));
+						mMainActivity.startActivity(Intent.createChooser(sendIntent, "Share Link"));
 					}
 					if (item == 0)
 					{
@@ -2235,19 +2245,19 @@ public class ThreadViewFragment extends ListFragment
 						}
 						Intent i = new Intent(Intent.ACTION_VIEW,
 								u);
-						activ.startActivity(i);
+						mMainActivity.startActivity(i);
 					}
 					if (item == 1)
 					{
-						((MainActivity)activ).openBrowser(href);
+						mMainActivity.openBrowser(href);
 					}
 					if (item == 4)
 					{
-						MaterialDialog.Builder build = new MaterialDialog.Builder(getActivity());
-						String[] descs = getActivity().getResources().getStringArray(R.array.preference_popupBrowser);
-						final String[] vals = getActivity().getResources().getStringArray(R.array.preference_popupBrowser_vals);
+						MaterialDialog.Builder build = new MaterialDialog.Builder(mMainActivity);
+						String[] descs = mMainActivity.getResources().getStringArray(R.array.preference_popupBrowser);
+						final String[] vals = mMainActivity.getResources().getStringArray(R.array.preference_popupBrowser_vals);
 						build.items(descs);
-						build.title(getActivity().getResources().getString(R.string.preference_popup_browser_title));
+						build.title(mMainActivity.getResources().getString(R.string.preference_popup_browser_title));
 						build.itemsCallbackSingleChoice(Integer.parseInt(_prefs.getString("usePopupBrowser2","1")), new MaterialDialog.ListCallback() {
 							@Override
 							public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
@@ -2436,8 +2446,8 @@ public class ThreadViewFragment extends ListFragment
         {
         	if ((_rootPostId > 0) && (_messageId == 0))
         	{
-	            ArrayList<Post> posts = ShackApi.processPosts(ShackApi.getPosts(_rootPostId, this.getContext(), ShackApi.getBaseUrl(getActivity())), _rootPostId, _maxBullets, getActivity());
-	            _shackloldata = ShackApi.getLols(getActivity());
+	            ArrayList<Post> posts = ShackApi.processPosts(ShackApi.getPosts(_rootPostId, this.getContext(), ShackApi.getBaseUrl(mMainActivity)), _rootPostId, _maxBullets, mMainActivity);
+	            _shackloldata = ShackApi.getLols(mMainActivity);
 	            if (_shackloldata.size() != 0)
 	            {
 	            	// check if this thread has shacklol data
@@ -2474,14 +2484,14 @@ public class ThreadViewFragment extends ListFragment
 	            }
 	            
 	            // fast scroll on mega threads
-            	if (getActivity () != null)
+            	if (mMainActivity != null)
         		{
             		boolean set = false;
             		if ((posts.size() > 300))
             			set = true;
             		final boolean set2 = set && _fastScroll;
             		
-        			getActivity().runOnUiThread(new Runnable(){
+        			mMainActivity.runOnUiThread(new Runnable(){
     	        		@Override public void run()
     	        		{
     	        			if (_viewAvailable)
@@ -2504,7 +2514,7 @@ public class ThreadViewFragment extends ListFragment
                 System.out.println("TIMER: CTT: " + (TimeDisplay.now() - timer)); timer = TimeDisplay.now();
                 prePreBuildTreeCache(posts);
 
-                statMax(getActivity(), "MaxThreadSize", posts.size());
+                statMax(mMainActivity, "MaxThreadSize", posts.size());
 
 	            return posts;
         	}
@@ -2526,8 +2536,8 @@ public class ThreadViewFragment extends ListFragment
             expandAndCheckPostWithoutAnimation(0);
 
             // pull to refresh integration
-            if (getActivity() != null)
-                ((MainActivity)getActivity()).getRefresher().setRefreshComplete();
+            if (mMainActivity != null)
+                mMainActivity.getRefresher().setRefreshComplete();
             System.out.println("TIMER: SRC: " + (TimeDisplay.now() - timer)); timer = TimeDisplay.now();
 
             // attempt at creating json so thread can be saved saveThread()
@@ -2549,7 +2559,7 @@ public class ThreadViewFragment extends ListFragment
             if ((_adapter != null) && (_adapter.getCount() > 0) && (_messageId == 0))
             {
                 // create fake thread for fav saving
-                t = new Thread(_adapter.getItem(0).getPostId(), _adapter.getItem(0).getUserName(), _adapter.getItem(0).getContent(), _adapter.getItem(0).getPosted(), _adapter.getCount(), "ontopic", hasReplied, ((MainActivity)getActivity()).mOffline.containsThreadId(_rootPostId));
+                t = new Thread(_adapter.getItem(0).getPostId(), _adapter.getItem(0).getUserName(), _adapter.getItem(0).getContent(), _adapter.getItem(0).getPosted(), _adapter.getCount(), "ontopic", hasReplied, mMainActivity.mOffline.containsThreadId(_rootPostId));
                 if (_adapter.getItem(0) != null)
                 {
                     _rootPostId = _adapter.getItem(0).getPostId();
@@ -2580,9 +2590,9 @@ public class ThreadViewFragment extends ListFragment
             }
             
             // mark as read if in favs
-            if (((MainActivity)getActivity()).mOffline.containsThreadId(_rootPostId))
+            if (mMainActivity.mOffline.containsThreadId(_rootPostId))
             {
-            	((MainActivity)getActivity()).markFavoriteAsRead(_rootPostId, _adapter.getCount());
+            	mMainActivity.markFavoriteAsRead(_rootPostId, _adapter.getCount());
             }
             System.out.println("TIMER: markRead: " + (TimeDisplay.now() - timer)); timer = TimeDisplay.now();
 
@@ -2639,7 +2649,7 @@ public class ThreadViewFragment extends ListFragment
         {
         	String selfUserName = _prefs.getString("userName", "default user");
             // get postqueueposts
-            PostQueueDB pqpdb = new PostQueueDB(getActivity());
+            PostQueueDB pqpdb = new PostQueueDB(mMainActivity);
             pqpdb.open();
             ArrayList<PostQueueObj> pqplist = (ArrayList<PostQueueObj>) pqpdb.getAllPostsInQueue(false);
             pqpdb.close();
@@ -2880,14 +2890,14 @@ public class ThreadViewFragment extends ListFragment
     	super.onResume();
     	
     	//  update all PQPs
-    	if ((_adapter != null) && (getActivity() != null))
+    	if ((_adapter != null) && (mMainActivity != null))
     	{
     		for (int i = 0; i < _adapter.getCount(); i++)
     		{
     			if (_adapter.getItem(i).isPQP())
     			{
     				System.out.println("getting db backed pqo from id " + _adapter.getItem(i).getPostId());
-    				PostQueueObj pqo = PostQueueObj.FromDB(_adapter.getItem(i).getPostId(), getActivity());
+    				PostQueueObj pqo = PostQueueObj.FromDB(_adapter.getItem(i).getPostId(), mMainActivity);
     				if ((pqo != null) && (pqo.getFinalId() != 0))
     				{
     					_adapter.getItem(i).setPostId(pqo.getFinalId());
@@ -2921,7 +2931,7 @@ public class ThreadViewFragment extends ListFragment
 	            	post.setPosted(TimeDisplay.now());
 	            	found = true;
 					// this updates blue dot and increases reply count in thread list
-					((MainActivity)getActivity()).attemptToUpdateReplyCountInThreadListTo(_rootPostId, length, true);
+					mMainActivity.attemptToUpdateReplyCountInThreadListTo(_rootPostId, length, true);
 	            	break;
 	            }
 	        }
@@ -2975,7 +2985,7 @@ public class ThreadViewFragment extends ListFragment
 	        case R.id.menu_textSelectSearch:
 	        	args = new Bundle();
 	    		args.putString("terms", bodyView.getText().subSequence(start, end).toString());
-	            ((MainActivity)getActivity()).openSearch(args);
+	            mMainActivity.openSearch(args);
 	            return true;
 	        }
 	        return false;
