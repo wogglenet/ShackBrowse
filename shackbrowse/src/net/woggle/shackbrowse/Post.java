@@ -23,7 +23,7 @@ public class Post implements Comparable<Post> {
 
     private Spannable _preview;
 	private ArrayList<String> imageUrls = new ArrayList<String>();
-	private Spannable _formattedContent;
+	// private Spannable _formattedContent;
 	private Bitmap _treebmp;
 	private LolObj _lolobj = null;
 	
@@ -132,8 +132,10 @@ public class Post implements Comparable<Post> {
         Spannable prePreview = PostFormatter.formatContent(this, false);
         // this limits the amount of work the ui thread has to do when displaying single line previews
         _preview = (Spannable)prePreview.subSequence(0, Math.min(prePreview.length(), 100));
-        _formattedContent = PostFormatter.formatContent(this, true);
-        // imageUrls = new ArrayList<String>();
+
+	    // _formattedContent = PostFormatter.formatContent(this, true);
+
+	    // imageUrls = new ArrayList<String>();
         setUserType();
         preSetModeration();
     }
@@ -196,7 +198,7 @@ public class Post implements Comparable<Post> {
     
     public Spannable getFormattedContent()
     {
-        return _formattedContent;
+        return PostFormatter.formatContent(this, true);
     }
 
     public Long getPosted()

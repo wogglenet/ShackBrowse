@@ -75,6 +75,11 @@ https://github.com/bradsh/ShackBrowse It is a mess. I am not a professional prog
 
 -->
 
+$ 5.4.8
+% v 5.4.8
+_ Jan 11, 2017
+* Bug Fix: New attempt at fixing link click bug after resume
+
 $ 5.4.7
 % v 5.4.7
 _ Jan 9, 2017

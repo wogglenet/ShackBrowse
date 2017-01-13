@@ -26,16 +26,14 @@ import static net.woggle.shackbrowse.StatsFragment.statInc;
 public class CustomURLSpan extends CustomClickableSpan implements OnLongClickListener {
 	private String href;
 
-	public interface mGetContext
-	{
-		public void mGetContext();
-	}
 
 	public CustomURLSpan(String href) {
 		// TODO Auto-generated constructor stub
 		super();
 		this.href = addHttp(href);
 	}
+
+
 	public static Dialog dialog;
 	
 	public String getURL()
@@ -47,6 +45,7 @@ public class CustomURLSpan extends CustomClickableSpan implements OnLongClickLis
         if (!Pattern.compile("^(?:f|ht)tps?://.*", Pattern.DOTALL).matcher(url).matches()) {
             url = "http://" + url;
         }
+
         return url;
     }
 	/*

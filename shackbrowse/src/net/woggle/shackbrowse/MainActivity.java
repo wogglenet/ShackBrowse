@@ -3059,29 +3059,27 @@ public class MainActivity extends ActionBarActivity
 			CustomTabActivityHelper.openCustomTab(this, intentBuilder.build(), Uri.parse(hrefs[0]));
 		}
 		else {
-			if (!isFinishing() && (!isDestroyed())) // attempted fix at very strange bug Exception java.lang.IllegalStateException: Activity has been destroyed on ft.commit
-			{
-				FragmentManager fm = getFragmentManager();
-				FragmentTransaction ft = fm.beginTransaction();
-				Bundle args = new Bundle();
-				args.putStringArray("hrefs", hrefs);
-				if (showZoomSetup)
-					args.putBoolean("showZoomSetup", true);
+			FragmentManager fm = getFragmentManager();
+			FragmentTransaction ft = fm.beginTransaction();
+			Bundle args = new Bundle();
+			args.putStringArray("hrefs", hrefs);
+			if (showZoomSetup)
+				args.putBoolean("showZoomSetup", true);
 
-				if (showPhotoView)
-					args.putBoolean("showPhotoView", true);
+			if (showPhotoView)
+				args.putBoolean("showPhotoView", true);
 
-				mPBfragment = (PopupBrowserFragment) Fragment.instantiate(getApplicationContext(), PopupBrowserFragment.class.getName(), args);
-				ft.add(R.id.browser_frame, mPBfragment, "pbfrag");
-				ft.attach(mPBfragment);
-				ft.commitAllowingStateLoss();
+			mPBfragment = (PopupBrowserFragment) Fragment.instantiate(getApplicationContext(), PopupBrowserFragment.class.getName(), args);
+			ft.add(R.id.browser_frame, mPBfragment, "pbfrag");
+			ft.attach(mPBfragment);
+			ft.commitAllowingStateLoss();
 
-				new anim(mBrowserFrame).toVisible();
+			new anim(mBrowserFrame).toVisible();
 
-				mPopupBrowserOpen = true;
+			mPopupBrowserOpen = true;
 
-				setTitleContextually();
-			}
+			setTitleContextually();
+
 		}
 	}
 	
