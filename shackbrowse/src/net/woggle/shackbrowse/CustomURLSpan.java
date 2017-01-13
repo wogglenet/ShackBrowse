@@ -104,7 +104,7 @@ public class CustomURLSpan extends CustomClickableSpan implements OnLongClickLis
 	public void onClick (View v) 
 	{
 		Activity test = (Activity)v.getContext();
-		if (test instanceof MainActivity && !test.isDestroyed() && !test.isFinishing())
+		if (test instanceof MainActivity)
 		{
 			MainActivity mAct = (MainActivity)test;
 

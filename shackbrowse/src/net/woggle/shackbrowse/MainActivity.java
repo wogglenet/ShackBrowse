@@ -1449,7 +1449,12 @@ public class MainActivity extends ActionBarActivity
 	public void openThreadViewAndSelectWithBackStack(int selectPostIdAfterLoading) {
 		openThreadView(selectPostIdAfterLoading, null, selectPostIdAfterLoading, null, false, 0, null, true, true);
 	}
-	public void openThreadViewAndFave(int faveThreadId)	{ openThreadView(faveThreadId, null, 0, null, true, 0, null, false, false); }
+	public void openThreadViewAndFave(int faveThreadId)	{
+
+		// sometimes this is called while the app is actually closed, and this causes a crash
+		if (!_threadView.isDetached())
+			openThreadView(faveThreadId, null, 0, null, true, 0, null, false, false);
+	}
 	public void openMessageView(int messageId, Message message)	{ openThreadView(0, Post.fromMessage(message), 0, null, false, messageId, message.getSubject(), false, false); }
 	public void openThreadView(int threadId, Post post, int selectPostIdAfterLoading, String json, boolean autoFaveOnLoad, int messageId, String messageSubject, boolean preserveBackStack, boolean doesntExpire)
 	{
