@@ -24,18 +24,17 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.text.ClipboardManager;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.MaterialDialogCompat;
 
 import static net.woggle.shackbrowse.StatsFragment.statInc;
 
-public class PicUploader extends ActionBarActivity {
+public class PicUploader extends AppCompatActivity {
 	private MaterialDialog _progressDialog;
 	
 	
@@ -231,7 +230,7 @@ public class PicUploader extends ActionBarActivity {
             	runOnUiThread(new Runnable(){
             		@Override public void run()
             		{
-                        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(PicUploader.this);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(PicUploader.this);
             	        builder.setTitle("Image Uploaded");
             	        builder.setMessage("Do what with the image URL?");
             	        builder.setCancelable(true);

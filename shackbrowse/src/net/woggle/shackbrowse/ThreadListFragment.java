@@ -76,7 +76,7 @@ import android.widget.Toast;
 import android.widget.AbsListView.OnScrollListener;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.MaterialDialogCompat;
+
 import com.gc.materialdesign.views.ButtonFlat;
 
 import static net.woggle.shackbrowse.StatsFragment.statInc;
@@ -714,10 +714,10 @@ public class ThreadListFragment extends ListFragment
         if (_showTangent) index.add(new Integer(0)); if (_showInformative) index.add(new Integer(1)); if (_showNWS) index.add(new Integer(2)); if (_showStupid) index.add(new Integer(3)); if (_showPolitical) index.add(new Integer(4)); if (_showOntopic) index.add(new Integer(5));
         final Integer[] checkedItems = index.toArray(new Integer[]{});
         // final Integer[] checkedItems = { _showTangent ? 0 : null ,_showInformative ? 1 : null,_showNWS  ? 2 : null,_showStupid ? 3 : null,_showPolitical ? 4 : null, _showOntopic ? 5 : null};
-        build.items(items).itemsCallbackMultiChoice(checkedItems, new MaterialDialog.ListCallbackMulti() {
+        build.items(items).itemsCallbackMultiChoice(checkedItems, new MaterialDialog.ListCallbackMultiChoice() {
             @Override
-            public void onSelection(MaterialDialog materialDialog, Integer[] integers, CharSequence[] charSequences) {
-                return;
+            public boolean onSelection(MaterialDialog materialDialog, Integer[] integers, CharSequence[] charSequences) {
+                return true;
             }
         })
         .cancelable(true)
@@ -1006,7 +1006,7 @@ public class ThreadListFragment extends ListFragment
     	if (type == 1)
     		thing = "Username";
 
-        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
     	builder.setTitle("Add Keyword Filter");
     	// Set up the input
 		final EditText input = new EditText(getActivity());
@@ -1039,7 +1039,7 @@ public class ThreadListFragment extends ListFragment
     }
     public void removeFiltWord(final String keyword, final String filename)
     {
-        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
     	builder.setTitle("Remove Filter Keyword");
     	String type = null;
     	if (filename.contains(DELETE_FILTWORD_FILENAME))
@@ -1073,7 +1073,7 @@ public class ThreadListFragment extends ListFragment
     }
     public void showFiltWordList()
     {
-        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(getActivity());
+	    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Keyword Filters");
         final Filtword cfwords = new Filtword(COLLAPSE_FILTWORD_FILENAME);
         final Filtword dfwords = new Filtword(DELETE_FILTWORD_FILENAME);

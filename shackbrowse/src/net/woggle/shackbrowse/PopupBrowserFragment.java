@@ -91,6 +91,7 @@ public class PopupBrowserFragment extends Fragment {
         mWebview.getSettings().setJavaScriptEnabled(true);
 		mWebview.getSettings().setDomStorageEnabled(true);
 		mWebview.getSettings().setDatabaseEnabled(true);
+	    mWebview.getSettings().setUserAgentString("Mozilla/5.0 (Linux; U; Android 2.0; en-us; Droid Build/ESD20) AppleWebKit/530.17 (KHTML, like Gecko) Version/4.0 Mobile Safari/530.17");
 		mWebview.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
 
 		mWebview.setBackgroundColor(0x00000000);

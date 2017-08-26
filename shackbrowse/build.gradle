@@ -4,7 +4,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.3'
+        classpath 'com.android.tools.build:gradle:2.3.3'
     }
 }
 
@@ -13,21 +13,24 @@ apply plugin: 'com.android.application'
 repositories {
     mavenCentral()
     maven { url "https://jitpack.io" }
+    maven {
+        url "https://maven.google.com"
+    }
 }
 
 dependencies {
     compile fileTree(include: '*.jar', dir: 'libs')
     // compile 'com.android.support:appcompat-v7:21.0.+'
-    compile 'com.google.android.gms:play-services-base:9.0.2'
-    compile 'com.google.android.gms:play-services-gcm:9.0.2'
+    compile 'com.google.android.gms:play-services-base:11.0.4'
+    compile 'com.google.android.gms:play-services-gcm:11.0.4'
     compile 'com.github.castorflex.smoothprogressbar:library:0.5.2'
     // compile 'com.android.support:support-v4:21.0.+'
-    compile 'com.afollestad:material-dialogs:0.6.2.4'
+    compile 'com.afollestad.material-dialogs:commons:0.9.4.7'
     compile 'com.github.vajro:MaterialDesignLibrary:1.6'
-    compile 'com.github.bumptech.glide:glide:3.6.0'
-    compile 'com.android.support:customtabs:24.0.0'
-    compile 'com.android.support:appcompat-v7:24.0.0'
-    compile 'com.android.support:support-v4:24.0.0'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile 'com.android.support:customtabs:26.0.1'
+    compile 'com.android.support:appcompat-v7:26.0.1'
+    compile 'com.android.support:support-v4:26.0.1'
     compile 'com.google.firebase:firebase-core:9.0.2'
     compile 'com.google.firebase:firebase-crash:9.0.2'
 }
@@ -37,8 +40,8 @@ android {
     signingConfigs {
         release
     }
-    compileSdkVersion 24
-    buildToolsVersion '23.0.3'
+    compileSdkVersion 26
+    buildToolsVersion '26.0.1'
     compileOptions.encoding = 'windows-1251'
     sourceSets {
         main {

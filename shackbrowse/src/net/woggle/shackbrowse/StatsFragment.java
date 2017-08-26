@@ -1,6 +1,7 @@
 package net.woggle.shackbrowse;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ListFragment;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -18,7 +19,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.MaterialDialogCompat;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONArray;
@@ -70,7 +70,7 @@ public class StatsFragment extends ListFragment {
 
     public void wipeStats()
     {
-        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Delete Stats?");
         builder.setMessage("This will clear stats both on this device and in the cloud for your username. Are you SURE?");
         builder.setCancelable(false);
@@ -95,9 +95,9 @@ public class StatsFragment extends ListFragment {
         new MaterialDialog.Builder(getActivity())
                 .title("Select Opt Out Option")
                 .items(R.array.preference_optoutstats)
-                .itemsCallbackSingleChoice(prefs.getInt("optOutFromStats", 0), new MaterialDialog.ListCallback() {
+                .itemsCallbackSingleChoice(prefs.getInt("optOutFromStats", 0), new MaterialDialog.ListCallbackSingleChoice() {
                     @Override
-                    public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                    public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
                         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
                         SharedPreferences.Editor edit = prefs.edit();
                         edit.putInt("optOutFromStats", which);
@@ -125,6 +125,8 @@ public class StatsFragment extends ListFragment {
                                     })
                                     .show();
                         }
+
+                        return true;
                     }
                 })
                 .positiveText("Confirm")

@@ -68,7 +68,7 @@
 			android:key="useVolumeButtons"
 			android:title="@string/preference_use_volume_buttons_title"
 			android:summary="@string/preference_use_volume_buttons_summary"
-			android:defaultValue="true"
+			android:defaultValue="false"
 			/>
         <ListPreference
             android:key="forcePostPreview"

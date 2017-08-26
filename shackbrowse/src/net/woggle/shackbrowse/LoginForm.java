@@ -13,7 +13,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.MaterialDialogCompat;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -59,7 +58,7 @@ public class LoginForm {
 	}
 	public void show()
 	{
-        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(_context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(_context);
         builder.setTitle("Enter Credentials");
         final View view = _context.getLayoutInflater().inflate(R.layout.dialog_login, null);
         final EditText usern = (EditText) view.findViewById(R.id.loginUsername);
@@ -198,7 +197,7 @@ public class LoginForm {
 	        	_context.runOnUiThread(new Runnable(){
 	        		@Override public void run()
 	        		{
-                        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(_context);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(_context);
 	        	        builder.setTitle("Verify Result");
 	        	        if (res)
 	        	        {

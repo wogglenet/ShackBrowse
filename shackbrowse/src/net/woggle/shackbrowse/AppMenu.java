@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -32,18 +33,26 @@ public class AppMenu extends ListFragment
 	private SharedPreferences _prefs;
 	int mCheckedPosition = 3;
 	private Object thisversion;
+
+	@Override
+	public void onAttach(Activity activity)
+	{
+		super.onAttach(activity);
+		System.out.println("APPMENU ATTACHED");
+	}
 	
 	@Override
     public void onCreate(Bundle savedInstanceBundle)
     {
-    	
+    	System.out.println("APPMENU INIT");
     	super.onCreate(savedInstanceBundle);
     	this.setRetainInstance(true);
     }
 
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-    {   
+    {
+	    System.out.println("APPMENU INIT VIEW");
     	_viewAvailable = true;
         return super.onCreateView(inflater, container, savedInstanceState);
     }
@@ -59,7 +68,7 @@ public class AppMenu extends ListFragment
     public void onActivityCreated(Bundle savedInstanceState)
     {
         super.onActivityCreated(savedInstanceState);
-
+	    System.out.println("APPMENU INIT OAC");
         // set list view up
         getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         getListView().setDividerHeight(0);

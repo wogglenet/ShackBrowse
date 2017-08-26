@@ -96,6 +96,22 @@
         <item>Local stats only, no cloud</item>
         <item>Paranoid; collect no stats!</item>
     </string-array>
+	<string-array name="preference_LEDBlinkInMS">
+		<item>Much Blink</item>
+		<item>Fast Blink</item>
+		<item>Standard Blink</item>
+		<item>Slower Blink</item>
+		<item>Molasses Blink</item>
+		<item>Slow AF Blink</item>
+	</string-array>
+	<string-array name="preference_LEDBlinkInMS_vals">
+		<item>1000</item>
+		<item>1600</item>
+		<item>2000</item>
+		<item>3000</item>
+		<item>5000</item>
+		<item>10000</item>
+	</string-array>
     <string-array name="preference_limitvibratespam">
         <item>No limit, much spam, very wow</item>
         <item>30 seconds</item>

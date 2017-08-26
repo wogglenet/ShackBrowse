@@ -20,6 +20,7 @@
   <body>
 <!--
 TODO
+* TODO SUPPORT NOTIFICATION CHANNELS FOR API 26
 * TODO NO NETWORK ICON
 * QUOTES FROM TEXT SELECTION
 * SEARCH GOOGLE BY TEXT SELECTION
@@ -27,7 +28,6 @@ TODO
 * WHITE MODE
 * OPTION TO REMOVE DEVICEID FROM ALL NOTIFICATIONS
 * WIDGET FOR TOP POSTS
-
 
 SERVER
 * STAR OUT SPOILER TEXT
@@ -74,6 +74,17 @@ l[Can I see the source?]l
 https://github.com/bradsh/ShackBrowse It is a mess. I am not a professional programmer nor do I have any degrees in computer science. I just wanted a shack app so I learned to program.
 
 -->
+
+$ 5.4.9
+% v 5.4.9
+_ Aug 26, 2017
+* Can select speed of notification light
+* New Notification LED color selector
+* Protected back button exit
+* Volume button nav defaults to off
+* Bug Fix: Android O hotfix
+* Bug Fix: Notification LED color selector actually works
+* Bug Fix: Twitter links in popup browser attempted fix
 
 $ 5.4.8
 % v 5.4.8

@@ -9,6 +9,7 @@ import net.woggle.shackbrowse.NetworkNotificationServers.OnGCMInteractListener;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -28,7 +29,9 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.view.View;
 import android.widget.EditText;
@@ -36,7 +39,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.MaterialDialogCompat;
+
+import com.afollestad.materialdialogs.color.ColorChooserDialog;
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.PeriodicTask;
 
@@ -58,7 +62,6 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
     private Preference _keyNotification;
     private OnGCMInteractListener mGCMlistener;
 
-
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -69,6 +72,8 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
         addPreferencesFromResource(R.xml.preferences_notifications);
 
         final Context fincon = getActivity();
+        final AppCompatActivity activ = (AppCompatActivity)getActivity();
+        final PreferenceFragment thisFrag = this;
         Preference SMCheckInterval = (Preference)findPreference("PeriodicNetworkServicePeriod");
         SMCheckInterval.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 
@@ -118,14 +123,35 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
                                                       notification.flags |= Notification.FLAG_SHOW_LIGHTS;
 
                                                       notification.ledARGB = prefs.getInt("notificationColor", Color.GREEN);
-                                                      notification.ledOffMS = 1600;
-                                                      notification.ledOnMS = 100;
+                                                      notification.ledOffMS = Integer.parseInt(prefs.getString("LEDBlinkInMS", "2000"));
+                                                      notification.ledOnMS = (int)(Integer.parseInt(prefs.getString("LEDBlinkInMS", "2000")) / 10);
                                                       // mId allows you to update the notification later on.
                                                       int mId = 58401;
                                                       mNotificationManager.notify(mId, notification);
 
                                                       return false;
                                                   }}
+        );
+
+        Preference colorNote = (Preference) findPreference("notificationColor2");
+        colorNote.setOnPreferenceClickListener(new OnPreferenceClickListener(){
+
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                new ColorChooserDialog.Builder(fincon, R.string.notepref_color)
+
+                        .allowUserColorInputAlpha(false)
+                        .titleSub(R.string.notepref_colorsub)  // title of dialog when viewing shades of a color
+                        .accentMode(false)  // when true, will display accent palette instead of primary palette
+                        .doneButton(R.string.md_done_label)  // changes label of the done button
+                        .cancelButton(R.string.md_cancel_label)  // changes label of the cancel button
+                        .backButton(R.string.md_back_label)  // changes label of the back button
+                        .preselect(prefs.getInt("notificationColor", Color.GREEN))  // optionally preselects a color
+                        .dynamicButtonColor(true)  // defaults to true, false will disable changing action buttons' color to currently selected color
+                        .show((AppCompatActivity)getActivity()); // an AppCompatActivity which implements ColorCallback
+                return false;
+            }}
         );
 
         mGCMlistener = new OnGCMInteractListener(){
@@ -355,7 +381,7 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
     ArrayList<String> mNoteKeywords = new ArrayList<String>();
     public void addKeyword()
     {
-        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Add Keyword Notification");
         // Set up the input
         final LinearLayout lay = new LinearLayout(getActivity());
@@ -390,7 +416,7 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
     }
     public void removeKeyword(final String keyword)
     {
-        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Remove Notification Keyword");
 
         builder.setMessage("Stop notifications for " + keyword + "?");
@@ -414,7 +440,7 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
     }
     public void showKeywords()
     {
-        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Keyword Notifications");
         final CharSequence[] items = mNoteKeywords.toArray(new CharSequence[mNoteKeywords.size()]);
         builder.setItems(items, new DialogInterface.OnClickListener() {
@@ -445,7 +471,7 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
     {
 
         if (!_GCMAccess.checkPlayServices()) {
-            MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(getActivity());
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle("No Play Services");
             builder.setMessage("You need to have Google Play Services installed to receive notifications.");
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener()

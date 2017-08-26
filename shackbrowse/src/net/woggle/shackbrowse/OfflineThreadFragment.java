@@ -18,7 +18,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.afollestad.materialdialogs.MaterialDialogCompat;
 
 
 public class OfflineThreadFragment extends ThreadListFragment {
@@ -44,7 +43,7 @@ public class OfflineThreadFragment extends ThreadListFragment {
 	
 	void clearAllOfflineThreads()
 	{
-        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(this.getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
         builder.setTitle("Clear Saved Threads");
         builder.setMessage("Are you sure you want to delete all threads?");
         builder.setPositiveButton("Delete All", new DialogInterface.OnClickListener() {

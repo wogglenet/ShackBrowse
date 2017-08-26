@@ -41,7 +41,7 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.CharacterStyle;
@@ -66,11 +66,10 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.MaterialDialogCompat;
 
 import static net.woggle.shackbrowse.StatsFragment.statInc;
 
-public class ComposePostView extends ActionBarActivity {
+public class ComposePostView extends AppCompatActivity {
 
 	protected static final int SELECT_IMAGE = 0;
 	protected static final int TAKE_PICTURE = 1;
@@ -574,7 +573,7 @@ public class ComposePostView extends ActionBarActivity {
     
     public void showParentPost()
     {
-        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(ComposePostView.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(ComposePostView.this);
         builder.setTitle("Post by " + mParentAuthor);
         ScrollView scrolly = new ScrollView(ComposePostView.this);
         TextView content = new TextView(ComposePostView.this);
@@ -606,7 +605,7 @@ public class ComposePostView extends ActionBarActivity {
 		postContent = getPreviewFromHTML(postContent);
 
 
-        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(ComposePostView.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(ComposePostView.this);
         builder.setTitle("Post by " + _prefs.getString("userName", "user"));
         ScrollView scrolly = new ScrollView(ComposePostView.this);
         TextView content = new TextView(ComposePostView.this);
@@ -668,7 +667,7 @@ public class ComposePostView extends ActionBarActivity {
 		EditText edit = (EditText)findViewById(R.id.textContent);
 		if (edit.length() > 1)
 		{
-            MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(ComposePostView.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(ComposePostView.this);
 	        builder.setTitle("Exit Composer");
 	        String whatDo = (_replyToPostId == 0) ? "create a new topic post" : "reply to this post";
 	        if (!_messageMode)
@@ -855,7 +854,7 @@ public class ComposePostView extends ActionBarActivity {
 	protected void openMarkupSelector(boolean andReselect, boolean macrosInstead) {
 		mIsMacroItem = macrosInstead;
 
-		MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(ComposePostView.this);
+		AlertDialog.Builder builder = new AlertDialog.Builder(ComposePostView.this);
 		builder.setTitle(MARKUPTITLE);
 		if (macrosInstead)
 			builder.setTitle(MACROTITLE);
@@ -1012,7 +1011,7 @@ public class ComposePostView extends ActionBarActivity {
         {
             if (!_prefs.getBoolean("hasSeenMarkupTip", false))
             {
-                MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(ComposePostView.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(ComposePostView.this);
                 builder.setTitle("Markup Button Tip");
                 builder.setMessage("You can long-press on a word to select the word in Android. Once a word is selected, you can hit the markup button and that markup will be applied. You can do this multiple times to easily add multiple markups to a text selection.");
                 builder.setNegativeButton("Never show this again", null);
@@ -1024,7 +1023,7 @@ public class ComposePostView extends ActionBarActivity {
             }
 	        if (mIsMacroItem)
 	        {
-		        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(ComposePostView.this);
+		        AlertDialog.Builder builder = new AlertDialog.Builder(ComposePostView.this);
 		        builder.setTitle("Cannot Apply");
 		        builder.setMessage("You must select text before applying text macros.");
 		        builder.setNegativeButton("OK", null);
@@ -1294,7 +1293,7 @@ public class ComposePostView extends ActionBarActivity {
             	System.out.println(_exception.getMessage());
             	if (_exception.getMessage().contains("create/17.json"))
             	{
-                    MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(ComposePostView.this);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(ComposePostView.this);
         	        builder.setTitle("Error");
         	        builder.setMessage("Could not access Shacknews posting API.\nPossibly bad login credentials?\nOpen settings?");
         	        builder.setPositiveButton("Open login settings", new DialogInterface.OnClickListener() {

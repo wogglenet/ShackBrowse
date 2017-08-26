@@ -17,8 +17,6 @@ import android.view.View.OnLongClickListener;
 import android.webkit.WebView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.MaterialDialogCompat;
-
 import java.util.regex.Pattern;
 
 import static net.woggle.shackbrowse.StatsFragment.statInc;
@@ -62,7 +60,7 @@ public class CustomURLSpan extends CustomClickableSpan implements OnLongClickLis
 		activ.runOnUiThread(new Runnable(){
     		@Override public void run()
     		{
-                MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(activ);
+                AlertDialog.Builder builder = new AlertDialog.Builder(activ);
     			builder.setTitle("Choose Link Action");
     	        final CharSequence[] items = { "Copy URL","Share Link","Open Externally", "Open in popup browser"};
     	        builder.setItems(items, new DialogInterface.OnClickListener() {

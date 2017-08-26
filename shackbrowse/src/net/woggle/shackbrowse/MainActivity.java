@@ -58,11 +58,13 @@ import android.preference.PreferenceManager;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.support.annotation.ColorInt;
+import android.support.annotation.NonNull;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
 import android.text.ClipboardManager;
@@ -93,8 +95,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.MaterialDialogCompat;
+import com.afollestad.materialdialogs.color.ColorChooserDialog;
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
@@ -103,7 +106,7 @@ import fr.castorflex.android.smoothprogressbar.SmoothProgressDrawable;
 
 import static net.woggle.shackbrowse.StatsFragment.statInc;
 
-public class MainActivity extends ActionBarActivity
+public class MainActivity extends AppCompatActivity implements ColorChooserDialog.ColorCallback
 {
 	static final String PQPSERVICESUCCESS = "net.woggle.PQPServiceSuccess";
 	static final String CHROMETABRECV = "net.woggle.shackbrowse.CHROMETABRECV";
@@ -222,6 +225,7 @@ public class MainActivity extends ActionBarActivity
 		this.setContentView(R.layout.main_splitview);
 
 		WebView wbv = new WebView(this);
+		wbv.clearFormData();
 		wbv.clearCache(true);
 		
 		initFragments(savedInstanceState);
@@ -581,8 +585,8 @@ public class MainActivity extends ActionBarActivity
 			_appMenu = new AppMenu();
 			// menu setup
 			ft = getFragmentManager().beginTransaction();
-			ft.attach(_appMenu);
 			ft.replace(R.id.menu_frame, _appMenu, "appmenu");
+			ft.attach(_appMenu);
 			ft.commit();
 		}
 
@@ -1410,7 +1414,7 @@ public class MainActivity extends ActionBarActivity
 			});
         	return;
         }
-        MaterialDialogCompat.Builder alert = new MaterialDialogCompat.Builder(this);
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
     	alert.setTitle("Shackmessage to " + username);
         LinearLayout layout = new LinearLayout(this);
         layout.setPadding(5,5,5,5);
@@ -1872,7 +1876,7 @@ public class MainActivity extends ActionBarActivity
 
     public void openThreadByIDDialog() {
         MainActivity _context = this;
-        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(_context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(_context);
         builder.setTitle("Enter Thread ID");
         final View view = _context.getLayoutInflater().inflate(R.layout.dialog_openthreadid, null);
         final EditText tid = (EditText) view.findViewById(R.id.openIDText);
@@ -1889,8 +1893,7 @@ public class MainActivity extends ActionBarActivity
         d.show();
     }
 
-
-    static private class OnPostResume
+	static private class OnPostResume
     {
 		static final int DO_NOTHING = 0;
     	static final int OPEN_BROWSER_ZOOM_SETUP = 1;
@@ -2068,7 +2071,21 @@ public class MainActivity extends ActionBarActivity
 		}
 		else
 		{
-			super.onBackPressed();
+			new MaterialDialog.Builder(this)
+					.title("Quit")
+					.content("Really Quit?")
+					.positiveText("Yes")
+					.onPositive(new MaterialDialog.SingleButtonCallback()
+					{
+						@Override
+						public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which)
+						{
+							finish();
+						}
+					})
+					.negativeText("No")
+					.show();
+			// super.onBackPressed();
 		}
 	}
 		
@@ -2082,7 +2099,7 @@ public class MainActivity extends ActionBarActivity
     	FragmentPagerAdapter a = (FragmentPagerAdapter) mPager.getAdapter();
 		ThreadListFragment TLfragment = (ThreadListFragment) a.instantiateItem(mPager, 1);
         */
-        Boolean handleVolume = _prefs.getBoolean("useVolumeButtons", true);
+        Boolean handleVolume = _prefs.getBoolean("useVolumeButtons", false);
         
         // do not do volume scroll with open web browser
         if (handleVolume && !mPopupBrowserOpen)
@@ -2189,7 +2206,7 @@ public class MainActivity extends ActionBarActivity
             if ((_exception != null) || (result == null))
             {
                 if (mActivityAvailable) {
-                    MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(MainActivity.this);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                     builder.setTitle("Woggle Offline");
                     builder.setMessage("Woggle servers are down. ShackBrowse may not work properly. It is recommended you close the app and try again later.");
                     builder.setCancelable(false);
@@ -2214,7 +2231,7 @@ public class MainActivity extends ActionBarActivity
             		if (parts[0].equals("d"))
             		{
                         if (mActivityAvailable) {
-                            MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(MainActivity.this);
+                            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                             builder.setTitle("ShackBrowse Offline");
                             builder.setCancelable(false);
                             builder.setMessage("ShackBrowse is currently unavailable. Try again later.");
@@ -2236,7 +2253,7 @@ public class MainActivity extends ActionBarActivity
             				if (_prefs.getString("ignoreNewVersion", "").equalsIgnoreCase(parts[1].toLowerCase()) && (parts[0].equals("u")))
             					return;
                             if (mActivityAvailable) {
-                                MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(MainActivity.this);
+                                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                                 builder.setTitle("ShackBrowse Version");
                                 String versExp = "\nYour Version: " + thisversion + "\nNew: " + parts[1];
                                 builder.setMessage(parts[0].equals("f") ? "ShackBrowse must update." + versExp : "A new version of ShackBrowse is available!" + versExp);
@@ -2638,7 +2655,7 @@ public class MainActivity extends ActionBarActivity
 	public void showKeywords() {
 		if (!_enableDonatorFeatures )
 		{
-            MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
 	        builder.setTitle("Donator Feature");
 	        builder.setMessage("Enable this feature by clicking the menu, \"Unlock DLC\" and \"Access Donator Features\".");
 	        builder.setPositiveButton("Go Now", new DialogInterface.OnClickListener() {
@@ -2817,7 +2834,7 @@ public class MainActivity extends ActionBarActivity
         boolean cloudEnabled = (this)._prefs.getBoolean("enableCloudSync", true);
     	if (!cloudEnabled)
     	{
-            MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Enable Cloud Sync");
             builder.setMessage("Cloud sync is disabled. Enable?");
             builder.setPositiveButton("Enable Cloud Sync", new DialogInterface.OnClickListener(){
@@ -2836,7 +2853,7 @@ public class MainActivity extends ActionBarActivity
     	}
     	else
     	{
-            MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
 	        builder.setTitle("Choose Cloud Action");
 	        final CharSequence[] items = { "Change Sync Interval (<1kb)","Perform Cloud to Local Copy","Perform Local to Cloud Copy","Merge Cloud and Local","Disable Cloud Sync"};
 	        builder.setItems(items, new DialogInterface.OnClickListener() {
@@ -2874,7 +2891,7 @@ public class MainActivity extends ActionBarActivity
     	}
     }
 	protected void cloudIntervalChoose() {
-        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Choose Cloud Interval");
         final CharSequence[] items = { "30 seconds","1 minute","2 minutes","5 minutes (default)","10 minutes"};
         builder.setItems(items, new DialogInterface.OnClickListener() {
@@ -3005,7 +3022,7 @@ public class MainActivity extends ActionBarActivity
         catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-            MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
 	        builder.setTitle("Error Clearing Collapsed");
 	        builder.setMessage("Clear Failure");
 	        builder.setNegativeButton("Ok", null);
@@ -3280,7 +3297,7 @@ public class MainActivity extends ActionBarActivity
 		if ((!_prefs.contains("browserImageZoom5")) && (!_prefs.getBoolean("neverShowAutoZoomAnnoy2", false)))
 		{
             StatsFragment.statInc(this, "AnnoyedByStartupZoomDialog");
-            MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		    builder.setTitle("Set up Autozoom");
 		    LayoutInflater annoyInflater = LayoutInflater.from(this);
 	        View annoyLayout = annoyInflater.inflate(R.layout.dialog_nevershowagain, null);
@@ -3356,7 +3373,7 @@ public class MainActivity extends ActionBarActivity
 	}
 
 	public void openPostQueueManager() {
-        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 	    builder.setTitle("Post Queue System");
 	    final PostQueueDB pdb = new PostQueueDB(this);
 		pdb.open();
@@ -3560,6 +3577,23 @@ public class MainActivity extends ActionBarActivity
 		ClipboardManager clipboard = (ClipboardManager)getSystemService(Activity.CLIPBOARD_SERVICE);
 		clipboard.setText(text);
 		Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+	}
+
+	// COLOR PREFERENCE CHOOSER
+
+	@Override
+	public void onColorSelection(ColorChooserDialog dialog, int color) {
+		// TODO
+		System.out.println("COLORCHOOSE DONE" + color);
+		Editor edit = _prefs.edit();
+		edit.putInt("notificationColor", color);
+		edit.commit();
+	}
+
+	@Override
+	public void onColorChooserDismissed(@NonNull ColorChooserDialog dialog)
+	{
+
 	}
 
 }

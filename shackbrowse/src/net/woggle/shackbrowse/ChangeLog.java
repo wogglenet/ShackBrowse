@@ -18,8 +18,6 @@ import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 
-import com.afollestad.materialdialogs.MaterialDialogCompat;
-
 public class ChangeLog {
 
         private final Context context;
@@ -136,7 +134,7 @@ public class ChangeLog {
                 wv.loadDataWithBaseURL(null, this.getLog(full), "text/html", "UTF-8",
                                 null);
 
-            MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(this.context);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this.context);
                 builder.setTitle(
                                 context.getResources().getString(
                                                 full ? R.string.changelog_full_title

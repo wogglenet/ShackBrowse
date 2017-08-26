@@ -54,7 +54,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.MaterialDialogCompat;
 
 public class PreferenceView extends PreferenceFragment
 {
@@ -727,7 +726,7 @@ public class PreferenceView extends PreferenceFragment
         		    	if (result == null)
         		    		return;
         		    	
-        		    	MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(getActivity());
+        		    	AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         		    	builder.setTitle("API Average Time for getPosts");
         		    	// Set up the input
         		    	String[] pingbits = result.split(Pattern.quote(" "));

@@ -71,7 +71,6 @@ import android.widget.TextView.BufferType;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.MaterialDialogCompat;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.nhaarman.listviewanimations.itemmanipulation.ExpandCollapseListener;
@@ -175,7 +174,6 @@ public class ThreadViewFragment extends ListFragment
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		System.out.println("ATTACHed!");
 		mMainActivity = (MainActivity)activity;
 	}
 
@@ -395,7 +393,7 @@ public class ThreadViewFragment extends ListFragment
 						@Override
 						public void onClick(View v) {
 							if (_prefs.getBoolean("showThreadExpiredOkDialog", true)) {
-								MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(mMainActivity);
+								AlertDialog.Builder builder = new AlertDialog.Builder(mMainActivity);
 								builder.setTitle("Expired Thread");
 								final View v2 = v;
 								LayoutInflater annoyInflater = LayoutInflater.from(mMainActivity);
@@ -648,7 +646,7 @@ public class ThreadViewFragment extends ListFragment
     			mMainActivity.runOnUiThread(new Runnable(){
 	        		@Override public void run()
 	        		{
-                        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(mMainActivity);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(mMainActivity);
 	                    builder.setTitle("Taggers for post");
 	                    builder.setNegativeButton("OK", null);
 	                    
@@ -819,7 +817,7 @@ public class ThreadViewFragment extends ListFragment
         	return;
         }
 
-        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(mMainActivity);
+        AlertDialog.Builder builder = new AlertDialog.Builder(mMainActivity);
         builder.setTitle("Choose LOL tag");
         final CharSequence[] items = { "lol","inf","unf","tag","wtf","ugh"};
         final CharSequence[] itemsQuick = { "See who tagged", "lol","inf","unf","tag","wtf","ugh"};
@@ -877,7 +875,7 @@ public class ThreadViewFragment extends ListFragment
     
     public void modChoose(final int pos)
     {
-        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(mMainActivity);
+        AlertDialog.Builder builder = new AlertDialog.Builder(mMainActivity);
         builder.setTitle("Choose mod tag");
         final CharSequence[] items = { "interesting","nws","stupid","tangent","ontopic","political" };
         builder.setItems(items, new DialogInterface.OnClickListener() {
@@ -2217,7 +2215,7 @@ public class ThreadViewFragment extends ListFragment
 
 		private void showLinkOptionsMenu(final String href)
 		{
-			MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(mMainActivity);
+			AlertDialog.Builder builder = new AlertDialog.Builder(mMainActivity);
 			builder.setTitle(href);
 			final CharSequence[] items = { "Open Externally", "Open in Popup Browser","Copy URL","Share Link", "Change Default Action"};
 			builder.setItems(items, new DialogInterface.OnClickListener() {
@@ -2258,12 +2256,13 @@ public class ThreadViewFragment extends ListFragment
 						final String[] vals = mMainActivity.getResources().getStringArray(R.array.preference_popupBrowser_vals);
 						build.items(descs);
 						build.title(mMainActivity.getResources().getString(R.string.preference_popup_browser_title));
-						build.itemsCallbackSingleChoice(Integer.parseInt(_prefs.getString("usePopupBrowser2","1")), new MaterialDialog.ListCallback() {
+						build.itemsCallbackSingleChoice(Integer.parseInt(_prefs.getString("usePopupBrowser2","1")), new MaterialDialog.ListCallbackSingleChoice() {
 							@Override
-							public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
+							public boolean onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
 								SharedPreferences.Editor edit = _prefs.edit();
 								edit.putString("usePopupBrowser2", vals[i]);
 								edit.apply();
+								return true;
 							}
 						});
 						build.show();

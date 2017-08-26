@@ -16,7 +16,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
@@ -36,7 +36,7 @@ import org.json.JSONArray;
 
 /**
  */
-public class DonateActivity extends ActionBarActivity {
+public class DonateActivity extends AppCompatActivity {
     // Debug tag, for logging
     static final String TAG = "ShackBrowseDonate";
 

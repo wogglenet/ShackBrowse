@@ -12,6 +12,7 @@ import org.json.JSONException;
 
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -36,7 +37,6 @@ import android.widget.TextView;
 import android.widget.AbsListView.OnScrollListener;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.MaterialDialogCompat;
 
 /* TO DO
  * widget for tagged threads               
@@ -235,7 +235,7 @@ public class MessageFragment extends ListFragment
 			});
         	return;
         }
-        MaterialDialogCompat.Builder alert = new MaterialDialogCompat.Builder(getActivity());
+	    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
         alert.setTitle("New Shackmessage");
         LinearLayout layout = new LinearLayout(getActivity());
         layout.setPadding(5,5,5,5);

@@ -134,6 +134,8 @@
     <string name="preference_usewinchatty_summary">Uses the Winchatty V2 API when possible. This is a replica of the shacknews database and the server responds much more quickly. It is sometimes 5 seconds out of date. Cannot be used for all API calls, but can provide faster service.</string>
     
     <string name="preferences_notifications">Notifications</string>
+    <string name="notepref_color">Primary Colors</string>
+    <string name="notepref_colorsub">Tones</string>
     <string name="preference_testnote">Test Notification</string>
     <string name="preferences_notifications_summary">Push notification options</string>
     <string name="preference_notesound_title">Sound</string>
@@ -348,6 +350,8 @@
     <string name="preference_onlyFavoritesFromLast18Hours_title">Only Recent Starred</string>
     <string name="preference_onlyFavoritesFromLast18Hours_summary">Only starred threads from the last 18 hours will be shown at the top of the latestchatty list. Older starred threads will remain in the starred posts app area.</string>
     <string name="compose_macro">Apply Macro</string>
+	<string name="preference_LEDBlinkInMS_title">LED Blink Speed</string>
+    <string name="preference_LEDBlinkInMS_summary">Changes the LED blink rate</string>
     <!-- items in  the array will show up even when not yet registered -->
     <string-array name="statsItems">
         <item>statsItemAnnoyedByStartupZoomDialog</item>

@@ -380,9 +380,9 @@ public class NotifierReceiver extends BroadcastReceiver {
 		}
 		
 		notification.flags |= Notification.FLAG_SHOW_LIGHTS;
-		notification.ledARGB = Color.GREEN;
-		notification.ledOffMS = 1500;
-		notification.ledOnMS = 100;
+		notification.ledARGB = prefs.getInt("notificationColor", Color.GREEN);
+		notification.ledOffMS = Integer.parseInt(prefs.getString("LEDBlinkInMS", "2000"));
+		notification.ledOnMS = (int)(Integer.parseInt(prefs.getString("LEDBlinkInMS", "2000")) / 10);
 		// mId allows you to update the notification later on.
 		
 		mNotificationManager.notify(mId, notification);

@@ -29,7 +29,7 @@ public class MaterialProgressDialog {
 
         MaterialDialog progressDialog = new MaterialDialog.Builder(activity)
                 .title(title)
-                .customView(R.layout.progress_dialog_material)
+                .customView(R.layout.progress_dialog_material, false)
                 .build();
         View customView = progressDialog.getCustomView();
         TextView tvMessage = (TextView) customView.findViewById(R.id.message);
