@@ -56,6 +56,9 @@ Source is available by request, although it is a nightmare. b{Questions}b, g{com
 
 q[b[n[F.A.Q.]n]b]q
 
+r{Can I Donate?}r
+Yes, you can send me a beer with http://woggle.net/donate/ .. I have enough money to run the server for years at this point. But I do like beer.
+
 g{Where do I get it?}g
 s[_[b[On g{Android}g?]b]_ l[Shack Browse]l is available on Google Play: https://play.google.com/store/apps/details?id=net.woggle.shackbrowse
 b[_[Don't have Android?]_]b Shack Browse can be run in b{Google Chrome}b to see what the fuss is about:
@@ -64,16 +67,21 @@ b[_[Don't have Android?]_]b Shack Browse can be run in b{Google Chrome}b to see 
 3b{.}b Notifications probably won't work, but I have no idea
 _[b[Have g{Android}g but no Google Play?]b]_ Download the APK and enable APK installation from unknown sources in your settings: http://woggle.net/oldSB/?C=M;O=D]s
 
-r{Can I Donate?}r
-Yes, you can send me a beer with http://woggle.net/donate/ .. I have enough money to run the server for years at this point. But I do like beer.
-
-y{My Notificiations are jacked up.}y
+y{My Notifications are jacked up.}y
 Like anything good in tech, turn it off and on again. If that doesn't work, clear app data and then log back in, close the app, and open it again.
 
 l[Can I see the source?]l
 https://github.com/bradsh/ShackBrowse It is a mess. I am not a professional programmer nor do I have any degrees in computer science. I just wanted a shack app so I learned to program.
 
 -->
+
+$ 5.4.10
+% v 5.4.10
+_ Nov 13, 2017
+* Major thread loading optimizations for those with lots of starred posts
+* Menu shows number of favorited threads
+* * N U K E ' D * macro
+* Option to turn off back-to-exit-guard (now defaults to off)
 
 $ 5.4.9
 % v 5.4.9

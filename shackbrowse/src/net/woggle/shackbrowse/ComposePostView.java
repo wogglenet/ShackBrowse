@@ -890,8 +890,10 @@ public class ComposePostView extends AppCompatActivity {
 			itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML("Macro: r{R}rg{A}gb{I}by{N}yl[B]ln[O]np[W]p"), null, true, true));
 			// ALLCAPS
 			itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML("Macro: ALLCAPS"), null, true, true));
-			// RAINBOW
+			// Christmas
 			itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML("Macro: r{C}rg{H}gr{R}rg{I}gr{S}rg{T}gr{M}rg{A}gr{S}r"), null, true, true));
+			// N U K E ' D
+			itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML("Macro: *[r{*" + "&nbsp;" + "N" + "&nbsp;" + "U" + "&nbsp;" + "K" + "&nbsp;" + "E" + "&nbsp;" + "'" + "&nbsp;" + "D*}r]*"), null, true, true));
 		}
 
 		ArrayAdapter<Spanned> adapter = new ArrayAdapter<Spanned>(ComposePostView.this,android.R.layout.simple_list_item_1, itemList);
@@ -997,6 +999,24 @@ public class ComposePostView extends AppCompatActivity {
 					        if ((i % 2) == 1) { curTag = "g"; curOpenBracket = "{"; curCloseBracket = "}"; }
 					        textToInsert = textToInsert + curTag + curOpenBracket + seltext.charAt(i) + curCloseBracket + curTag;
 				        }
+				        break;
+			        case 4:
+				        // NUKE'D
+				        String textToStart = seltext.replaceAll("\\s+",""); // remove whitespace
+				        textToStart = textToStart.toUpperCase(); // uppercase
+
+				        for (int i = 0; i < textToStart.length(); i++)
+				        {
+					        textToInsert = textToInsert + textToStart.charAt(i);
+					        // space it out
+					        if (i < (textToStart.length() - 1))
+					        {
+						        textToInsert = textToInsert + " ";
+					        }
+				        }
+
+				        textToInsert = "*[r{* " + textToInsert + " ' D *}r]*";
+
 				        break;
 		        }
 	        }

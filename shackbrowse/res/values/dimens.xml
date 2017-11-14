@@ -4,6 +4,7 @@
     <dimen name="searchViewTextSize">16sp</dimen>
     
     <dimen name="menuItemTextSize">16sp</dimen>
+    <dimen name="menuItemSmallTextSize">12sp</dimen>
     <dimen name="menuHeaderTextSize">12sp</dimen>
     
     <dimen name="textSize">14sp</dimen>

@@ -91,6 +91,20 @@ public class OfflineThread
 			_threads.put(threadId, value);
 		}
     }
+
+    public void updateSingleThreadToDisk(int threadId)
+    {
+	    SavedThreadObj value = _threads.get(threadId);
+	    if (value != null)
+	    {
+		    OfflineDB odb = new OfflineDB(_activity);
+		    odb.open();
+		    odb.updateThreadById(threadId, value);
+		    odb.close();
+		    System.out.println("OFFLINETHREAD: usttd updated TID " + threadId);
+	    }
+	    else { System.out.println("OFFLINETHREAD: usttd COULD NOT update TID " + threadId); }
+    }
 	
 	public void updateRecordedReplyCountPrev(int threadId, int count)
 	{

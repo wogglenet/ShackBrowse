@@ -1335,6 +1335,11 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		else
 			closeMenu();
 	}
+
+	public void updateMenuStarredPostsCount()
+	{
+		_appMenu.setSmallText(8,Integer.toString(mOffline.getCount()));
+	}
 	
 	public void openMenu() {
 		if (!mDrawerLayout.isDrawerOpen(_menuFrame))
@@ -1614,7 +1619,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
             
             // update "previous" count
 	    	mOffline.updateRecordedReplyCount(_rootPostId, count);
-	    	mOffline.flushThreadsToDiskTask();
+	    	mOffline.updateSingleThreadToDisk(_rootPostId);
         }
     	mRefreshOfflineThreadsWoReplies();
 	}
@@ -2071,21 +2076,27 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		}
 		else
 		{
-			new MaterialDialog.Builder(this)
-					.title("Quit")
-					.content("Really Quit?")
-					.positiveText("Yes")
-					.onPositive(new MaterialDialog.SingleButtonCallback()
-					{
-						@Override
-						public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which)
+			if (_prefs.getBoolean("backButtonGuard", false))
+			{
+				new MaterialDialog.Builder(this)
+						.title("Quit")
+						.content("Really Quit?")
+						.positiveText("Yes")
+						.onPositive(new MaterialDialog.SingleButtonCallback()
 						{
-							finish();
-						}
-					})
-					.negativeText("No")
-					.show();
-			// super.onBackPressed();
+							@Override
+							public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which)
+							{
+								finish();
+							}
+						})
+						.negativeText("No")
+						.show();
+			}
+			else
+			{
+				super.onBackPressed();
+			}
 		}
 	}
 		

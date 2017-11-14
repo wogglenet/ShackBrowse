@@ -55,5 +55,21 @@
             android:paddingBottom="9dip"
             android:paddingRight="6dip"
           />
+	  <TextView
+		  android:id="@+id/menuItemSmallText"
+		  android:text="010"
+		  android:layout_width="wrap_content"
+		  android:layout_weight="0"
+		  android:layout_height="wrap_content"
+		  android:layout_gravity="center"
+		  android:textColor="@color/nonpreview_post_text_color"
+		  android:gravity="end"
+		  android:layout_marginRight="10dp"
+		  android:visibility="gone"
+		  android:textSize="@dimen/menuItemSmallTextSize"
+		  android:paddingTop="11dip"
+		  android:paddingBottom="9dip"
+		  android:paddingRight="14dip"
+		  />
  	 </LinearLayout>
 </net.woggle.CheckableLinearLayout>

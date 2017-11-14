@@ -129,8 +129,9 @@ public class OfflineThreadFragment extends ThreadListFragment {
 		             {
 		             	Thread t = iter.next();
 		                _offlineThread.updateRecordedReplyCount(t.getThreadId(), t.getReplyCount());
+			             _offlineThread.updateSingleThreadToDisk(t.getThreadId());
 		             }	
-		             _offlineThread.flushThreadsToDiskTask();
+		             // _offlineThread.flushThreadsToDiskTask();
 					
 					// only a full refresh triggers shacklol
 		        	 _shackloldata = ShackApi.getLols(getActivity());

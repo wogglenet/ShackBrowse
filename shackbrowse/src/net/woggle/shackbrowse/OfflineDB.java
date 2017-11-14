@@ -98,6 +98,13 @@ public class OfflineDB
 		return returned;
 	}
 
+	public void updateThreadById(int stId, SavedThreadObj st)
+	{
+		ContentValues newValues = new ContentValues();
+		newValues.put(DatabaseHelper.COLUMN_SJSON, st._threadJson.toString());
+		database.update(DatabaseHelper.TABLE_STARRED, newValues, DatabaseHelper.COLUMN_STID + "=" + stId, null);
+	}
+
 	public void deleteAll() {
 		database.delete(DatabaseHelper.TABLE_STARRED, null, null);
 	}

@@ -352,6 +352,8 @@
     <string name="compose_macro">Apply Macro</string>
 	<string name="preference_LEDBlinkInMS_title">LED Blink Speed</string>
     <string name="preference_LEDBlinkInMS_summary">Changes the LED blink rate</string>
+	<string name="preference_backbuttonguard_title">Prevent Back Button Exit</string>
+    <string name="preference_backbuttonguard_summary">Pops up a dialog asking if you meant to exit the app when you hit back in a root view instead of just exiting the app.</string>
     <!-- items in  the array will show up even when not yet registered -->
     <string-array name="statsItems">
         <item>statsItemAnnoyedByStartupZoomDialog</item>

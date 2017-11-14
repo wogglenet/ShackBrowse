@@ -628,6 +628,7 @@ public class ThreadListFragment extends ListFragment
 		{
 			Toast.makeText(getActivity(), "Thread removed from favorites", Toast.LENGTH_SHORT).show();
 		}
+	    ((MainActivity)getActivity()).updateMenuStarredPostsCount();
  		((MainActivity)getActivity()).mRefreshOfflineThreadsWoReplies();
 	}
     
@@ -845,7 +846,8 @@ public class ThreadListFragment extends ListFragment
         if (thread == null)
             return;
         
-        markFavoriteAsRead(thread);
+        // markFavoriteAsRead(thread);
+	    // this now happens afterDisplay
         
         _itemChecked = index -1;
         _adapter.notifyDataSetChanged();
@@ -868,23 +870,6 @@ public class ThreadListFragment extends ListFragment
         }
         
         ((MainActivity)getActivity()).openThreadView(thread.getThreadId(), thread, lol);
-    }
-    
-    public void markFavoriteAsRead (Thread thread)
-    {
-    	OfflineThread offline = ((MainActivity)getActivity()).mOffline;
-        if (offline.containsThreadId(thread.getThreadId()))
-        {
-        	// this is a favorite, must update unread counts when we open
-        	thread.setReplyCountPrevious(thread.getReplyCount());
-            
-            // update data for last viewed count, this creates the info for how many are unread.
-        	offline.updateRecordedReplyCountPrev(thread.getThreadId(), thread.getReplyCount());
-            
-            // update "previous" count
-        	offline.updateRecordedReplyCount(thread.getThreadId(), thread.getReplyCount());
-        	offline.flushThreadsToDiskTask();
-        }
     }
     
     public void markFavoriteAsRead (int threadId, int replyCount)
@@ -2063,8 +2048,9 @@ public class ThreadListFragment extends ListFragment
 						// add any threadIds that dont exist
 						if (!_threadIds.contains(t.getThreadId()))
 							_threadIds.add(t.getThreadId());
-					}	
-					_offlineThread.flushThreadsToDiskTask();
+
+						_offlineThread.updateSingleThreadToDisk(t.getThreadId());
+					}
 				}
 				
 				// remove threads that are pinned or already displayed

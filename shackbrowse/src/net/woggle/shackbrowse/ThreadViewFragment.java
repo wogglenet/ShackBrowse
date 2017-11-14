@@ -746,6 +746,7 @@ public class ThreadViewFragment extends ListFragment
     			_showUnFavSaved = true;
     			_showFavSaved = false;
     		}
+    		mMainActivity.updateMenuStarredPostsCount();
     		mMainActivity.invalidateOptionsMenu();
     		mMainActivity.mRefreshOfflineThreadsWoReplies();
     	}
@@ -2539,61 +2540,65 @@ public class ThreadViewFragment extends ListFragment
                 mMainActivity.getRefresher().setRefreshComplete();
             System.out.println("TIMER: SRC: " + (TimeDisplay.now() - timer)); timer = TimeDisplay.now();
 
-            // attempt at creating json so thread can be saved saveThread()
-            // this is for when we receive a loading command via intent without a thread json at the same time
-            boolean hasReplied = false;
-            String userName = _prefs.getString("userName", "");
 
-            if (userName.length() > 0)
-            {
-                for (int i = 0; i < _adapter.getCount(); i++)
-                {
-                    if (_adapter.getItem(i).getUserName().equals(userName))
-                        hasReplied = true;
-                }
-            }
-            System.out.println("TIMER: hasReplied: " + (TimeDisplay.now() - timer)); timer = TimeDisplay.now();
+		    // attempt at creating json so thread can be saved saveThread()
+		    // this is for when we receive a loading command via intent without a thread json at the same time
+		    boolean hasReplied = false;
+		    String userName = _prefs.getString("userName", "");
 
-            Thread t = null;
-            if ((_adapter != null) && (_adapter.getCount() > 0) && (_messageId == 0))
-            {
-                // create fake thread for fav saving
-                t = new Thread(_adapter.getItem(0).getPostId(), _adapter.getItem(0).getUserName(), _adapter.getItem(0).getContent(), _adapter.getItem(0).getPosted(), _adapter.getCount(), "ontopic", hasReplied, mMainActivity.mOffline.containsThreadId(_rootPostId));
-                if (_adapter.getItem(0) != null)
-                {
-                    _rootPostId = _adapter.getItem(0).getPostId();
+		    if (userName.length() > 0)
+		    {
+			    for (int i = 0; i < _adapter.getCount(); i++)
+			    {
+				    if (_adapter.getItem(i).getUserName().equals(userName))
+					    hasReplied = true;
+			    }
+		    }
+		    System.out.println("TIMER: hasReplied: " + (TimeDisplay.now() - timer));
+		    timer = TimeDisplay.now();
 
-					/*
-					if (TimeDisplay.threadAgeInHours(_adapter.getItem(0).getPosted()) > 18d)
-					{
-						_showThreadExpired = true;
-					}
-					else
-						_showThreadExpired = false;
-						*/
-                }
-            }
+		    Thread t = null;
+		    if ((_adapter != null) && (_adapter.getCount() > 0) && (_messageId == 0))
+		    {
+			    // create fake thread for fav saving
+			    t = new Thread(_adapter.getItem(0).getPostId(), _adapter.getItem(0).getUserName(), _adapter.getItem(0).getContent(), _adapter.getItem(0).getPosted(), _adapter.getCount(), "ontopic", hasReplied, mMainActivity.mOffline.containsThreadId(_rootPostId));
+			    if (_adapter.getItem(0) != null)
+			    {
+				    _rootPostId = _adapter.getItem(0).getPostId();
 
-            if (t != null)
-            {
-                // create data for fav saving
-                if (t.getJson() != null)
-                    _lastThreadJson = t.getJson();
-            }
-            System.out.println("TIMER: fakeJson: " + (TimeDisplay.now() - timer)); timer = TimeDisplay.now();
-    		// autofave. TODO: MAKE WORK WITH POSTQUEUE
-            if (_autoFaveOnLoad)
-            {
-            	saveThread();
-            	_autoFaveOnLoad = false;
-            }
-            
-            // mark as read if in favs
-            if (mMainActivity.mOffline.containsThreadId(_rootPostId))
-            {
-            	mMainActivity.markFavoriteAsRead(_rootPostId, _adapter.getCount());
-            }
-            System.out.println("TIMER: markRead: " + (TimeDisplay.now() - timer)); timer = TimeDisplay.now();
+				/*
+				if (TimeDisplay.threadAgeInHours(_adapter.getItem(0).getPosted()) > 18d)
+				{
+					_showThreadExpired = true;
+				}
+				else
+					_showThreadExpired = false;
+					*/
+			    }
+		    }
+
+		    if (t != null)
+		    {
+			    // create data for fav saving
+			    if (t.getJson() != null)
+				    _lastThreadJson = t.getJson();
+		    }
+		    System.out.println("TIMER: fakeJson: " + (TimeDisplay.now() - timer));
+		    timer = TimeDisplay.now();
+		    // autofave. TODO: MAKE WORK WITH POSTQUEUE
+		    if (_autoFaveOnLoad)
+		    {
+			    saveThread();
+			    _autoFaveOnLoad = false;
+		    }
+
+		    // mark as read if in favs
+		    if (mMainActivity.mOffline.containsThreadId(_rootPostId))
+		    {
+			    mMainActivity.markFavoriteAsRead(_rootPostId, _adapter.getCount());
+		    }
+		    System.out.println("TIMER: markRead: " + (TimeDisplay.now() - timer));
+		    timer = TimeDisplay.now();
 
 
 

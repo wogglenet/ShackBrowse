@@ -102,6 +102,11 @@ public class AppMenu extends ListFragment
        	updateMenuUi();
        	
     }
+
+    public void setSmallText(int menuID, String text)
+    {
+	    _adapter.getItem(_adapter.getPositionFromMID(menuID)).setSmallText(text);
+    }
     
     public void updateMenuUi()
     {
@@ -126,7 +131,7 @@ public class AppMenu extends ListFragment
                                 ((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_STATS);
 
                             }
-                        }, R.drawable.ic_action_action_assessment));
+                        }, R.drawable.ic_action_action_assessment, ""));
                     }
     	        	_adapter.add(new MenuItems(1, "Navigation" , 0, 0));
                     _adapter.add(new MenuItems(0, "Frontpage" , 11, R.drawable.ic_action_action_home));
@@ -138,8 +143,8 @@ public class AppMenu extends ListFragment
                                 ((MainActivity)getActivity()).cleanUpViewer();
                                 ((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_NOTEPREFS);
                             }
-                        }, R.drawable.ic_action_action_settings));
-    	        	_adapter.add(new MenuItems(0, "Starred Posts" , 8, R.drawable.ic_action_toggle_star));
+                        }, R.drawable.ic_action_action_settings, ""));
+    	        	_adapter.add(new MenuItems(0, "Starred Posts" , 8, R.drawable.ic_action_toggle_star, null, null, 0, Integer.toString(((MainActivity)getActivity()).mOffline.getCount())));
     	        	_adapter.add(new MenuItems(0, "Shack Messages" , 5, R.drawable.ic_action_communication_email));
     	        	_adapter.add(new MenuItems(0, "Settings" , 7, R.drawable.ic_action_action_settings));
     	        	_adapter.add(new MenuItems(0, "Advanced Search" , 6, R.drawable.ic_action_action_search));
@@ -388,11 +393,13 @@ public class AppMenu extends ListFragment
 	            {
 	                holder = new ViewHolderMenuItem();
 	                holder.text = (TextView)vi.findViewById(R.id.menuItemText);
+		            holder.smallText = (TextView)vi.findViewById(R.id.menuItemSmallText);
 	                holder.icon = (ImageView)vi.findViewById(R.id.menuItemIcon);
                     holder.settings = (ImageView)vi.findViewById(R.id.menuItemSettings);
 
 	                // zoom for preview.. needs to only be done ONCE, when holder is first created
 	                holder.text.setTextSize(TypedValue.COMPLEX_UNIT_PX, holder.text.getTextSize() * _zoom);
+		            holder.smallText.setTextSize(TypedValue.COMPLEX_UNIT_PX, holder.smallText.getTextSize() * _zoom);
                     holder.icon.setScaleX(_zoom);
                     holder.icon.setScaleY(_zoom);
                     holder.settings.setScaleX(_zoom);
@@ -416,6 +423,15 @@ public class AppMenu extends ListFragment
                 {
                     holder.settings.setVisibility(View.GONE);
                 }
+
+	            if (m.getSmallText() != "") {
+		            holder.smallText.setVisibility(View.VISIBLE);
+		            holder.smallText.setText(m.getSmallText());
+	            }
+	            else
+	            {
+		            holder.smallText.setVisibility(View.GONE);
+	            }
 	            
 	            holder.icon.setImageResource(m.getImgRes());
             }
@@ -467,6 +483,7 @@ public class AppMenu extends ListFragment
         {
             public ImageView icon;
 			TextView text;
+	        TextView smallText;
             public ImageView settings;
         }
         private class ViewHolderMenuHeader
@@ -489,6 +506,7 @@ public class AppMenu extends ListFragment
     	private int _imgSrc;
 		private PremadeSearch _premadesearch;
         private int mExtraImageDrawable;
+	    private String mSmallText;
 
         MenuItems(PremadeSearch pms)
     	{
@@ -500,9 +518,9 @@ public class AppMenu extends ListFragment
     	}
 		MenuItems(int type, String text, int id, int img, PremadeSearch pms)
     	{
-            this(type , text, id ,img, pms, null, 0);
+            this(type , text, id ,img, pms, null, 0, "");
     	}
-        MenuItems(int type, String text, int id, int img, PremadeSearch pms, View.OnClickListener settingsClick, int imageDrawable)
+        MenuItems(int type, String text, int id, int img, PremadeSearch pms, View.OnClickListener settingsClick, int imageDrawable, String smallText)
         {
             _settingsClick = settingsClick;
             _text = text;
@@ -511,12 +529,17 @@ public class AppMenu extends ListFragment
             _type = type;
             _premadesearch = pms;
             mExtraImageDrawable = imageDrawable;
+	        mSmallText = smallText;
         }
 
 		public String getText()
 		{
 			return _text;
 		}
+	    public String getSmallText()
+	    {
+		    return mSmallText;
+	    }
 		public int getId()
 		{
 			return _id;
@@ -541,6 +564,8 @@ public class AppMenu extends ListFragment
         public View.OnClickListener getExtraOnClickListener() {
             return _settingsClick;
         }
+
+        public void setSmallText(String smallText) { mSmallText = smallText; updateMenuUi(); }
     }
     
     /*
