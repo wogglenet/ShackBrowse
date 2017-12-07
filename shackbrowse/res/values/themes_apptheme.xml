@@ -5,7 +5,7 @@
 
     <style name="AppThemeDark" parent="AppTheme">
         <item name="colorPrimary">@color/gnushackdark</item>
-        <item name="colorPrimaryDark">@color/selected_postbg</item>
+        <item name="colorPrimaryDark">@color/gnushackdark</item>
         <item name="colorAccent">@color/SBmed</item>
         <item name="ptrHeaderBackground">@color/gnushackdark</item>
         <item name="menuBGdrawable">@drawable/bg_menu_dark</item>
@@ -18,7 +18,7 @@
 
       <item name="colorPrimary">@color/SBdark</item>
       <item name="ptrHeaderBackground">@color/SBdark</item>
-      <item name="colorPrimaryDark">@color/SBvdark</item>
+      <item name="colorPrimaryDark">@color/SBdark</item>
       <item name="colorAccent">@color/SBmed</item>
       <item name="windowActionBar">true</item>
       <item name="android:theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>

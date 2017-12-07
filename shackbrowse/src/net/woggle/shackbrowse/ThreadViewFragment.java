@@ -73,6 +73,7 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.nhaarman.listviewanimations.itemmanipulation.ExpandCollapseListener;
 
 import net.woggle.CheckableTableLayout;
@@ -1763,11 +1764,12 @@ public class ThreadViewFragment extends ListFragment
 
 						Glide.with(mMainActivity)
 								.load(PopupBrowserFragment.imageUrlFixer(url))
+								.apply(new RequestOptions()
 								.override(width, width)
 								.fitCenter()
 								.diskCacheStrategy(DiskCacheStrategy.ALL)
 								.placeholder(R.drawable.ic_action_image_photo)
-								.error(R.drawable.ic_action_content_flag)
+								.error(R.drawable.ic_action_content_flag))
 								.into(image);
 
 						// PhotoViewAttacher mAttacher = new PhotoViewAttacher(image);

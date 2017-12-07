@@ -626,21 +626,25 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String appTheme =  prefs.getString("appTheme", "0");
         int themeId;
-        int statusBarColor;
+        int lightBarColor;
+		int darkBarColor;
         if (appTheme.equals("1")) {
             themeId = R.style.AppThemeDark;
-            statusBarColor = R.color.selected_postbg;
+            lightBarColor = R.color.gnushackdark;
+	        darkBarColor = R.color.selected_postbg;
         }
         else {
             themeId = R.style.AppTheme;
-            statusBarColor = R.color.SBvdark;
+            lightBarColor = R.color.SBdark;
+			darkBarColor = R.color.SBvdark;
         }
 
         context.setTheme(themeId);
 
         //We need to manually change statusbar color, otherwise, it remains green.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            context.getWindow().setStatusBarColor(context.getResources().getColor(statusBarColor));
+            context.getWindow().setNavigationBarColor(context.getResources().getColor(darkBarColor));
+	        context.getWindow().setStatusBarColor(context.getResources().getColor(lightBarColor));
         }
 
         return themeId;

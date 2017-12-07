@@ -13,6 +13,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
@@ -23,7 +24,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.ClipboardManager;
 import android.util.Log;
@@ -35,11 +38,13 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import static net.woggle.shackbrowse.StatsFragment.statInc;
 
 public class PicUploader extends AppCompatActivity {
+	private static final int MY_PERMISSIONS_REQUEST_READ_EXT = 20;
 	private MaterialDialog _progressDialog;
 	
 	
 	SharedPreferences _prefs;
-	
+	private Uri mImageUri;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -58,24 +63,74 @@ public class PicUploader extends AppCompatActivity {
          
 	        if (type.startsWith("image/"))
 	        {
-	        	
-	        	System.out.println("uploadin");
-	        	Uri imageUri = (Uri)getIntent().getParcelableExtra(Intent.EXTRA_STREAM);
 
-                final BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inSampleSize = 4;
+		        mImageUri = (Uri)getIntent().getParcelableExtra(Intent.EXTRA_STREAM);
+		        
+		        
+		        if (ContextCompat.checkSelfPermission(this,
+				        Manifest.permission.READ_EXTERNAL_STORAGE)
+				        != PackageManager.PERMISSION_GRANTED) {
 
-                String realPath = getRealPathFromURI(imageUri);
 
-                Bitmap bm = BitmapFactory.decodeFile(realPath,options);
-                ((ImageView)findViewById(R.id.picUploadBG)).setImageBitmap(bm);
+				        // No explanation needed, we can request the permission.
 
-	        	// ((ImageView)findViewById(R.id.picUploadBG)).setImageURI(imageUri);
+				        ActivityCompat.requestPermissions(this,
+						        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+						        MY_PERMISSIONS_REQUEST_READ_EXT);
 
-		        uploadImage(realPath);
+				        // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+				        // app-defined int constant. The callback method gets the
+				        // result of the request.
+
+		        }
+		        else
+		        {
+			        uploadURI();
+		        }
+
 	        }
         }
-        
+	}
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+		switch (requestCode) {
+			case MY_PERMISSIONS_REQUEST_READ_EXT: {
+				// If request is cancelled, the result arrays are empty.
+				if (grantResults.length > 0
+						&& grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+					// permission was granted, yay! Do the
+					uploadURI();
+
+				} else {
+
+					// permission denied, boo! Disable the
+					// functionality that depends on this permission.
+				}
+				return;
+			}
+
+			// other 'case' lines to check for other
+			// permissions this app might request
+		}
+	}
+	
+	public void uploadURI () {
+		System.out.println("uploadin");
+		
+
+		final BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inSampleSize = 4;
+
+		String realPath = getRealPathFromURI(mImageUri);
+
+		Bitmap bm = BitmapFactory.decodeFile(realPath,options);
+		((ImageView)findViewById(R.id.picUploadBG)).setImageBitmap(bm);
+
+		// ((ImageView)findViewById(R.id.picUploadBG)).setImageURI(imageUri);
+
+		uploadImage(realPath);
 	}
 	
 	
@@ -97,7 +152,11 @@ public class PicUploader extends AppCompatActivity {
 	
 	void uploadImage(String imageLocation)
 	{
-	    _progressDialog = MaterialProgressDialog.show(PicUploader.this, "Upload", "Uploading image to chattypics");
+	    _progressDialog = new MaterialDialog.Builder(this)
+				.title("Upload")
+				.content("Uploading image to chattypics")
+				.progress(true, 0)
+				.show();
 	    new UploadAndInsertTask().execute(imageLocation);
         statInc(this, "ImagesToChattyPics");
 	}
@@ -110,8 +169,18 @@ public class PicUploader extends AppCompatActivity {
 	    @Override 
 	    protected void onProgressUpdate(String...params)
 	    {
-	    	_progressDialog.setContent(params[0]);
-	    	System.out.println(params[0]);
+		    if ((_progressDialog != null) && (_progressDialog.isShowing()))
+		    {
+		    	try
+			    {
+				    _progressDialog.setContent(params[0]);
+			    }
+			    catch (Exception e)
+			    {
+				    System.out.println("FAILED" + params[0] + e.getMessage());
+			    }
+		    }
+	    	System.out.println("X" + params[0]);
 	    }
 	    
         @Override

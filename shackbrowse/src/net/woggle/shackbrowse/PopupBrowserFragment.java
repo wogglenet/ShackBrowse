@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.lang.reflect.Field;
 
@@ -318,10 +319,11 @@ public class PopupBrowserFragment extends Fragment {
 
 		Glide.with(getActivity())
 				.load(PopupBrowserFragment.imageUrlFixer(url))
+				.apply(new RequestOptions()
 				.fitCenter()
 				.diskCacheStrategy(DiskCacheStrategy.ALL)
 				.placeholder(R.drawable.ic_action_image_photo)
-				.error(R.drawable.ic_action_content_flag)
+				.error(R.drawable.ic_action_content_flag))
 				.into(image);
 
 

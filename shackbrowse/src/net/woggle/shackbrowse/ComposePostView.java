@@ -6,9 +6,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.woggle.EditTextSelectionSaved;
 import net.woggle.shackbrowse.legacy.LegacyFactory;
 
 import android.app.Activity;
@@ -494,6 +496,13 @@ public class ComposePostView extends AppCompatActivity {
 				openMarkupSelector(false, true);
 			}
 		});
+		findViewById(R.id.composeButtonSelectAll).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				((EditTextSelectionSaved)findViewById(R.id.textContent)).selectAll();
+			}
+		});
+
 	}
 	
 	@Override
@@ -886,14 +895,19 @@ public class ComposePostView extends AppCompatActivity {
 		{
 			// AMERICA item
 			itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML("Macro: r{A}rMb{E}br{R}rIb{C}br{A}r"), null, true, true));
-			// RAINBOW
-			itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML("Macro: r{R}rg{A}gb{I}by{N}yl[B]ln[O]np[W]p"), null, true, true));
+			// random
+			itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML("Macro: r{R}rs[A]sb{N}b-[D]-l[O]l/[M]/p[!]p"), null, true, true));
 			// ALLCAPS
 			itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML("Macro: ALLCAPS"), null, true, true));
 			// Christmas
 			itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML("Macro: r{C}rg{H}gr{R}rg{I}gr{S}rg{T}gr{M}rg{A}gr{S}r"), null, true, true));
 			// N U K E ' D
 			itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML("Macro: *[r{*" + "&nbsp;" + "N" + "&nbsp;" + "U" + "&nbsp;" + "K" + "&nbsp;" + "E" + "&nbsp;" + "'" + "&nbsp;" + "D*}r]*"), null, true, true));
+			// RAINBOW
+			itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML("Macro: r{R}rn[A]ny{I}yl[N]lg{B}gb{O}bp[W]p"), null, true, true));
+			// ZA???L?????G???O??????!???
+			itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML("Macro: " + zalgo_text("Zalgo / Cthulhu")), null, true, true));
+
 		}
 
 		ArrayAdapter<Spanned> adapter = new ArrayAdapter<Spanned>(ComposePostView.this,android.R.layout.simple_list_item_1, itemList);
@@ -972,17 +986,27 @@ public class ComposePostView extends AppCompatActivity {
 				        }
 				        break;
 			        case 1:
-				        // RAINBOW
+				        // RANDOM
 				        for (int i = 0; i < seltext.length(); i++)
 				        {
 					        String curTag = ""; String curOpenBracket = "{"; String curCloseBracket = "}";
-					        if ((i % 7) == 0) { curTag = "r"; curOpenBracket = "{"; curCloseBracket = "}"; }
-					        if ((i % 7) == 1) { curTag = "g"; curOpenBracket = "{"; curCloseBracket = "}"; }
-					        if ((i % 7) == 2) { curTag = "b"; curOpenBracket = "{"; curCloseBracket = "}"; }
-					        if ((i % 7) == 3) { curTag = "y"; curOpenBracket = "{"; curCloseBracket = "}"; }
-					        if ((i % 7) == 4) { curTag = "l"; curOpenBracket = "["; curCloseBracket = "]"; }
-					        if ((i % 7) == 5) { curTag = "n"; curOpenBracket = "["; curCloseBracket = "]"; }
-					        if ((i % 7) == 6) { curTag = "p"; curOpenBracket = "["; curCloseBracket = "]"; }
+
+					        Random r = new Random(); int j = r.nextInt(13);
+
+					        if (j == 0) { curTag = "r"; curOpenBracket = "{"; curCloseBracket = "}"; }
+					        if (j == 1) { curTag = "g"; curOpenBracket = "{"; curCloseBracket = "}"; }
+					        if (j == 2) { curTag = "b"; curOpenBracket = "{"; curCloseBracket = "}"; }
+					        if (j == 3) { curTag = "y"; curOpenBracket = "{"; curCloseBracket = "}"; }
+					        if (j == 4) { curTag = "l"; curOpenBracket = "["; curCloseBracket = "]"; }
+					        if (j == 5) { curTag = "n"; curOpenBracket = "["; curCloseBracket = "]"; }
+					        if (j == 6) { curTag = "p"; curOpenBracket = "["; curCloseBracket = "]"; }
+					        if (j == 7) { curTag = "/"; curOpenBracket = "["; curCloseBracket = "]"; }
+					        if (j == 8) { curTag = "b"; curOpenBracket = "["; curCloseBracket = "]"; }
+					        if (j == 9) { curTag = "q"; curOpenBracket = "["; curCloseBracket = "]"; }
+					        if (j == 10) { curTag = "s"; curOpenBracket = "["; curCloseBracket = "]"; }
+					        if (j == 11) { curTag = "_"; curOpenBracket = "["; curCloseBracket = "]"; }
+					        if (j == 12) { curTag = "-"; curOpenBracket = "["; curCloseBracket = "]"; }
+
 					        textToInsert = textToInsert + curTag + curOpenBracket + seltext.charAt(i) + curCloseBracket + curTag;
 				        }
 				        break;
@@ -1017,6 +1041,37 @@ public class ComposePostView extends AppCompatActivity {
 
 				        textToInsert = "*[r{* " + textToInsert + " ' D *}r]*";
 
+				        break;
+			        case 5:
+				        // RAINBOW
+				        int j = 0;
+				        for (int i = 0; i < seltext.length(); i++)
+				        {
+					        if (Character.toString(seltext.charAt(i)).equals(" "))
+					        {
+						        textToInsert = textToInsert + " ";
+						        continue;
+					        }
+					        else
+					        {
+						        String curTag = ""; String curOpenBracket = "{"; String curCloseBracket = "}";
+						        if ((j % 7) == 0) { curTag = "r"; curOpenBracket = "{"; curCloseBracket = "}"; }
+						        if ((j % 7) == 1) { curTag = "n"; curOpenBracket = "["; curCloseBracket = "]"; }
+						        if ((j % 7) == 2) { curTag = "y"; curOpenBracket = "{"; curCloseBracket = "}"; }
+						        if ((j % 7) == 3) { curTag = "l"; curOpenBracket = "["; curCloseBracket = "]"; }
+						        if ((j % 7) == 4) { curTag = "g"; curOpenBracket = "{"; curCloseBracket = "}"; }
+						        if ((j % 7) == 5) { curTag = "b"; curOpenBracket = "{"; curCloseBracket = "}"; }
+						        if ((j % 7) == 6) { curTag = "p"; curOpenBracket = "["; curCloseBracket = "]"; }
+
+						        textToInsert = textToInsert + curTag + curOpenBracket + seltext.charAt(i) + curCloseBracket + curTag;
+
+						        j++;
+					        }
+				        }
+				        break;
+			        case 6:
+				        //  ZA???L?????G???O??????!???
+				        textToInsert = zalgo_text(seltext);
 				        break;
 		        }
 	        }
@@ -1470,6 +1525,8 @@ public class ComposePostView extends AppCompatActivity {
             }
         }
 	}
+
+
 	
 	// DRAFTS
 	
@@ -1717,4 +1774,147 @@ public class ComposePostView extends AppCompatActivity {
     public static boolean isGooglePhotosUri(Uri uri) {
         return "com.google.android.apps.photos.content".equals(uri.getAuthority());
     }
+
+    // ***********************
+	// **** ZALGO  CRAP *****
+	// *******************
+
+	// data set of leet unicode chars
+	//---------------------------------------------------
+
+	//those go UP
+	final char[] zalgo_up = {
+			'\u030d', /*     ?     */        '\u030e', /*     ?     */        '\u0304', /*     ?     */        '\u0305', /*     ?     */
+			'\u033f', /*     ?     */        '\u0311', /*     ?     */        '\u0306', /*     ?     */        '\u0310', /*     ?     */
+			'\u0352', /*     ?     */        '\u0357', /*     ?     */        '\u0351', /*     ?     */        '\u0307', /*     ?     */
+			'\u0308', /*     ?     */        '\u030a', /*     ?     */        '\u0342', /*     ?     */        '\u0343', /*     ?     */
+			'\u0344', /*     ?     */        '\u034a', /*     ?     */        '\u034b', /*     ?     */        '\u034c', /*     ?     */
+			'\u0303', /*     ?     */        '\u0302', /*     ?     */        '\u030c', /*     ?     */        '\u0350', /*     ?     */
+			'\u0300', /*     ?     */        '\u0301', /*     ?     */        '\u030b', /*     ?     */        '\u030f', /*     ?     */
+			'\u0312', /*     ?     */        '\u0313', /*     ?     */        '\u0314', /*     ?     */        '\u033d', /*     ?     */
+			'\u0309', /*     ?     */        '\u0363', /*     ?     */        '\u0364', /*     ?     */        '\u0365', /*     ?     */
+			'\u0366', /*     ?     */        '\u0367', /*     ?     */        '\u0368', /*     ?     */        '\u0369', /*     ?     */
+			'\u036a', /*     ?     */        '\u036b', /*     ?     */        '\u036c', /*     ?     */        '\u036d', /*     ?     */
+			'\u036e', /*     ?     */        '\u036f', /*     ?     */        '\u033e', /*     ?     */        '\u035b', /*     ?     */
+			'\u0346', /*     ?     */        '\u031a' /*     ?     */
+	};
+
+	//those go DOWN
+	final char[] zalgo_down = {
+			'\u0316', /*     ?     */        '\u0317', /*     ?     */        '\u0318', /*     ?     */        '\u0319', /*     ?     */
+			'\u031c', /*     ?     */        '\u031d', /*     ?     */        '\u031e', /*     ?     */        '\u031f', /*     ?     */
+			'\u0320', /*     ?     */        '\u0324', /*     ?     */        '\u0325', /*     ?     */        '\u0326', /*     ?     */
+			'\u0329', /*     ?     */        '\u032a', /*     ?     */        '\u032b', /*     ?     */        '\u032c', /*     ?     */
+			'\u032d', /*     ?     */        '\u032e', /*     ?     */        '\u032f', /*     ?     */        '\u0330', /*     ?     */
+			'\u0331', /*     ?     */        '\u0332', /*     ?     */        '\u0333', /*     ?     */        '\u0339', /*     ?     */
+			'\u033a', /*     ?     */        '\u033b', /*     ?     */        '\u033c', /*     ?     */        '\u0345', /*     ?     */
+			'\u0347', /*     ?     */        '\u0348', /*     ?     */        '\u0349', /*     ?     */        '\u034d', /*     ?     */
+			'\u034e', /*     ?     */        '\u0353', /*     ?     */        '\u0354', /*     ?     */        '\u0355', /*     ?     */
+			'\u0356', /*     ?     */        '\u0359', /*     ?     */        '\u035a', /*     ?     */        '\u0323' /*     ?     */
+	};
+
+	//those always stay in the middle
+	final char[] zalgo_mid = {
+			'\u0315', /*     ?     */        '\u031b', /*     ?     */        '\u0340', /*     ?     */        '\u0341', /*     ?     */
+			'\u0358', /*     ?     */        '\u0321', /*     ?     */        '\u0322', /*     ?     */        '\u0327', /*     ?     */
+			'\u0328', /*     ?     */        '\u0334', /*     ?     */        '\u0335', /*     ?     */        '\u0336', /*     ?     */
+			'\u034f', /*     ?     */        '\u035c', /*     ?     */        '\u035d', /*     ?     */        '\u035e', /*     ?     */
+			'\u035f', /*     ?     */        '\u0360', /*     ?     */        '\u0362', /*     ?     */        '\u0338', /*     ?     */
+			'\u0337', /*     ?     */        '\u0361', /*     ?     */        '\u0489' /*     ?_     */
+	};
+
+	// rand funcs
+	//---------------------------------------------------
+
+	//gets an int between 0 and max
+	public int rand(int max)
+	{
+		return (int) Math.floor(Math.random() * max);
+	}
+
+	//gets a random char from a zalgo char table
+	public char rand_zalgo(char[] array)
+	{
+		int ind = (int) Math.floor(Math.random() * array.length);
+		return array[ind];
+	}
+
+	// utils funcs
+	//---------------------------------------------------
+
+
+	//lookup char to know if its a zalgo char or not
+	public boolean is_zalgo_char(char c)
+	{
+		int i;
+		for(i=0; i<zalgo_up.length; i++)
+			if(c == zalgo_up[i])
+				return true;
+		for(i=0; i<zalgo_down.length; i++)
+			if(c == zalgo_down[i])
+				return true;
+		for(i=0; i<zalgo_mid.length; i++)
+			if(c == zalgo_mid[i])
+				return true;
+		return false;
+	}
+
+	// main shit
+	//---------------------------------------------------
+	public String zalgo_text(String txt)
+	{
+		String newtxt = "";
+
+		for(int i=0; i<txt.length(); i++)
+		{
+			if(is_zalgo_char(txt.charAt(i)))
+				continue;
+
+			int num_up;
+			int num_mid;
+			int num_down;
+
+			//add the normal character
+			newtxt += txt.charAt(i);
+
+			//options
+			if(true) // mini
+			{
+				num_up = rand(8);
+				num_mid = rand(2);
+				num_down = rand(8);
+			}
+			else if(false) // norm
+			{
+				num_up = rand(16) / 2 + 1;
+				num_mid = rand(6) / 2;
+				num_down = rand(16) / 2 + 1;
+			}
+			else //maxi
+			{
+				num_up = rand(64) / 4 + 3;
+				num_mid = rand(16) / 4 + 1;
+				num_down = rand(64) / 4 + 3;
+			}
+			/*
+			if(document.getElementById('zalgo_opt_up').checked)
+				for(var j=0; j<num_up; j++)
+					newtxt += rand_zalgo(zalgo_up);
+			*/
+
+				for(int j=0; j<num_mid; j++)
+					newtxt += Character.toString(rand_zalgo(zalgo_mid));
+
+				for(int j=0; j<num_down; j++)
+					newtxt += Character.toString(rand_zalgo(zalgo_down));
+		}
+
+		//result is in nextxt, display that
+
+		return newtxt;
+
+		//done
+	}
+
+
 }

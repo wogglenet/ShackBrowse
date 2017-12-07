@@ -92,5 +92,17 @@
             android:layout_centerVertical="true"
             android:background="?android:attr/selectableItemBackground"
             />
+        <ImageButton
+            android:id="@+id/composeButtonSelectAll"
+            android:layout_toRightOf="@id/composeButtonMacros"
+            android:layout_height="@dimen/composeRowButtonHeight"
+            android:layout_width="@dimen/composeRowButtonWidth"
+            android:src="@drawable/ic_action_select_all"
+            android:paddingLeft="10dp"
+            android:scaleType="fitCenter"
+            android:paddingRight="10dp"
+            android:layout_centerVertical="true"
+            android:background="?android:attr/selectableItemBackground"
+            />
 </RelativeLayout>
 </LinearLayout>

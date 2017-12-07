@@ -75,6 +75,17 @@ https://github.com/bradsh/ShackBrowse It is a mess. I am not a professional prog
 
 -->
 
+$ 5.5.0
+% v 5.5.0
+_ Dec 7, 2017
+* Select all button in text editor, useful for quicker text decoration
+* Themed app colors now apply to navigation bar on supported devices
+* New random macro
+* Rainbow is more rainbow-ey
+* New Zalgo macro, for the dark ones
+* Android build tools / plugins / libraries updated. There may be bugs.
+* Bug Fix: Chattypics Uploader should now work again when you share images to it from another android app
+
 $ 5.4.10
 % v 5.4.10
 _ Nov 13, 2017
