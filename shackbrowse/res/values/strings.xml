@@ -194,7 +194,7 @@
     <string name="preference_showusername_summary">Show the poster\'s username in reply previews. May take up too much space on narrow displays.</string>
     
     <string name="preference_fastscroll_title">Fast Scroll</string>
-    <string name="preference_fastscroll_summary">Show grabbable/draggable fast scroll control in long threads.</string>
+    <string name="preference_fastscroll_summary">Show grabbable/draggable fast scroll control in long threads over 400 posts.</string>
     
     <string name="preference_swipedismiss_title">Swipe to Dismiss</string>
     <string name="preference_swipedismiss_summary">Allows you to close the reply view with a left-to-right swipe.</string>
@@ -307,6 +307,13 @@
     <string name="statsItemGaveALOLTagwtf">LOLTag: WTF\'d</string>
     <string name="statsItemGaveALOLTaginf">LOLTag: INF\'d</string>
     <string name="statsItemGaveALOLTagunf">LOLTag: UNF\'d</string>
+    <string name="statsItemRemovedALOLTag">Removed a LOLTag</string>
+    <string name="statsItemRemovedALOLTaglol">LOLTag removed: unLOL\'d</string>
+    <string name="statsItemRemovedALOLTagtag">LOLTag removed: unTAG\'d</string>
+    <string name="statsItemRemovedALOLTagugh">LOLTag removed: unUGH\'d</string>
+    <string name="statsItemRemovedALOLTagwtf">LOLTag removed: unWTF\'d</string>
+    <string name="statsItemRemovedALOLTaginf">LOLTag removed: unINF\'d</string>
+    <string name="statsItemRemovedALOLTagunf">LOLTag removed: unUNF\'d</string>
     <string name="statsItemOpenedPost">Posts Opened</string>
     <string name="statsItemMaxThreadSize">Largest number of posts seen in single thread</string>
     <string name="statsItemTimeInApp">Time spent in main app</string>

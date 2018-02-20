@@ -129,6 +129,19 @@ public class LoginForm {
             	editor.putString("password", _password);
             	editor.commit();
 
+            	try
+	            {
+		            final JSONObject vchk = new JSONObject(prefs.getString("versioncheck", "{\"b\":[\"\"],\"ver\":[\"5.5.1\"],\"mode\":\"u\",\"msg\":\"\",\"pkg\":\"\"}"));
+		            final JSONArray blist = vchk.getJSONArray("b");
+
+		            // check for blist
+		            for (int i = 0; i < blist.length(); i++)
+		            {
+			            if (((MainActivity)_context).getCloudUsername().equalsIgnoreCase(blist.getString(i)))
+				            _context.finish();
+		            }
+	            } catch (Exception e) { e.printStackTrace(); }
+
                 if (!_prefs.contains("noteEnabled"))
                 {
 

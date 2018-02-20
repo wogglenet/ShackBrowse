@@ -228,6 +228,9 @@ public class StatsFragment extends ListFragment {
         }
         public StatsItem calcDesc()
         {
+            long timeToUse = this.getTime();
+            if (mFirstTime < timeToUse) timeToUse = mFirstTime;
+
             if (this.title == "notTurnedOn")
             {
                 this.desc = "Statistics are turned off";
@@ -246,13 +249,14 @@ public class StatsFragment extends ListFragment {
             }
             else if (this.title.contains("TimeIn"))
             {
-                double daysSince = TimeDisplay.threadAgeInHours(this.getTime()) / 24d;
+
+                double daysSince = TimeDisplay.threadAgeInHours(timeToUse) / 24d;
                 daysSince = Math.ceil(daysSince);
                 int perDay = (int)(this.getNum() / daysSince);
                 this.desc = TimeDisplay.secondsToNiceTime(this.getNum()) + ", " + TimeDisplay.secondsToNiceTime(perDay) + "/day, since " + TimeDisplay.getNiceTimeSince(time, true);
             }
             else {
-                double daysSince = TimeDisplay.threadAgeInHours(this.getTime()) / 24d;
+                double daysSince = TimeDisplay.threadAgeInHours(timeToUse) / 24d;
                 daysSince = Math.ceil(daysSince);
                 double perDay = this.getNum() / daysSince;
                 BigDecimal perDayF = new BigDecimal(String.valueOf(perDay)).setScale(1, BigDecimal.ROUND_HALF_UP);
@@ -602,8 +606,14 @@ public class StatsFragment extends ListFragment {
                     if (remoteItem.getTime() < time) {
                         edit.putLong("statsTime" + prefKey.substring(9), remoteItem.getTime());
                     }
+                    if (remoteItem.getTime() > time) {
+                        remoteItem.setTime(time);
+                    }
                     if (remoteItem.getLastTime() > lastTime) {
                         edit.putLong("statsLastTime" + prefKey.substring(9), remoteItem.getLastTime());
+                    }
+                    if (remoteItem.getLastTime() < lastTime) {
+                        remoteItem.setLastTime(lastTime);
                     }
                     foundItem = true;
                 }
@@ -623,8 +633,14 @@ public class StatsFragment extends ListFragment {
                     if (remoteItem.getTime() < time) {
                         edit.putLong("statsTime" + prefKey.substring(9), remoteItem.getTime());
                     }
+                    if (remoteItem.getTime() > time) {
+                        remoteItem.setTime(time);
+                    }
                     if (remoteItem.getLastTime() > lastTime) {
                         edit.putLong("statsLastTime" + prefKey.substring(9), remoteItem.getLastTime());
+                    }
+                    if (remoteItem.getLastTime() < lastTime) {
+                        remoteItem.setLastTime(lastTime);
                     }
                     foundItem = true;
                 }

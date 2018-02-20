@@ -471,15 +471,15 @@ public class OfflineThread
  	
  	public void triggerCloudToLocal() {
  		System.out.println("OFFLINETHREAD: triggered cloudtolocal");
- 		if (getCloudUsername() !=  null)
+ 		if ((getCloudUsername() !=  null) && (cloudEnabled()))
  			new CloudToLocal().execute();
 	}
  	public void triggerLocalToCloud() {
- 		if (getCloudUsername() !=  null)
+ 		if ((getCloudUsername() !=  null) && (cloudEnabled()))
  			new LocalToCloud().execute();
 	}
  	public void triggerCloudMerge() {
- 		if (getCloudUsername() !=  null)
+ 		if ((getCloudUsername() !=  null) && (cloudEnabled()))
  			new CloudMerge().execute();
 	}
  	class CloudToLocal extends AsyncTask <String, Void, JSONArray>
@@ -774,14 +774,16 @@ public class OfflineThread
     {
         return ((MainActivity)_activity).getCloudUsername();
     }
+    public boolean cloudEnabled() {
+	    return (((MainActivity)_activity)._prefs.getBoolean("usernameVerified", false) && ((MainActivity)_activity)._prefs.getBoolean("enableCloudSync", true));
+    }
  	
  	Runnable cloudUpdater = new Runnable()
  	{
  	     @Override 
  	     public void run() {
  	    	
- 	    	 boolean cloudEnabled = (((MainActivity)_activity)._prefs.getBoolean("usernameVerified", false) && ((MainActivity)_activity)._prefs.getBoolean("enableCloudSync", true));
- 	    	 if (cloudEnabled)
+ 	    	 if (cloudEnabled())
  	    	 {
 	 	    	 triggerCloudToLocal(); //this function can change value of m_interval.
 	 	    	 Integer cloudInterval = ((MainActivity)_activity)._prefs.getInt("cloudInterval", 300);

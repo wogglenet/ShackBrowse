@@ -1761,7 +1761,7 @@ public class ShackApi
     // version
     public static String getVersion() throws ClientProtocolException, IOException
     {
-    	return get(BASE_URL_ALT + "versions.txt");
+    	return get(BASE_URL_ALT + "versioncheck.php");
     }
 
 	public static String noteAddUser(String userName, String getreplies, String getvanity) throws ClientProtocolException, UnsupportedEncodingException, IOException {

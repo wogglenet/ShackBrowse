@@ -104,8 +104,8 @@ public final class TimeDisplay {
         }
         else {
             // check if this post is so old its not even the same year
-            // threadage > 8760 == one year. optimization to prevent getyear from being run on every thread
-            if (threadAge > 8760f && !TimeDisplay.getYear(TimeDisplay.now()).equals(TimeDisplay.getYear(posted)))
+            // threadage > 4380 == one half year. optimization to prevent getyear from being run on every thread
+            if (threadAge > 4380f && !TimeDisplay.getYear(TimeDisplay.now()).equals(TimeDisplay.getYear(posted)))
             {
                 // older than one year
                 ret = TimeDisplay.convTime(posted, "MMM dd, yyyy h:mma zzz");

@@ -24,10 +24,10 @@ TODO
 * TODO NO NETWORK ICON
 * QUOTES FROM TEXT SELECTION
 * SEARCH GOOGLE BY TEXT SELECTION
-* NOTIFICATION SNOOZE
 * WHITE MODE
 * OPTION TO REMOVE DEVICEID FROM ALL NOTIFICATIONS
 * WIDGET FOR TOP POSTS
+* Twitter?
 
 SERVER
 * STAR OUT SPOILER TEXT
@@ -74,6 +74,15 @@ l[Can I see the source?]l
 https://github.com/bradsh/ShackBrowse It is a mess. I am not a professional programmer nor do I have any degrees in computer science. I just wanted a shack app so I learned to program.
 
 -->
+
+$ 5.5.1
+% v 5.5.1
+_ Feb 20, 2018
+* Ability to mute reply notifications for a single post
+* Default Link Option for youtube now includes twitter links going to external browser. Check settings for more options.
+* Bug Fix: A few icon sizes
+* Bug Fix: Cloud statistics dates weren't updating to current day
+* Bug Fix: Stats per day now based on first ever recorded stat rather than first record for that category
 
 $ 5.5.0
 % v 5.5.0

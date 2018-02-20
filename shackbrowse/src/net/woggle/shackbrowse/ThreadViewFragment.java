@@ -95,6 +95,8 @@ import java.util.ListIterator;
 
 import static net.woggle.shackbrowse.StatsFragment.statInc;
 import static net.woggle.shackbrowse.StatsFragment.statMax;
+import static net.woggle.shackbrowse.notifier.NotifierReceiver.checkIfMuted;
+import static net.woggle.shackbrowse.notifier.NotifierReceiver.toggleMuted;
 
 public class ThreadViewFragment extends ListFragment
 {
@@ -792,6 +794,44 @@ public class ThreadViewFragment extends ListFragment
         	 ErrorDialog.display(mMainActivity, "Error", "Error determining message TYPE for reply.");
         }
     }
+
+	void toggleNotificationMute(final Post parentPost)
+	{
+		boolean verified = _prefs.getBoolean("usernameVerified", false);
+		if (!verified)
+		{
+			LoginForm login = new LoginForm(mMainActivity);
+			login.setOnVerifiedListener(new LoginForm.OnVerifiedListener() {
+				@Override
+				public void onSuccess() {
+					toggleNotificationMute(parentPost);
+				}
+
+				@Override
+				public void onFailure() {
+				}
+			});
+			return;
+		}
+		else if (_messageId == 0)
+		{
+			// do toggle
+			boolean isMuted = toggleMuted(parentPost.getPostId(), _prefs);
+
+			Toast.makeText(mMainActivity, (isMuted ? "Reply notifications muted for this post" : "Reply notifications enabled for this post"), Toast.LENGTH_SHORT).show();
+
+			//boolean isNewsItem = _adapter.getItem(0).getUserName().equalsIgnoreCase("shacknews");
+			//mMainActivity.openComposerForReply(POST_REPLY, parentPost, isNewsItem);
+		}
+		else if (_rootPostId == 0)
+		{
+			ErrorDialog.display(mMainActivity, "Error", "Button should not be visible in messages fragment.");
+		}
+		else
+		{
+			ErrorDialog.display(mMainActivity, "Error", "Error determining message TYPE for mute button.");
+		}
+	}
     
     public void shackmessageTo (String username)
     {
@@ -1200,6 +1240,7 @@ public class ThreadViewFragment extends ListFragment
         String _donatorList = "";
         private String _donatorGoldList = "";
         private String _donatorQuadList = "";
+        boolean _replyNotificationsEnabled;
         boolean _showModTools = false;
 		private boolean _showHoursSince = true;
 		private boolean _hideLinks = true;
@@ -1368,6 +1409,7 @@ public class ThreadViewFragment extends ListFragment
             _donatorGoldList = _prefs.getString("goldLimeUsers", "");
             _donatorQuadList = _prefs.getString("quadLimeUsers", "");
             _displayLimes  = _prefs.getBoolean("displayLimes", true);
+            _replyNotificationsEnabled = (_prefs.getBoolean("noteReplies", false) && _prefs.getBoolean("noteEnabled", false));
             // "enableDonatorFeatures"
             _displayLolButton  = true;
             setupPref();
@@ -1459,7 +1501,7 @@ public class ThreadViewFragment extends ListFragment
         {
             if (convertView != null && convertView.getTag() != null) {
                 ViewHolder holder = (ViewHolder) convertView.getTag();
-                Post p = getItem(position);
+                final Post p = getItem(position);
 
                 // load expanded data
 
@@ -1502,9 +1544,36 @@ public class ThreadViewFragment extends ListFragment
                 holder.buttonReply.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        postReply(_adapter.getItem(pos));
+                        postReply(p);
                     }
                 });
+
+                final ImageButton buttonNoteEnabled = holder.buttonNoteEnabled;
+	            final ImageButton buttonNoteMuted = holder.buttonNoteMuted;
+	            holder.buttonNoteEnabled.setOnClickListener(new View.OnClickListener() {
+		            @Override
+		            public void onClick(View v) {
+			            toggleNotificationMute(p);
+			            buttonNoteEnabled.setVisibility(View.GONE);
+			            buttonNoteMuted.setVisibility(View.VISIBLE);
+		            }
+	            });
+	            holder.buttonNoteMuted.setOnClickListener(new View.OnClickListener() {
+		            @Override
+		            public void onClick(View v) {
+			            toggleNotificationMute(p);
+			            buttonNoteEnabled.setVisibility(View.VISIBLE);
+			            buttonNoteMuted.setVisibility(View.GONE);
+		            }
+	            });
+
+
+				boolean mutedButtonsVisible = (p.getUserName().equalsIgnoreCase(_userName) && (_messageId == 0) && (_replyNotificationsEnabled) && !p.isPQP());
+
+				boolean mutedPost = checkIfMuted(p.getPostId(), _prefs);
+				holder.buttonNoteMuted.setVisibility(mutedPost && mutedButtonsVisible ? View.VISIBLE : View.GONE);
+				holder.buttonNoteEnabled.setVisibility(!mutedPost && mutedButtonsVisible ? View.VISIBLE : View.GONE);
+
 
                 final ImageButton btnlol = holder.buttonLol;
                 holder.buttonLol.setOnClickListener(new View.OnClickListener() {
@@ -1851,6 +1920,9 @@ public class ThreadViewFragment extends ListFragment
                 holder.buttonReply = (ImageButton)convertView.findViewById(R.id.buttonReplyPost);
                 holder.buttonAllImages = (ImageButton)convertView.findViewById(R.id.buttonOpenAllImages);
                 holder.buttonLol = (ImageButton)convertView.findViewById(R.id.buttonPostLOL);
+
+	            holder.buttonNoteEnabled = (ImageButton)convertView.findViewById(R.id.buttonNotificationEnabled);
+	            holder.buttonNoteMuted = (ImageButton)convertView.findViewById(R.id.buttonNotificationMuted);
                 
                 // zoom for expanded
                 // holder.content.setTextSize(TypedValue.COMPLEX_UNIT_PX, holder.content.getTextSize() * _zoom);
@@ -1918,40 +1990,6 @@ public class ThreadViewFragment extends ListFragment
                 }
 
                 holder.postedtime.setText(TimeDisplay.getNiceTimeSince(p.getPosted(), _showHoursSince));
-                /*
-            	final double threadAgeInHours = TimeDisplay.threadAgeInHours(p.getPosted());
-            	// set posted time
-                if (threadAgeInHours <= 24f && _showHoursSince)
-                {
-                    // this is actually the same as the final else below, but this is the most common result
-                    holder.postedtime.setText(TimeDisplay.doubleThreadAgeToString(threadAgeInHours));
-                }
-                else {
-                    // check if this post is so old its not even the same year
-                    // threadage > 8760 == one year. optimization to prevent getyear from being run on every thread
-                    if (threadAgeInHours > 8760f && !TimeDisplay.getYear(TimeDisplay.now()).equals(TimeDisplay.getYear(p.getPosted())))
-                    {
-                        // older than one year
-                        holder.postedtime.setText(TimeDisplay.convTime(p.getPosted(), "MMM dd, yyyy h:mma zzz"));
-                    }
-                    else
-                    {
-                        if ((!_showHoursSince) || (threadAgeInHours > 24f)) {
-                            if (TimeDisplay.threadAgeInHours(p.getPosted()) > 96f) {
-                                // default readout for !showsince or > 96h, has month
-                                holder.postedtime.setText(TimeDisplay.convertTimeLong(p.getPosted()));
-                            }
-                            else {
-                                // has only day of week
-                                holder.postedtime.setText(TimeDisplay.convertTime(p.getPosted()));
-                            }
-                        } else {
-                            // standard less than 24h with showtimesince... this will actually always be caught by the first if as an optimization
-                            holder.postedtime.setText(TimeDisplay.doubleThreadAgeToString(threadAgeInHours));
-                        }
-                    }
-                }
-                */
 
             	// 5L is used by the postqueue system to indicate the post hasnt been posted yet
             	if (p.getPosted() == 5L)
@@ -2489,7 +2527,7 @@ public class ThreadViewFragment extends ListFragment
             	if (mMainActivity != null)
         		{
             		boolean set = false;
-            		if ((posts.size() > 300))
+            		if ((posts.size() > 400))
             			set = true;
             		final boolean set2 = set && _fastScroll;
             		
@@ -2649,6 +2687,8 @@ public class ThreadViewFragment extends ListFragment
             TextView preview;
             //TextView username;
             TextView postedtime;
+	        public ImageButton buttonNoteEnabled;
+	        public ImageButton buttonNoteMuted;
         }
         
         public ArrayList<Post> fakePostAddinator(ArrayList<Post> posts)

@@ -1,6 +1,8 @@
 package net.woggle.shackbrowse.notifier;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import net.woggle.shackbrowse.MainActivity;
 import net.woggle.shackbrowse.NotificationObj;
@@ -31,6 +33,8 @@ import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+
+import org.json.JSONArray;
 
 public class NotifierReceiver extends BroadcastReceiver {
 
@@ -108,6 +112,12 @@ public class NotifierReceiver extends BroadcastReceiver {
 				mBuilder.setContentIntent(resultPendingIntent);
 				mBuilder.setDeleteIntent(getDeleteIntent("GCMNoteCountReply", context));
 				Notification notification = mBuilder.build();
+
+				// notification snooze
+				if (checkIfMuted(Integer.parseInt(data.getString("parentid")), prefs))
+				{
+					return;
+				}
 				
 				int mId = 58401;
 				handleNotification(notification, mId, context);
@@ -176,7 +186,7 @@ public class NotifierReceiver extends BroadcastReceiver {
 				mBuilder.setContentIntent(resultPendingIntent);
 				mBuilder.setDeleteIntent(getDeleteIntent("GCMNoteCountVanity", context));
 				Notification notification = mBuilder.build();
-				
+
 				int mId = 58402;
 				handleNotification(notification, mId, context);
 				
@@ -318,6 +328,80 @@ public class NotifierReceiver extends BroadcastReceiver {
 			}
 		}
    }
+
+	public static boolean checkIfMuted(int postId, SharedPreferences prefs)
+	{
+		String mutedList = prefs.getString("GCMNoteMuted", "");
+		ArrayList<String> muted = new ArrayList<String>(Arrays.asList(mutedList.split(",")));
+
+		if (mutedList.contains(Integer.toString(postId)))
+		{
+			return true;
+		}
+		return false;
+	}
+	// returns true for muted, false for now not muted
+	public static boolean toggleMuted(int postId, SharedPreferences prefs)
+	{
+
+		String postIdString = Integer.toString(postId);
+		String mutedList = prefs.getString("GCMNoteMuted", "");
+
+		ArrayList<String> muted = new ArrayList<String>();
+		if (!mutedList.equals(""))
+			muted.addAll(Arrays.asList(mutedList.split(",")));
+
+		if (mutedList.contains(Integer.toString(postId)))
+		{
+			for (int i = 0; i < muted.size(); i++)
+			{
+				if (muted.get(i).equals(postIdString))
+				{
+					muted.remove(i);
+				}
+			}
+
+
+			Editor edit = prefs.edit();
+			edit.putString("GCMNoteMuted", commaDelimitedStringFromStringArrayList(muted));
+			edit.commit();
+			return false;
+		}
+		else
+		{
+			muted.add(0, postIdString);
+			if (muted.size() > 20)
+				muted.remove(muted.size() - 1); // remove last item
+
+			Editor edit = prefs.edit();
+			edit.putString("GCMNoteMuted", commaDelimitedStringFromStringArrayList(muted));
+			edit.commit();
+			return true;
+		}
+	}
+
+	static public String commaDelimitedStringFromStringArrayList(ArrayList<String> list)
+	{
+		String out = "";
+		for (int i = 0; i < list.size(); i++)
+		{
+			out = out + (i > 0 ? ",":"") + list.get(i);
+		}
+		return out;
+	}
+
+	public static boolean isInteger(String s) {
+		try {
+			Integer.parseInt(s);
+		} catch(NumberFormatException e) {
+			return false;
+		} catch(NullPointerException e) {
+			return false;
+		}
+		// only got here if we didn't return false
+		return true;
+	}
+
 	private NotificationCompat.InboxStyle getInboxStyleFor(String title, String type, int num, Context ctx)
 	{
 		return getInboxStyleFor(title, type, null, num, ctx);

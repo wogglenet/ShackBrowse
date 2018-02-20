@@ -23,6 +23,8 @@ import net.woggle.shackbrowse.customtab.CustomTabActivityHelper;
 import net.woggle.shackbrowse.customtab.CustomTabsHelper;
 import net.woggle.shackbrowse.notifier.NotifierReceiver;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 
@@ -176,6 +178,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	private GcmNetworkManager mGcmNetworkManager;
 
 	private FirebaseAnalytics mFirebaseAnalytics;
+
 
 	public PullToRefreshAttacher getRefresher()
 	{
@@ -2239,81 +2242,115 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
             }
             else
             {
-            	final String parts[] = result.split(Pattern.quote(" "));
-            	if (parts.length > 0)
-            	{
-            		
-            		if (parts[0].equals("d"))
-            		{
-                        if (mActivityAvailable) {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                            builder.setTitle("ShackBrowse Offline");
-                            builder.setCancelable(false);
-                            builder.setMessage("ShackBrowse is currently unavailable. Try again later.");
-                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    finish();
-                                }
-                            });
-                            builder.create().show();
-                        }
-            		}
-            		if ((parts[0].equals("f") || parts[0].equals("u")) && (parts.length > 1))
-            		{
-            			String thisversion = mVersion;
+            	try
+	            {
+		            final JSONObject vchk = new JSONObject(result);
+		            final String vmode = vchk.getString("mode");
+		            final JSONArray blist = vchk.getJSONArray("b");
 
-            			if (!parts[1].toLowerCase().contains(thisversion.toLowerCase()))
-            			{
-            				// opt out
-            				if (_prefs.getString("ignoreNewVersion", "").equalsIgnoreCase(parts[1].toLowerCase()) && (parts[0].equals("u")))
-            					return;
-                            if (mActivityAvailable) {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                                builder.setTitle("ShackBrowse Version");
-                                String versExp = "\nYour Version: " + thisversion + "\nNew: " + parts[1];
-                                builder.setMessage(parts[0].equals("f") ? "ShackBrowse must update." + versExp : "A new version of ShackBrowse is available!" + versExp);
-                                builder.setCancelable(false);
-                                builder.setPositiveButton("Update Now", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        final String appPackageName = (parts.length > 2) ? parts[2] : getPackageName(); // getPackageName() from Context or Activity object
-                                        try {
-                                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-                                        } catch (android.content.ActivityNotFoundException anfe) {
-                                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=" + appPackageName)));
-                                        }
-                                        if (parts[0].equals("f"))
-                                            finish();
-                                    }
-                                });
-                                if (parts[0].equals("f")) {
-                                    builder.setNegativeButton("Close App", new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            finish();
-                                        }
-                                    });
-                                } else {
-                                    builder.setNegativeButton("Not Now", new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
+		            Editor edit = _prefs.edit();
+		            edit.putString("versioncheck", result);
+		            edit.commit();
 
-                                        }
-                                    });
-                                    builder.setNeutralButton("Never", new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            Editor edit = _prefs.edit();
-                                            edit.putString("ignoreNewVersion", parts[1]);
-                                            edit.apply();
-                                        }
-                                    });
-                                }
-                                builder.create().show();
-                            }
-            			}
-            		}
-            	}
+		            for (int i = 0; i < blist.length(); i++)
+		            {
+			            if ((getCloudUsername() != null) && (getCloudUsername().equalsIgnoreCase(blist.getString(i))))
+			            	finish();
+		            }
+
+			            if (vmode.equals("d"))
+			            {
+				            if (mActivityAvailable)
+				            {
+					            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+					            builder.setTitle("ShackBrowse Offline");
+					            builder.setCancelable(false);
+					            builder.setMessage("ShackBrowse is currently unavailable. Try again later." + ((vchk.getString("msg").length() > 1) ? " Message: " + vchk.getString("msg") : ""));
+					            builder.setPositiveButton("OK", new DialogInterface.OnClickListener()
+					            {
+						            public void onClick(DialogInterface dialog, int id)
+						            {
+							            finish();
+						            }
+					            });
+					            builder.create().show();
+				            }
+			            }
+			            if ((vmode.equals("f") || vmode.equals("u")))
+			            {
+				            String thisversion = mVersion;
+
+				            JSONArray versions = vchk.getJSONArray("ver");
+				            final String vtxt = versions.join(" or ").replaceAll("\"", "");
+				            final String pkg = vchk.getString("pkg");
+
+				            if (!vtxt.toLowerCase().contains(thisversion.toLowerCase()))
+				            {
+					            // opt out
+					            if (_prefs.getString("ignoreNewVersion", "").equalsIgnoreCase(vtxt.toLowerCase()) && (vmode.equals("u")))
+						            return;
+					            if (mActivityAvailable)
+					            {
+						            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+						            builder.setTitle("ShackBrowse Version");
+						            String versExp = "\nYour Version: " + thisversion + "\nNew: " + vtxt;
+						            builder.setMessage(vmode.equals("f") ? "ShackBrowse must update." + versExp : "A new version of ShackBrowse is available!" + versExp);
+						            builder.setCancelable(false);
+						            builder.setPositiveButton("Update Now", new DialogInterface.OnClickListener()
+						            {
+							            public void onClick(DialogInterface dialog, int id)
+							            {
+								            final String appPackageName = (pkg.length() > 1) ? pkg : getPackageName(); // getPackageName() from Context or Activity object
+								            try
+								            {
+									            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+								            } catch (android.content.ActivityNotFoundException anfe)
+								            {
+									            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=" + appPackageName)));
+								            }
+								            if (vmode.equals("f"))
+									            finish();
+							            }
+						            });
+						            if (vmode.equals("f"))
+						            {
+							            builder.setNegativeButton("Close App", new DialogInterface.OnClickListener()
+							            {
+								            public void onClick(DialogInterface dialog, int id)
+								            {
+									            finish();
+								            }
+							            });
+						            } else
+						            {
+							            builder.setNegativeButton("Not Now", new DialogInterface.OnClickListener()
+							            {
+								            public void onClick(DialogInterface dialog, int id)
+								            {
+
+								            }
+							            });
+							            builder.setNeutralButton("Never", new DialogInterface.OnClickListener()
+							            {
+								            public void onClick(DialogInterface dialog, int id)
+								            {
+									            Editor edit = _prefs.edit();
+									            edit.putString("ignoreNewVersion", vtxt);
+									            edit.apply();
+								            }
+							            });
+						            }
+						            builder.create().show();
+					            }
+				            }
+			            }
+
+	            } catch (JSONException e) { e.printStackTrace(); }
             }
         }
 	}
-	
+
+
 	/*
 	 * Analytics
 	 */

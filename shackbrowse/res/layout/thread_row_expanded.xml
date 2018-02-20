@@ -105,6 +105,32 @@
 				android:layout_alignBottom="@id/buttonReplyPost"
 				android:background="?android:attr/selectableItemBackground"
 			    />
+			   <ImageButton
+				   android:id="@+id/buttonNotificationEnabled"
+				   android:layout_toLeftOf="@id/buttonPostLOL"
+				   android:layout_width="@dimen/buttonReplyWidth"
+				   android:layout_below="@id/postContent"
+				   android:layout_height="@dimen/buttonReplyHeight"
+				   android:src="@drawable/ic_action_notifications"
+				   android:paddingLeft="10dp"
+				   android:scaleType="fitCenter"
+				   android:paddingRight="10dp"
+				   android:layout_alignBottom="@id/buttonReplyPost"
+				   android:background="?android:attr/selectableItemBackground"
+				   />
+			   <ImageButton
+				   android:id="@+id/buttonNotificationMuted"
+				   android:layout_toLeftOf="@id/buttonPostLOL"
+				   android:layout_width="@dimen/buttonReplyWidth"
+				   android:layout_below="@id/postContent"
+				   android:layout_height="@dimen/buttonReplyHeight"
+				   android:src="@drawable/ic_action_notifications_off"
+				   android:paddingLeft="10dp"
+				   android:scaleType="fitCenter"
+				   android:paddingRight="10dp"
+				   android:layout_alignBottom="@id/buttonReplyPost"
+				   android:background="?android:attr/selectableItemBackground"
+				   />
 			    
 		</RelativeLayout>
  	 <RelativeLayout

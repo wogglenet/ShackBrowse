@@ -271,7 +271,7 @@
 	</string-array>
 	<string-array name="preference_popupBrowser">
 		<item>Open all links in popup</item>
-		<item>Open everything but youtube and google play in popup</item>
+		<item>Open everything but youtube, twitter, and google play in popup</item>
 		<item>Open only images in popup</item>
 		<item>Open all links externally</item>
 	</string-array>

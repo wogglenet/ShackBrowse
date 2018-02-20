@@ -168,7 +168,7 @@ public class CustomURLSpan extends CustomClickableSpan implements OnLongClickLis
 				mAct.addToThreadIdBackStack(currentPostId);
 				mAct.openThreadViewAndSelectWithBackStack(newId);
 
-			} else if (((_useBrowser == 0) && (!href.contains("play.google"))) || ((_useBrowser == 1) && (!href.contains("youtu.be")) && (!href.contains("youtube")) && (!href.contains("play.google"))) || ((_useBrowser == 2) && (PopupBrowserFragment.isImage(href))))
+			} else if (((_useBrowser == 0) && (!href.contains("play.google"))) || ((_useBrowser == 1) && (!href.contains("youtu.be")) && (!href.contains("youtube")) && (!href.contains("twitter")) && (!href.contains("play.google"))) || ((_useBrowser == 2) && (PopupBrowserFragment.isImage(href))))
 			{
 				mAct.openBrowser(href);
 
