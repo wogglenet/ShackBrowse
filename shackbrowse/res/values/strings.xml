@@ -338,16 +338,14 @@
     <string name="compose_strike">Strike</string>
     <string name="menu_compose_settings">Settings</string>
     <string name="browser_photo_title">Photo View</string>
-    <string name="preference_embedimages">Embed Images in Posts</string>
-    <string name="preference_embedimages_summary">Some images and GIFs can be loaded inline with the post when it is opened. Default: Only on Wi-Fi.</string>
-    <string name="preference_hidelinks_title">Hide Embedded Image Links</string>
-    <string name="preference_hidelinks_summary">Hides the link text when criteria are met to auto-embed and display certain images inline in an opened post.</string>
+    <string name="preference_embed">Embed Images, Tweets, and Youtube in Posts</string>
+    <string name="preference_embed_summary">Some images, Tweets, and Youtube links and GIFs can be loaded inline with the post when it is opened. Default: Always.</string>
+    <string name="preference_hidelinks_title">Hide Embedded Item Links</string>
+    <string name="preference_hidelinks_summary">Hides the link text when criteria are met to auto-embed and display certain items inline in an opened post.</string>
     <string name="preference_showlinkbutton_title">Show Link Option Button</string>
     <string name="preference_showlinkbutton_summary">Show the link secondary options button icon next to links. Gives options to copy url, share link, and open externally. Auto disabled on some links when hidden by auto-embedded images.</string>
     <string name="preference_threadexpired_title">Show Expired Thread Alert</string>
     <string name="preference_threadexpired_summary">Shows a red bar on the bottom of expired threads</string>
-    <string name="preference_uct_title">Use Chrome Tabs</string>
-    <string name="preference_uct_summary">If Chrome is installed, this will cause Chrome Tabs to be used as the popup browser when possible. Links clicked on will show up in your Chrome history.</string>
     <string name="preference_acr_title">Allow Reply Collapse</string>
     <string name="preference_acr_summary">Allows you to click on the header of a post to collapse it after you opened it, except the root post, which has +1 resistance to collapse.</string>
     <string name="preference_limitvibratespam_title">Annoyance Limit</string>
@@ -416,4 +414,11 @@
         <item>statsItemTimeInApp</item>
         <item>statsItemTimeInComposer</item>
     </string-array>
+
+
+    <string name="com.twitter.sdk.android.CONSUMER_KEY">XwN2M5eEu3MxGsQMvSTDqzRh0</string>
+    <string name="com.twitter.sdk.android.CONSUMER_SECRET">lelldQpAX0rERpvaLxb37cS6ycN2Sd9GBckbm6WozpqwQTT2bH</string>
+    <bool name="com.twitter.sdk.android.TRACE_ENABLED">true</bool>
+    <bool name="com.twitter.sdk.android.COLLECT_IDENTIFIERS_ENABLED">false</bool>
+
 </resources>

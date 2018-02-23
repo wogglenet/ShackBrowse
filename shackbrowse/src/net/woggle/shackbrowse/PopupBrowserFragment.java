@@ -33,6 +33,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 
 import java.lang.reflect.Field;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class PopupBrowserFragment extends Fragment {
@@ -296,6 +298,70 @@ public class PopupBrowserFragment extends Fragment {
 		else
 		{
 			return false;
+		}
+	}
+	public static boolean isTweet (String _href)
+	{
+		if (
+				_href.contains("twitter.com/")
+				)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	public static String getTweetId (String _href)
+	{
+		if (
+				_href.contains("twitter.com/")
+				)
+		{
+			String href[] = _href.split("/");
+			String idplus[] = href[href.length -1].split("\\?");
+			return idplus[0];
+		}
+		else
+		{
+			return null;
+		}
+	}
+
+	public static boolean isYoutube (String _href)
+	{
+		if ((
+				_href.contains("/youtu.be/")
+				) || (
+			_href.contains("/www.youtube.com/")
+	) || (
+				_href.contains("/youtube.com/")
+		))
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	public static String getYoutubeId (String _href)
+	{
+		if ((_href.contains("/youtu.be/")) || (_href.contains("youtube.com/")))
+		{
+			String pattern = "(?<=watch\\?v=|/videos/|embed\\/|youtu.be\\/|\\/v\\/|\\/e\\/|watch\\?v%3D|watch\\?feature=player_embedded&v=|%2Fvideos%2F|embed%\u200C\u200B2F|youtu.be%2F|%2Fv%2F)[^#\\&\\?\\n]*";
+
+			Pattern compiledPattern = Pattern.compile(pattern);
+			Matcher matcher = compiledPattern.matcher(_href); //url is youtube url for which you want to extract the id.
+			if (matcher.find()) {
+				return matcher.group();
+			}
+			else return null;
+		}
+		else
+		{
+			return null;
 		}
 	}
 

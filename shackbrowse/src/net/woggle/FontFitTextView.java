@@ -6,7 +6,7 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.widget.TextView;
 
-public class FontFitTextView extends TextView {
+public class FontFitTextView extends android.support.v7.widget.AppCompatTextView {
 
     public FontFitTextView(Context context) {
         super(context);

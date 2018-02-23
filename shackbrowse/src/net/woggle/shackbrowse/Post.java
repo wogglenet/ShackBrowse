@@ -1,5 +1,6 @@
 package net.woggle.shackbrowse;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,6 +24,8 @@ public class Post implements Comparable<Post> {
 
     private Spannable _preview;
 	private ArrayList<String> imageUrls = new ArrayList<String>();
+
+	private ArrayList<ThreadViewFragment.PostLoadingAdapter.PostClip> _chopped;
 	// private Spannable _formattedContent;
 	private Bitmap _treebmp;
 	private LolObj _lolobj = null;
@@ -34,6 +37,17 @@ public class Post implements Comparable<Post> {
 	private boolean _isPolitical = false;
 	private boolean _isPQP = false;
     private boolean _isWorking = false;
+
+
+
+    public ArrayList<ThreadViewFragment.PostLoadingAdapter.PostClip> getChoppedPost ()
+    {
+    	return _chopped;
+    }
+    public void setChoppedPost(ArrayList<ThreadViewFragment.PostLoadingAdapter.PostClip> choppedPost)
+    {
+    	_chopped = choppedPost;
+    }
 
     /**
      * gets the depth string representing the tree lines for this post, before the collapse icon is added

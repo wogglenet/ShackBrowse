@@ -9,7 +9,7 @@ import android.widget.TextView;
  * This is a really crappy workaround i found on stackexchange for a crash in android 6.0 when deselecting text while using the hack to make text selection work with linkmovementmethod
  * Created by brad on 12/11/2015.
  */
-public class FixedTextView extends TextView {
+public class FixedTextView extends android.support.v7.widget.AppCompatTextView {
 
     public FixedTextView(final Context context) {
         super(context);

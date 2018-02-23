@@ -14,14 +14,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import net.woggle.shackbrowse.ChangeLog.onChangeLogCloseListener;
 import net.woggle.shackbrowse.NetworkNotificationServers.OnGCMInteractListener;
 import net.woggle.shackbrowse.PullToRefreshAttacher.Options;
-import net.woggle.shackbrowse.customtab.CustomTabActivityHelper;
-import net.woggle.shackbrowse.customtab.CustomTabsHelper;
-import net.woggle.shackbrowse.notifier.NotifierReceiver;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,7 +28,6 @@ import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -49,8 +44,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -60,12 +53,12 @@ import android.preference.PreferenceManager;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
-import android.support.customtabs.CustomTabsIntent;
+
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
@@ -91,6 +84,7 @@ import android.webkit.WebView;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -102,6 +96,13 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.color.ColorChooserDialog;
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.pierfrancescosoffritti.youtubeplayer.player.AbstractYouTubePlayerListener;
+import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayer;
+import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerFullScreenListener;
+import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerInitListener;
+import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerView;
+import com.pierfrancescosoffritti.youtubeplayer.ui.PlayerUIController;
+import com.twitter.sdk.android.core.Twitter;
 
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressDrawable;
@@ -121,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
     int _splitView = 1;
     boolean _dualPane = false;
 	private int _orientLock = 0;
-	protected boolean mUseChromeTab = false;
+
 	SharedPreferences _prefs;
 	private ArrayList<Integer> _threadIdBackStack = new ArrayList<Integer>();
 
@@ -170,7 +171,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
     private Long mLastResumeTime = TimeDisplay.now();
 	protected boolean isBeta = false;
 	protected String mVersion = "none";
-	CustomTabActivityHelper mCustomTabActivityHelper;
 	private Bitmap mChromeTabShareIcon;
 	private String mChromeTabCurrentUrl;
 	private String mBrowserPageTitle;
@@ -178,6 +178,8 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	private GcmNetworkManager mGcmNetworkManager;
 
 	private FirebaseAnalytics mFirebaseAnalytics;
+	private YouTubePlayerView mYoutubeView;
+	private boolean mYoutubeFullscreen = false;
 
 
 	public PullToRefreshAttacher getRefresher()
@@ -223,14 +225,9 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	        // Ignore
 	    }
 
-		mCustomTabActivityHelper = new CustomTabActivityHelper();
-
+		// load loading splash
 		this.setContentView(R.layout.main_splitview);
 
-		WebView wbv = new WebView(this);
-		wbv.clearFormData();
-		wbv.clearCache(true);
-		
 		initFragments(savedInstanceState);
 
 		mShortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime) * 1;
@@ -243,12 +240,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		// set up preferences
         reloadPrefs();
 
-		if (mUseChromeTab)
-		{
-			Resources resources = getResources();
-			mChromeTabShareIcon = BitmapFactory.decodeResource(resources, R.drawable.ic_action_social_share);
-		}
-		
 		// notifications registrator, works mostly automatically
 		OnGCMInteractListener GCMlistener = new OnGCMInteractListener(){
 			@Override	public void networkResult(String res)
@@ -295,8 +286,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		ndb.open();
 		ndb.pruneNotes();
 		ndb.close();
-		
-		
+
 		// seen
 		_seen = new Seen();
 
@@ -365,6 +355,11 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
         // set up favorites class
         mOffline = new OfflineThread(this);
+
+		// clean up webview
+		WebView wbv = new WebView(this);
+		wbv.clearFormData();
+		wbv.clearCache(true);
         
         
         // set up change log
@@ -489,12 +484,14 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         
         _sresFrame.setSlidingEnabled(true);
 
+		// default content setting
+		setContentTo(Integer.parseInt(_prefs.getString("APP_DEFAULTPANE", Integer.toString(CONTENT_THREADLIST))));
+
 		// analytics
 		// Obtain the FirebaseAnalytics instance.
 		mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        
-        // default content setting
-        setContentTo(Integer.parseInt(_prefs.getString("APP_DEFAULTPANE", Integer.toString(CONTENT_THREADLIST))));
+
+		Twitter.initialize(this);
         
         // check for wifi connection
         //ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
@@ -579,8 +576,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 		_messageList = new MessageFragment();
 
-		_loadingSplash = new LoadingSplashFragment();
-
 		if (fm.findFragmentById(R.id.menu_frame) != null)
 			_appMenu = (AppMenu) fm.findFragmentById(R.id.menu_frame);
 		else
@@ -623,6 +618,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			ft.attach(mPBfragment);
 			ft.commit();
 		}
+		_loadingSplash = new LoadingSplashFragment();
 	}
 
 	public static int themeApplicator(Activity context) {
@@ -1272,9 +1268,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		
 		mOffline.endCloudUpdates();
 
-		if (mUseChromeTab)
-			mCustomTabActivityHelper.unbindCustomTabsService(this);
-
 		// unregister receiver for pqpservice
 		LocalBroadcastManager.getInstance(this).unregisterReceiver(mPQPServiceReceiver);
 		
@@ -1308,9 +1301,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 		mOffline.startCloudUpdates();
 
-		if (mUseChromeTab)
-			mCustomTabActivityHelper.bindCustomTabsService(this);
-		
 		// register to receive information from PQPService
 		IntentFilter filter = new IntentFilter(PQPSERVICESUCCESS);
         mPQPServiceReceiver = new PQPServiceReceiver();
@@ -1785,11 +1775,37 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	
 	public void setDualPane (boolean dualPane)
 	{
+		RelativeLayout ytholder = (RelativeLayout)findViewById(R.id.tlist_ytholder);
 		SlideFrame slide = (SlideFrame)findViewById(R.id.singleThread);
 		SlideFrame sres = (SlideFrame)findViewById(R.id.searchResults);
 		FrameLayout contentframe = (FrameLayout)findViewById(R.id.content_frame);
+
+		boolean ytOpen = ((mYoutubeView != null && mYoutubeView.getVisibility() == View.VISIBLE) ? true : false);
 		//RelativeLayout contentCont = (RelativeLayout)findViewById(R.id.contentContainer);
-		
+
+		// YOUTUBE STUFF
+		if ((ytOpen) && (dualPane))
+		{
+			((RelativeLayout.LayoutParams)slide.getLayoutParams()).addRule(RelativeLayout.ABOVE, 0);
+			((RelativeLayout.LayoutParams)sres.getLayoutParams()).addRule(RelativeLayout.ABOVE, R.id.tlist_ytholder);
+			((RelativeLayout.LayoutParams)contentframe.getLayoutParams()).addRule(RelativeLayout.ABOVE, R.id.tlist_ytholder);
+		}
+		else if ((ytOpen) && (!dualPane))
+		{
+			((RelativeLayout.LayoutParams)slide.getLayoutParams()).addRule(RelativeLayout.ABOVE, R.id.tlist_ytholder);
+			((RelativeLayout.LayoutParams)sres.getLayoutParams()).addRule(RelativeLayout.ABOVE, R.id.tlist_ytholder);
+			((RelativeLayout.LayoutParams)contentframe.getLayoutParams()).addRule(RelativeLayout.ABOVE, R.id.tlist_ytholder);
+		}
+		else
+		{
+			((RelativeLayout.LayoutParams)slide.getLayoutParams()).addRule(RelativeLayout.ABOVE, 0);
+			((RelativeLayout.LayoutParams)sres.getLayoutParams()).addRule(RelativeLayout.ABOVE, 0);
+			((RelativeLayout.LayoutParams)contentframe.getLayoutParams()).addRule(RelativeLayout.ABOVE, 0);
+		}
+
+		// END YOUTUBE STUFF
+
+
 		if (!dualPane)
 		{
 			// CHANGE TO NON DUAL PANE MODE 
@@ -1802,6 +1818,10 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			((RelativeLayout.LayoutParams)contentframe.getLayoutParams()).width = getScreenWidth();
 			((RelativeLayout.LayoutParams)contentframe.getLayoutParams()).addRule(RelativeLayout.RIGHT_OF,0);
 			contentframe.requestLayout();
+
+			// ytholder
+			((RelativeLayout.LayoutParams)ytholder.getLayoutParams()).width = getScreenWidth();
+			((RelativeLayout.LayoutParams)ytholder.getLayoutParams()).addRule(RelativeLayout.ALIGN_PARENT_LEFT);
     		
     		// changee slider layer
 
@@ -1809,6 +1829,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
     		slide.requestLayout();
     		((RelativeLayout.LayoutParams)slide.getLayoutParams()).addRule(RelativeLayout.ALIGN_PARENT_LEFT);
     		((RelativeLayout.LayoutParams)slide.getLayoutParams()).addRule(RelativeLayout.RIGHT_OF,0);
+
 
     		if (_threadView._rootPostId == 0 && _threadView._messageId == 0)
     		{
@@ -1828,6 +1849,14 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		else
 		{
 			// DUAL PANE SETUP
+
+			// ytholder
+			// ytholder
+			if (mYoutubeFullscreen)
+				((RelativeLayout.LayoutParams)ytholder.getLayoutParams()).width = (int)(getScreenWidth());
+			else
+				((RelativeLayout.LayoutParams)ytholder.getLayoutParams()).width = (int)(getScreenWidth() * (1f / 3f));
+
 			
 			// sresults slider
 			((RelativeLayout.LayoutParams)sres.getLayoutParams()).width = (int)(getScreenWidth() * (1f / 3f));
@@ -1843,6 +1872,9 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	       		((RelativeLayout.LayoutParams)slide.getLayoutParams()).addRule(RelativeLayout.RIGHT_OF,0);
 	    		((RelativeLayout.LayoutParams)contentframe.getLayoutParams()).addRule(RelativeLayout.RIGHT_OF, R.id.singleThread);
 	    		((RelativeLayout.LayoutParams)sres.getLayoutParams()).addRule(RelativeLayout.RIGHT_OF, R.id.singleThread);
+
+	    		//ytholder
+			    ((RelativeLayout.LayoutParams)ytholder.getLayoutParams()).addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
     		}
     		else
     		{
@@ -1850,13 +1882,15 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	    		((RelativeLayout.LayoutParams)slide.getLayoutParams()).addRule(RelativeLayout.RIGHT_OF, R.id.content_frame);
 	    		((RelativeLayout.LayoutParams)contentframe.getLayoutParams()).addRule(RelativeLayout.RIGHT_OF, 0);
 	    		((RelativeLayout.LayoutParams)sres.getLayoutParams()).addRule(RelativeLayout.RIGHT_OF, 0);
+
+			    //ytholder
+			    ((RelativeLayout.LayoutParams)ytholder.getLayoutParams()).addRule(RelativeLayout.ALIGN_PARENT_LEFT);
     		}
-    		sres.requestLayout();
-    		slide.requestLayout();
+
     		slide.setSlidingEnabled(false);
     		slide.openLayer(false);
     		contentframe.setVisibility(View.VISIBLE);
-    		((RelativeLayout)contentframe.getParent()).requestLayout();
+
     		
     		if (sres.isOpened())
     		{
@@ -1865,6 +1899,13 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
     			sres.setVisibility(View.VISIBLE);
     		}
 		}
+
+		ytholder.requestLayout();
+		sres.requestLayout();
+		slide.requestLayout();
+		contentframe.requestLayout();
+		((RelativeLayout)contentframe.getParent()).requestLayout();
+
         contentframe.setTranslationX(0f);
         sres.setTranslationX(0f);
 
@@ -1874,13 +1915,15 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		if (_appMenu != null)
 			_appMenu.updateMenuUi();
 	}
-	
+
+
+
 
 	// HANDLE CLOSED ACTIVITIES RETURNING TO MAIN
     
     private int getScreenWidth() {
     	// calculate sizes
-        Display display = ((WindowManager)getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+	    Display display = ((WindowManager)getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         DisplayMetrics displaymetrics = new DisplayMetrics();
         display.getMetrics(displaymetrics);
 		return (displaymetrics.widthPixels);
@@ -1951,7 +1994,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
             _zoom = Float.parseFloat(_prefs.getString("fontZoom", "1.0"));
             _showPinnedInTL = _prefs.getBoolean("showPinnedInTL", true);
             _swappedSplit = _prefs.getBoolean("swappedSplit", false);
-			mUseChromeTab = _prefs.getBoolean("useChromeTab", false);
             _enableDonatorFeatures = true;
             if (_threadView != null) {
                 if (_threadView._adapter != null) {
@@ -2362,6 +2404,8 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		if (_analytics)
 		{
 			System.out.println("ANALYTICS: track " + category + action + label);
+
+
 			Bundle bundle = new Bundle();
 			bundle.putString(FirebaseAnalytics.Param.ITEM_ID, label);
 			bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, category);
@@ -3092,69 +3136,26 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	private void openBrowser(boolean showZoomSetup, String... hrefs) { openBrowser(false, showZoomSetup, hrefs); }
 	public void openBrowserPhotoView(String... hrefs) { openBrowser(true, false, hrefs); }
 	private void openBrowser(boolean showPhotoView, boolean showZoomSetup, String... hrefs) {
-		// chrome tab garbage
-		String packageName = CustomTabsHelper.getPackageNameToUse(this);
+		FragmentManager fm = getFragmentManager();
+		FragmentTransaction ft = fm.beginTransaction();
+		Bundle args = new Bundle();
+		args.putStringArray("hrefs", hrefs);
+		if (showZoomSetup)
+			args.putBoolean("showZoomSetup", true);
 
-		if ((hrefs != null) && (hrefs.length <= 1) && (!showZoomSetup) && mUseChromeTab && (packageName != null))
-		{
-			// If we cant find a package name, it means there's no browser that // supports Chrome Custom Tabs installed. So, we fallback to the
-			// webview
+		if (showPhotoView)
+			args.putBoolean("showPhotoView", true);
 
-			CustomTabsIntent.Builder intentBuilder = new CustomTabsIntent.Builder();
+		mPBfragment = (PopupBrowserFragment) Fragment.instantiate(getApplicationContext(), PopupBrowserFragment.class.getName(), args);
+		ft.add(R.id.browser_frame, mPBfragment, "pbfrag");
+		ft.attach(mPBfragment);
+		ft.commitAllowingStateLoss();
 
-			int toolbarColor;
-			if (mThemeResId == R.style.AppThemeDark)
-			{
-				toolbarColor = getResources().getColor(R.color.gnushackdark);
-			}
-			else {
-				toolbarColor = getResources().getColor(R.color.SBdark);
-			}
+		new anim(mBrowserFrame).toVisible();
 
+		mPopupBrowserOpen = true;
 
-			intentBuilder.setToolbarColor(toolbarColor);
-			intentBuilder.setShowTitle(true);
-			mChromeTabCurrentUrl = hrefs[0];
-/*
-			if (mChromeTabShareIcon == null) {
-				Resources resources = getResources();
-				mChromeTabShareIcon = BitmapFactory.decodeResource(resources, R.drawable.ic_action_social_share);
-			}
-
-			Intent actionIntent = new Intent(Intent.ACTION_SEND);
-			actionIntent.setType("text/plain");
-			actionIntent.putExtra(Intent.EXTRA_TEXT, hrefs[0]);
-			intentBuilder.setActionButton(mChromeTabShareIcon, "Share",PendingIntent.getActivity(getApplicationContext(), 0, actionIntent, 0));
-
-
-			intentBuilder.setStartAnimations(this, R.anim.slide_in_right, R.anim.slide_out_left);
-			intentBuilder.setExitAnimations(this, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-*/
-			CustomTabActivityHelper.openCustomTab(this, intentBuilder.build(), Uri.parse(hrefs[0]));
-		}
-		else {
-			FragmentManager fm = getFragmentManager();
-			FragmentTransaction ft = fm.beginTransaction();
-			Bundle args = new Bundle();
-			args.putStringArray("hrefs", hrefs);
-			if (showZoomSetup)
-				args.putBoolean("showZoomSetup", true);
-
-			if (showPhotoView)
-				args.putBoolean("showPhotoView", true);
-
-			mPBfragment = (PopupBrowserFragment) Fragment.instantiate(getApplicationContext(), PopupBrowserFragment.class.getName(), args);
-			ft.add(R.id.browser_frame, mPBfragment, "pbfrag");
-			ft.attach(mPBfragment);
-			ft.commitAllowingStateLoss();
-
-			new anim(mBrowserFrame).toVisible();
-
-			mPopupBrowserOpen = true;
-
-			setTitleContextually();
-
-		}
+		setTitleContextually();
 	}
 	
 	private void restartBrowserWithZoom() {
@@ -3538,8 +3539,8 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
             if (_currentFragmentType == CONTENT_FRONTPAGE) {
                         fT.hide(_articleViewer);
             }
-
-            fT.hide(mCurrentFragment);
+			if (mCurrentFragment != null)
+                fT.hide(mCurrentFragment);
             fT.commit();
 
             _loadingSplash.randomizeTagline();
@@ -3648,4 +3649,97 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 	}
 
+	// YOUTUBE PLAYER
+	public void openYoutube(String url)
+	{
+		System.out.println("OPENING YT" + url);
+		boolean ytOpen = ((mYoutubeView != null && mYoutubeView.getVisibility() == View.VISIBLE) ? true : false);
+
+		if (ytOpen)
+		{
+			mYoutubeView.release();
+			RelativeLayout ytHolder = (RelativeLayout) findViewById(R.id.tlist_ytholder);
+			ytHolder.removeAllViews();
+		}
+
+		mYoutubeView = new YouTubePlayerView(this);
+		RelativeLayout ytHolder = (RelativeLayout) findViewById(R.id.tlist_ytholder);
+		ytHolder.addView(mYoutubeView, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+		mYoutubeView.setVisibility(View.VISIBLE);
+		PlayerUIController puic = mYoutubeView.getPlayerUIController();
+
+		Drawable myIcon = getResources().getDrawable(R.drawable.ic_action_content_clear);
+		ImageView close = new ImageView(this);
+		close.setImageResource(R.drawable.ic_action_content_clear);
+		close.setOnClickListener(new View.OnClickListener()
+		{
+			@Override
+			public void onClick(View view)
+			{
+				closeYoutube();
+			}
+		});
+		puic.addView(close);
+
+		mYoutubeView.addFullScreenListener(new YouTubePlayerFullScreenListener(){
+			@Override
+			public void onYouTubePlayerEnterFullScreen()
+			{
+				mYoutubeFullscreen = true;
+				ActionBar actionBar = getSupportActionBar();
+				actionBar.hide();
+				View decorView = getWindow().getDecorView();
+				// Hide the status bar.
+				int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+				decorView.setSystemUiVisibility(uiOptions);
+
+				resizeOtherContentHeightsForYoutube();
+			}
+
+			@Override
+			public void onYouTubePlayerExitFullScreen()
+			{
+				mYoutubeFullscreen = false;
+				ActionBar actionBar = getSupportActionBar();
+				actionBar.show();
+				View decorView = getWindow().getDecorView();
+				// Show the status bar.
+				int uiOptions = View.SYSTEM_UI_FLAG_VISIBLE;
+				decorView.setSystemUiVisibility(uiOptions);
+
+				resizeOtherContentHeightsForYoutube();
+			}
+		});
+
+		final String youtubeId = PopupBrowserFragment.getYoutubeId(url);
+		mYoutubeView.initialize(new YouTubePlayerInitListener() {
+			@Override
+			public void onInitSuccess(final YouTubePlayer initializedYouTubePlayer) {
+				initializedYouTubePlayer.addListener(new AbstractYouTubePlayerListener() {
+					@Override
+					public void onReady() {
+						initializedYouTubePlayer.loadVideo(youtubeId, 0);
+					}
+				});
+			}
+		}, true);
+
+		resizeOtherContentHeightsForYoutube();
+	}
+
+	public void closeYoutube()
+	{
+
+		mYoutubeView.release();
+		mYoutubeView.setVisibility(View.GONE);
+		RelativeLayout ytHolder = (RelativeLayout) findViewById(R.id.tlist_ytholder);
+		ytHolder.removeAllViews();
+
+		resizeOtherContentHeightsForYoutube();
+	}
+
+	private void resizeOtherContentHeightsForYoutube()
+	{
+		setDualPane(_dualPane);
+	}
 }

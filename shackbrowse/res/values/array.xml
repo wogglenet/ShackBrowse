@@ -235,12 +235,12 @@
 		<item>5</item>
 		<item>2</item>
 	</string-array>
-    <string-array name="preference_embedimages">
+    <string-array name="preference_embed">
         <item>Never</item>
         <item>Only on Wi-Fi</item>
         <item>Always</item>
     </string-array>
-    <string-array name="preference_embedimages_vals">
+    <string-array name="preference_embed_vals">
         <item>0</item>
         <item>1</item>
         <item>2</item>

@@ -27,7 +27,6 @@ TODO
 * WHITE MODE
 * OPTION TO REMOVE DEVICEID FROM ALL NOTIFICATIONS
 * WIDGET FOR TOP POSTS
-* Twitter?
 
 SERVER
 * STAR OUT SPOILER TEXT
@@ -74,6 +73,12 @@ l[Can I see the source?]l
 https://github.com/bradsh/ShackBrowse It is a mess. I am not a professional programmer nor do I have any degrees in computer science. I just wanted a shack app so I learned to program.
 
 -->
+
+$ 5.5.2Beta
+% v 5.5.2Beta
+_ Feb 23, 2018
+* Youtube and Twitter embedding
+* Default for all embedding is now "always" even without wifi. Option in settings.
 
 $ 5.5.1
 % v 5.5.1

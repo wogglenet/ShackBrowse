@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.EditText;
 
-public class EditTextSelectionSaved extends EditText {
+public class EditTextSelectionSaved extends android.support.v7.widget.AppCompatEditText {
 
 	
 	public EditTextSelectionSaved(Context context, AttributeSet attrs) {

@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:key="base">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" android:key="base">
     <PreferenceCategory android:title="@string/preferences_common">
     <Preference
         android:key="notifications"
         android:title="@string/preferences_notifications"
         android:summary="@string/preferences_notifications_summary" />
         <ListPreference
-            android:key="embedImages"
-            android:title="@string/preference_embedimages"
-            android:entries="@array/preference_embedimages"
-            android:entryValues="@array/preference_embedimages_vals"
-            android:summary="@string/preference_embedimages_summary"
-            android:defaultValue="1"
+            android:key="embedItems"
+            android:title="@string/preference_embed"
+            android:entries="@array/preference_embed"
+            android:entryValues="@array/preference_embed_vals"
+            android:summary="@string/preference_embed_summary"
+            android:defaultValue="2"
             />
 
         <ListPreference
@@ -192,12 +190,6 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:key="tview" android:title="@string/preferences_threadview" android:summary="@string/preferences_threadview_summary">
-		<CheckBoxPreference
-			android:key="useChromeTab"
-			android:title="@string/preference_uct_title"
-			android:summary="@string/preference_uct_summary"
-			android:defaultValue="false"
-			/>
 		<ListPreference
 			android:key="replyAnimationSpeed"
 			android:title="@string/preference_animspeed_title"
@@ -248,7 +240,6 @@
 	  	     android:summary="@string/preference_fastscroll_summary"
 	  	     android:defaultValue="true"
 	  	     />
-	    
 	      <CheckBoxPreference
 	  	     android:key="showPostLolsThreadView"
 	  	     android:title="@string/preference_threadview_postlols_title"
