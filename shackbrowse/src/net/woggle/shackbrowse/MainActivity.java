@@ -95,7 +95,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.color.ColorChooserDialog;
 import com.google.android.gms.gcm.GcmNetworkManager;
-import com.google.firebase.analytics.FirebaseAnalytics;
+//FIREBASE import com.google.firebase.analytics.FirebaseAnalytics;
 import com.pierfrancescosoffritti.youtubeplayer.player.AbstractYouTubePlayerListener;
 import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayer;
 import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerFullScreenListener;
@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	private String mBrowserPageSubTitle;
 	private GcmNetworkManager mGcmNetworkManager;
 
-	private FirebaseAnalytics mFirebaseAnalytics;
+	//FIREBASE 	private FirebaseAnalytics mFirebaseAnalytics;
 	private YouTubePlayerView mYoutubeView;
 	private boolean mYoutubeFullscreen = false;
 
@@ -489,7 +489,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 		// analytics
 		// Obtain the FirebaseAnalytics instance.
-		mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+		//FIREBASE mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
 		Twitter.initialize(this);
         
@@ -2407,10 +2407,10 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 
 			Bundle bundle = new Bundle();
-			bundle.putString(FirebaseAnalytics.Param.ITEM_ID, label);
-			bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, category);
-			bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, action);
-			mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+			//FIREBASE 	bundle.putString(FirebaseAnalytics.Param.ITEM_ID, label);
+			//FIREBASE 	bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, category);
+			//FIREBASE bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, action);
+			//FIREBASE mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 
 		}
 	}
@@ -3729,6 +3729,15 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 	public void closeYoutube()
 	{
+
+		if (mYoutubeFullscreen)
+		{
+			ActionBar actionBar = getSupportActionBar();
+			actionBar.show();
+			View decorView = getWindow().getDecorView();
+			// Show the status bar.
+			int uiOptions = View.SYSTEM_UI_FLAG_VISIBLE;
+		}
 
 		mYoutubeView.release();
 		mYoutubeView.setVisibility(View.GONE);

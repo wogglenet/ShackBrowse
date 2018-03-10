@@ -74,9 +74,9 @@ https://github.com/bradsh/ShackBrowse It is a mess. I am not a professional prog
 
 -->
 
-$ 5.5.2Beta
-% v 5.5.2Beta
-_ Feb 23, 2018
+$ 5.6.0
+% v 5.6.0
+_ Mar 10, 2018
 * Youtube and Twitter embedding
 * Default for all embedding is now "always" even without wifi. Option in settings.
 
