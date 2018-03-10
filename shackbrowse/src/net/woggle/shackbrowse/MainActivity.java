@@ -3737,6 +3737,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			View decorView = getWindow().getDecorView();
 			// Show the status bar.
 			int uiOptions = View.SYSTEM_UI_FLAG_VISIBLE;
+			decorView.setSystemUiVisibility(uiOptions);
 		}
 
 		mYoutubeView.release();
