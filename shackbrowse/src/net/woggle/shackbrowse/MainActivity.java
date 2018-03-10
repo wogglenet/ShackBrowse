@@ -1779,18 +1779,16 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		SlideFrame slide = (SlideFrame)findViewById(R.id.singleThread);
 		SlideFrame sres = (SlideFrame)findViewById(R.id.searchResults);
 		FrameLayout contentframe = (FrameLayout)findViewById(R.id.content_frame);
-
-		boolean ytOpen = ((mYoutubeView != null && mYoutubeView.getVisibility() == View.VISIBLE) ? true : false);
 		//RelativeLayout contentCont = (RelativeLayout)findViewById(R.id.contentContainer);
 
 		// YOUTUBE STUFF
-		if ((ytOpen) && (dualPane))
+		if ((isYTOpen()) && (dualPane))
 		{
 			((RelativeLayout.LayoutParams)slide.getLayoutParams()).addRule(RelativeLayout.ABOVE, 0);
 			((RelativeLayout.LayoutParams)sres.getLayoutParams()).addRule(RelativeLayout.ABOVE, R.id.tlist_ytholder);
 			((RelativeLayout.LayoutParams)contentframe.getLayoutParams()).addRule(RelativeLayout.ABOVE, R.id.tlist_ytholder);
 		}
-		else if ((ytOpen) && (!dualPane))
+		else if ((isYTOpen()) && (!dualPane))
 		{
 			((RelativeLayout.LayoutParams)slide.getLayoutParams()).addRule(RelativeLayout.ABOVE, R.id.tlist_ytholder);
 			((RelativeLayout.LayoutParams)sres.getLayoutParams()).addRule(RelativeLayout.ABOVE, R.id.tlist_ytholder);
@@ -2162,7 +2160,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         Boolean handleVolume = _prefs.getBoolean("useVolumeButtons", false);
         
         // do not do volume scroll with open web browser
-        if (handleVolume && !mPopupBrowserOpen)
+        if (handleVolume && !mPopupBrowserOpen && !isYTOpen())
         {
             if (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP)
             {
@@ -3653,9 +3651,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	public void openYoutube(String url)
 	{
 		System.out.println("OPENING YT" + url);
-		boolean ytOpen = ((mYoutubeView != null && mYoutubeView.getVisibility() == View.VISIBLE) ? true : false);
-
-		if (ytOpen)
+		if (isYTOpen())
 		{
 			mYoutubeView.release();
 			RelativeLayout ytHolder = (RelativeLayout) findViewById(R.id.tlist_ytholder);
@@ -3724,6 +3720,8 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			}
 		}, true);
 
+		new getYTTitleTask().execute(youtubeId);
+
 		resizeOtherContentHeightsForYoutube();
 	}
 
@@ -3747,9 +3745,29 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 		resizeOtherContentHeightsForYoutube();
 	}
+	public boolean isYTOpen() { return ((mYoutubeView != null && mYoutubeView.getVisibility() == View.VISIBLE) ? true : false); }
 
 	private void resizeOtherContentHeightsForYoutube()
 	{
 		setDualPane(_dualPane);
 	}
+
+	/*
+	 * YT TITLE
+	 */
+	class getYTTitleTask extends AsyncTask<String, Void, String>
+	{
+		@Override
+		protected String doInBackground(String... params)
+		{
+			return ShackApi.getYTTitle(params[0]);
+		}
+		@Override
+		protected void onPostExecute(String result)
+		{
+			if (isYTOpen())
+			mYoutubeView.getPlayerUIController().setVideoTitle(result);
+		}
+	}
+
 }

@@ -101,7 +101,6 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/tmp" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/transforms" />
       <excludeFolder url="file://$MODULE_DIR$/build/outputs" />
-      <excludeFolder url="file://$MODULE_DIR$/build/reports" />
       <excludeFolder url="file://$MODULE_DIR$/build/tmp" />
     </content>
     <orderEntry type="jdk" jdkName="Android API 26 Platform" jdkType="Android SDK" />
@@ -136,6 +135,7 @@
     <orderEntry type="library" name="com.github.vajro:MaterialDesignLibrary-1.6" level="project" />
     <orderEntry type="library" name="com.google.firebase:firebase-core-11.8.0" level="project" />
     <orderEntry type="library" name="com.twitter:twitter-text:1.14.7@jar" level="project" />
+    <orderEntry type="library" name="com.nhaarman.listviewanimations:library:2.6.0@jar" level="project" />
     <orderEntry type="library" name="com.github.bumptech.glide:gifdecoder-4.6.1" level="project" />
     <orderEntry type="library" name="com.squareup.picasso:picasso:2.5.2@jar" level="project" />
     <orderEntry type="library" name="com.twitter.sdk.android:tweet-composer-3.2.0" level="project" />
@@ -150,12 +150,12 @@
     <orderEntry type="library" name="com.google.firebase:firebase-iid-license-11.8.0" level="project" />
     <orderEntry type="library" name="__local_aars__:C.\Users\brad\workspace\ShackBrowse\shackbrowse\libs\tagsoup-1.2.1.jar:unspecified@jar" level="project" />
     <orderEntry type="library" name="com.android.support:recyclerview-v7-27.0.1" level="project" />
+    <orderEntry type="library" name="org.ccil.cowan.tagsoup:tagsoup:1.2.1@jar" level="project" />
     <orderEntry type="library" name="com.google.code.gson:gson:2.7@jar" level="project" />
     <orderEntry type="library" name="com.twitter.sdk.android:twitter-3.2.0" level="project" />
     <orderEntry type="library" name="com.google.firebase:firebase-analytics-11.8.0" level="project" />
     <orderEntry type="library" name="com.squareup.okio:okio:1.13.0@jar" level="project" />
     <orderEntry type="library" name="com.squareup.retrofit2:retrofit:2.3.0@jar" level="project" />
-    <orderEntry type="library" name="__local_aars__:C.\Users\brad\workspace\ShackBrowse\shackbrowse\libs\com.haarman.listviewanimations-2.6.0.jar:unspecified@jar" level="project" />
     <orderEntry type="library" name="android.arch.lifecycle:common:1.0.3@jar" level="project" />
     <orderEntry type="library" name="com.afollestad.material-dialogs:commons-0.9.6.0" level="project" />
     <orderEntry type="library" name="com.android.support:support-core-utils-27.0.2" level="project" />

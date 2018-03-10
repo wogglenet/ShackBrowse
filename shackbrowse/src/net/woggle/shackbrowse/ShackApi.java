@@ -1857,4 +1857,43 @@ public class ShackApi
         }
         return null;
     }
+
+	public static String getYTTitleAPI(String ytid)
+	{
+		String title = "";
+		JSONObject response = null;
+		try {
+			response = getJson("https://www.googleapis.com/youtube/v3/videos?part=snippet&id=" + URLEncoder.encode(ytid, "UTF8") + "&key=AIzaSyBKsZFus5jO-MefknNd58QYa3sAcQhUo2Q");
+			JSONArray items = response.getJSONArray("items");
+
+
+			for(int i=0;i<items.length();i++){
+				System.out.println("Item "+i+" : ");
+				System.out.println("Title : "+items.getJSONObject(i).getJSONObject("snippet").get("title"));
+
+				System.out.println("Description : "+items.getJSONObject(i).getJSONObject("snippet").get("description"));
+				System.out.println("URL : https://www.youtube.com/watch?v="+items.getJSONObject(i).getJSONObject("id").getString("videoId"));
+
+			}
+
+			title = items.getJSONObject(0).getJSONObject("snippet").getString("title");
+		}
+		catch (Exception e){
+			e.printStackTrace();
+		}
+		return title;
+	}
+	public static String getYTTitle(String ytid)
+	{
+		String title = "";
+		JSONObject response = null;
+		try {
+			response = getJson("https://noembed.com/embed?url=https://www.youtube.com/watch?v=" + URLEncoder.encode(ytid, "UTF8"));
+			title = response.getString("title");
+		}
+		catch (Exception e){
+			e.printStackTrace();
+		}
+		return title;
+	}
 }

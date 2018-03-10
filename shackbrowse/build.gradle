@@ -35,6 +35,10 @@ dependencies {
     implementation 'com.android.support:support-v4:27.0.2'
     implementation 'com.android.support:appcompat-v7:27.0.2'
 
+    compile 'com.nhaarman.listviewanimations:library:2.6.0'
+
+    compile 'org.ccil.cowan.tagsoup:tagsoup:1.2.1'
+
     //  implementation 'com.google.firebase:firebase-core:11.8.0'
     //  implementation 'com.google.firebase:firebase-crash:11.8.0'
 

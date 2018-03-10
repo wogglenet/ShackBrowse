@@ -848,55 +848,6 @@ public class ThreadViewFragment extends ListFragment
     	mMainActivity.openNewMessagePromptForSubject(username);
     }
 
-    public void lolChoose(int pos, final boolean isFromQuickLOL)
-    {
-        final int finpos = pos;
-
-        boolean verified = _prefs.getBoolean("usernameVerified", false);
-        if (!verified)
-        {
-        	LoginForm login = new LoginForm(mMainActivity);
-        	login.setOnVerifiedListener(new LoginForm.OnVerifiedListener() {
-				@Override
-				public void onSuccess() {
-					lolChoose(finpos, isFromQuickLOL);
-				}
-
-				@Override
-				public void onFailure() {
-				}
-			});
-        	return;
-        }
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(mMainActivity);
-        builder.setTitle("Choose LOL tag");
-        final CharSequence[] items = { "lol","inf","unf","tag","wtf","ugh"};
-        final CharSequence[] itemsQuick = { "See who tagged", "lol","inf","unf","tag","wtf","ugh"};
-        if (isFromQuickLOL)
-        {
-        builder.setItems(itemsQuick, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-            	if (item == 0)
-            	{
-            		new GetTaggersTask().execute(_adapter.getItem(finpos).getPostId());
-            	}
-            	else
-            		lolPost((String)itemsQuick[item], finpos);
-                }});
-        }
-        else
-        {
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                lolPost((String)items[item], finpos);
-                }});
-        }
-        AlertDialog alert = builder.create();
-        alert.setCanceledOnTouchOutside(true);
-        alert.show();
-    }
-
     private void lolPost(final String tag, final int pos)
     {
         String userName = _prefs.getString("userName", "");
@@ -1271,7 +1222,6 @@ public class ThreadViewFragment extends ListFragment
         private BitmapDrawable _donatorQuadIcon;
         private BitmapDrawable _briefcaseIcon;
 		private boolean _displayLimes = true;
-		private boolean _displayLolButton = false;
 		private HashMap<String, LolObj> _threadloldata;
 		private Bitmap _bulletEndNew;
 		private Bitmap _bulletExtendPastNew;
@@ -1420,8 +1370,7 @@ public class ThreadViewFragment extends ListFragment
             _donatorQuadList = _prefs.getString("quadLimeUsers", "");
             _displayLimes  = _prefs.getBoolean("displayLimes", true);
             _replyNotificationsEnabled = (_prefs.getBoolean("noteReplies", false) && _prefs.getBoolean("noteEnabled", false));
-            // "enableDonatorFeatures"
-            _displayLolButton  = true;
+
             setupPref();
 
             // fast scroll on mega threads
@@ -1637,6 +1586,7 @@ public class ThreadViewFragment extends ListFragment
 							sub2.add(Menu.NONE, 6, Menu.NONE, "Copy URL of Post");
 							sub2.add(Menu.NONE, 7, Menu.NONE, "Share Link to Post");
 						}
+						/*
 						SubMenu sub3 = extpop.getMenu().addSubMenu(Menu.NONE, 2, Menu.NONE, "LOLtag Post");
 						sub3.add(Menu.NONE, 8, Menu.NONE, "lol");
 						sub3.add(Menu.NONE, 9, Menu.NONE, "inf");
@@ -1645,6 +1595,7 @@ public class ThreadViewFragment extends ListFragment
 						sub3.add(Menu.NONE, 12, Menu.NONE, "wtf");
 						sub3.add(Menu.NONE, 13, Menu.NONE, "tag");
 						extpop.getMenu().add(Menu.NONE, 14, Menu.NONE, "Check LOL Taggers");
+						*/
 						if ((_showModTools) && (_rootPostId != 0)) {
 							extpop.getMenu().add(Menu.NONE, 15, Menu.NONE, "Mod Tools");
 						}
@@ -1669,6 +1620,8 @@ public class ThreadViewFragment extends ListFragment
 									case 7:
 										shareURL(pos);
 										break;
+
+										/*
 									case 8:
 									case 9:
 									case 10:
@@ -1677,9 +1630,12 @@ public class ThreadViewFragment extends ListFragment
 									case 13:
 										lolPost((String) item.getTitle(), pos);
 										break;
+
 									case 14:
 										new GetTaggersTask().execute(_adapter.getItem(pos).getPostId());
 										break;
+										*/
+
 									case 15:
 										modChoose(pos);
 										break;
@@ -1695,8 +1651,8 @@ public class ThreadViewFragment extends ListFragment
 				});
 
 
-                // donator lol button
-                if ((_displayLolButton) && (_messageId == 0))
+                // lol button
+                if (_messageId == 0)
                     holder.buttonLol.setVisibility(View.VISIBLE);
                 else
                     holder.buttonLol.setVisibility(View.GONE);
