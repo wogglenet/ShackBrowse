@@ -302,9 +302,7 @@ public class PopupBrowserFragment extends Fragment {
 	}
 	public static boolean isTweet (String _href)
 	{
-		if (
-				_href.contains("twitter.com/")
-				)
+		if (getTweetId(_href) != null)
 		{
 			return true;
 		}
@@ -313,7 +311,7 @@ public class PopupBrowserFragment extends Fragment {
 			return false;
 		}
 	}
-	public static String getTweetId (String _href)
+	public static Long getTweetId (String _href)
 	{
 		if (
 				_href.contains("twitter.com/")
@@ -321,7 +319,12 @@ public class PopupBrowserFragment extends Fragment {
 		{
 			String href[] = _href.split("/");
 			String idplus[] = href[href.length -1].split("\\?");
-			return idplus[0];
+			Long tid = null;
+			try {
+				tid = Long.parseLong(idplus[0]);
+			}
+			catch (Exception e) { e.printStackTrace(); }
+			return tid;
 		}
 		else
 		{

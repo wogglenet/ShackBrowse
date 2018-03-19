@@ -1808,7 +1808,7 @@ public class ThreadViewFragment extends ListFragment
 
 						holder.postContent.addView(tweetHolder, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
-						final long tweetId = Long.parseLong(PopupBrowserFragment.getTweetId(url));
+						final long tweetId = PopupBrowserFragment.getTweetId(url);
 						if (postClip.tweetdata == null)
 						{
 

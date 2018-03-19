@@ -84,15 +84,15 @@
 		  android:title="@string/replyMsg"
 		  android:orderInCategory="10" />
 	<item android:id="@+id/menu_switchToSent"
-        app:showAsAction="never"
+        app:showAsAction="always"
 	   	  android:visible="false"
-		  android:icon="@drawable/ic_action_content_reply"
+		  android:icon="@drawable/inbox_arrow_up"
 		  android:title="@string/msgSent"
 		  android:orderInCategory="50" />
 	<item android:id="@+id/menu_switchToInbox"
-        app:showAsAction="never"
+        app:showAsAction="always"
 	   	  android:visible="false"
-		  android:icon="@drawable/ic_action_content_reply"
+		  android:icon="@drawable/inbox_arrow_down"
 		  android:title="@string/msgInbox"
 		  android:orderInCategory="51" />
 <!-- SEARCH ACTIONS -->
@@ -152,6 +152,12 @@
 		  android:icon="@drawable/ic_action_content_clear"
 		  android:title="@string/browserClose"
 		  android:orderInCategory="70" />
+	<item android:id="@+id/menu_browserZoomOk"
+		  app:showAsAction="always"
+		  android:visible="false"
+		  android:icon="@drawable/ic_action_action_done"
+		  android:title="@string/browserZoomOk"
+		  android:orderInCategory="9" />
 	<item android:id="@+id/menu_browserOpenExt"
         app:showAsAction="never"
 	   	  android:visible="false"

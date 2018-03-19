@@ -700,6 +700,13 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         	getSupportActionBar().setTitle(_searchResults._title);
         	mDrawerToggle.setDrawerIndicatorEnabled(false);
         }
+        else if (_currentFragmentType == CONTENT_MESSAGES)
+		{
+			if (getMessageType())
+				getSupportActionBar().setTitle("SMsg Inbox");
+			else
+				getSupportActionBar().setTitle("SMsg Sent");
+		}
         else
         {
         	getSupportActionBar().setTitle(mTitle);
@@ -826,6 +833,9 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	        case R.id.menu_browserClose:
 	        	closeBrowser();
 	        	break;
+		    case R.id.menu_browserZoomOk:
+			    closeBrowser();
+			    break;
 	        case R.id.menu_browserOpenExt:
 	        	if (mPBfragment != null)
 	        		mPBfragment.openExternal();
@@ -1083,12 +1093,13 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         menu.findItem(R.id.menu_favThread).setVisible((_threadView._showFavSaved) && showReplyViewItems);
         menu.findItem(R.id.menu_unfavThread).setVisible((_threadView._showUnFavSaved) && showReplyViewItems);
         
-        menu.findItem(R.id.menu_browserClose).setVisible(mPopupBrowserOpen);
+        menu.findItem(R.id.menu_browserClose).setVisible(mPopupBrowserOpen && !browserZoomMode);
         menu.findItem(R.id.menu_browserOpenExt).setVisible(mPopupBrowserOpen && !browserZoomMode);
-        menu.findItem(R.id.menu_browserSettings).setVisible(mPopupBrowserOpen);
+        menu.findItem(R.id.menu_browserSettings).setVisible(mPopupBrowserOpen && !browserZoomMode);
         menu.findItem(R.id.menu_browserShare).setVisible(mPopupBrowserOpen && !browserZoomMode);
         menu.findItem(R.id.menu_browserChangeZoom).setVisible(mPopupBrowserOpen && !browserZoomMode);
         menu.findItem(R.id.menu_browserCopyURL).setVisible(mPopupBrowserOpen && !browserZoomMode);
+        menu.findItem(R.id.menu_browserZoomOk).setVisible(browserZoomMode);
         
         menu.findItem(R.id.menu_refreshNotes).setVisible(showNoteItems && (dualPane || !areSlidersOpen));
         menu.findItem(R.id.menu_notesDel).setVisible(showNoteItems && (dualPane || !areSlidersOpen));
@@ -1641,6 +1652,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
     {
     	_messagesGetInbox = !_messagesGetInbox;
     	_messageList.refreshMessages();
+	    setTitleContextually();
     }
     public boolean getMessageType()
     {
@@ -2074,8 +2086,12 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	// back button overriding
 	@Override
 	public void onBackPressed() {
-		
-		if (isMenuOpen())
+
+    	if (isYTOpen() && mYoutubeFullscreen)
+	    {
+	    	mYoutubeView.exitFullScreen();
+	    }
+		else if (isMenuOpen())
 		{
 			closeMenu();
 		}

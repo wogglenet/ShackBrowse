@@ -55,8 +55,6 @@ public class MessageFragment extends ListFragment
     private boolean _viewAvailable = false;
     private boolean _silentLoad = false;
 
-	private boolean _getInbox = true;
-
 	protected MaterialDialog _progressDialog;
 
 	private SharedPreferences _prefs;
@@ -568,7 +566,9 @@ public class MessageFragment extends ListFragment
             System.out.println("MSG start");
             ArrayList<Message> new_messages = new ArrayList<Message>();
 			try {
+				System.out.println("msg get " + _pageNumber);
 				new_messages = ShackApi.getMessages(_pageNumber + 1, this.getContext(), ((MainActivity)getActivity()).getMessageType());
+				System.out.println("msg got " + new_messages.size());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -581,18 +581,21 @@ public class MessageFragment extends ListFragment
              // remove threads already displayed
              if (new_messages != null && new_messages.size() > 0)
              {
+
 	             Iterator<Message> iter = new_messages.iterator();
 	             while (iter.hasNext())
 	             	if (!_messageIds.add(iter.next().getMessageId()))
 	             		iter.remove();
+
+	             System.out.println("MSG removed already displayed");
              }
              else
              {
                  System.out.println("MSG STLCS false");
             	 _adapter.setLastCallSuccessful(false);
              }
-            System.out.println("MSG RETURN!");
-             return new_messages;
+            System.out.println("MSG RETURN! # = " + new_messages.size());
+	        return new_messages;
         }
         
         @Override

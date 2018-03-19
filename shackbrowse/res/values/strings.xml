@@ -49,6 +49,7 @@
     <string name="browser_title">Browser</string>
     <string name="browserZoom_title">Adjust Image Zoom</string>
     <string name="browserClose">Close</string>
+    <string name="browserZoomOk">Done</string>
     <string name="browserOpenExt">External Browser</string>
     <string name="browserSettings">Settings</string>
     <string name="browserZoom">Adjust Auto-Zoom</string>
@@ -418,7 +419,8 @@
 
     <string name="com.twitter.sdk.android.CONSUMER_KEY">XwN2M5eEu3MxGsQMvSTDqzRh0</string>
     <string name="com.twitter.sdk.android.CONSUMER_SECRET">lelldQpAX0rERpvaLxb37cS6ycN2Sd9GBckbm6WozpqwQTT2bH</string>
-    <bool name="com.twitter.sdk.android.TRACE_ENABLED">true</bool>
+
+	<bool name="com.twitter.sdk.android.TRACE_ENABLED">true</bool>
     <bool name="com.twitter.sdk.android.COLLECT_IDENTIFIERS_ENABLED">false</bool>
 
 </resources>

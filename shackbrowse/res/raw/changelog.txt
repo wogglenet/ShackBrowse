@@ -74,6 +74,14 @@ https://github.com/bradsh/ShackBrowse It is a mess. I am not a professional prog
 
 -->
 
+$ 5.6.1
+% v 5.6.1
+_ Mar 19, 2018
+* Shack Messages title now indicates if you're looking at sent or inbox
+* Back button now backs out of fullscreen embedded Youtube
+* Bug Fix: Fixed Twitter related crashes. Twitter links that can't be embedded won't be embedded instead of crashing
+* Bug Fix: Message inbox will now show all pages if you scroll down instead of only the first page
+
 $ 5.6.0
 % v 5.6.0
 _ Mar 10, 2018
