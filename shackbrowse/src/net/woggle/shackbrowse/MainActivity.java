@@ -755,8 +755,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         }
 
         mPBfragment = (PopupBrowserFragment)getFragment("pbfrag");
-        
-        NotificationsDB ndb;
+
 		switch (item.getItemId())
 	    {
 	        case android.R.id.home:
@@ -875,11 +874,20 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	        	_searchResults.editSearch();
 	        	break;
 	        case R.id.menu_notesDel:
-	        	ndb = new NotificationsDB(this);
-	        	ndb.open();
-	        	ndb.deleteAll();
-	        	ndb.close();
-	        	nf.refreshNotes();
+	        	final Context con = this; final NotificationFragment fnf = nf;
+	        	new MaterialDialog.Builder(this).title("Delete Notifications?")
+				        .positiveText("Clear All").onPositive(new MaterialDialog.SingleButtonCallback()
+		        {
+			        @Override
+			        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which)
+			        {
+				        final NotificationsDB ndb = new NotificationsDB(con);
+				        ndb.open();
+				        ndb.deleteAll();
+				        ndb.close();
+				        fnf.refreshNotes();
+			        }
+		        }).negativeText("Cancel").show();
 	        	break;
 	        case R.id.menu_refreshNotes:
 	        	nf.refreshNotes();
