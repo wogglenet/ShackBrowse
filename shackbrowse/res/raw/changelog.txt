@@ -76,17 +76,17 @@ https://github.com/bradsh/ShackBrowse It is a mess. I am not a professional prog
 
 $ 5.6.1
 % v 5.6.1
-_ Mar 19, 2018
+_ Mar 20, 2018
 * Shack Messages title now indicates if you're looking at sent or inbox, new icons for this
-* Back button now backs out of fullscreen embedded Youtube
 * Confirmation dialog for notification clear button
+* Youtube links open externally instead of popup browser
 * Bug Fix: Fixed Twitter related crashes. Twitter links that can't be embedded won't be embedded instead of crashing
 * Bug Fix: Message inbox will now show all pages if you scroll down instead of only the first page
 
 $ 5.6.0
 % v 5.6.0
 _ Mar 10, 2018
-* Youtube and Twitter embedding
+* Twitter embedding
 * Default for all embedding is now "always" even without wifi. Option in settings.
 
 $ 5.5.1

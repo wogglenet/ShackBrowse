@@ -1107,7 +1107,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         menu.findItem(R.id.menu_browserShare).setVisible(mPopupBrowserOpen && !browserZoomMode);
         menu.findItem(R.id.menu_browserChangeZoom).setVisible(mPopupBrowserOpen && !browserZoomMode);
         menu.findItem(R.id.menu_browserCopyURL).setVisible(mPopupBrowserOpen && !browserZoomMode);
-        menu.findItem(R.id.menu_browserZoomOk).setVisible(browserZoomMode);
+        menu.findItem(R.id.menu_browserZoomOk).setVisible(mPopupBrowserOpen && browserZoomMode);
         
         menu.findItem(R.id.menu_refreshNotes).setVisible(showNoteItems && (dualPane || !areSlidersOpen));
         menu.findItem(R.id.menu_notesDel).setVisible(showNoteItems && (dualPane || !areSlidersOpen));
@@ -3204,6 +3204,8 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			ft.add(R.id.browser_frame, mPBfragment, "pbfrag");
 			ft.attach(mPBfragment);
 			ft.commit();
+
+			setTitleContextually();
 		}		
 	}
 

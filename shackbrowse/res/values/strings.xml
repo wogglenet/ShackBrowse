@@ -339,8 +339,8 @@
     <string name="compose_strike">Strike</string>
     <string name="menu_compose_settings">Settings</string>
     <string name="browser_photo_title">Photo View</string>
-    <string name="preference_embed">Embed Images, Tweets, and Youtube in Posts</string>
-    <string name="preference_embed_summary">Some images, Tweets, and Youtube links and GIFs can be loaded inline with the post when it is opened. Default: Always.</string>
+    <string name="preference_embed">Embed Multimedia in Posts</string>
+    <string name="preference_embed_summary">Some images, Tweets, and GIFs can be loaded inline with the post when it is opened. Default: Always.</string>
     <string name="preference_hidelinks_title">Hide Embedded Item Links</string>
     <string name="preference_hidelinks_summary">Hides the link text when criteria are met to auto-embed and display certain items inline in an opened post.</string>
     <string name="preference_showlinkbutton_title">Show Link Option Button</string>

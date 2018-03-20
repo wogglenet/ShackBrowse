@@ -1208,6 +1208,7 @@ public class ThreadViewFragment extends ListFragment
 		private int _embedItems = 1;
 		private boolean _linkButtons = true;
         private String _userName = "";
+	    private boolean _verified = false;
 		private String _OPuserName = "";
         private HashMap<String, HashMap<String, LolObj>> _shackloldata = new HashMap<String, HashMap<String, LolObj>>();
 
@@ -1256,7 +1257,7 @@ public class ThreadViewFragment extends ListFragment
 
 
 
-		public View.OnClickListener getUserNameClickListenerForPosition(int pos, View v)
+	    public View.OnClickListener getUserNameClickListenerForPosition(int pos, View v)
         {
             final String unamefinal = getItem(pos).getUserName();
             return new View.OnClickListener() {
@@ -1356,6 +1357,7 @@ public class ThreadViewFragment extends ListFragment
         void loadPrefs()
         {
             _userName = _prefs.getString("userName", "").trim();
+            _verified = _prefs.getBoolean("usernameVerified", false);
             _lolsInPost = _prefs.getBoolean("showPostLolsThreadView", true);
             _getLols = _prefs.getBoolean("getLols", true);
             _zoom = Float.parseFloat(_prefs.getString("fontZoom", "1.0"));
@@ -2206,7 +2208,7 @@ public class ThreadViewFragment extends ListFragment
 					}
 					startClip = text.getSpanEnd(target);
 				}
-				if (PopupBrowserFragment.isYoutube(target.getURL().trim())) {
+				if (PopupBrowserFragment.isYoutube(target.getURL().trim()) && _verified) {
 					if ((text.subSequence(startClip, text.getSpanEnd(target)).toString().length() > 0)) {
 						if (removeLinks) {
 							Spannable tempTxt = ((Spannable) text.subSequence(startClip, text.getSpanStart(target)));
