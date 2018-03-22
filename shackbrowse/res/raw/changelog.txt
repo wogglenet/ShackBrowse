@@ -97,7 +97,7 @@ _ Mar 22, 2018
 * Link to woggle online cloud data viewer https://woggle.net/notifications in notification area
 * Can now delete all other notification devices in notification area
 * Updated some buttons and icons
-* Mod tools removed. Don't think anyone used them.
+* Mod tools changed to little flag
 * Bug Fix: Back/menu button in Shack Messages
 * Bug Fix: Mute notification button not zooming with text zoom
 * Bug Fix: Infinitely zooming text on rotation of post composer
