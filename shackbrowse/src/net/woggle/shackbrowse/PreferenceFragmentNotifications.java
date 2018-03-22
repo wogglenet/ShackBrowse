@@ -38,6 +38,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import com.afollestad.materialdialogs.color.ColorChooserDialog;
@@ -60,6 +61,7 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
     private boolean _Venabled;
 
     private Preference _keyNotification;
+    private Preference _devicesNotification;
     private OnGCMInteractListener mGCMlistener;
 
     @Override
@@ -165,6 +167,7 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
                     _noteEnabled.setChecked(false);
                     _vanityNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
                     _keyNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
+                    _devicesNotification.setEnabled(false);
                     if (_progressDialog != null)
                     {
                         _progressDialog.dismiss();
@@ -213,6 +216,7 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
                         _noteEnabled.setChecked(false);
                         _vanityNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
                         _keyNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
+                        _devicesNotification.setEnabled(false);
                         mNoteKeywords = new ArrayList<String>();
                         edit.putBoolean("noteEnabled", false);
                     }
@@ -245,6 +249,8 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
                             _noteEnabled.setChecked(true);
                             _vanityNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
                             _keyNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
+                            _devicesNotification.setEnabled(true);
+                            _devicesNotification.setTitle("Devices: " + result.getJSONArray("devices").length());
                         }
                         else
                         {
@@ -252,7 +258,10 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
                             _noteEnabled.setChecked(false);
                             _vanityNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
                             _keyNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
+                            _devicesNotification.setTitle("Devices: " + result.getJSONArray("devices").length());
+                            _devicesNotification.setEnabled(false);
                         }
+
                         mNoteKeywords = new ArrayList<String>();
                         JSONArray keywordArr = result.getJSONArray("keywords");
                         if ((keywordArr != null) && (keywordArr.length() > 0))
@@ -271,6 +280,45 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
                     _progressDialog = null;
                 }
             }};
+
+        ((Preference)findPreference("notificationEditOnline")).setOnPreferenceClickListener(new OnPreferenceClickListener()
+        {
+            @Override
+            public boolean onPreferenceClick(Preference preference)
+            {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.woggle.net/notifications"));
+                startActivity(browserIntent);
+                return false;
+            }
+        });
+        _devicesNotification = (Preference) findPreference("notificationDevices");
+        _devicesNotification.setOnPreferenceClickListener(new OnPreferenceClickListener()
+        {
+            @Override
+            public boolean onPreferenceClick(Preference preference)
+            {
+                new MaterialDialog.Builder(getActivity()).title("Delete all other devices?").content("Are you sure? This will prevent all of your other devices from receiving notifications, and only this device will receive them until you re-enable notifications on other devices.").positiveText("Remove other devices").negativeText("Cancel")
+                        .onPositive(new MaterialDialog.SingleButtonCallback()
+                        {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which)
+                            {
+                                new MaterialDialog.Builder(getActivity()).title("Seriously?").content("Your other devices will be unregistered and will need to be registered on each device. Only use this if your notifications are broken.").positiveText("Remove all other devices").negativeText("Cancel")
+                                .onPositive(new MaterialDialog.SingleButtonCallback()
+                                {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which)
+                                    {
+                                        _progressDialog = MaterialProgressDialog.show(getActivity(), "Adding Keyword", "Communicating with Shack Browse server...", true, true);
+                                        _GCMAccess.doUserInfoTask("remallexcept", null);
+                                    }
+                                }).show();
+                            }
+                        }).show();
+                return false;
+            }
+        });
+        _devicesNotification.setTitle("Devices: #unknown");
 
         _keyNotification = (Preference) findPreference("noteKeywords");
         _keyNotification.setOnPreferenceClickListener(new OnPreferenceClickListener(){
@@ -319,6 +367,7 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
                                 _noteEnabled.setChecked(false);
                                 _vanityNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
                                 _keyNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
+                                _devicesNotification.setEnabled(false);
                             }
                         });
                     }
@@ -425,7 +474,9 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 mNoteKeywords.remove(keyword);
+                _progressDialog = MaterialProgressDialog.show(getActivity(), "Removing Keyword", "Communicating with Shack Browse server...", true, true);
                 _GCMAccess.doUserInfoTask("removekeyword", keyword);
+                showKeywords();
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

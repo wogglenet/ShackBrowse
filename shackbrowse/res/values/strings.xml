@@ -127,6 +127,11 @@
     
     <string name="preference_pushkey_title">Keywords</string>
     <string name="preference_pushkey_summary">Notification when someone posts a keyword.</string>
+
+    <string name="preference_devicesnote">Click to remove ALL OTHER devices besides this one. Useful fix if your notifications are broken for some reason.</string>
+    <string name="preference_noteeditonline">Edit Online</string>
+    <string name="preference_noteeditonline_summary">Click to view the online notification settings editor. Also affects iOS settings.</string>
+
     
     <string name="preferences_appwide">App-wide Options</string>
     <string name="preferences_appwide_summary">Splitview mode, Orientation lock, Font sizes, Favorites pane, Shack[LOL], Volume nav, API, Analytics opt-out</string>

@@ -74,6 +74,19 @@ https://github.com/bradsh/ShackBrowse It is a mess. I am not a professional prog
 
 -->
 
+$ 5.6.2
+% v 5.6.2
+_ Mar 22, 2018
+* Link to woggle online cloud data viewer https://woggle.net/notifications in notification area
+* Can now delete all other notification devices in notification area
+* Updated some buttons and icons
+* Mod tools removed. Don't think anyone used them.
+* Bug Fix: Back/menu button in Shack Messages
+* Bug Fix: Mute notification button not zooming with text zoom
+* Bug Fix: Infinitely zooming text on rotation of post composer
+* Bug Fix: Post composer buttons not zooming
+* Bug Fix: Thread highlighter not highlighting in expanded posts
+
 $ 5.6.1
 % v 5.6.1
 _ Mar 20, 2018

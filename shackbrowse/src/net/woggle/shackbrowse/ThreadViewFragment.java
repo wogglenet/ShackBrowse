@@ -82,6 +82,7 @@ import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerView;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.models.Image;
 import com.twitter.sdk.android.core.models.Tweet;
 import com.twitter.sdk.android.tweetui.CompactTweetView;
 import com.twitter.sdk.android.tweetui.TweetUtils;
@@ -1474,7 +1475,7 @@ public class ThreadViewFragment extends ListFragment
                     holder.expLolCounts.setText("");
                 }
 
-				Spannable postTextContent = (Spannable) applyHighlight(p.getFormattedContent());
+				Spannable postTextContent = (Spannable) p.getFormattedContent();
 
                 final int pos = position;
                 final String unamefinal = p.getUserName();
@@ -1571,7 +1572,44 @@ public class ThreadViewFragment extends ListFragment
                     holder.buttonAllImages.setVisibility(View.GONE);
                 }
 
+                final ImageButton butshr = holder.buttonSharePost;
+                holder.buttonSharePost.setOnClickListener(new View.OnClickListener()
+                {
+	                @Override
+	                public void onClick(View view)
+	                {
+		                PopupMenu sharepop = new PopupMenu(getContext(), butshr);
+		                sharepop.getMenu().add(Menu.NONE, 0, Menu.NONE, "Copy Post Text");
+		                if (_messageId == 0)
+		                {
+		                	// not a message
+			                sharepop.getMenu().add(Menu.NONE, 1, Menu.NONE, "Copy URL of Post");
+			                sharepop.getMenu().add(Menu.NONE, 2, Menu.NONE, "Share Link to Post");
+		                }
+		                sharepop.setOnMenuItemClickListener(new OnMenuItemClickListener()
+		                {
+			                @Override
+			                public boolean onMenuItemClick(MenuItem item)
+			                {
+				                switch (item.getItemId()) {
+					                case 0:
+						                copyPostText(pos);
+						                break;
+					                case 1:
+						                copyURL(pos);
+						                break;
+					                case 2:
+						                shareURL(pos);
+						                break;
+				                }
+				                return true;
+			                }
+		                });
+		                sharepop.show();
+	                }
+                });
 
+/*
                 final ImageButton btnothr = holder.buttonOther;
                 holder.buttonOther.setOnClickListener(new View.OnClickListener() {
 					@Override
@@ -1597,7 +1635,7 @@ public class ThreadViewFragment extends ListFragment
 						sub3.add(Menu.NONE, 12, Menu.NONE, "wtf");
 						sub3.add(Menu.NONE, 13, Menu.NONE, "tag");
 						extpop.getMenu().add(Menu.NONE, 14, Menu.NONE, "Check LOL Taggers");
-						*/
+						*//*
 						if ((_showModTools) && (_rootPostId != 0)) {
 							extpop.getMenu().add(Menu.NONE, 15, Menu.NONE, "Mod Tools");
 						}
@@ -1636,7 +1674,7 @@ public class ThreadViewFragment extends ListFragment
 									case 14:
 										new GetTaggersTask().execute(_adapter.getItem(pos).getPostId());
 										break;
-										*/
+										*//*
 
 									case 15:
 										modChoose(pos);
@@ -1651,7 +1689,7 @@ public class ThreadViewFragment extends ListFragment
 						extpop.show();
 					}
 				});
-
+*/
 
                 // lol button
                 if (_messageId == 0)
@@ -1680,12 +1718,12 @@ public class ThreadViewFragment extends ListFragment
                 // hide buttons on pqp posts
                 if (p.isPQP()) {
                     holder.buttonLol.setVisibility(View.GONE);
-                    holder.buttonOther.setVisibility(View.GONE);
+                    holder.buttonSharePost.setVisibility(View.GONE);
                     holder.buttonReply.setVisibility(View.GONE);
                     //holder.rowtype.setLoading(false);
                 } else {
                     holder.buttonLol.setVisibility(View.VISIBLE);
-                    holder.buttonOther.setVisibility(View.VISIBLE);
+                    holder.buttonSharePost.setVisibility(View.VISIBLE);
                     holder.buttonReply.setVisibility(View.VISIBLE);
                 }
 
@@ -1724,7 +1762,7 @@ public class ThreadViewFragment extends ListFragment
 						// debug
 						//Random color = new Random();
 						//postText.setBackgroundColor(Color.argb(255, color.nextInt(255), color.nextInt(255), color.nextInt(255)));
-						postText.setText(postClipText, BufferType.SPANNABLE);
+						postText.setText(applyHighlight(postClipText), BufferType.SPANNABLE);
 						postText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
 						postText.setTextSize(TypedValue.COMPLEX_UNIT_PX, postText.getTextSize() * _zoom);
 
@@ -1928,7 +1966,8 @@ public class ThreadViewFragment extends ListFragment
 
                 holder.expLolCounts = (TextView)convertView.findViewById(R.id.textExpPostLolCounts);
 
-                holder.buttonOther = (ImageButton)convertView.findViewById(R.id.buttonPostOpt);
+                // holder.buttonOther = (ImageButton)convertView.findViewById(R.id.buttonPostOpt);
+	            holder.buttonSharePost = (ImageButton)convertView.findViewById(R.id.buttonSharePost);
                 holder.buttonReply = (ImageButton)convertView.findViewById(R.id.buttonReplyPost);
                 holder.buttonAllImages = (ImageButton)convertView.findViewById(R.id.buttonOpenAllImages);
                 holder.buttonLol = (ImageButton)convertView.findViewById(R.id.buttonPostLOL);
@@ -1949,10 +1988,10 @@ public class ThreadViewFragment extends ListFragment
                 // buttons are already as small as they can be
                 if (_zoom >= 0.9)
                 {
-                	ViewGroup.LayoutParams buttonLayout = holder.buttonOther.getLayoutParams();
+                	ViewGroup.LayoutParams buttonLayout = holder.buttonSharePost.getLayoutParams();
 	                buttonLayout.height = (int)Math.floor(buttonLayout.height * _zoom);
 	                buttonLayout.width = (int)Math.floor(buttonLayout.width * _zoom);
-	                holder.buttonOther.setLayoutParams(buttonLayout);
+	                holder.buttonSharePost.setLayoutParams(buttonLayout);
 
 	                buttonLayout = holder.buttonReply.getLayoutParams();
 	                buttonLayout.height = (int)Math.floor(buttonLayout.height * _zoom);
@@ -1968,6 +2007,16 @@ public class ThreadViewFragment extends ListFragment
 	                buttonLayout.height = (int)Math.floor(buttonLayout.height * _zoom);
 	                buttonLayout.width = (int)Math.floor(buttonLayout.width * _zoom);
 	                holder.buttonLol.setLayoutParams(buttonLayout);
+
+	                buttonLayout = holder.buttonNoteMuted.getLayoutParams();
+	                buttonLayout.height = (int)Math.floor(buttonLayout.height * _zoom);
+	                buttonLayout.width = (int)Math.floor(buttonLayout.width * _zoom);
+	                holder.buttonNoteMuted.setLayoutParams(buttonLayout);
+
+	                buttonLayout = holder.buttonNoteEnabled.getLayoutParams();
+	                buttonLayout.height = (int)Math.floor(buttonLayout.height * _zoom);
+	                buttonLayout.width = (int)Math.floor(buttonLayout.width * _zoom);
+	                holder.buttonNoteEnabled.setLayoutParams(buttonLayout);
                 }
                 convertView.setTag(holder);
             }
@@ -2729,7 +2778,7 @@ public class ThreadViewFragment extends ListFragment
 			*/
 			public TextView previewUsername;
 			public ImageButton buttonRefresh;
-			public ImageButton buttonOther;
+			// public ImageButton buttonOther;
 			public ImageButton buttonReply;
 			public TextView expLolCounts;
 			public TextView previewLolCounts;
@@ -2743,6 +2792,7 @@ public class ThreadViewFragment extends ListFragment
             TextView postedtime;
 	        public ImageButton buttonNoteEnabled;
 	        public ImageButton buttonNoteMuted;
+	        public ImageButton buttonSharePost;
         }
         
         public ArrayList<Post> fakePostAddinator(ArrayList<Post> posts)

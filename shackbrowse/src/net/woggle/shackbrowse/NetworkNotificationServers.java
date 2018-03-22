@@ -367,6 +367,13 @@ public class NetworkNotificationServers
             		 {
             			 ShackApi.noteRemoveKeyword(userName, params[1]);
             		 }
+		             if (preAction.equals("remallexcept"))
+		             {
+			             if (getRegistrationId().length() > 0)
+			             {
+				             ShackApi.noteUnregEverythingBut(userName, getRegistrationId());
+			             }
+		             }
 					 return ShackApi.noteGetUser(userName);
 				} catch (Exception e) {
 					// username doesnt exist, add it then retry

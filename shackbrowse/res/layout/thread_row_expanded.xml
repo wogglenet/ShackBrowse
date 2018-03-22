@@ -51,21 +51,25 @@
 	       android:textColor="@color/replyCount"
 	       android:textSize="@dimen/lolTagSize"
 	     />
+	   <!--
 	     		<ImageButton
 	       		android:id="@+id/buttonPostOpt"
 	       	 	android:src="@drawable/ic_action_navigation_more_vert"
 			    android:layout_width="@dimen/buttonReplyWidth"
 			    android:layout_height="@dimen/buttonReplyHeight"
 			    android:scaleType="fitCenter"
-			    android:layout_below="@id/postContent"
-			    android:layout_alignParentRight="true"
-			    android:layout_marginRight="6dp"
+				android:layout_alignParentRight="true"
+				android:layout_marginRight="6dp"
 			    android:paddingLeft="10dp"
 			    android:paddingRight="10dp"
 			    android:background="?android:attr/selectableItemBackground"
-				/>
+				/> -->
 	   			<ImageButton
-	   			android:layout_toLeftOf="@id/buttonPostOpt"
+
+					android:layout_alignParentRight="true"
+					android:layout_marginRight="6dp"
+
+
 	   			android:layout_below="@id/postContent"
 			    android:id="@+id/buttonReplyPost"			    
 			    android:layout_width="@dimen/buttonReplyWidth"
@@ -74,13 +78,26 @@
 			    android:paddingRight="10dp"
 			    android:scaleType="fitCenter"
 			    android:src="@drawable/ic_action_content_reply"
-			    android:layout_alignBottom="@id/buttonPostOpt"
 			    android:background="?android:attr/selectableItemBackground"
 			    />
+
+	   <ImageButton
+		   android:layout_toLeftOf="@id/buttonReplyPost"
+		   android:id="@+id/buttonSharePost"
+		   android:layout_below="@id/postContent"
+		   android:src="@drawable/ic_action_social_share"
+		   android:layout_width="@dimen/buttonReplyWidth"
+		   android:layout_height="@dimen/buttonReplyHeight"
+		   android:paddingLeft="10dp"
+		   android:paddingRight="10dp"
+		   android:scaleType="fitCenter"
+		   android:layout_alignBottom="@id/buttonReplyPost"
+		   android:background="?android:attr/selectableItemBackground"
+		   />
  	     		
 	   			
 			 	<ImageButton
-			    android:layout_toLeftOf="@id/buttonReplyPost"
+			    android:layout_toLeftOf="@id/buttonSharePost"
 			    android:id="@+id/buttonOpenAllImages"
 			    android:layout_below="@id/postContent"
 			    android:src="@drawable/ic_action_image_photo"

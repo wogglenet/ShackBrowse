@@ -1772,6 +1772,9 @@ public class ShackApi
 	public static String noteUnreg(String userName, String deviceid) throws ClientProtocolException, UnsupportedEncodingException, IOException {
 		return get(NOTESERV_URL + "change.php?type=device&action=remove&user=" + URLEncoder.encode(userName, "UTF8") + "&deviceid=" + URLEncoder.encode(deviceid, "UTF8"));
 	}
+	public static String noteUnregEverythingBut(String userName, String deviceid) throws ClientProtocolException, UnsupportedEncodingException, IOException {
+		return get(NOTESERV_URL + "change.php?type=device&action=remallexcept&user=" + URLEncoder.encode(userName, "UTF8") + "&deviceid=" + URLEncoder.encode(deviceid, "UTF8"));
+	}
 	public static JSONObject noteGetUser(String userName) throws ClientProtocolException, UnsupportedEncodingException, IOException, JSONException {
 		return getJson(NOTESERV_URL + "getuser.php?user=" + URLEncoder.encode(userName, "UTF8"));
 	}

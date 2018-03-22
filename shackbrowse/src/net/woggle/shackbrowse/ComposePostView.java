@@ -56,6 +56,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.ScaleAnimation;
@@ -64,10 +65,12 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.gc.materialdesign.views.ButtonFloatSmall;
 
 import static net.woggle.shackbrowse.StatsFragment.statInc;
 
@@ -161,6 +164,17 @@ public class ComposePostView extends AppCompatActivity {
         _zoom = Float.parseFloat(_prefs.getString("fontZoom", "1.0"));
         EditText editBox = (EditText)findViewById(R.id.textContent);
         editBox.setTextSize(TypedValue.COMPLEX_UNIT_PX, editBox.getTextSize() * _zoom);
+
+		if (_zoom >= 0.9)
+		{
+			applyButtonZoom(findViewById(R.id.composeButtonPost));
+			applyButtonZoom(((ButtonFloatSmall)findViewById(R.id.composeButtonPost)).getIcon());
+			applyButtonZoom(findViewById(R.id.composeButtonCamera));
+			applyButtonZoom(findViewById(R.id.composeButtonMacros));
+			applyButtonZoom(findViewById(R.id.composeButtonMarkup));
+			applyButtonZoom(findViewById(R.id.composeButtonPicture));
+			applyButtonZoom(findViewById(R.id.composeButtonSelectAll));
+		}
         
         editBox.setCustomSelectionActionModeCallback(new StyleCallback());
         
@@ -221,6 +235,14 @@ public class ComposePostView extends AppCompatActivity {
         
 	}
 
+	public void applyButtonZoom (View imageButton)
+	{
+		// ImageButton button = (ImageButton) imageButton;
+		ViewGroup.LayoutParams buttonLayout = imageButton.getLayoutParams();
+		buttonLayout.height = (int) Math.floor(buttonLayout.height * _zoom);
+		buttonLayout.width = (int) Math.floor(buttonLayout.width * _zoom);
+		imageButton.setLayoutParams(buttonLayout);
+	}
 
     // returns true if edit bar enabled
     private boolean decideEditBar() {
@@ -803,7 +825,7 @@ public class ComposePostView extends AppCompatActivity {
 		
 		editBox = (EditText)findViewById(R.id.textContent);
 		editBox.setText(postText);
-        editBox.setTextSize(TypedValue.COMPLEX_UNIT_PX, editBox.getTextSize() * _zoom);
+       //  editBox.setTextSize(TypedValue.COMPLEX_UNIT_PX, editBox.getTextSize() * _zoom);
         editBox.setCustomSelectionActionModeCallback(new StyleCallback());
 		editBox.requestFocus();
 	}

@@ -78,6 +78,15 @@
             android:key="pref_testnote"
             android:title="@string/preference_testnote"
             />
+		<Preference
+			android:key="notificationDevices"
+			android:summary="@string/preference_devicesnote"
+			/>
+		<Preference
+			android:key="notificationEditOnline"
+			android:title="@string/preference_noteeditonline"
+			android:summary="@string/preference_noteeditonline_summary"
+			/>
 
     </PreferenceCategory>
 </PreferenceScreen>

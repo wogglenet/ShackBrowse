@@ -706,6 +706,8 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 				getSupportActionBar().setTitle("SMsg Inbox");
 			else
 				getSupportActionBar().setTitle("SMsg Sent");
+
+			mDrawerToggle.setDrawerIndicatorEnabled(true);
 		}
         else
         {
@@ -3792,7 +3794,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		protected void onPostExecute(String result)
 		{
 			if (isYTOpen())
-			mYoutubeView.getPlayerUIController().setVideoTitle(result);
+				mYoutubeView.getPlayerUIController().setVideoTitle(result);
 		}
 	}
 
