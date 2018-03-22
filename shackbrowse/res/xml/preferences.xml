@@ -247,6 +247,7 @@
 	  	     android:defaultValue="true"
               android:dependency="getLols"
 	  	     />
+
 	    <CheckBoxPreference
   	     android:key="showModTools"
   	     android:title="@string/preference_show_mod_tools_title"

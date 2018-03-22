@@ -230,7 +230,7 @@
     <string name="preference_show_hours_since_summary">Choose whether to display post times as "hours since" when under 24 hours or to use dates.</string>
     
     <string name="preference_show_mod_tools_title">Shacknews Mod Tools</string>
-    <string name="preference_show_mod_tools_summary">Enable if you are a Shacknews moderator. I\'m honestly not even sure if these work.</string>
+    <string name="preference_show_mod_tools_summary">Enable if you are a Shacknews moderator. Shows up as a little flag on a moddable post.</string>
     
     <string name="preferences_version">Application Version</string>
     <string name="preference_version_title">Unknown</string>

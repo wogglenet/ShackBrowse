@@ -51,6 +51,23 @@ e[*]e Bug Fix: Popup browser now opens current page when external browser opened
 
 Source is available by request, although it is a nightmare. b{Questions}b, g{comments}g, r{criticisms}r, and y{feature requests}y go below.
 
+g{? Shack Browse}g s[y{?Early morning bug fixes!}y]s
+
+n[q[q[What's New]q]q]n
+p[v 5.6.2]p
+s[? Link to woggle online cloud data viewer https://woggle.net/notifications in notification area
+? Can now delete all other notification devices in notification area
+? Updated some buttons and icons
+? Mod tools removed. Don't think anyone used them.
+? Bug Fix: Back/menu button in Shack Messages
+? Bug Fix: Mute notification button not zooming with text zoom
+? Bug Fix: Infinitely zooming text on rotation of post composer
+? Bug Fix: Post composer buttons not zooming
+? Bug Fix: Thread highlighter not highlighting in expanded posts
+? Bug Fix: lol tag button was appearing in SMs]s
+
+Source is available by request, although it is a nightmare. b{?Questions}b, g{?comments}g, r{? criticisms}r, and y{?feature requests}y go below.
+
 ------
 
 q[b[n[F.A.Q.]n]b]q
@@ -67,7 +84,7 @@ b[_[Don't have Android?]_]b Shack Browse can be run in b{Google Chrome}b to see 
 _[b[Have g{Android}g but no Google Play?]b]_ Download the APK and enable APK installation from unknown sources in your settings: http://woggle.net/oldSB/?C=M;O=D]s
 
 y{My Notifications are jacked up.}y
-Like anything good in tech, turn it off and on again. If that doesn't work, clear app data and then log back in, close the app, and open it again.
+Like anything good in tech, turn it off and on again. If that doesn't work, clear app data and then log back in, close the app, and open it again. If that doesn't work, try the option in notifications to delete all other devices. You can also visit https://woggle.net/notifications to see what that shows.
 
 l[Can I see the source?]l
 https://github.com/bradsh/ShackBrowse It is a mess. I am not a professional programmer nor do I have any degrees in computer science. I just wanted a shack app so I learned to program.

@@ -880,7 +880,7 @@ public class ThreadViewFragment extends ListFragment
     public void modChoose(final int pos)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(mMainActivity);
-        builder.setTitle("Choose mod tag");
+        builder.setTitle("Shack Moderator Tag");
         final CharSequence[] items = { "interesting","nws","stupid","tangent","ontopic","political" };
         builder.setItems(items, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
@@ -1609,12 +1609,15 @@ public class ThreadViewFragment extends ListFragment
 	                }
                 });
 
-/*
+
                 final ImageButton btnothr = holder.buttonOther;
                 holder.buttonOther.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
+						modChoose(pos);
+						/*
 						PopupMenu extpop = new PopupMenu(getContext(), btnothr);
+
 						SubMenu sub = extpop.getMenu().addSubMenu(Menu.NONE, 0, Menu.NONE, unamefinal + " Actions");
 						sub.add(Menu.NONE, 3, Menu.NONE, "Shack Message " + unamefinal);
 						sub.add(Menu.NONE, 4, Menu.NONE, "Search for posts by " + unamefinal);
@@ -1626,7 +1629,7 @@ public class ThreadViewFragment extends ListFragment
 							sub2.add(Menu.NONE, 6, Menu.NONE, "Copy URL of Post");
 							sub2.add(Menu.NONE, 7, Menu.NONE, "Share Link to Post");
 						}
-						/*
+
 						SubMenu sub3 = extpop.getMenu().addSubMenu(Menu.NONE, 2, Menu.NONE, "LOLtag Post");
 						sub3.add(Menu.NONE, 8, Menu.NONE, "lol");
 						sub3.add(Menu.NONE, 9, Menu.NONE, "inf");
@@ -1635,7 +1638,7 @@ public class ThreadViewFragment extends ListFragment
 						sub3.add(Menu.NONE, 12, Menu.NONE, "wtf");
 						sub3.add(Menu.NONE, 13, Menu.NONE, "tag");
 						extpop.getMenu().add(Menu.NONE, 14, Menu.NONE, "Check LOL Taggers");
-						*//*
+
 						if ((_showModTools) && (_rootPostId != 0)) {
 							extpop.getMenu().add(Menu.NONE, 15, Menu.NONE, "Mod Tools");
 						}
@@ -1645,6 +1648,8 @@ public class ThreadViewFragment extends ListFragment
 								if (item.getItemId() <= 2)
 									return false;
 								switch (item.getItemId()) {
+
+								
 									case 3:
 										shackmessageTo(unamefinal);
 										break;
@@ -1661,7 +1666,7 @@ public class ThreadViewFragment extends ListFragment
 										shareURL(pos);
 										break;
 
-										/*
+										
 									case 8:
 									case 9:
 									case 10:
@@ -1674,7 +1679,7 @@ public class ThreadViewFragment extends ListFragment
 									case 14:
 										new GetTaggersTask().execute(_adapter.getItem(pos).getPostId());
 										break;
-										*//*
+
 
 									case 15:
 										modChoose(pos);
@@ -1687,9 +1692,10 @@ public class ThreadViewFragment extends ListFragment
 							}
 						});
 						extpop.show();
+						*/
 					}
 				});
-*/
+
 
 
 
@@ -1711,6 +1717,8 @@ public class ThreadViewFragment extends ListFragment
                     //holder.rowtype.setLoading(false);
                 }
 
+
+
                 // hide buttons on pqp posts
                 if (p.isPQP()) {
                     holder.buttonSharePost.setVisibility(View.GONE);
@@ -1721,10 +1729,21 @@ public class ThreadViewFragment extends ListFragment
                     holder.buttonReply.setVisibility(View.VISIBLE);
                 }
 	            // lol button
+
+	            holder.buttonOther.setVisibility(View.GONE);
 	            if ((_messageId == 0) && (!p.isPQP()))
+	            {
+	            	// is a real post in a thread, not queued or shack message
 		            holder.buttonLol.setVisibility(View.VISIBLE);
+		            if ((_showModTools) && (_rootPostId != 0))
+		            {
+			            holder.buttonOther.setVisibility(View.VISIBLE);
+		            }
+	            }
 	            else
+	            {
 		            holder.buttonLol.setVisibility(View.GONE);
+	            }
 
 
 				// dont bother recreating views
@@ -1965,7 +1984,7 @@ public class ThreadViewFragment extends ListFragment
 
                 holder.expLolCounts = (TextView)convertView.findViewById(R.id.textExpPostLolCounts);
 
-                // holder.buttonOther = (ImageButton)convertView.findViewById(R.id.buttonPostOpt);
+                holder.buttonOther = (ImageButton)convertView.findViewById(R.id.buttonPostOpt);
 	            holder.buttonSharePost = (ImageButton)convertView.findViewById(R.id.buttonSharePost);
                 holder.buttonReply = (ImageButton)convertView.findViewById(R.id.buttonReplyPost);
                 holder.buttonAllImages = (ImageButton)convertView.findViewById(R.id.buttonOpenAllImages);
@@ -1987,10 +2006,16 @@ public class ThreadViewFragment extends ListFragment
                 // buttons are already as small as they can be
                 if (_zoom >= 0.9)
                 {
+
                 	ViewGroup.LayoutParams buttonLayout = holder.buttonSharePost.getLayoutParams();
 	                buttonLayout.height = (int)Math.floor(buttonLayout.height * _zoom);
 	                buttonLayout.width = (int)Math.floor(buttonLayout.width * _zoom);
 	                holder.buttonSharePost.setLayoutParams(buttonLayout);
+
+	                buttonLayout = holder.buttonOther.getLayoutParams();
+	                buttonLayout.height = (int)Math.floor(buttonLayout.height * _zoom);
+	                buttonLayout.width = (int)Math.floor(buttonLayout.width * _zoom);
+	                holder.buttonOther.setLayoutParams(buttonLayout);
 
 	                buttonLayout = holder.buttonReply.getLayoutParams();
 	                buttonLayout.height = (int)Math.floor(buttonLayout.height * _zoom);
@@ -2792,6 +2817,7 @@ public class ThreadViewFragment extends ListFragment
 	        public ImageButton buttonNoteEnabled;
 	        public ImageButton buttonNoteMuted;
 	        public ImageButton buttonSharePost;
+	        public ImageButton buttonOther;
         }
         
         public ArrayList<Post> fakePostAddinator(ArrayList<Post> posts)
