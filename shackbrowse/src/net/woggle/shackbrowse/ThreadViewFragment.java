@@ -1691,11 +1691,7 @@ public class ThreadViewFragment extends ListFragment
 				});
 */
 
-                // lol button
-                if (_messageId == 0)
-                    holder.buttonLol.setVisibility(View.VISIBLE);
-                else
-                    holder.buttonLol.setVisibility(View.GONE);
+
 
 
                 // this must be done for recycled views, setmodtagsfalse doesnt handle loading
@@ -1717,15 +1713,18 @@ public class ThreadViewFragment extends ListFragment
 
                 // hide buttons on pqp posts
                 if (p.isPQP()) {
-                    holder.buttonLol.setVisibility(View.GONE);
                     holder.buttonSharePost.setVisibility(View.GONE);
                     holder.buttonReply.setVisibility(View.GONE);
                     //holder.rowtype.setLoading(false);
                 } else {
-                    holder.buttonLol.setVisibility(View.VISIBLE);
                     holder.buttonSharePost.setVisibility(View.VISIBLE);
                     holder.buttonReply.setVisibility(View.VISIBLE);
                 }
+	            // lol button
+	            if ((_messageId == 0) && (!p.isPQP()))
+		            holder.buttonLol.setVisibility(View.VISIBLE);
+	            else
+		            holder.buttonLol.setVisibility(View.GONE);
 
 
 				// dont bother recreating views
