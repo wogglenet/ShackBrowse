@@ -11,10 +11,10 @@
     <string name="tview_unsavethread">Un-save Thread</string>
     <string name="copy_url">Copy URL</string>
     <string name="new_post">New Post</string>
-    <string name="findOnPage">Find On Page</string>
+    <string name="findOnPage">Finder</string>
     <string name="findInThread">Highlight In Thread</string>
-    <string name="keyfilter">Keyword Filters</string>
-    <string name="modfilter">Modtag Filters</string>
+    <string name="keyfilter">Keyword Autocollapse</string>
+    <string name="modfilter">Check Your Filters</string>
     <string name="cloudopt">Cloud Sync Options</string>
     <string name="search">Search</string>
     <string name="searchdel">Delete Custom Searches</string>
@@ -184,7 +184,7 @@
     <string name="preference_shacktag_thread_list_title">Show Markup</string>
     <string name="preference_shacktag_thread_list_summary">Show or strip colorful shacktag markup from topic list preview text.</string>
     
-    <string name="preference_splitView_title">Use Tablet View</string>
+    <string name="preference_splitView_title">Use Split/Tablet View</string>
     <string name="preference_splitView_summary">Select whether to use split view (tablet mode) for portrait, landscape, neither or both. Good for tablets.</string>
     
     <string name="preference_newbranches_title">Show New Posts</string>

@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
       package="net.woggle.shackbrowse"
-      android:versionCode="429"
-      android:versionName="5.6.2">
+      android:versionCode="430"
+      android:versionName="5.6.3">
 <uses-permission android:name="android.permission.INTERNET"></uses-permission>
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /><permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -13,13 +13,6 @@
 <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /> <!-- used for periodic network service -->
 
 <uses-feature android:name="android.hardware.camera" android:required="false" />
-
-<!--  PUSH NOTIFICATIONS -->
-<uses-permission android:name="android.permission.WAKE_LOCK" />
-<uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-
-<permission android:name="net.woggle.shackbrowse.permission.C2D_MESSAGE" android:protectionLevel="signature" />
-<uses-permission android:name="net.woggle.shackbrowse.permission.C2D_MESSAGE" />
 
 
 <uses-sdk android:minSdkVersion="17" android:targetSdkVersion="25"></uses-sdk>
@@ -78,48 +71,44 @@
         </activity>
         <!-- <meta-data android:name="com.google.android.backup.api_key" android:value="AEdPqrEAAAAINYb8pl9xts7OT2boxSmcxRPcaTdG_J6wNhE71Q" /> -->
     
-    <!--  
-    	<receiver android:name="net.woggle.shackbrowse.notifier.NotifierReceiver">
+
+    	<receiver android:name="net.woggle.shackbrowse.notifier.BootReceiver">
 			<intent-filter>
 				<action android:name="android.intent.action.BOOT_COMPLETED" />
 			</intent-filter>
 		</receiver>
-		
-		<receiver android:name="net.woggle.shackbrowse.notifier.NotifierAlarmReceiver" />
-	-->	
-	
-		<receiver
-            android:name="net.woggle.shackbrowse.notifier.NotifierReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND" >
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <category android:name="net.woggle.shackbrowse" />
-            </intent-filter>
-        </receiver>
+
+		<service
+			android:name="net.woggle.shackbrowse.notifier.NotifierReceiver">
+			<intent-filter>
+				<action android:name="com.google.firebase.MESSAGING_EVENT" />
+			</intent-filter>
+		</service>
+		<service
+			android:name="net.woggle.shackbrowse.notifier.FCMIDReceiver">
+			<intent-filter>
+				<action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+			</intent-filter>
+		</service>
+
         <receiver android:name="net.woggle.shackbrowse.notifier.NotificationDeleteReceiver">
             <intent-filter>
                 <action android:name="net.woggle.shackbrowse.NOTIFICATION_DELETED" />
             </intent-filter>
 		</receiver>
 
-        <receiver android:name="net.woggle.shackbrowse.notifier.NotificationDeleteReceiver">
-            <intent-filter>
-                <action android:name="net.woggle.shackbrowse.NOTIFICATION_DELETED" />
-            </intent-filter>
-        </receiver>
-
-		<!--   <service android:name="net.woggle.shackbrowse.notifier.NotifierService" /> -->
     	<service android:enabled="true" android:name="net.woggle.shackbrowse.PostQueueService" />
 
 
         <!-- used for widget and for shackmessage updates -->
-        <service android:name=".PeriodicNetworkService"
-                 android:exported="true"
-                 android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
-            <intent-filter>
-                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
-            </intent-filter>
-        </service>
+		<service
+			android:exported="false"
+			android:name=".PeriodicNetworkService">
+			<intent-filter>
+				<action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>
+			</intent-filter>
+		</service>
+
 
 
 
@@ -132,8 +121,6 @@
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
             </intent-filter>
         </receiver>
-        <meta-data android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
 
         <!-- multi window stuff -->
         <uses-library android:required="false" android:name="com.sec.android.app.multiwindow" />

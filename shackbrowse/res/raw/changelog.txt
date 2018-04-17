@@ -25,8 +25,8 @@ TODO
 * QUOTES FROM TEXT SELECTION
 * SEARCH GOOGLE BY TEXT SELECTION
 * WHITE MODE
-* OPTION TO REMOVE DEVICEID FROM ALL NOTIFICATIONS
 * WIDGET FOR TOP POSTS
+* Easy notification reply
 
 SERVER
 * STAR OUT SPOILER TEXT
@@ -66,7 +66,7 @@ s[? Link to woggle online cloud data viewer https://woggle.net/notifications in 
 ? Bug Fix: Thread highlighter not highlighting in expanded posts
 ? Bug Fix: lol tag button was appearing in SMs]s
 
-Source is available by request, although it is a nightmare. b{?Questions}b, g{?comments}g, r{? criticisms}r, and y{?feature requests}y go below.
+Source is available by request, although it is a nightmare. b{?Questions}b, g{?comments}g, r{?criticisms}r, and y{?feature requests}y go below.
 
 ------
 
@@ -90,6 +90,20 @@ l[Can I see the source?]l
 https://github.com/bradsh/ShackBrowse It is a mess. I am not a professional programmer nor do I have any degrees in computer science. I just wanted a shack app so I learned to program.
 
 -->
+
+$ 5.6.3
+% v 5.6.3
+_ Apr 14, 2018
+* bradsh's darkshack now default, like it always should have been
+* Reply view highlighter button moved back to the overflow button
+* Dropdown of latest filter inputs on "Find on Page" in latestchatty thread list
+* Wasted 5 hours of my life migrating to Firebase against my will, thanks Google
+* Fast scroll now defaults to off
+* Embedded links no longer hide by default
+* PicUploader asks confirmation
+* Renamed UI text all over the app
+* Bug Fix: Android 4.x crash with links
+* Bug Fix: Frontpage articles not having clickable links
 
 $ 5.6.2
 % v 5.6.2

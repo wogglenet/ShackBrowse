@@ -24,6 +24,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
@@ -33,6 +34,7 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import static net.woggle.shackbrowse.StatsFragment.statInc;
@@ -123,14 +125,33 @@ public class PicUploader extends AppCompatActivity {
 		final BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inSampleSize = 4;
 
-		String realPath = getRealPathFromURI(mImageUri);
+		final String realPath = getRealPathFromURI(mImageUri);
 
 		Bitmap bm = BitmapFactory.decodeFile(realPath,options);
 		((ImageView)findViewById(R.id.picUploadBG)).setImageBitmap(bm);
 
 		// ((ImageView)findViewById(R.id.picUploadBG)).setImageURI(imageUri);
 
-		uploadImage(realPath);
+		new MaterialDialog.Builder(this)
+				.title("Really upload?")
+				.content("This will upload the selected image to the internet for public consumption. Continue?")
+				.positiveText("Upload It")
+				.onPositive(new MaterialDialog.SingleButtonCallback()
+				{
+					@Override
+					public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which)
+					{
+						uploadImage(realPath);
+					}
+				}).negativeText("Do NOT Upload")
+				.onNegative(new MaterialDialog.SingleButtonCallback()
+				{
+					@Override
+					public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which)
+					{
+						finish();
+					}
+				}).show();
 	}
 	
 	

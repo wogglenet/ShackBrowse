@@ -42,8 +42,6 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import com.afollestad.materialdialogs.color.ColorChooserDialog;
-import com.google.android.gms.gcm.GcmNetworkManager;
-import com.google.android.gms.gcm.PeriodicTask;
 
 public class PreferenceFragmentNotifications extends PreferenceFragment
 {
@@ -85,7 +83,7 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
 
                 long updateInterval = (long)newInterval; // DEFAULT 3 HR,  5 minutes 50-100mb, 10 minutes 25-50mb, 30mins 10-20mb, 1 hr 5-10mb, 3 hr 1-3mb, 6hr .5-1.5mb, 12hr .25-1mb
 
-                PeriodicNetworkService.ScheduleService(fincon, updateInterval);
+                PeriodicNetworkService.scheduleJob(fincon, updateInterval);
 
                 return true;
             }
@@ -524,13 +522,26 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
         if (!_GCMAccess.checkPlayServices()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle("No Play Services");
-            builder.setMessage("You need to have Google Play Services installed to receive notifications.");
+            builder.setMessage("You need to have Google Play Services installed and updated to receive notifications.");
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener()
             {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i)
                 {
                     ((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_PREFS);
+                }
+            });
+            builder.setNeutralButton("Update", new DialogInterface.OnClickListener()
+            {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i)
+                {
+                    String appPackageName = "com.google.android.gms";
+                    try {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+                    } catch (android.content.ActivityNotFoundException anfe) {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                    }
                 }
             });
             builder.show();

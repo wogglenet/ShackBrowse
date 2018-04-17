@@ -1229,7 +1229,7 @@ public class ThreadViewFragment extends ListFragment
 		private Bitmap _bulletExtendPastNew;
 		private Bitmap _bulletBranchNew;
 		private LruCache<String, Bitmap> mMemoryCache;
-		private boolean _fastScroll = true;
+		private boolean _fastScroll = false;
 		private NetworkInfo mWifi;
 
         public ExpandCollapseListener mExpandCollapseListener = new ExpandCollapseListener() {
@@ -1364,10 +1364,10 @@ public class ThreadViewFragment extends ListFragment
             _zoom = Float.parseFloat(_prefs.getString("fontZoom", "1.0"));
             _showModTools = _prefs.getBoolean("showModTools", false);
             _showHoursSince  = _prefs.getBoolean("showHoursSince", true);
-			_hideLinks = _prefs.getBoolean("hideLinksWhenEmbed", true);
+			_hideLinks = _prefs.getBoolean("hideLinksWhenEmbed", false);
 			_embedItems = Integer.parseInt(_prefs.getString("embedItems", "2"));
 			_linkButtons = _prefs.getBoolean("showLinkOptionsButton", true);
-            _fastScroll   = _prefs.getBoolean("fastScroll", true);
+            _fastScroll   = _prefs.getBoolean("fastScroll", false);
             _donatorList = _prefs.getString("limeUsers", "");
             _donatorGoldList = _prefs.getString("goldLimeUsers", "");
             _donatorQuadList = _prefs.getString("quadLimeUsers", "");

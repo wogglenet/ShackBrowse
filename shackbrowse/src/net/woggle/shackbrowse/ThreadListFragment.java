@@ -9,7 +9,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,6 +20,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Stack;
 
+import net.woggle.AutocompleteProvider;
 import net.woggle.CheckableLinearLayout;
 import net.woggle.SwipeDismissListViewTouchListener;
 import net.woggle.SwipeDismissListViewTouchListener.DismissCallbacks;
@@ -2371,5 +2371,14 @@ public class ThreadListFragment extends ListFragment
     	View wantedView = listView.getChildAt(wantedChild);
     	return wantedView;
     }
+
+	public void saveFinderQueryToList()
+	{
+		String query = (((ThreadListFragment.ThreadLoadingAdapter.ThreadFilter)_adapter.getFilter()).lastFilterString);
+		if (query.length() > 0)
+		{
+			new AutocompleteProvider(getActivity(), "Finder", 5).addItem(query);
+		}
+	}
 }
 

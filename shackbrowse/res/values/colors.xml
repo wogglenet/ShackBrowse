@@ -6,6 +6,7 @@
         <item>@color/modtag_nws</item>
         <item>@color/gnushackdark</item>
     </integer-array>
+	<color name="briefcasepurple">#4e4560</color>
     <color name="gnushack">#52c334</color>
     <color name="gnushackdark">#333</color>
     <color name="selected_highlight_postbg">#202020</color>
@@ -100,4 +101,5 @@
     <color name="SBTvdark">#30122f11</color>
     <color name="SBTplaindark">#30151515</color>
     <color name="SBTplainvdark">#d0000000</color>
+	<color name="SBTbriefcasepurple">#304e4560</color>
 </resources>

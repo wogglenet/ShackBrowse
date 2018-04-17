@@ -30,12 +30,12 @@
 		  android:title="@string/modfilter"
 		  android:orderInCategory="5" />
 	<item android:id="@+id/menu_cloudOptions"
-		  app:showAsAction="ifRoom"
+		  app:showAsAction="never"
 		  android:icon="@drawable/ic_action_file_cloud"
 		  android:title="@string/cloudopt"
 		  android:orderInCategory="6" />
 	<item android:id="@+id/menu_restoreCollapsed"
-		  app:showAsAction="ifRoom"
+		  app:showAsAction="never"
 		  android:icon="@drawable/ic_action_content_undo"
 		  android:title="@string/restoreCollapsed"
 		  android:orderInCategory="13" />
@@ -59,7 +59,7 @@
 		  android:title="@string/unfav"
 		  android:orderInCategory="8" />
 	<item android:id="@+id/menu_findInThread"
-        app:showAsAction="always|collapseActionView"
+        app:showAsAction="never|collapseActionView"
 		  android:icon="@drawable/marker"
 		  android:title="@string/findInThread"
 		  android:orderInCategory="30"

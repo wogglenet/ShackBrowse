@@ -10,6 +10,13 @@
         <item name="ptrHeaderBackground">@color/gnushackdark</item>
         <item name="menuBGdrawable">@drawable/bg_menu_dark</item>
     </style>
+    <style name="AppThemePurple" parent="AppTheme">
+        <item name="colorPrimary">@color/briefcasepurple</item>
+        <item name="colorPrimaryDark">@color/briefcasepurple</item>
+        <item name="colorAccent">@color/SBmed</item>
+        <item name="ptrHeaderBackground">@color/briefcasepurple</item>
+        <item name="menuBGdrawable">@drawable/bg_menu_purple</item>
+    </style>
   <style name="AppTheme" parent="Theme.AppCompat">
       <!-- <item name="android:actionBarStyle">@style/SBActionBar</item> -->
       <item name="android:actionOverflowButtonStyle">@style/OverFlow</item>

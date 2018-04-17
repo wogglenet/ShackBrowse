@@ -3,6 +3,7 @@ package net.woggle.shackbrowse.notifier;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 
 import net.woggle.shackbrowse.MainActivity;
 import net.woggle.shackbrowse.NotificationObj;
@@ -34,39 +35,41 @@ import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 
+import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
+
 import org.json.JSONArray;
 
-public class NotifierReceiver extends BroadcastReceiver {
-
+public class NotifierReceiver extends FirebaseMessagingService
+{
 	public static final int icon_res = R.drawable.note_logo;
-	@Override
-	public void onReceive(Context context, Intent intent) {
-		Log.i("SBNOTIFIER", "NotifierReceiver invoked, starting service");
 
-      
+	@Override
+	public void onMessageReceived(RemoteMessage message){
+
+		Log.i("SBNOTIFIER", "NotifierReceiver invoked, starting service");
+		Context context = getApplicationContext();
+
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher);
-      /*
-      AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-      PendingIntent pendingIntent =
-               PendingIntent.getBroadcast(context, 0, new Intent(context, NotifierReceiver.class), 0);
 
-      // use inexact repeating which is easier on battery (system can phase events and not wake at exact times)
-      alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 0,
-    		  AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent);
-      */
-		Bundle data = intent.getExtras();
-		if ((data != null) && (data.getString("type") != null))
+
+		String from = message.getFrom();
+		Map data = message.getData();
+
+
+
+		if ((data != null) && (data.get("type") != null))
 		{
-			if (data.getString("type").equalsIgnoreCase("reply"))
+			if (data.get("type").toString().equalsIgnoreCase("reply"))
 			{
 				NotificationCompat.Builder mBuilder =
 				        new NotificationCompat.Builder(context)
 				        .setSmallIcon(icon_res)
 				        .setLargeIcon(largeIcon)
-				        .setContentTitle(data.getString("username") + " replied to your post")
-						.setContentText(PostFormatter.formatContent(data.getString("username"), data.getString("text"), null, false, true))
-						.setTicker(data.getString("username") + " replied to your post")
+				        .setContentTitle(data.get("username").toString() + " replied to your post")
+						.setContentText(PostFormatter.formatContent(data.get("username").toString(), data.get("text").toString(), null, false, true))
+						.setTicker(data.get("username").toString() + " replied to your post")
 						.setAutoCancel(true);
 				
 				
@@ -74,7 +77,7 @@ public class NotifierReceiver extends BroadcastReceiver {
 				Intent resultIntent = new Intent(context, MainActivity.class);
 				
 				// save notification to db
-				NotificationObj n = new NotificationObj(Integer.parseInt(data.getString("nlsid")), "reply", data.getString("text"), data.getString("username"), TimeDisplay.now(), "reply");
+				NotificationObj n = new NotificationObj(Integer.parseInt(data.get("nlsid").toString()), "reply", data.get("text").toString(), data.get("username").toString(), TimeDisplay.now(), "reply");
 				n.commit(context);
 				
 				// check count
@@ -83,7 +86,7 @@ public class NotifierReceiver extends BroadcastReceiver {
 				mBuilder.setNumber(numNew);
 				
 				// NLSID
-				resultIntent.putExtra("notificationNLSID", Integer.parseInt(data.getString("nlsid")));
+				resultIntent.putExtra("notificationNLSID", Integer.parseInt(data.get("nlsid").toString()));
 	
 				// second if checks if we are replacing a notification when the last one was never clicked
 				// if so must create a multi reply
@@ -98,7 +101,7 @@ public class NotifierReceiver extends BroadcastReceiver {
 				}
 				else
 				{
-					mBuilder.setStyle(getBigTextFor(data.getString("username") + " replied to your post", data.getString("text")));
+					mBuilder.setStyle(getBigTextFor(data.get("username").toString() + " replied to your post", data.get("text").toString()));
 					resultIntent.putExtra("notificationOpenId", true);
 				}
 				
@@ -114,7 +117,7 @@ public class NotifierReceiver extends BroadcastReceiver {
 				Notification notification = mBuilder.build();
 
 				// notification snooze
-				if (checkIfMuted(Integer.parseInt(data.getString("parentid")), prefs))
+				if (checkIfMuted(Integer.parseInt(data.get("parentid").toString()), prefs))
 				{
 					return;
 				}
@@ -129,16 +132,16 @@ public class NotifierReceiver extends BroadcastReceiver {
                 StatsFragment.statInc(context, "NotifiedReply");
                 StatsFragment.statInc(context, "Notifications");
 			}
-			else if (data.getString("type").equalsIgnoreCase("vanity"))
+			else if (data.get("type").toString().equalsIgnoreCase("vanity"))
 			{
 			  
 				NotificationCompat.Builder mBuilder =
 				        new NotificationCompat.Builder(context)
 				        .setSmallIcon(icon_res)
 				        .setLargeIcon(largeIcon)
-				        .setContentTitle(data.getString("username") + " mentioned you in a post")
-						.setContentText(PostFormatter.formatContent(data.getString("username"), data.getString("text"), null, false, true))
-						.setTicker(data.getString("username") + " mentioned you in a post")
+				        .setContentTitle(data.get("username").toString() + " mentioned you in a post")
+						.setContentText(PostFormatter.formatContent(data.get("username").toString(), data.get("text").toString(), null, false, true))
+						.setTicker(data.get("username").toString() + " mentioned you in a post")
 						.setAutoCancel(true);
 				
 				
@@ -147,7 +150,7 @@ public class NotifierReceiver extends BroadcastReceiver {
 				
 				
 				// save notification to db
-				NotificationObj n = new NotificationObj(Integer.parseInt(data.getString("nlsid")), "vanity", data.getString("text"), data.getString("username"), TimeDisplay.now(), "vanity");
+				NotificationObj n = new NotificationObj(Integer.parseInt(data.get("nlsid").toString()), "vanity", data.get("text").toString(), data.get("username").toString(), TimeDisplay.now(), "vanity");
 				n.commit(context);
 				
 				// check count
@@ -156,7 +159,7 @@ public class NotifierReceiver extends BroadcastReceiver {
 				mBuilder.setNumber(numNew);
 				
 				// NLSID
-				resultIntent.putExtra("notificationNLSID", Integer.parseInt(data.getString("nlsid")));
+				resultIntent.putExtra("notificationNLSID", Integer.parseInt(data.get("nlsid").toString()));
 	
 				// second if checks if we are replacing a notification when the last one was never clicked
 				// if so must create a multi reply
@@ -172,7 +175,7 @@ public class NotifierReceiver extends BroadcastReceiver {
 				}
 				else
 				{
-					mBuilder.setStyle(getBigTextFor(data.getString("username") + " mentioned your shack name", data.getString("text")));
+					mBuilder.setStyle(getBigTextFor(data.get("username").toString() + " mentioned your shack name", data.get("text").toString()));
 					resultIntent.putExtra("notificationOpenVanityId", true);
 				}
 				
@@ -197,16 +200,16 @@ public class NotifierReceiver extends BroadcastReceiver {
                 StatsFragment.statInc(context, "NotifiedVanity");
                 StatsFragment.statInc(context, "Notifications");
 			}
-			else if (data.getString("type").equalsIgnoreCase("keyword"))
+			else if (data.get("type").toString().equalsIgnoreCase("keyword"))
 			{
 			  
 				NotificationCompat.Builder mBuilder =
 				        new NotificationCompat.Builder(context)
 				        .setSmallIcon(icon_res)
 				        .setLargeIcon(largeIcon)
-				        .setContentTitle(data.getString("username") + " mentioned " + data.getString("keyword"))
-						.setContentText(PostFormatter.formatContent(data.getString("username"), data.getString("text"), null, false, true))
-						.setTicker(data.getString("username") + " mentioned " + data.getString("keyword"))
+				        .setContentTitle(data.get("username").toString() + " mentioned " + data.get("keyword").toString())
+						.setContentText(PostFormatter.formatContent(data.get("username").toString(), data.get("text").toString(), null, false, true))
+						.setTicker(data.get("username").toString() + " mentioned " + data.get("keyword").toString())
 						.setAutoCancel(true);
 				
 				
@@ -214,32 +217,32 @@ public class NotifierReceiver extends BroadcastReceiver {
 				Intent resultIntent = new Intent(context, MainActivity.class);
 				
 				// save notification to db
-				NotificationObj n = new NotificationObj(Integer.parseInt(data.getString("nlsid")), "keyword", data.getString("text"), data.getString("username"), TimeDisplay.now(), data.getString("keyword"));
+				NotificationObj n = new NotificationObj(Integer.parseInt(data.get("nlsid").toString()), "keyword", data.get("text").toString(), data.get("username").toString(), TimeDisplay.now(), data.get("keyword").toString());
 				n.commit(context);
 				
 				// check count
-				int noteCount = prefs.getInt("GCMNoteCount" + data.getString("keyword").hashCode(), 0);
+				int noteCount = prefs.getInt("GCMNoteCount" + data.get("keyword").toString().hashCode(), 0);
 				int numNew = noteCount + 1;
 				mBuilder.setNumber(numNew);
 				
 				// NLSID
-				resultIntent.putExtra("notificationNLSID", Integer.parseInt(data.getString("nlsid")));
-				resultIntent.putExtra("notificationKeyword", data.getString("keyword"));
+				resultIntent.putExtra("notificationNLSID", Integer.parseInt(data.get("nlsid").toString()));
+				resultIntent.putExtra("notificationKeyword", data.get("keyword").toString());
 	
 				// second if checks if we are replacing a notification when the last one was never clicked
 				// if so must create a multi reply
 				if (numNew > 1)
 				{
 					// multiple replies
-					mBuilder.setContentTitle("New Mentions of " + data.getString("keyword"));
+					mBuilder.setContentTitle("New Mentions of " + data.get("keyword").toString());
 					mBuilder.setContentText("Click to show a list");
-					mBuilder.setTicker(numNew + " new mentions of "+ data.getString("keyword"));
-					mBuilder.setStyle(getInboxStyleFor("New mentions of "+ data.getString("keyword"), "keyword", data.getString("keyword"), numNew, context));
+					mBuilder.setTicker(numNew + " new mentions of "+ data.get("keyword").toString());
+					mBuilder.setStyle(getInboxStyleFor("New mentions of "+ data.get("keyword").toString(), "keyword", data.get("keyword").toString(), numNew, context));
 					resultIntent.putExtra("notificationOpenKList", true);
 				}
 				else
 				{
-					mBuilder.setStyle(getBigTextFor(data.getString("username") + " mentioned " + data.getString("keyword"), data.getString("text")));
+					mBuilder.setStyle(getBigTextFor(data.get("username").toString() + " mentioned " + data.get("keyword").toString(), data.get("text").toString()));
 					resultIntent.putExtra("notificationOpenKeywordId", true);
 				}
 				
@@ -251,29 +254,29 @@ public class NotifierReceiver extends BroadcastReceiver {
 				PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 				
 				mBuilder.setContentIntent(resultPendingIntent);
-				mBuilder.setDeleteIntent(getDeleteIntent("GCMNoteCount" + data.getString("keyword").hashCode(), context));
+				mBuilder.setDeleteIntent(getDeleteIntent("GCMNoteCount" + data.get("keyword").toString().hashCode(), context));
 				Notification notification = mBuilder.build();
 				
-				int mId = data.getString("keyword").hashCode();
+				int mId = data.get("keyword").toString().hashCode();
 				handleNotification(notification, mId, context);
 				
 				Editor editor = prefs.edit();
-				editor.putInt("GCMNoteCount" + data.getString("keyword").hashCode(), numNew);
+				editor.putInt("GCMNoteCount" + data.get("keyword").toString().hashCode(), numNew);
 				editor.commit();
 
                 StatsFragment.statInc(context, "NotifiedKeyword");
                 StatsFragment.statInc(context, "Notifications");
 			}
-			else if (data.getString("type").equalsIgnoreCase("shackmsg"))
+			else if (data.get("type").toString().equalsIgnoreCase("shackmsg"))
 			{
 			  
 				NotificationCompat.Builder mBuilder =
 				        new NotificationCompat.Builder(context)
 				        .setSmallIcon(icon_res)
 				        .setLargeIcon(largeIcon)
-				        .setContentTitle(data.getString("username") + " sent you a shackmessage")
-						.setContentText(data.getString("text"))
-						.setTicker(data.getString("username") + " sent you a shackmessage")
+				        .setContentTitle(data.get("username").toString() + " sent you a shackmessage")
+						.setContentText(data.get("text").toString())
+						.setTicker(data.get("username").toString() + " sent you a shackmessage")
 						.setAutoCancel(true);
 				
 				
@@ -281,18 +284,18 @@ public class NotifierReceiver extends BroadcastReceiver {
 				Intent resultIntent = new Intent(context, MainActivity.class);
 				
 				resultIntent.putExtra("notificationOpenMessages", true);
-				resultIntent.putExtra("notificationNLSID", Integer.parseInt(data.getString("nlsid")));
+				resultIntent.putExtra("notificationNLSID", Integer.parseInt(data.get("nlsid").toString()));
                 int numNew = 0;
-				if (data.getString("username").equals("multiple"))
+				if (data.get("username").toString().equals("multiple"))
 				{
 					// multiple replies
 					mBuilder.setContentTitle("New shackmessages");
 					mBuilder.setContentText("Click to show a list");
 
-					if (data.getString("username").equals("multiple"))
+					if (data.get("username").toString().equals("multiple"))
 					{
 						try {
-							numNew = Integer.parseInt(data.getString("text"));
+							numNew = Integer.parseInt(data.get("text").toString());
 						}
 						catch (Exception e)
 						{
@@ -320,7 +323,7 @@ public class NotifierReceiver extends BroadcastReceiver {
 				handleNotification(notification, mId, context);
 				
 				Editor editor = prefs.edit();
-				editor.putString("GCMShackMsgLastNotifiedId", data.getString("id"));
+				editor.putString("GCMShackMsgLastNotifiedId", data.get("id").toString());
 				editor.commit();
 
                 StatsFragment.statInc(context, "NotifiedShackMessage");
@@ -355,7 +358,7 @@ public class NotifierReceiver extends BroadcastReceiver {
 		{
 			for (int i = 0; i < muted.size(); i++)
 			{
-				if (muted.get(i).equals(postIdString))
+				if (muted.get(i).contentEquals(postIdString))
 				{
 					muted.remove(i);
 				}
@@ -441,7 +444,7 @@ public class NotifierReceiver extends BroadcastReceiver {
 		form.setSpan(new ForegroundColorSpan(ctx.getResources().getColor(R.color.userName)), 0, user.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
 		return form;
 	}
-	private void handleNotification(Notification notification, int mId, Context context) {
+	public static void handleNotification(Notification notification, int mId, Context context) {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		
 		NotificationManager mNotificationManager =

@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.text.ClipboardManager;
@@ -218,9 +219,11 @@ public class FrontpageBrowserFragment extends Fragment {
 
                     @Override
                     public boolean shouldOverrideUrlLoading(WebView view, String _href) {
+                        System.out.println("open LINK" + _href);
                         Uri uri = Uri.parse(_href);
                         String id = uri.getQueryParameter("id");
                         if ((uri.getHost().equalsIgnoreCase("www.shacknews.com") || uri.getHost().equalsIgnoreCase("shacknews.com")) && id != null) {
+                            System.out.println("open LINK chatty " + _href);
                             ((MainActivity) getActivity()).openThreadViewAndSelect(Integer.parseInt(id));
                             return true;
                         } else if ((uri.getHost().equalsIgnoreCase("www.shacknews.com") || uri.getHost().equalsIgnoreCase("shacknews.com")) && uri.getPath().toLowerCase().contains("article")) {
@@ -234,15 +237,20 @@ public class FrontpageBrowserFragment extends Fragment {
                         }
                         else
                         {
+                            System.out.println("open external" + _href);
                             openExternal(_href);
                             return true;
                         }
                     }
+
+
                 });
 
         // mWebview.getSettings().setDefaultZoom(WebSettings.ZoomDensity.FAR);
+
         mWebview.getSettings().setUseWideViewPort(false);
         mWebview.getSettings().setLoadWithOverviewMode(false);
+        mWebview.getSettings().setSupportMultipleWindows(false);
         mWebview.setBackgroundColor(Color.BLACK);
 
         mWebview.loadUrl(mFirstHref);
@@ -267,6 +275,10 @@ public class FrontpageBrowserFragment extends Fragment {
             Intent i = new Intent(Intent.ACTION_VIEW,
                     Uri.parse(href));
             getActivity().startActivity(i);
+        }
+        else
+        {
+            System.out.println("openExternal: NO ACTIVITY");
         }
     }
 

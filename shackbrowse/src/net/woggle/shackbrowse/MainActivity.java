@@ -12,9 +12,11 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
+import net.woggle.AutocompleteProvider;
 import net.woggle.shackbrowse.ChangeLog.onChangeLogCloseListener;
 import net.woggle.shackbrowse.NetworkNotificationServers.OnGCMInteractListener;
 import net.woggle.shackbrowse.PullToRefreshAttacher.Options;
@@ -81,6 +83,7 @@ import android.view.ViewConfiguration;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
+import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -94,7 +97,6 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.color.ColorChooserDialog;
-import com.google.android.gms.gcm.GcmNetworkManager;
 //FIREBASE import com.google.firebase.analytics.FirebaseAnalytics;
 import com.pierfrancescosoffritti.youtubeplayer.player.AbstractYouTubePlayerListener;
 import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayer;
@@ -112,7 +114,6 @@ import static net.woggle.shackbrowse.StatsFragment.statInc;
 public class MainActivity extends AppCompatActivity implements ColorChooserDialog.ColorCallback
 {
 	static final String PQPSERVICESUCCESS = "net.woggle.PQPServiceSuccess";
-	static final String CHROMETABRECV = "net.woggle.shackbrowse.CHROMETABRECV";
     FrameLayout mFrame;
     OfflineThread mOffline;
     
@@ -136,9 +137,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	private AppMenu _appMenu;
 	boolean _showPinnedInTL = true;
 	private long _lastOpenedThreadViewEpochSeconds = 0l;
-	
 	boolean _swappedSplit = false;
-	public boolean _enableDonatorFeatures = false;
 	Seen _seen;
 	NetworkNotificationServers _GCMAccess;
 	private ThreadListFragment _threadList;
@@ -171,11 +170,8 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
     private Long mLastResumeTime = TimeDisplay.now();
 	protected boolean isBeta = false;
 	protected String mVersion = "none";
-	private Bitmap mChromeTabShareIcon;
-	private String mChromeTabCurrentUrl;
 	private String mBrowserPageTitle;
 	private String mBrowserPageSubTitle;
-	private GcmNetworkManager mGcmNetworkManager;
 
 	//FIREBASE 	private FirebaseAnalytics mFirebaseAnalytics;
 	private YouTubePlayerView mYoutubeView;
@@ -279,7 +275,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 		// TODO: enable or disable based on preferences for widget and for SM autocheck
 		long updateInterval = Long.parseLong(_prefs.getString("PeriodicNetworkServicePeriod", "10800")); // DEFAULT 3 HR 10800L,  5 minutes 50-100mb, 10 minutes 25-50mb, 30mins 10-20mb, 1 hr 5-10mb, 3 hr 1-3mb, 6hr .5-1.5mb, 12hr .25-1mb
-		PeriodicNetworkService.ScheduleService(this, updateInterval);
+		PeriodicNetworkService.scheduleJob(this, updateInterval);
 
 		// notification database pruning
 		NotificationsDB ndb = new NotificationsDB(this);
@@ -623,11 +619,17 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 	public static int themeApplicator(Activity context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String appTheme =  prefs.getString("appTheme", "0");
+        String appTheme =  prefs.getString("appTheme", "1");
         int themeId;
         int lightBarColor;
 		int darkBarColor;
-        if (appTheme.equals("1")) {
+
+		if (appTheme.equals("2")) {
+			themeId = R.style.AppThemePurple;
+			lightBarColor = R.color.briefcasepurple;
+			darkBarColor = R.color.selected_postbg;
+		}
+        else if (appTheme.equals("1")) {
             themeId = R.style.AppThemeDark;
             lightBarColor = R.color.gnushackdark;
 	        darkBarColor = R.color.selected_postbg;
@@ -952,6 +954,10 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
                 @Override
                 public boolean onQueryTextChange(String newText) {
                     if ((_threadView != null) && (_threadView._adapter != null)) {
+	                    if ((newText.length() == 0) && (_threadView._highlight.length() > 5))
+	                    {
+		                    new AutocompleteProvider(MainActivity.this, "Highlighter", 5).addItem(_threadView._highlight);
+	                    }
                         _threadView._highlight = newText;
                         _threadView._adapter.notifyDataSetChanged();
                     }
@@ -960,6 +966,11 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
                 @Override
                 public boolean onQueryTextSubmit(String query) {
+                	if (query.length() > 5)
+	                {
+		                new AutocompleteProvider(MainActivity.this, "Highlighter", 5).addItem(query);
+	                }
+
                     // used to hide the keyboard
                     sview.setVisibility(View.INVISIBLE);
                     sview.setVisibility(View.VISIBLE);
@@ -972,6 +983,10 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			public boolean onMenuItemActionCollapse(MenuItem arg0) {
 				if ((_threadView != null) && (_threadView._adapter != null))
 				{
+					if (_threadView._highlight.length() > 5)
+					{
+						new AutocompleteProvider(MainActivity.this, "Highlighter", 5).addItem(_threadView._highlight);
+					}
 					_threadView._highlighting = false;
 					_threadView._highlight = "";
 					_threadView._adapter.notifyDataSetChanged();
@@ -1009,21 +1024,52 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
                 return true;
             }
         });
-	    SearchView sview2 = (SearchView)mFinder.getActionView();
-	    sview2.setOnSearchClickListener(new View.OnClickListener(){
-			@Override
-			public void onClick(View v) {
-				if ((_threadList != null) && (_threadList._adapter != null))
-				{
-					_threadList._filtering = true;
-				}
-			}});
+
+		MenuItem menuRefreshItem = menu.findItem(R.id.menu_refreshThreads);
+		MenuItem menuNewpostItem = menu.findItem(R.id.menu_newPost);
+		MenuItem finder = menu.findItem(R.id.menu_findOnPage);
+	    final SearchView sview2 = (SearchView)mFinder.getActionView();
+
+		MenuItemCompat.setOnActionExpandListener(finder,
+				new MenuItemCompat.OnActionExpandListener() {
+					@Override
+					public boolean onMenuItemActionExpand(MenuItem menuItem) {
+						if ((_threadList != null) && (_threadList._adapter != null))
+						{
+							_threadList._filtering = true;
+						}
+
+						// hide new post and refresh
+						menuRefreshItem.setVisible(false);
+						menuNewpostItem.setVisible(false);
+						return true;
+					}
+					@Override
+					public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+						// save to list of suggestions
+						if ((_threadList != null) && (_threadList._adapter != null))
+						{
+							_threadList.saveFinderQueryToList();
+						}
+						// unhide other items
+						menuRefreshItem.setVisible(true);
+						menuNewpostItem.setVisible(true);
+						supportInvalidateOptionsMenu();
+						return true;
+					}
+				});
 	    sview2.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
 
 			@Override
 			public boolean onQueryTextChange(String newText) {
 				if ((_threadList != null) && (_threadList._adapter != null))
 				{
+					String query = (((ThreadListFragment.ThreadLoadingAdapter.ThreadFilter)_threadList._adapter.getFilter()).lastFilterString);
+
+					if ((newText.length() == 0) && (query.length() > 5))
+					{
+						_threadList.saveFinderQueryToList();
+					}
 					_threadList._adapter.getFilter().filter(newText);
 				}
 				return false;
@@ -1031,14 +1077,15 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 			@Override
 			public boolean onQueryTextSubmit(String query) {
-				// TODO Auto-generated method stub
+				new AutocompleteProvider(MainActivity.this, "Finder", 5).addItem(query);
 				return false;
 			}});
-	    
+
 	    return super.onCreateOptionsMenu(menu);
 	}
-    
-    @Override
+
+
+	@Override
     public boolean onPrepareOptionsMenu(Menu menu)
     {
         super.onPrepareOptionsMenu(menu);
@@ -1070,7 +1117,18 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         menu.findItem(R.id.menu_refreshThreads).setVisible(showTListItems);
         menu.findItem(R.id.menu_cloudOptions).setVisible(showTListItems || showFavItems);
         menu.findItem(R.id.menu_findOnPage).setVisible(showTListItems);
-        if ((!showTListItems) && (mFinder.isActionViewExpanded()))
+
+        // hack to do autocomplete sview2
+	    int autoCompleteTextViewID = getResources().getIdentifier("android:id/search_src_text", null, null);
+	    AutoCompleteTextView searchAutoCompleteTextView = (AutoCompleteTextView) menu.findItem(R.id.menu_findOnPage).getActionView().findViewById(autoCompleteTextViewID);
+	    searchAutoCompleteTextView.setAdapter(new AutocompleteProvider(MainActivity.this,"Finder",5).getSuggestionAdapter());
+
+	    // hack to do autocomplete sview1
+	    AutoCompleteTextView searchAutoCompleteTextView2 = (AutoCompleteTextView) menu.findItem(R.id.menu_findInThread).getActionView().findViewById(autoCompleteTextViewID);
+	    searchAutoCompleteTextView2.setAdapter(new AutocompleteProvider(MainActivity.this,"Highlighter",5).getSuggestionAdapter());
+
+
+	    if ((!showTListItems) && (mFinder.isActionViewExpanded()))
         	mFinder.collapseActionView();
         menu.findItem(R.id.menu_keywordFilter).setVisible(showTListItems);
         menu.findItem(R.id.menu_modtagFilter).setVisible(showTListItems);
@@ -1078,8 +1136,8 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         menu.findItem(R.id.menu_restoreCollapsed).setVisible(showTListItems);
         
         menu.findItem(R.id.menu_searchGo).setVisible(showSearchItems);
-        menu.findItem(R.id.menu_searchDel).setVisible(showSearchItems && _enableDonatorFeatures);
-        menu.findItem(R.id.menu_searchSave).setVisible(showSearchItems && _enableDonatorFeatures);
+        menu.findItem(R.id.menu_searchDel).setVisible(showSearchItems);
+        menu.findItem(R.id.menu_searchSave).setVisible(showSearchItems);
         
         menu.findItem(R.id.menu_replyMsg).setVisible(showMessageItems && (_threadView._messageId != 0) && (dualPane || areSlidersOpen));
         menu.findItem(R.id.menu_newMsg).setVisible(showMessageItems);
@@ -1746,21 +1804,11 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	public void evaluateDualPane(Configuration conf)
 	{
         _splitView = Integer.parseInt(_prefs.getString("splitView", "1"));
-       
-        if (_orientLock != Integer.parseInt(_prefs.getString("orientLock", "0")))
-        {
-        	_orientLock = Integer.parseInt(_prefs.getString("orientLock", "0"));
-	        if (_orientLock == 0)
-	        	setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-	        if (_orientLock == 1)
-	        	setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-	        if (_orientLock == 2)
-	        	setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-	        if (_orientLock == 3)
-	        	setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
-	        if (_orientLock == 4)
-	        	setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
-        }
+
+		if (_orientLock != Integer.parseInt(_prefs.getString("orientLock", "0")))
+		{
+			setOrientLock();
+		}
     
         if (_splitView == 0 || _currentFragmentType == CONTENT_FRONTPAGE || _currentFragmentType == CONTENT_PREFS || _currentFragmentType == CONTENT_STATS || _currentFragmentType == CONTENT_NOTEPREFS)
         {
@@ -1777,6 +1825,24 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         	setDualPane(false);
         }
 	}
+
+	private void setOrientLock()
+	{
+
+		_orientLock = Integer.parseInt(_prefs.getString("orientLock", "0"));
+		if (_orientLock == 0)
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+		if (_orientLock == 1)
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		if (_orientLock == 2)
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+		if (_orientLock == 3)
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
+		if (_orientLock == 4)
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+
+	}
+
 	public boolean getDualPane () { return _dualPane; }
 	public boolean getSliderOpen () { return _tviewFrame.isOpened(); }
 
@@ -2014,7 +2080,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
             _zoom = Float.parseFloat(_prefs.getString("fontZoom", "1.0"));
             _showPinnedInTL = _prefs.getBoolean("showPinnedInTL", true);
             _swappedSplit = _prefs.getBoolean("swappedSplit", false);
-            _enableDonatorFeatures = true;
             if (_threadView != null) {
                 if (_threadView._adapter != null) {
                     _threadView._adapter.loadPrefs();
@@ -2773,22 +2838,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		_threadList.showFilters();
 	}
 	public void showKeywords() {
-		if (!_enableDonatorFeatures )
-		{
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	        builder.setTitle("Donator Feature");
-	        builder.setMessage("Enable this feature by clicking the menu, \"Unlock DLC\" and \"Access Donator Features\".");
-	        builder.setPositiveButton("Go Now", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int id) {
-					Intent i = new Intent(MainActivity.this, DonateActivity.class);
-	                startActivityForResult(i, ThreadListFragment.OPEN_PREFS);
-	            }
-	        });
-	        builder.setNegativeButton("Cancel", null);
-	        builder.create().show();
-	        return;
-		}
-		
 		_threadList.showFiltWordList();
 	}
 	
@@ -3717,6 +3766,8 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 				int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
 				decorView.setSystemUiVisibility(uiOptions);
 
+				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
 				resizeOtherContentHeightsForYoutube();
 			}
 
@@ -3730,6 +3781,8 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 				// Show the status bar.
 				int uiOptions = View.SYSTEM_UI_FLAG_VISIBLE;
 				decorView.setSystemUiVisibility(uiOptions);
+
+				setOrientLock();
 
 				resizeOtherContentHeightsForYoutube();
 			}
@@ -3764,6 +3817,8 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			// Show the status bar.
 			int uiOptions = View.SYSTEM_UI_FLAG_VISIBLE;
 			decorView.setSystemUiVisibility(uiOptions);
+
+			setOrientLock();
 		}
 
 		mYoutubeView.release();

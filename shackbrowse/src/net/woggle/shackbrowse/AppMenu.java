@@ -706,14 +706,11 @@ public class AppMenu extends ListFragment
 		args.putString("terms", "*");
 		args.putString("category", "informative");
 		_adapter.add(new MenuItems(new PremadeSearch("Informative Posts", 0, args, false)));
-        
-        if (((MainActivity)getActivity())._enableDonatorFeatures)
-        {
-        	args = new Bundle();
-        	args.putString("terms", "*");
-			args.putString("category", "nws");
-        	_adapter.add(new MenuItems(new PremadeSearch("NWS Posts", 0, args, false)));
-        }
+
+        args = new Bundle();
+        args.putString("terms", "*");
+		args.putString("category", "nws");
+        _adapter.add(new MenuItems(new PremadeSearch("NWS Posts", 0, args, false)));
         
         // saved searches
         if (_prefs.getString("savedSearchesJson", null) != null)

@@ -10,6 +10,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import net.woggle.shackbrowse.notifier.NotifierReceiver;
+import net.woggle.shackbrowse.notifier.ShackMessageNotifierReceiver;
 
 import java.math.BigInteger;
 import java.nio.charset.Charset;
@@ -210,8 +211,8 @@ public class ShackMessageCheck
 
 	// used for sending fake notifications to the notifierreceiver. check for sms locally, then send notification!
 	private void sendSMBroadcast(String username, String text, int nlsid, boolean multiple, int howMany) {
-		NotifierReceiver receiver = new NotifierReceiver();
-		_context.registerReceiver( receiver, new IntentFilter( "net.woggle.fakenotification" ) );
+		ShackMessageNotifierReceiver receiver = new ShackMessageNotifierReceiver();
+		_context.registerReceiver(receiver, new IntentFilter( "net.woggle.fakenotification" ) );
 
 		Intent broadcast = new Intent();
 		broadcast.putExtra("type", "shackmsg");

@@ -84,12 +84,14 @@
         <item>get out of here, chicken!</item><!-- http://www.shacknews.com/chatty?id=34709595 -->
     </string-array>
     <string-array name="preference_theme">
-        <item>Normal</item>
+        <item>Green</item>
         <item>bradsh\'s darkshack</item>
+		<item>briefcase purple</item>
     </string-array>
     <string-array name="preference_theme_vals">
         <item>0</item>
         <item>1</item>
+		<item>2</item>
     </string-array>
     <string-array name="preference_optoutstats">
         <item>Use cloud sync between devices</item>

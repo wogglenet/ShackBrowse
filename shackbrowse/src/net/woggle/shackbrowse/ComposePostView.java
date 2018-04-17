@@ -38,6 +38,7 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
@@ -69,6 +70,7 @@ import android.widget.ImageButton;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.gc.materialdesign.views.ButtonFloatSmall;
 
@@ -1287,9 +1289,22 @@ public class ComposePostView extends AppCompatActivity {
 	
 	void uploadImage(String imageLocation)
 	{
-	    _progressDialog = MaterialProgressDialog.show(ComposePostView.this, "Upload", "Uploading image to chattypics");
-	    new UploadAndInsertTask().execute(imageLocation);
-        statInc(this, "ImagesToChattyPics");
+
+		new MaterialDialog.Builder(this)
+				.title("Really upload?")
+				.content("This will upload the selected image to the internet for public consumption. Continue?")
+				.positiveText("Upload It")
+				.onPositive(new MaterialDialog.SingleButtonCallback()
+				{
+					@Override
+					public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which)
+					{
+						_progressDialog = MaterialProgressDialog.show(ComposePostView.this, "Upload", "Uploading image to chattypics");
+						new UploadAndInsertTask().execute(imageLocation);
+						statInc(ComposePostView.this, "ImagesToChattyPics");
+					}
+				}).negativeText("Do NOT Upload").show();
+
 	}
 	
 	void postSuccessful(PostReference pr)

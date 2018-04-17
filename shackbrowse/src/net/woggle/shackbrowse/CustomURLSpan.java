@@ -4,6 +4,8 @@ import net.woggle.CustomClickableSpan;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -97,11 +99,24 @@ public class CustomURLSpan extends CustomClickableSpan implements OnLongClickLis
 		});
 		return true;
 	}
-	
+
+	// fix for support library sucking
+	private Activity getActivityFromView(View v) {
+		Context context = v.getContext();
+		while (context instanceof ContextWrapper) {
+			if (context instanceof Activity) {
+				return (Activity)context;
+			}
+			context = ((ContextWrapper)context).getBaseContext();
+		}
+		return null;
+	}
+
 	@Override
 	public void onClick (View v) 
 	{
-		Activity test = (Activity)v.getContext();
+		Activity test = getActivityFromView(v);
+
 		if (test instanceof MainActivity)
 		{
 			MainActivity mAct = (MainActivity)test;
