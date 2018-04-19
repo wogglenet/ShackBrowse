@@ -1,0 +1,41 @@
+{
+  "project_info": {
+    "project_number": "1047530033396",
+    "firebase_url": "https://shackbrowse.firebaseio.com",
+    "project_id": "shackbrowse"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1047530033396:android:ab43897be0c2c1fd",
+        "android_client_info": {
+          "package_name": "net.woggle.shackbrowse"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1047530033396-4ca97chi9tr0ihsv55m32bqnei0l961s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7xFnZZXCTKrP9grZE-M2pgNSJsjf-l2I"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
