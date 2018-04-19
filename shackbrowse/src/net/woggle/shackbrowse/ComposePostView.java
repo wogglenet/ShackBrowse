@@ -949,7 +949,7 @@ public class ComposePostView extends AppCompatActivity {
 		_shackTagDialog.show();
 
 		// this is apparently no longer needed in new versions of android
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N_MR1)
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
 		{
 			if (andReselect)
 			{
@@ -966,7 +966,7 @@ public class ComposePostView extends AppCompatActivity {
 							@Override
 							public void run()
 							{
-
+								System.out.println("POSTCOMPOSER: DO WORKAROUND");
 								EditText et = (EditText) findViewById(R.id.textContent);
 								// completely retarded workaround to bring the contextual action mode actionbar back
 								et.setHapticFeedbackEnabled(false);

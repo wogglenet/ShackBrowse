@@ -38,6 +38,7 @@ public class PeriodicNetworkService  extends JobService
     {
         Log.d("startuptest", "StartUpBootReceiver BOOT_COMPLETED");
 
+        System.out.println("SHACKBROWSE PERIODIC NETWORK MESSAGE CHECK STARTUP");
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         System.out.println("SMCHK: init tasks");
         long flex = Math.round((double)updateIntervalSeconds * (1f/3f));
