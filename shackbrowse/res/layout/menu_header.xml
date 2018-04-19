@@ -28,7 +28,7 @@
             />
     </LinearLayout>
     <View android:id="@+id/postTopLine"
-        android:background="@color/SBlight"
+        android:background="@color/gnushack"
         android:layout_width = "match_parent"
         android:layout_height="1dp"
         android:paddingBottom="6dip"

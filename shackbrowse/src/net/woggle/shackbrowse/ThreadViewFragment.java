@@ -95,6 +95,7 @@ import net.woggle.FixedTextView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URLEncoder;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1787,6 +1788,8 @@ public class ThreadViewFragment extends ListFragment
 						// links stuff
 						postText.setLinkTextColor(getResources().getColor(R.color.linkColor));
 						postText.setTextIsSelectable(true);
+						postText.setFocusable(true);
+						postText.setFocusableInTouchMode(true);
 						postText.setMovementMethod(new CustomLinkMovementMethod());
 						StyleCallback cb = new StyleCallback();
 						cb.setTextView(postText);
@@ -3141,6 +3144,7 @@ public class ThreadViewFragment extends ListFragment
 
 		public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
 	    	menu.findItem(R.id.menu_textSelectSearch).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+			menu.findItem(R.id.menu_textSelectSearchGoogle).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
     		if (menu.findItem(android.R.id.selectAll) != null)
     			menu.findItem(android.R.id.selectAll).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
@@ -3157,11 +3161,22 @@ public class ThreadViewFragment extends ListFragment
 	        Bundle args;
 			switch(item.getItemId()) {
 
-	        case R.id.menu_textSelectSearch:
-	        	args = new Bundle();
-	    		args.putString("terms", bodyView.getText().subSequence(start, end).toString());
-	            mMainActivity.openSearch(args);
-	            return true;
+		        case R.id.menu_textSelectSearch:
+		            args = new Bundle();
+		            args.putString("terms", bodyView.getText().subSequence(start, end).toString());
+		            mMainActivity.openSearch(args);
+		            return true;
+
+				case R.id.menu_textSelectSearchGoogle:
+					try
+					{
+						String escapedQuery = URLEncoder.encode(bodyView.getText().subSequence(start, end).toString(), "UTF-8");
+						Uri uri = Uri.parse("http://www.google.com/#q=" + escapedQuery);
+						Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+						startActivity(intent);
+					}
+					catch (Exception e) { e.printStackTrace(); }
+					return true;
 	        }
 	        return false;
 	    }

@@ -5,4 +5,9 @@
           android:titleCondensed="Search"
           android:icon="@drawable/ic_action_action_search"
           android:title="Search" />
+    <item android:id="@+id/menu_textSelectSearchGoogle"
+          android:showAsAction="ifRoom"
+          android:titleCondensed="Search"
+          android:icon="@drawable/ic_action_action_search"
+          android:title="Search Google" />
 </menu>

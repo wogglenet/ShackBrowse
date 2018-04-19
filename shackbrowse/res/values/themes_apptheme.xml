@@ -3,38 +3,43 @@
 <!-- Generated with http://android-holo-colors.com -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="AppThemeDark" parent="AppTheme">
-        <item name="colorPrimary">@color/gnushackdark</item>
-        <item name="colorPrimaryDark">@color/gnushackdark</item>
-        <item name="colorAccent">@color/SBmed</item>
-        <item name="ptrHeaderBackground">@color/gnushackdark</item>
-        <item name="menuBGdrawable">@drawable/bg_menu_dark</item>
+    <style name="AppThemeGreen" parent="AppTheme">
+        <item name="colorPrimary">@color/SBdark</item>
+        <item name="colorPrimaryDark">@color/SBdark</item>
+        <item name="colorAccent">@color/SBlight</item>
+        <item name="ptrHeaderBackground">@color/SBdark</item>
+        <item name="menuBGdrawable">@drawable/bg_menu</item>
+        <item name="menuSelectorDrawable">@color/selector_appmenu</item>
+		<item name="colorHighlight">@color/gnushack</item>
     </style>
     <style name="AppThemePurple" parent="AppTheme">
         <item name="colorPrimary">@color/briefcasepurple</item>
         <item name="colorPrimaryDark">@color/briefcasepurple</item>
-        <item name="colorAccent">@color/SBmed</item>
+        <item name="colorAccent">@color/brightbriefcase</item>
         <item name="ptrHeaderBackground">@color/briefcasepurple</item>
         <item name="menuBGdrawable">@drawable/bg_menu_purple</item>
+        <item name="menuSelectorDrawable">@color/selector_appmenu_purple</item>
+        <item name="colorHighlight">@color/briefcasemedium</item>
     </style>
   <style name="AppTheme" parent="Theme.AppCompat">
       <!-- <item name="android:actionBarStyle">@style/SBActionBar</item> -->
       <item name="android:actionOverflowButtonStyle">@style/OverFlow</item>
       <!-- Set AppCompat’s color theming attrs -->
       <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
-
-      <item name="colorPrimary">@color/SBdark</item>
-      <item name="ptrHeaderBackground">@color/SBdark</item>
-      <item name="colorPrimaryDark">@color/SBdark</item>
-      <item name="colorAccent">@color/SBmed</item>
       <item name="windowActionBar">true</item>
       <item name="android:theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
-          <item name="android:textAppearanceMedium">@style/MyTextAppearance</item>
-
-
+      <item name="android:textAppearanceMedium">@style/MyTextAppearance</item>
       <item name="md_dark_theme">true</item>
 
-      <item name="menuBGdrawable">@drawable/bg_menu</item>
+      <item name="colorPrimary">@color/gnushackdark</item>
+      <item name="colorPrimaryDark">@color/gnushackdark</item>
+      <item name="colorAccent">@color/SBlight</item>
+      <item name="ptrHeaderBackground">@color/gnushackdark</item>
+      <item name="menuBGdrawable">@drawable/bg_menu_dark</item>
+      <item name="menuSelectorDrawable">@color/selector_appmenu</item>
+      <item name="colorHighlight">@color/gnushack</item>
+
+      <item name="android:navigationBarColor">@color/selected_postbg</item>
       <!-- colorPrimary is used for the default action bar background -->
 
 

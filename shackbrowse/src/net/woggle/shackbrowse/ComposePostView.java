@@ -948,24 +948,35 @@ public class ComposePostView extends AppCompatActivity {
 		_shackTagDialog.setCanceledOnTouchOutside(true);
 		_shackTagDialog.show();
 
-		if (andReselect)
+		// this is apparently no longer needed in new versions of android
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N_MR1)
 		{
-			_shackTagDialog.setOnDismissListener(new OnDismissListener(){
+			if (andReselect)
+			{
+				_shackTagDialog.setOnDismissListener(new OnDismissListener()
+				{
 
-				@Override
-				public void onDismiss(DialogInterface dialog) {
-					EditText et = (EditText)findViewById(R.id.textContent);
-					et.post(new Runnable(){
+					@Override
+					public void onDismiss(DialogInterface dialog)
+					{
+						EditText et = (EditText) findViewById(R.id.textContent);
+						et.post(new Runnable()
+						{
 
-						@Override
-						public void run() {
-							EditText et = (EditText)findViewById(R.id.textContent);
-							// completely retarded workaround to bring the contextual action mode actionbar back
-							et.setHapticFeedbackEnabled(false);
-							et.performLongClick();
-							et.setHapticFeedbackEnabled(true);
-						}});
-				}});
+							@Override
+							public void run()
+							{
+
+								EditText et = (EditText) findViewById(R.id.textContent);
+								// completely retarded workaround to bring the contextual action mode actionbar back
+								et.setHapticFeedbackEnabled(false);
+								et.performLongClick();
+								et.setHapticFeedbackEnabled(true);
+							}
+						});
+					}
+				});
+			}
 		}
 	}
 
@@ -1104,6 +1115,7 @@ public class ComposePostView extends AppCompatActivity {
 		        textToInsert = tags[which].substring(0, 2) + seltext + tags[which].substring(5);
 	        }
 	        edit.getText().replace(Math.min(start, end), Math.max(start, end), textToInsert, 0, textToInsert.length());
+	        System.out.println("EDIT: SETSELECTION" + start + " " + end + " " + (Math.min(start, end) + textToInsert.length()));
 	        edit.setSelection(Math.min(start, end), Math.min(start, end) + textToInsert.length());
         }
         else

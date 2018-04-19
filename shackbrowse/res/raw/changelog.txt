@@ -91,17 +91,22 @@ https://github.com/bradsh/ShackBrowse It is a mess. I am not a professional prog
 
 -->
 
-$ 5.6.3
-% v 5.6.3
-_ Apr 14, 2018
+$ 5.7.0
+% v 5.7.0
+_ Apr 19, 2018
+* New theme: briefcase purple
 * bradsh's darkshack now default, like it always should have been
 * Reply view highlighter button moved back to the overflow button
-* Dropdown of latest filter inputs on "Find on Page" in latestchatty thread list
+* Autocomplete for submitted searches and page filters
+* Redesigned the search page a little since search seems to be working although the man with the briefcase will not say if he fixed it
 * Wasted 5 hours of my life migrating to Firebase against my will, thanks Google
 * Fast scroll now defaults to off
 * Embedded links no longer hide by default
 * PicUploader asks confirmation
-* Renamed UI text all over the app
+* Renamed UI text all over the app and rearranged quick searches
+* "Search Google" added to post text selection options
+* Bug Fix: Text not reselecting for chain-combo shacktagging in post composer
+* Bug Fix: "Threads out of date by 3 or more hours" can now be swiped right, and should not have bugs anymore
 * Bug Fix: Android 4.x crash with links
 * Bug Fix: Frontpage articles not having clickable links
 

@@ -25,6 +25,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import net.woggle.CheckableLinearLayout;
+
 public class AppMenu extends ListFragment
 {
     
@@ -63,7 +65,7 @@ public class AppMenu extends ListFragment
     	_viewAvailable = false;
     	super.onDestroyView();
     }
-    
+
 	@Override
     public void onActivityCreated(Bundle savedInstanceState)
     {
@@ -72,11 +74,8 @@ public class AppMenu extends ListFragment
         // set list view up
         getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         getListView().setDividerHeight(0);
-        TypedArray a = getActivity().getTheme().obtainStyledAttributes(((MainActivity)getActivity()).mThemeResId, new int[] {R.attr.menuBGdrawable});
-        int attributeResourceId = a.getResourceId(0, 0);
-        //Drawable drawable = getResources().getDrawable(attributeResourceId);
-        a.recycle();
-        getListView().setBackgroundResource(attributeResourceId);
+
+        getListView().setBackgroundResource(MainActivity.getThemeResource(getActivity(), R.attr.menuBGdrawable));
         // getListView().setBackground(drawable);
         
         _prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -396,6 +395,9 @@ public class AppMenu extends ListFragment
 		            holder.smallText = (TextView)vi.findViewById(R.id.menuItemSmallText);
 	                holder.icon = (ImageView)vi.findViewById(R.id.menuItemIcon);
                     holder.settings = (ImageView)vi.findViewById(R.id.menuItemSettings);
+		            holder.menuItemCont = (CheckableLinearLayout)vi.findViewById(R.id.menuItemContainer);
+
+		            holder.menuItemCont.setBackgroundResource(MainActivity.getThemeResource(getActivity(),R.attr.menuSelectorDrawable));
 
 	                // zoom for preview.. needs to only be done ONCE, when holder is first created
 	                holder.text.setTextSize(TypedValue.COMPLEX_UNIT_PX, holder.text.getTextSize() * _zoom);
@@ -404,6 +406,8 @@ public class AppMenu extends ListFragment
                     holder.icon.setScaleY(_zoom);
                     holder.settings.setScaleX(_zoom);
                     holder.settings.setScaleY(_zoom);
+
+
 	                
 	                vi.setTag(holder);
 	            }
@@ -442,6 +446,7 @@ public class AppMenu extends ListFragment
 	            {
 	                holder = new ViewHolderMenuHeader();
 	                holder.text = (TextView)vi.findViewById(R.id.menuItemText);
+	                holder.ptl = vi.findViewById(R.id.postTopLine);
 	                holder.menuItemCont = (LinearLayout)vi.findViewById(R.id.menuItemContainer);
 	                
 	                // zoom for preview.. needs to only be done ONCE, when holder is first created
@@ -451,6 +456,8 @@ public class AppMenu extends ListFragment
 	                holder.menuItemCont.setClickable(false);
 	                holder.menuItemCont.setFocusable(false);
 	                holder.menuItemCont.setOnClickListener(null);
+
+	                holder.ptl.setBackgroundResource(MainActivity.getThemeResource(getActivity(),R.attr.colorAccent));
 	                
 	                vi.setTag(holder);
 	            }
@@ -464,6 +471,9 @@ public class AppMenu extends ListFragment
 	            {
 	                holder = new ViewHolderMenuHeader();
 	                holder.text = (TextView)vi.findViewById(R.id.text);
+		            holder.menuItemCont = (CheckableLinearLayout)vi.findViewById(R.id.searchItemContainer);
+
+		            holder.menuItemCont.setBackgroundResource(MainActivity.getThemeResource(getActivity(),R.attr.menuSelectorDrawable));
 	                
 	                // zoom for preview.. needs to only be done ONCE, when holder is first created
 	                holder.text.setTextSize(TypedValue.COMPLEX_UNIT_PX, holder.text.getTextSize() * _zoom);
@@ -485,11 +495,13 @@ public class AppMenu extends ListFragment
 			TextView text;
 	        TextView smallText;
             public ImageView settings;
+	        CheckableLinearLayout menuItemCont;
         }
         private class ViewHolderMenuHeader
         {
 			TextView text;
 			LinearLayout menuItemCont;
+	        View ptl;
         }
         
         
@@ -650,10 +662,16 @@ public class AppMenu extends ListFragment
 	
 	public void setupBasicSearchList(MenuAdapter _adapter) {
 		System.out.println("Setting up search list");
+
 		Bundle args = new Bundle();
 		args.putString("userNameField", "parentAuthor");
 		args.putString("parentAuthor", "");
 		_adapter.add(new MenuItems(new PremadeSearch(getResources().getString(R.string.search_repliestome), 0, args, true)));
+
+		args = new Bundle();
+		args.putString("userNameField", "terms");
+		args.putString("terms", "");
+		_adapter.add(new MenuItems(new PremadeSearch(getResources().getString(R.string.search_vanity), 0, args, true)));
 		
 		args = new Bundle();
 		args.putString("userNameField", "author");
@@ -665,24 +683,19 @@ public class AppMenu extends ListFragment
 		args.putString("author", "");
 		args.putString("tag", "lol");
 		args.putInt("days", 365);
-		_adapter.add(new MenuItems(new PremadeSearch("Posts I Made Which Were LOL'd", 1, args, true)));
+		_adapter.add(new MenuItems(new PremadeSearch("My Posts Which Were LOL'd", 1, args, true)));
 		
 		args = new Bundle();
         args.putString("tag", "lol");
 		args.putInt("days", 1);
-		_adapter.add(new MenuItems(new PremadeSearch("Today's Top LOLs", 1, args, false)));
+		_adapter.add(new MenuItems(new PremadeSearch("Top LOLs Today", 1, args, false)));
 		
-		args = new Bundle();
-		args.putString("userNameField", "terms");
-		args.putString("terms", "");
-		_adapter.add(new MenuItems(new PremadeSearch(getResources().getString(R.string.search_vanity), 0, args, true)));
+
 		
 		args = new Bundle();
 		args.putString("tag", "lol");
 		args.putInt("days", 30);
 		_adapter.add(new MenuItems(new PremadeSearch("Top LOLs This Month", 1, args, false)));
-		
-		_adapter.add(new MenuItems(new PremadeSearch("Posts I Drafted Replies To", 3, null, false)));
 		
 		args = new Bundle();
 		args.putString("userNameField", "tagger");
@@ -707,10 +720,14 @@ public class AppMenu extends ListFragment
 		args.putString("category", "informative");
 		_adapter.add(new MenuItems(new PremadeSearch("Informative Posts", 0, args, false)));
 
+		_adapter.add(new MenuItems(new PremadeSearch("Posts I Drafted Replies To", 3, null, false)));
+
+		/*
         args = new Bundle();
         args.putString("terms", "*");
 		args.putString("category", "nws");
         _adapter.add(new MenuItems(new PremadeSearch("NWS Posts", 0, args, false)));
+        */
         
         // saved searches
         if (_prefs.getString("savedSearchesJson", null) != null)
@@ -720,7 +737,7 @@ public class AppMenu extends ListFragment
 		    	
 		    	for (int i = 0; i < savedSearches.length(); i++)
 		    	{
-		    		_adapter.insert(new MenuItems(new PremadeSearch("Saved Search: " + savedSearches.getJSONObject(i).getString("name"), savedSearches.getJSONObject(i).getInt("typeIsLol"), SearchViewFragment.deserializeBundle(savedSearches.getJSONObject(i).getString("args")), false)), (_prefs.getBoolean("noteEnabled", false)) ? 10 : 9);
+		    		_adapter.insert(new MenuItems(new PremadeSearch("Saved: " + savedSearches.getJSONObject(i).getString("name"), savedSearches.getJSONObject(i).getInt("typeIsLol"), SearchViewFragment.deserializeBundle(savedSearches.getJSONObject(i).getString("args")), false)), (_prefs.getBoolean("noteEnabled", false)) ? 10 : 9);
 		    	}
 	        }
 	        catch (JSONException e)

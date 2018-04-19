@@ -42,6 +42,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
@@ -83,6 +84,7 @@ import android.view.ViewConfiguration;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
+import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -327,6 +329,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
             /** Called when a drawer has settled in a completely open state. */
             public void onDrawerOpened(View drawerView) {
+            	hideKeyboard();
                 setTitleContextually();
             }
         };
@@ -617,6 +620,14 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		_loadingSplash = new LoadingSplashFragment();
 	}
 
+	public static int getThemeResource(Activity mainactivity, int Rid)
+	{
+		TypedArray a = mainactivity.getTheme().obtainStyledAttributes(((MainActivity)mainactivity).mThemeResId, new int[] {Rid});
+		int attributeResourceId = a.getResourceId(0, 0);
+		//Drawable drawable = getResources().getDrawable(attributeResourceId);
+		a.recycle();
+		return attributeResourceId;
+	}
 	public static int themeApplicator(Activity context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String appTheme =  prefs.getString("appTheme", "1");
@@ -629,15 +640,15 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			lightBarColor = R.color.briefcasepurple;
 			darkBarColor = R.color.selected_postbg;
 		}
-        else if (appTheme.equals("1")) {
-            themeId = R.style.AppThemeDark;
-            lightBarColor = R.color.gnushackdark;
-	        darkBarColor = R.color.selected_postbg;
+        else if (appTheme.equals("0")) {
+            themeId = R.style.AppThemeGreen;
+			lightBarColor = R.color.SBdark;
+			darkBarColor = R.color.SBvdark;
         }
         else {
             themeId = R.style.AppTheme;
-            lightBarColor = R.color.SBdark;
-			darkBarColor = R.color.SBvdark;
+			lightBarColor = R.color.gnushackdark;
+			darkBarColor = R.color.selected_postbg;
         }
 
         context.setTheme(themeId);
@@ -954,7 +965,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
                 @Override
                 public boolean onQueryTextChange(String newText) {
                     if ((_threadView != null) && (_threadView._adapter != null)) {
-	                    if ((newText.length() == 0) && (_threadView._highlight.length() > 5))
+	                    if ((newText.length() == 0) && (_threadView._highlight.length() > 0))
 	                    {
 		                    new AutocompleteProvider(MainActivity.this, "Highlighter", 5).addItem(_threadView._highlight);
 	                    }
@@ -966,7 +977,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
                 @Override
                 public boolean onQueryTextSubmit(String query) {
-                	if (query.length() > 5)
+                	if (query.length() > 0)
 	                {
 		                new AutocompleteProvider(MainActivity.this, "Highlighter", 5).addItem(query);
 	                }
@@ -983,7 +994,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			public boolean onMenuItemActionCollapse(MenuItem arg0) {
 				if ((_threadView != null) && (_threadView._adapter != null))
 				{
-					if (_threadView._highlight.length() > 5)
+					if (_threadView._highlight.length() > 0)
 					{
 						new AutocompleteProvider(MainActivity.this, "Highlighter", 5).addItem(_threadView._highlight);
 					}
@@ -1004,60 +1015,44 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			}});
 
 
-	    
+		MenuItem menuRefreshItem = menu.findItem(R.id.menu_refreshThreads);
+		MenuItem menuNewpostItem = menu.findItem(R.id.menu_newPost);
 	    mFinder = menu.findItem(R.id.menu_findOnPage);
         MenuItemCompat.setOnActionExpandListener(mFinder, new MenuItemCompat.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionCollapse(MenuItem arg0) {
-                if ((_threadList != null) && (_threadList._adapter != null)) {
-                    _threadList._filtering = false;
-                    _threadList._adapter.getFilter().filter("");
-                }
+	            // save to list of suggestions
+	            if ((_threadList != null) && (_threadList._adapter != null))
+	            {
+		            _threadList.saveFinderQueryToList();
+	            }
+
+	            if ((_threadList != null) && (_threadList._adapter != null)) {
+		            _threadList._filtering = false;
+		            _threadList._adapter.getFilter().filter("");
+	            }
+	            // unhide other items
+	            menuRefreshItem.setVisible(true);
+	            menuNewpostItem.setVisible(true);
+	            supportInvalidateOptionsMenu();
                 return true;
             }
 
             @Override
             public boolean onMenuItemActionExpand(MenuItem arg0) {
-                if ((_threadList != null) && (_threadList._adapter != null)) {
-                    _threadList._filtering = true;
-                }
-                return true;
+	            if ((_threadList != null) && (_threadList._adapter != null))
+	            {
+		            _threadList._filtering = true;
+	            }
+
+	            // hide new post and refresh
+	            menuRefreshItem.setVisible(false);
+	            menuNewpostItem.setVisible(false);
+	            return true;
             }
         });
 
-		MenuItem menuRefreshItem = menu.findItem(R.id.menu_refreshThreads);
-		MenuItem menuNewpostItem = menu.findItem(R.id.menu_newPost);
-		MenuItem finder = menu.findItem(R.id.menu_findOnPage);
 	    final SearchView sview2 = (SearchView)mFinder.getActionView();
-
-		MenuItemCompat.setOnActionExpandListener(finder,
-				new MenuItemCompat.OnActionExpandListener() {
-					@Override
-					public boolean onMenuItemActionExpand(MenuItem menuItem) {
-						if ((_threadList != null) && (_threadList._adapter != null))
-						{
-							_threadList._filtering = true;
-						}
-
-						// hide new post and refresh
-						menuRefreshItem.setVisible(false);
-						menuNewpostItem.setVisible(false);
-						return true;
-					}
-					@Override
-					public boolean onMenuItemActionCollapse(MenuItem menuItem) {
-						// save to list of suggestions
-						if ((_threadList != null) && (_threadList._adapter != null))
-						{
-							_threadList.saveFinderQueryToList();
-						}
-						// unhide other items
-						menuRefreshItem.setVisible(true);
-						menuNewpostItem.setVisible(true);
-						supportInvalidateOptionsMenu();
-						return true;
-					}
-				});
 	    sview2.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
 
 			@Override
@@ -1066,7 +1061,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 				{
 					String query = (((ThreadListFragment.ThreadLoadingAdapter.ThreadFilter)_threadList._adapter.getFilter()).lastFilterString);
 
-					if ((newText.length() == 0) && (query.length() > 5))
+					if (newText.length() == 0)
 					{
 						_threadList.saveFinderQueryToList();
 					}
@@ -1119,13 +1114,31 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         menu.findItem(R.id.menu_findOnPage).setVisible(showTListItems);
 
         // hack to do autocomplete sview2
-	    int autoCompleteTextViewID = getResources().getIdentifier("android:id/search_src_text", null, null);
-	    AutoCompleteTextView searchAutoCompleteTextView = (AutoCompleteTextView) menu.findItem(R.id.menu_findOnPage).getActionView().findViewById(autoCompleteTextViewID);
-	    searchAutoCompleteTextView.setAdapter(new AutocompleteProvider(MainActivity.this,"Finder",5).getSuggestionAdapter());
+	    AutoCompleteTextView searchAutoCompleteTextView = (AutoCompleteTextView) menu.findItem(R.id.menu_findOnPage).getActionView().findViewById(android.support.v7.appcompat.R.id.search_src_text);
+	    searchAutoCompleteTextView.setAdapter(new AutocompleteProvider(MainActivity.this, "Finder", 5).getSuggestionAdapter());
+	    searchAutoCompleteTextView.setThreshold(0);
+
+	    searchAutoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+	    {
+		    @Override
+		    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l)
+		    {
+			    searchAutoCompleteTextView.setText(searchAutoCompleteTextView.getAdapter().getItem(position).toString());
+		    }
+	    });
 
 	    // hack to do autocomplete sview1
-	    AutoCompleteTextView searchAutoCompleteTextView2 = (AutoCompleteTextView) menu.findItem(R.id.menu_findInThread).getActionView().findViewById(autoCompleteTextViewID);
+	    AutoCompleteTextView searchAutoCompleteTextView2 = (AutoCompleteTextView) menu.findItem(R.id.menu_findInThread).getActionView().findViewById(android.support.v7.appcompat.R.id.search_src_text);
 	    searchAutoCompleteTextView2.setAdapter(new AutocompleteProvider(MainActivity.this,"Highlighter",5).getSuggestionAdapter());
+	    searchAutoCompleteTextView2.setThreshold(0);
+	    searchAutoCompleteTextView2.setOnItemClickListener(new AdapterView.OnItemClickListener()
+	    {
+		    @Override
+		    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l)
+		    {
+			    searchAutoCompleteTextView2.setText(searchAutoCompleteTextView2.getAdapter().getItem(position).toString());
+		    }
+	    });
 
 
 	    if ((!showTListItems) && (mFinder.isActionViewExpanded()))
@@ -1136,8 +1149,8 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         menu.findItem(R.id.menu_restoreCollapsed).setVisible(showTListItems);
         
         menu.findItem(R.id.menu_searchGo).setVisible(showSearchItems);
-        menu.findItem(R.id.menu_searchDel).setVisible(showSearchItems);
-        menu.findItem(R.id.menu_searchSave).setVisible(showSearchItems);
+        // menu.findItem(R.id.menu_searchDel).setVisible(showSearchItems);
+        // menu.findItem(R.id.menu_searchSave).setVisible(showSearchItems);
         
         menu.findItem(R.id.menu_replyMsg).setVisible(showMessageItems && (_threadView._messageId != 0) && (dualPane || areSlidersOpen));
         menu.findItem(R.id.menu_newMsg).setVisible(showMessageItems);

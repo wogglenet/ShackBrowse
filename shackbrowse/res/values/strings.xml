@@ -17,8 +17,8 @@
     <string name="modfilter">Check Your Filters</string>
     <string name="cloudopt">Cloud Sync Options</string>
     <string name="search">Search</string>
-    <string name="searchdel">Delete Custom Searches</string>
-    <string name="searchsave">Save Search</string>
+    <string name="searchdel">Edit Saved Searches</string>
+    <string name="searchsave">Save This Search</string>
     <string name="editSearch">Edit Search</string>
     <string name="retrySearch">Refresh Results</string>
     
@@ -56,7 +56,8 @@
     <string name="browserShare">Share URL</string>
     <string name="browserCopyURL">Copy URL</string>
     
-    <string name="searchTypeText">Type:</string>
+    <string name="searchTypePosts">Search for Posts</string>
+    <string name="searchTypeLols">Search for [LOL]s</string>
     
     <string name="unfav">Un-Favorite</string>
     <string name="fav">Favorite</string>

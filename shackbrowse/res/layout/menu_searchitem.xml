@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <net.woggle.CheckableLinearLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
-  android:id="@+id/messageContainer"
+  android:id="@+id/searchItemContainer"
   android:layout_width="fill_parent"
   android:layout_height="wrap_content"
   android:paddingLeft="3dip"
   android:paddingRight="0dip"
   android:orientation="vertical"
-  android:background="@color/selector_appmenu"
   >
 
   <LinearLayout

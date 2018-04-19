@@ -50,6 +50,7 @@ import android.os.Handler;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.app.ListFragment;
+import android.support.design.widget.Snackbar;
 import android.text.InputType;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -184,6 +185,20 @@ public class ThreadListFragment extends ListFragment
 			*/
 					if (SNKVERBOSE) System.out.println("SNK: OPEN ONRESUME REFRESH");
 					_lastResumeTimeAndPrompt = System.currentTimeMillis();
+
+					Snackbar
+							.make(getListView(), "Your threads are out of date by 3 or more hours", Snackbar.LENGTH_INDEFINITE)
+							.setAction("Refresh", new View.OnClickListener()
+							{
+								@Override
+								public void onClick(View view)
+								{
+									refreshThreads();
+									closeSnackBar(true);
+								}
+							})
+							.show(); // Don’t forget to show!
+					/*
 					openSnackBar("Your threads are out of date by 3 or more hours", "Refresh", new View.OnClickListener()
 					{
 						@Override
@@ -193,6 +208,7 @@ public class ThreadListFragment extends ListFragment
 							closeSnackBar(true);
 						}
 					});
+					*/
 
 				}
 			}
@@ -498,6 +514,16 @@ public class ThreadListFragment extends ListFragment
 	public void openUndoBar(final Thread t, final int pos)
 	{
 		if (SNKVERBOSE) System.out.println("SNK: OPEN TCOLAPSE");
+		Snackbar.make(getListView(),t.getUserName() + " Thread Collapsed",Snackbar.LENGTH_LONG)
+				.setAction("Undo", new View.OnClickListener()
+				{
+					@Override
+					public void onClick(View view)
+					{
+						undoCollapse(t, pos);
+					}
+				}).show();
+		/*
 		openSnackBar(t.getUserName() + " Thread Collapsed", "Undo", new View.OnClickListener()
 		{
 			@Override
@@ -506,6 +532,7 @@ public class ThreadListFragment extends ListFragment
 				undoCollapse(t, pos);
 			}
 		});
+		*/
 	}
 	
 	class SnackBarQueueItem
@@ -617,6 +644,7 @@ public class ThreadListFragment extends ListFragment
 			    });
 		    }
     	}
+    	else throw new RuntimeException();
     }
     protected void toggleFavThread(Thread thread) {
     	if (((MainActivity)getActivity()).mOffline.toggleThread(thread.getThreadId(), thread.getPosted(), thread.getJson()))
@@ -2375,7 +2403,7 @@ public class ThreadListFragment extends ListFragment
 	public void saveFinderQueryToList()
 	{
 		String query = (((ThreadListFragment.ThreadLoadingAdapter.ThreadFilter)_adapter.getFilter()).lastFilterString);
-		if (query.length() > 0)
+		if (query != null && query.length() > 0)
 		{
 			new AutocompleteProvider(getActivity(), "Finder", 5).addItem(query);
 		}

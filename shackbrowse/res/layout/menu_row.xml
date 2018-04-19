@@ -6,7 +6,6 @@
   android:layout_height="wrap_content"
   android:paddingLeft="3dip"
   android:paddingRight="0dip"
-  android:background="@color/selector_appmenu"
   android:orientation="vertical"
   >
   <LinearLayout

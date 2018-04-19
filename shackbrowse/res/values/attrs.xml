@@ -2,6 +2,8 @@
 <resources>
 
     <attr name="menuBGdrawable" format="reference" />
+    <attr name="menuSelectorDrawable" format="reference" />
+    <attr name="colorHighlight" format="reference" />
 
 
     <declare-styleable name="modtype">

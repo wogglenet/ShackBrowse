@@ -59,6 +59,7 @@ public class LoadingSplashFragment extends Fragment {
                 statInc(v.getContext(), "ClickedOnLoadingSplashScreen");
             }
         });
+        getActivity().findViewById(R.id.splash_tagline).setBackgroundResource(MainActivity.getThemeResource(getActivity(),R.attr.colorHighlight));
     }
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {

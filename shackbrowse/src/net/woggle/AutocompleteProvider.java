@@ -17,6 +17,7 @@ public class AutocompleteProvider
 	private String mId;
 	private int mLimit;
 	private JSONArray jArray;
+	private static final int MIN_CHAR_LENGTH = 3;
 
 	public AutocompleteProvider (Context context, String id, int limit)
 	{
@@ -55,7 +56,7 @@ public class AutocompleteProvider
 	public JSONArray getJSONArray() { return jArray; }
 	public void addItem (String item)
 	{
-		if (item.length() > 0)
+		if (item.length() >= MIN_CHAR_LENGTH)
 		{
 			try
 			{

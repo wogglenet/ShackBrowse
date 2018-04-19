@@ -372,7 +372,7 @@ public class NotificationFragment extends ListFragment
             if (holder == null)
             {
                 holder = new ViewHolder();
-                holder.container = (CheckableLinearLayout)convertView.findViewById(R.id.messageContainer);
+                holder.container = (CheckableLinearLayout)convertView.findViewById(R.id.notificationContainer);
                 holder.userName = (TextView)convertView.findViewById(R.id.textUserName);
                 holder.content = (TextView)convertView.findViewById(R.id.textContent);
                 holder.posted = (TextView)convertView.findViewById(R.id.textPostedTime);
