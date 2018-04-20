@@ -119,6 +119,7 @@ public class NetworkNotificationServers
                  {
 	                 if (params[0].equals("reg"))
 	                 {
+	                 	System.out.println("FCM ID: " + getRegistrationId());
 	                	if (getRegistrationId().length() > 0)
 		                {
                             // "enableDonatorFeatures"

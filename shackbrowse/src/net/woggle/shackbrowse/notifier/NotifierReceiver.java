@@ -48,6 +48,7 @@ public class NotifierReceiver extends FirebaseMessagingService
 	public void onMessageReceived(RemoteMessage message){
 
 		Log.i("SBNOTIFIER", "NotifierReceiver invoked, starting service");
+		System.out.println("SHACK BROWSE FCM MSG RECEIVE");
 		Context context = getApplicationContext();
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);

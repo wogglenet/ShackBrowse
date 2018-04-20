@@ -232,9 +232,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 		getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
-		// this is for upgraders, a check to upgrade donator prefs
-		upgradeDonatorPreferences();
-				
 		// set up preferences
         reloadPrefs();
 
@@ -275,9 +272,9 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			}
 		}
 
-		// TODO: enable or disable based on preferences for widget and for SM autocheck
+		// SM autocheck
 		long updateInterval = Long.parseLong(_prefs.getString("PeriodicNetworkServicePeriod", "10800")); // DEFAULT 3 HR 10800L,  5 minutes 50-100mb, 10 minutes 25-50mb, 30mins 10-20mb, 1 hr 5-10mb, 3 hr 1-3mb, 6hr .5-1.5mb, 12hr .25-1mb
-		PeriodicNetworkService.scheduleJob(this, updateInterval);
+		PeriodicNetworkService.scheduleJob(this, updateInterval); // scheduleJob also checks preferences
 
 		// notification database pruning
 		NotificationsDB ndb = new NotificationsDB(this);
@@ -1024,6 +1021,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	            // save to list of suggestions
 	            if ((_threadList != null) && (_threadList._adapter != null))
 	            {
+		            System.out.println("AUTOCOMP: SAVE OMIAC");
 		            _threadList.saveFinderQueryToList();
 	            }
 
@@ -1057,12 +1055,14 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 			@Override
 			public boolean onQueryTextChange(String newText) {
+				System.out.println("AUTOCOMP: OQTC: " + newText);
 				if ((_threadList != null) && (_threadList._adapter != null))
 				{
 					String query = (((ThreadListFragment.ThreadLoadingAdapter.ThreadFilter)_threadList._adapter.getFilter()).lastFilterString);
 
 					if (newText.length() == 0)
 					{
+						System.out.println("AUTOCOMP: SAVE OQTC");
 						_threadList.saveFinderQueryToList();
 					}
 					_threadList._adapter.getFilter().filter(newText);
@@ -1072,7 +1072,12 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 			@Override
 			public boolean onQueryTextSubmit(String query) {
-				new AutocompleteProvider(MainActivity.this, "Finder", 5).addItem(query);
+				System.out.println("AUTOCOMP: SAVE OQS");
+				_threadList.saveFinderQueryToList();
+
+				// used to hide the keyboard
+				sview.setVisibility(View.INVISIBLE);
+				sview.setVisibility(View.VISIBLE);
 				return false;
 			}});
 
@@ -2941,24 +2946,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	            output.close();
 	        }
 	    }
-	}
-	
-	
-	private void upgradeDonatorPreferences() {
-		// check for old style preferences used in shackbrowse v2
-		if (
-				(_prefs.getBoolean("enablePushNotificationsPref", false)) ||
-				(_prefs.getBoolean("displayLolButton", false)) ||
-				(_prefs.getBoolean("displayNWSSearch", false)) ||
-				(_prefs.getBoolean("enableSaveSearch", false)) ||
-				(_prefs.getBoolean("enableKeywordFilter", false)) ||
-				(_prefs.getString("limeUsers", "").contains(_prefs.getString("userName", "")) && !_prefs.getString("userName", "").equals(""))
-			)
-		{
-			Editor edit = _prefs.edit();
-			edit.putBoolean("enableDonatorFeatures", true);
-			edit.apply();
-		}
 	}
 	
 	protected void onSaveInstanceState(Bundle save) {

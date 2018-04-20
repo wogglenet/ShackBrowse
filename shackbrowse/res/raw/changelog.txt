@@ -51,22 +51,22 @@ e[*]e Bug Fix: Popup browser now opens current page when external browser opened
 
 Source is available by request, although it is a nightmare. b{Questions}b, g{comments}g, r{criticisms}r, and y{feature requests}y go below.
 
-g{? Shack Browse}g s[y{?Early morning bug fixes!}y]s
+g{❁ Shack Browse}g s[y{☔Rain or ☃snow ShackBrowse gets made!}y]s
 
 n[q[q[What's New]q]q]n
 p[v 5.6.2]p
-s[? Link to woggle online cloud data viewer https://woggle.net/notifications in notification area
-? Can now delete all other notification devices in notification area
-? Updated some buttons and icons
-? Mod tools removed. Don't think anyone used them.
-? Bug Fix: Back/menu button in Shack Messages
-? Bug Fix: Mute notification button not zooming with text zoom
-? Bug Fix: Infinitely zooming text on rotation of post composer
-? Bug Fix: Post composer buttons not zooming
-? Bug Fix: Thread highlighter not highlighting in expanded posts
-? Bug Fix: lol tag button was appearing in SMs]s
+s[⭐ Link to woggle online cloud data viewer https://woggle.net/notifications in notification area
+⭐ Can now delete all other notification devices in notification area
+⭐ Updated some buttons and icons
+⭐ Mod tools removed. Don't think anyone used them.
+✅ Bug Fix: Back/menu button in Shack Messages
+✅ Bug Fix: Mute notification button not zooming with text zoom
+✅ Bug Fix: Infinitely zooming text on rotation of post composer
+✅ Bug Fix: Post composer buttons not zooming
+✅ Bug Fix: Thread highlighter not highlighting in expanded posts
+✅ Bug Fix: lol tag button was appearing in SMs]s
 
-Source is available by request, although it is a nightmare. b{?Questions}b, g{?comments}g, r{?criticisms}r, and y{?feature requests}y go below.
+Source is available by request, although it is a nightmare. b{☝Questions}b, g{✍comments}g, r{⚡criticisms}r, and y{✨feature requests}y go below.
 
 ------
 
@@ -90,6 +90,11 @@ l[Can I see the source?]l
 https://github.com/bradsh/ShackBrowse It is a mess. I am not a professional programmer nor do I have any degrees in computer science. I just wanted a shack app so I learned to program.
 
 -->
+
+$ 5.7.1
+% v 5.7.1
+_ Apr 20, 2018
+* Bug Fix: Notifications not working
 
 $ 5.7.0
 % v 5.7.0

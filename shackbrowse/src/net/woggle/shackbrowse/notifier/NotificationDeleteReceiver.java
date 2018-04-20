@@ -12,8 +12,11 @@ public class NotificationDeleteReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
     	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         Editor edit = prefs.edit();
-        edit.putInt(intent.getExtras().getString("key"), 0);
-        edit.commit();
+        if (intent != null && intent.getExtras() != null)
+        {
+            edit.putInt(intent.getExtras().getString("key"), 0);
+            edit.commit();
+        }
         System.out.println("SWIPED NOTIFICATION: deleted prefkey " +intent.getExtras().getString("key"));
     }
 }

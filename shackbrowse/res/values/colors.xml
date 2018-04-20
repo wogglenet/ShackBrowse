@@ -36,7 +36,7 @@
     <color name="post_divider_color">#00000000</color>
     <color name="transparent">#00000000</color>
     <color name="holoHighlight">#0DBFFD</color>
-    <color name="clickHighlight">#385460</color>
+    <color name="clickHighlight">#555555</color>
     <color name="linkColor">#B0B0B0</color>
     
     <color name="buttonBarBg">#303030</color>

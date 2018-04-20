@@ -1987,14 +1987,14 @@ public class ThreadViewFragment extends ListFragment
 
                 holder.expLolCounts = (TextView)convertView.findViewById(R.id.textExpPostLolCounts);
 
-                holder.buttonOther = (ImageButton)convertView.findViewById(R.id.buttonPostOpt);
-	            holder.buttonSharePost = (ImageButton)convertView.findViewById(R.id.buttonSharePost);
-                holder.buttonReply = (ImageButton)convertView.findViewById(R.id.buttonReplyPost);
-                holder.buttonAllImages = (ImageButton)convertView.findViewById(R.id.buttonOpenAllImages);
-                holder.buttonLol = (ImageButton)convertView.findViewById(R.id.buttonPostLOL);
+                holder.buttonOther = convertView.findViewById(R.id.buttonPostOpt);
+	            holder.buttonSharePost = convertView.findViewById(R.id.buttonSharePost);
+                holder.buttonReply = convertView.findViewById(R.id.buttonReplyPost);
+                holder.buttonAllImages = convertView.findViewById(R.id.buttonOpenAllImages);
+                holder.buttonLol = convertView.findViewById(R.id.buttonPostLOL);
 
-	            holder.buttonNoteEnabled = (ImageButton)convertView.findViewById(R.id.buttonNotificationEnabled);
-	            holder.buttonNoteMuted = (ImageButton)convertView.findViewById(R.id.buttonNotificationMuted);
+	            holder.buttonNoteEnabled = convertView.findViewById(R.id.buttonNotificationEnabled);
+	            holder.buttonNoteMuted = convertView.findViewById(R.id.buttonNotificationMuted);
 
                 // zoom for expanded
                 // holder.content.setTextSize(TypedValue.COMPLEX_UNIT_PX, holder.content.getTextSize() * _zoom);
