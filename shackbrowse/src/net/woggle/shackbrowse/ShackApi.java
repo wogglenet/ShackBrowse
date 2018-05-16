@@ -1554,7 +1554,10 @@ public class ShackApi
             	// convert time to local timezone
                 Long postedTime = convertTimeMsg(date);
 
-            	msg_items.add(new Message(iid, user, subject, mContent, msgs[i].substring(start + startStr.length(), end), postedTime, read));
+	            if (!inbox)
+	                msg_items.add(new Message(iid, "To: " + user, subject, mContent, msgs[i].substring(start + startStr.length(), end), postedTime, read));
+	            else
+            	    msg_items.add(new Message(iid, user, subject, mContent, msgs[i].substring(start + startStr.length(), end), postedTime, read));
             	
             }
             return msg_items;

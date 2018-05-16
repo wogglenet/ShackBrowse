@@ -448,6 +448,7 @@ public class ComposePostView extends AppCompatActivity {
         		{
 	        		EditText edit = (EditText)findViewById(R.id.textContent);
 	        		edit.setText("\r\n\r\nPrevious message from " + author + ": \r\n" + postContent);
+	        		edit.setSelection(0,0);
         		}
         		setTitle("Msg to " + author);
         	}
@@ -854,7 +855,13 @@ public class ComposePostView extends AppCompatActivity {
 				edit.setSelection(edit.getText().length());
 			}
 		}
-		
+	    if (_messageMode)
+		    edit.post(new Runnable() {
+			    @Override
+			    public void run() {
+				    edit.setSelection(0);
+			    }
+		    });
 	}
 	
 	void appendText(String text) { appendText(text, true); }

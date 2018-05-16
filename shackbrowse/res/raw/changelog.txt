@@ -23,7 +23,6 @@ TODO
 * TODO SUPPORT NOTIFICATION CHANNELS FOR API 26
 * TODO NO NETWORK ICON
 * QUOTES FROM TEXT SELECTION
-* SEARCH GOOGLE BY TEXT SELECTION
 * WHITE MODE
 * WIDGET FOR TOP POSTS
 * Easy notification reply
@@ -90,6 +89,12 @@ l[Can I see the source?]l
 https://github.com/bradsh/ShackBrowse It is a mess. I am not a professional programmer nor do I have any degrees in computer science. I just wanted a shack app so I learned to program.
 
 -->
+
+$ 5.7.2
+% v 5.7.2
+_ May 16, 2018
+* Bug Fix: Confusing usernames in Shackmessage Sent Outbox
+* Bug Fix: Replying to shackmessages puts text cursor after message chain text on Oreo devices
 
 $ 5.7.1
 % v 5.7.1
