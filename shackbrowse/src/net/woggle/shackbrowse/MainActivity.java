@@ -116,6 +116,7 @@ import static net.woggle.shackbrowse.StatsFragment.statInc;
 public class MainActivity extends AppCompatActivity implements ColorChooserDialog.ColorCallback
 {
 	static final String PQPSERVICESUCCESS = "net.woggle.PQPServiceSuccess";
+	static final String CLICKLINK = "net.woggle.ClickLink";
     FrameLayout mFrame;
     OfflineThread mOffline;
     
@@ -160,6 +161,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	private MenuItem mHighlighter;
 	private int onPostResume = OnPostResume.DO_NOTHING;
 	private PQPServiceReceiver mPQPServiceReceiver;
+	private ClickLinkReceiver mClickLinkReceiver;
 	private NetworkConnectivityReceiver mNetworkConnectivityReceiver;
     public boolean mSOPBFPTRL;
     public FrontpageBrowserFragment _articleViewer;
@@ -1367,6 +1369,9 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 		// unregister receiver for pqpservice
 		LocalBroadcastManager.getInstance(this).unregisterReceiver(mPQPServiceReceiver);
+
+		// unregister receiver for clicklink
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(mClickLinkReceiver);
 		
 		// unreg ncr
         try {
@@ -1404,6 +1409,13 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         LocalBroadcastManager.getInstance(this).registerReceiver(
 				mPQPServiceReceiver,
 				filter);
+
+		// register to receive information from CustomURLSpan
+		IntentFilter filter2 = new IntentFilter(CLICKLINK);
+		mClickLinkReceiver = new ClickLinkReceiver();
+		LocalBroadcastManager.getInstance(this).registerReceiver(
+				mClickLinkReceiver,
+				filter2);
         
         // connectivity changes
         mNetworkConnectivityReceiver = new NetworkConnectivityReceiver();
@@ -1579,7 +1591,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
         ThreadViewFragment view = _threadView;
 
-        if ((!view.isPostIdInAdapter(threadId) || expired) || (view._messageId != messageId))
+        if ((!view.isPostIdInAdapter(threadId) || expired) || (view._messageId != messageId) && view.isAdded())
         {
 	        // replace threadview with a new one? maybe fix bugs?
 	        /*
@@ -3489,6 +3501,97 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         	}
         }
     }
+
+
+    // this is a workaround for a crash because i couldnt get an activity from a view 100% in customurlspan
+	public class ClickLinkReceiver extends BroadcastReceiver{
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			Bundle ext = intent.getExtras();
+			System.out.println("CLICLINKWORKS");
+			String href = ext.getString("URL");
+
+			MainActivity mAct = MainActivity.this;
+
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mAct);
+			statInc(mAct, "ClickedLink");
+			int _useBrowser = Integer.parseInt(prefs.getString("usePopupBrowser2", "1"));
+
+			// see if we can address URL internally
+			int newId = 0;
+			if (
+					href.contains("://www.shacknews.com/chatty?id=")
+							|| href.contains("://shacknews.com/chatty?id=")
+							|| href.contains("://www.shacknews.com/chatty/laryn.x?id=")
+							|| href.contains("://shacknews.com/chatty/laryn.x?id=")
+							|| href.contains("://www.shacknews.com/laryn.x?id=")
+							|| href.contains("://shacknews.com/laryn.x?id=")
+							|| href.contains("://www.shacknews.com/chatty/ja.zz?id=")
+							|| href.contains("://shacknews.com/chatty/ja.zz?id=")
+							|| href.contains("://www.shacknews.com/chatty/funk.y?id=")
+							|| href.contains("://shacknews.com/chatty/funk.y?id=")
+							|| (href.contains("shacknews.com/article") && ((_useBrowser == 1) || (_useBrowser == 0)))
+					)
+			{
+				if (href.contains("shacknews.com/article")) // simple removal of article viewer
+				{
+					if (mAct.getSliderOpen() && !mAct.getDualPane())
+					{
+						mAct._tviewFrame.closeLayer(true);
+					} else if (mAct._sresFrame.isOpened())
+					{
+						mAct._sresFrame.closeLayer(true);
+					}
+					mAct.openInArticleViewer(href);
+					return;
+				} else
+				{
+					Uri uri = Uri.parse(href);
+					try
+					{
+						newId = Integer.valueOf(uri.getQueryParameter("id").trim());
+					} catch (NumberFormatException e)
+					{
+						Toast.makeText(mAct, "Invalid URL, could not open thread internally", Toast.LENGTH_SHORT).show();
+					}
+				}
+			}
+
+			// fix youtube app not handling their own youtu.be url shortener
+			if (href.contains("youtu.be"))
+			{
+				String[] splt = href.split("youtu.be/");
+				if (splt.length > 1)
+				{
+					href = "http://www.youtube.com/watch?v=" + splt[1];
+				}
+			}
+
+			if (newId > 0)
+			{
+				System.out.println("opening new thread: " + newId);
+
+				int currentPostId = (mAct)._threadView._adapter.getItem(mAct._threadView._lastExpanded).getPostId();
+				mAct.addToThreadIdBackStack(currentPostId);
+				mAct.openThreadViewAndSelectWithBackStack(newId);
+
+			} else if (((_useBrowser == 0) && (!href.contains("play.google"))) || ((_useBrowser == 1) && (!href.contains("youtu.be")) && (!href.contains("youtube")) && (!href.contains("twitter")) && (!href.contains("play.google"))) || ((_useBrowser == 2) && (PopupBrowserFragment.isImage(href))))
+			{
+				mAct.openBrowser(href);
+
+			} else
+			{
+				Uri u = Uri.parse(href);
+				if (u.getScheme() == null)
+				{
+					u = Uri.parse("http://" + href);
+				}
+				Intent i = new Intent(Intent.ACTION_VIEW, u);
+				mAct.startActivity(i);
+			}
+		}
+	}
 
 	public class NetworkConnectivityReceiver extends BroadcastReceiver {
 

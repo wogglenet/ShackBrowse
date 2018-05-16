@@ -2312,7 +2312,7 @@ public class ThreadViewFragment extends ListFragment
         	for (CustomURLSpan target : list)
         	{
         		Drawable iSpan = mMainActivity.getResources().getDrawable(R.drawable.ic_action_action_launch);
-        		iSpan.setBounds(0, 0, t.getLineHeight(),t.getLineHeight());
+        		iSpan.setBounds(0,0, (int)(t.getLineHeight()*1.35f),(int)(t.getLineHeight()*1.35f));
         		builder.insert(text.getSpanEnd(target), " o");
 				builder.setSpan(new ImageSpan(iSpan, DynamicDrawableSpan.ALIGN_BOTTOM) , text.getSpanEnd(target) +1, text.getSpanEnd(target)+2,   Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 				final String href = target.getURL();

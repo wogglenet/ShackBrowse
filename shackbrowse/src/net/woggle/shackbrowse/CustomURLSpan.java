@@ -1,29 +1,17 @@
 package net.woggle.shackbrowse;
 
-import net.woggle.CustomClickableSpan;
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
-import android.content.ContextWrapper;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.Uri;
-import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentActivity;
-import android.text.ClipboardManager;
-import android.view.HapticFeedbackConstants;
+import android.support.v4.content.LocalBroadcastManager;
+import android.text.style.ClickableSpan;
 import android.view.View;
-import android.view.View.OnLongClickListener;
-import android.webkit.WebView;
-import android.widget.Toast;
 
 import java.util.regex.Pattern;
 
 import static net.woggle.shackbrowse.StatsFragment.statInc;
 
-public class CustomURLSpan extends CustomClickableSpan implements OnLongClickListener {
+public class CustomURLSpan extends ClickableSpan
+{
 	private String href;
 
 
@@ -52,7 +40,7 @@ public class CustomURLSpan extends CustomClickableSpan implements OnLongClickLis
 	 * DEPRECATED 
 	 * LONGCLICK NOT ACTUALLY USED
 	 * 
-	 */
+
 	@Override
 	public boolean onLongClick (View v)
 	{
@@ -111,10 +99,18 @@ public class CustomURLSpan extends CustomClickableSpan implements OnLongClickLis
 		}
 		return null;
 	}
-
+*/
 	@Override
 	public void onClick (View v) 
 	{
+
+		Intent localIntent = new Intent(MainActivity.CLICKLINK)
+				// Puts the status into the Intent
+				.putExtra("URL", href);
+		// Broadcasts the Intent to receivers in this app.
+		LocalBroadcastManager.getInstance(v.getContext().getApplicationContext()).sendBroadcast(localIntent);
+
+/*
 		Activity test = getActivityFromView(v);
 
 		if (test instanceof MainActivity)
@@ -198,5 +194,6 @@ public class CustomURLSpan extends CustomClickableSpan implements OnLongClickLis
 				mAct.startActivity(i);
 			}
 		}
+		*/
 	}
 }

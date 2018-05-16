@@ -93,8 +93,10 @@ https://github.com/bradsh/ShackBrowse It is a mess. I am not a professional prog
 $ 5.7.2
 % v 5.7.2
 _ May 16, 2018
+* Slightly increased size of link options button at end of links
 * Bug Fix: Confusing usernames in Shackmessage Sent Outbox
 * Bug Fix: Replying to shackmessages puts text cursor after message chain text on Oreo devices
+* Bug Fix: Attempt at fixing crash on link click
 
 $ 5.7.1
 % v 5.7.1
