@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
       package="net.woggle.shackbrowse"
-      android:versionCode="433"
-      android:versionName="5.7.2">
+      android:versionCode="434"
+      android:versionName="5.8.0">
 <uses-permission android:name="android.permission.INTERNET"></uses-permission>
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -11,9 +11,8 @@
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 <uses-permission android:name="android.permission.VIBRATE" />
-<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /> <!-- used for periodic network service -->
-
-<uses-feature android:name="android.hardware.camera" android:required="false" />
+<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /><!-- used for periodic network service -->
+<uses-permission android:name="android.permission.CAMERA" />
 
 
 <uses-sdk android:minSdkVersion="17" android:targetSdkVersion="25"></uses-sdk>

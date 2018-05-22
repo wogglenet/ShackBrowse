@@ -1,20 +1,20 @@
 package net.woggle.shackbrowse;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.woggle.EditTextSelectionSaved;
-import net.woggle.shackbrowse.legacy.LegacyFactory;
+import net.woggle.EditTextSelectionSavedAllowImage;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -29,7 +29,9 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -38,7 +40,9 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.renderscript.ScriptGroup;
 import android.support.annotation.NonNull;
+import android.support.v13.view.inputmethod.InputContentInfoCompat;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
@@ -61,12 +65,14 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.ScaleAnimation;
+import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
-import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -88,7 +94,8 @@ public class ComposePostView extends AppCompatActivity {
 	
 	final String[] _tagLabels = { "r{red}r", "g{green}g", "b{blue}b", "y{yellow}y", "e[olive]e", "l[lime]l", "n[orange]n", "p[multisync]p", "/[italics]/", "b[bold]b",  "q[quote]q",  "s[small]s",  "_[underline]_",   "-[strike]-",  "spoilo[er]o"};
     final String[] _tags = {      "r{...}r",  "g{...}g",   "b{...}b",  "y{...}y",  "e[...]e",  "l[...]l",  "n[...]n",	  "p[...]p",      "/[...]/",         "b[...]b",   "q[...]q",     "s[...]s",   "_[...]_",     "-[...]-",	   "o[...]o"};
-	
+	final String mEmoji = "\u2600\u2601\u2602\u2603\u2604\u2605\u2606\u2607\u2608\u2609\u260e\u2614\u2615\u2616\u2617\u2618\u261c\u261d\u261e\u261f\u2620\u2621\u2622\u2623\u2639\u263a\u263b\u2665\u2666\u2698\u26a0\u26a1\u26bd\u26be\u26c7\u26c8\u26c4\u26c5\u26cf\u26d4\u26e4\u26e5\u26e6\u26e7\u26f0\u26f1\u26f2\u26f3\u26f4\u26f5\u26f7\u26f8\u26f9\u26fa\u2701\u2702\u2703\u2704\u2705\u2706\u2707\u2708\u2709\u270a\u270b\u270c\u270d\u270e\u270f\u2710\u2711\u2712\u2713\u2714\u2715\u2716\u2717\u2718\u2728\u2744\u274c\u274e\u2764\u2b50\u231a\u231b\u23f0\u23f1\u23f3";
+
 	private boolean _isNewsItem = false;
     private int _replyToPostId = 0;
 	private MaterialDialog _progressDialog;
@@ -164,7 +171,7 @@ public class ComposePostView extends AppCompatActivity {
         
         // zoom handling
         _zoom = Float.parseFloat(_prefs.getString("fontZoom", "1.0"));
-        EditText editBox = (EditText)findViewById(R.id.textContent);
+		EditTextSelectionSavedAllowImage editBox = (EditTextSelectionSavedAllowImage)findViewById(R.id.textContent);
         editBox.setTextSize(TypedValue.COMPLEX_UNIT_PX, editBox.getTextSize() * _zoom);
 
 		if (_zoom >= 0.9)
@@ -179,6 +186,22 @@ public class ComposePostView extends AppCompatActivity {
 		}
         
         editBox.setCustomSelectionActionModeCallback(new StyleCallback());
+
+		editBox.setKeyBoardInputCallbackListener(new EditTextSelectionSavedAllowImage.KeyBoardInputCallbackListener() {
+			@Override
+			public void onCommitContent(InputContentInfoCompat inputContentInfo, int flags, Bundle opts) {
+				try
+				{
+
+					uploadImage(inputContentInfo.getContentUri());
+				}
+				catch (Exception e)
+				{
+
+				}
+			//you will get your gif/png/jpg here in opts bundle
+		}
+	});
         
 
         
@@ -198,14 +221,23 @@ public class ComposePostView extends AppCompatActivity {
         // handle text sharing intent
         if (extras != null && extras.containsKey("preText"))
         {
-        	appendText(extras.getString("preText"));
+        	System.out.println("PRETEXT: " + extras.getString("preText"));
+        	EditTextSelectionSavedAllowImage ed = findViewById(R.id.textContent);
+        	ed.post(new Runnable()
+	        {
+		        @Override
+		        public void run()
+		        {
+			        ed.append(extras.getString("preText"));
+		        }
+	        });
+
         }
         // handle image share intent
         if (extras != null && extras.containsKey("preImage"))
         {
 	        Uri selectedImage = (Uri)extras.getParcelable("preImage");
-	        String realPath = getPath(this, selectedImage);
-	        uploadImage(realPath);
+	        uploadImage(selectedImage);
         }
         
         if (savedInstanceState == null)
@@ -336,6 +368,12 @@ public class ComposePostView extends AppCompatActivity {
         	case R.id.menu_compose_preview:
         		showPreview();
         		break;
+	        case R.id.menu_compose_emoji:
+	        	showEmoji();
+				break;
+	        case R.id.menu_compose_selectall:
+		        ((EditTextSelectionSavedAllowImage)findViewById(R.id.textContent)).selectAll();
+		        break;
             case R.id.menu_compose_showextended_on:
                 _prefs.edit().putString("extendedEditor", "2").commit();
                 _extendedEditor = 2;
@@ -524,7 +562,7 @@ public class ComposePostView extends AppCompatActivity {
 		findViewById(R.id.composeButtonSelectAll).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				((EditTextSelectionSaved)findViewById(R.id.textContent)).selectAll();
+				((EditTextSelectionSavedAllowImage)findViewById(R.id.textContent)).selectAll();
 			}
 		});
 
@@ -584,8 +622,12 @@ public class ComposePostView extends AppCompatActivity {
             {
                 menu.findItem(R.id.menu_compose_showParent).setVisible(false);
             }
-            if (!LegacyFactory.getLegacy().hasCamera(this))
-                menu.findItem(R.id.menu_compose_camera).setVisible(false);
+	        PackageManager pm = ComposePostView.this.getPackageManager();
+
+	        if (!pm.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+		        menu.findItem(R.id.menu_compose_camera).setVisible(false);
+	        }
+
         }
 
         if (menu != null && menu.findItem(R.id.menu_compose_post) != null)
@@ -601,6 +643,7 @@ public class ComposePostView extends AppCompatActivity {
             menu.findItem(R.id.menu_compose_picture).setVisible(showPostAsAction);
             menu.findItem(R.id.menu_compose_markup).setVisible(showPostAsAction);
 	        menu.findItem(R.id.menu_compose_macro).setVisible(showPostAsAction);
+	        menu.findItem(R.id.menu_compose_selectall).setVisible(showPostAsAction);
         }
     }
 
@@ -872,13 +915,58 @@ public class ComposePostView extends AppCompatActivity {
 	    {
 		    // if there is text in there, put the image on a new line
 		    if (edit.length() > 0 && !edit.getText().toString().endsWith(("\n")))
-		        text = "\n" + text;
+		        text = "\n" + " " + text + " ";
 		    
 		    edit.append(text + "\n");
 	    }
 	    else edit.append(" " + text + " ");
 	    
 	    System.out.println("composeview: append : " + text + " result: " + edit.getText().toString());
+	}
+
+	protected void showEmoji() {
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(ComposePostView.this);
+		builder.setTitle("Terrible \"Emoji\"");
+
+		GridView grid = new GridView(ComposePostView.this);
+		grid.setNumColumns(3);
+		grid.setHorizontalSpacing(2);
+		grid.setVerticalSpacing(2);
+		//grid.setNumColumns(GridView.AUTO_FIT);
+		grid.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
+		grid.setGravity(Gravity.CENTER);
+
+		grid.setOnItemClickListener(new OnItemClickListener()
+		{
+			@Override
+			public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
+			{
+				EditText edit = (EditText)findViewById(R.id.textContent);
+				edit.append(Character.toString(mEmoji.charAt(i)));
+			}
+		});
+
+
+		ArrayList<String> itemList = new ArrayList<String>();
+		for (int i = 0; i < mEmoji.length(); i++)
+		{
+			itemList.add(Character.toString(mEmoji.charAt(i)));
+		}
+
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(ComposePostView.this,android.R.layout.simple_list_item_1, itemList);
+		grid.setAdapter(adapter);
+		builder.setView(grid);
+
+		builder.setNegativeButton("Close", new DialogInterface.OnClickListener(){
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+
+			} });
+		AlertDialog built = builder.create();
+		built.setCanceledOnTouchOutside(true);
+		built.show();
 	}
 	
 	protected AlertDialog _shackTagDialog;
@@ -1287,10 +1375,7 @@ public class ComposePostView extends AppCompatActivity {
                     getContentResolver().takePersistableUriPermission(originalUri, takeFlags);
                 }
 
-
-
-                String realPath = getPath(this, originalUri);
-                uploadImage(realPath);
+                uploadImage(originalUri);
             } 
         }
         else if (requestCode == TAKE_PICTURE)
@@ -1298,20 +1383,31 @@ public class ComposePostView extends AppCompatActivity {
             if (resultCode == Activity.RESULT_OK)
             {
                 // picture was taken, and resides at the location we specified
-                uploadImage(mCurrentPhotoPath);
+	            File file = new File(mCurrentPhotoPath);
+                uploadImage(Uri.fromFile(file));
             }
         }
 	}
 
-
-
-	
-	void uploadImage(String imageLocation)
+	void uploadImage(Uri imageUri)
 	{
-
+		// create dialog with thumbnail
+		LinearLayout parent = new LinearLayout(this);
+		parent.setPadding(2, 2, 2, 2);
+		parent.setOrientation(LinearLayout.VERTICAL);
+		TextView text = new TextView(this);
+		text.setText("This will upload the selected image to the internet for public consumption. Continue?");
+		text.setTextColor(Color.WHITE);
+		text.setPadding(3, 3, 3, 3);
+		ImageView image = new ImageView(this);
+		image.setAdjustViewBounds(true);
+		image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+		if (imageUri != null) { image.setImageURI(imageUri); System.out.println("UPLOADIMAGEuri: " + imageUri.toString()); }
+		parent.addView(image);
+		parent.addView(text);
 		new MaterialDialog.Builder(this)
 				.title("Really upload?")
-				.content("This will upload the selected image to the internet for public consumption. Continue?")
+				.customView(parent, true)
 				.positiveText("Upload It")
 				.onPositive(new MaterialDialog.SingleButtonCallback()
 				{
@@ -1319,11 +1415,17 @@ public class ComposePostView extends AppCompatActivity {
 					public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which)
 					{
 						_progressDialog = MaterialProgressDialog.show(ComposePostView.this, "Upload", "Uploading image to chattypics");
-						new UploadAndInsertTask().execute(imageLocation);
-						statInc(ComposePostView.this, "ImagesToChattyPics");
+						if (imageUri != null)
+						{
+							new UploadUriAndInsertTask().execute(imageUri);
+							statInc(ComposePostView.this, "ImagesToChattyPics");
+						}
+						else
+						{
+							_progressDialog.dismiss();
+						}
 					}
 				}).negativeText("Do NOT Upload").show();
-
 	}
 	
 	void postSuccessful(PostReference pr)
@@ -1368,14 +1470,7 @@ public class ComposePostView extends AppCompatActivity {
                 
                 if (!_messageMode)
                 {
-                	/*
-                	runOnUiThread(new Runnable(){
-                		@Override public void run()
-                		{
-                			_progressDialog = ProgressDialog.show(ComposePostView.this, "Posting", "Contacting server...", true, false);
-                		}
-        			});
-        			*/
+
                 	PostQueueObj pqo = new PostQueueObj(_replyToPostId, content, _isNewsItem);
                 	pqo.create(ComposePostView.this);
 	                // JSONObject data = ShackApi.postReply(ComposePostView.this, _replyToPostId, content, _isNewsItem);
@@ -1386,14 +1481,7 @@ public class ComposePostView extends AppCompatActivity {
                 }
                 else
                 {
-                	/*
-                	runOnUiThread(new Runnable(){
-                		@Override public void run()
-                		{
-                			_progressDialog = ProgressDialog.show(ComposePostView.this, "Sending Message", "Contacting server...", true, false);
-                		}
-        			});
-        			*/
+
                 	// ShackApi.postMessage(ComposePostView.this, _messageSubject, _messageRecipient, content);
                 	PostQueueObj pqo = new PostQueueObj(_messageSubject, _messageRecipient, content);
                 	pqo.create(ComposePostView.this);
@@ -1445,141 +1533,205 @@ public class ComposePostView extends AppCompatActivity {
         }
         
 	}
-	
-	class UploadAndInsertTask extends AsyncTask<String, Void, String>
+
+	public static String getMimeTypeOfUri(Context context, Uri uri) {
+		BitmapFactory.Options opt = new BitmapFactory.Options();
+		/* The doc says that if inJustDecodeBounds set to true, the decoder
+		 * will return null (no bitmap), but the out... fields will still be
+		 * set, allowing the caller to query the bitmap without having to
+		 * allocate the memory for its pixels. */
+		opt.inJustDecodeBounds = true;
+
+		InputStream istream = null;
+		try
+		{
+			istream = context.getContentResolver().openInputStream(uri);
+
+			BitmapFactory.decodeStream(istream, null, opt);
+			istream.close();
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
+		MimeTypeMap mime = MimeTypeMap.getSingleton();
+
+		return mime.getExtensionFromMimeType(opt.outMimeType);
+	}
+
+	class UploadUriAndInsertTask extends AsyncTask<Uri, Void, String>
 	{
-	    Exception _exception;
-	    
-        @Override
-        protected String doInBackground(String... params)
-        {
-            try
-            {
-                String imageLocation = params[0];
-                
-                // resize the image for faster uploading
-                String smallImageLocation = resizeImage(imageLocation);
-                
-                String userName = _prefs.getString("chattyPicsUserName", null);
-                String password = _prefs.getString("chattyPicsPassword", null);
-                
-                // attempt to log in so the image will appear in the user's gallery
-                String login_cookie = null;
-                if (userName != null && password != null)
-                    login_cookie = ShackApi.loginToUploadImage(userName, password);
-                
-                // actually upload the thing
-                String content = ShackApi.uploadImage(smallImageLocation, login_cookie);
-                
-                // if the image was resized, delete the small one
-                if (!imageLocation.equals(smallImageLocation))
-                {
-                    try
-                    {
-                        File file = new File(smallImageLocation);
-                        file.delete();
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.e("shackbrowse", "Error deleting resized image", ex);
-                    }
-                }
-                
-                Pattern p = Pattern.compile("http\\:\\/\\/chattypics\\.com\\/viewer\\.php\\?file=(.*?)\"");
-                Matcher match = p.matcher(content);
-                                
-                if (match.find())
-                    return "http://chattypics.com/files/" + match.group(1);
-                
-                return null;
-            }
-            catch (Exception e)
-            {
-                Log.e("shackbrowse", "Error posting reply", e);
-                _exception = e;
-                return null;
-            }
-        }
-        
-        String resizeImage(String path) throws Exception
-        {
-            final int MAXIMUM_SIZE = 1600;
-            
-            // get the original image
-            // Bitmap original = BitmapFactory.decodeFile(path);
+		Exception _exception;
 
-            Bitmap original=null;
-            File f= new File(path);
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-            try {
-                original = BitmapFactory.decodeStream(new FileInputStream(f), null, options);
-            } catch (FileNotFoundException e) {
-                System.out.println("404 ERROR");
-                e.printStackTrace();
-            }
+		@Override
+		protected String doInBackground(Uri... params)
+		{
+			try
+			{
+				Uri uri = params[0];
+				String ext = getMimeTypeOfUri(ComposePostView.this, uri);
+				InputStream inputstream = getContentResolver().openInputStream(uri);
 
-            float scale = Math.min((float)MAXIMUM_SIZE / original.getWidth(), (float)MAXIMUM_SIZE / original.getHeight());
-            
-            // work around for older devices that don't support EXIF
-            int rotation = LegacyFactory.getLegacy().getRequiredImageRotation(path);
-            
-            Matrix matrix = new Matrix();
-            matrix.postScale(scale, scale);
-            matrix.postRotate(rotation);
-            
-            Bitmap resized = Bitmap.createBitmap(original, 0, 0, original.getWidth(), original.getHeight(), matrix, true);
-            
-            // generate the new image
-            File file = new File(path);
-            File newFile = getFileStreamPath(file.getName());
-            
-            // save the image
-            FileOutputStream f2 = new FileOutputStream(newFile);
-            try
-            {
-                resized.compress(CompressFormat.JPEG, 97, f2);
-            }
-            finally
-            {
-                f2.close();
-            }
-            
-            return newFile.getAbsolutePath();
-        }
+				if ((ext == null) || (ext == "jpeg"))
+				{
+					ext = "jpg";
+				}
 
-        @Override
-        protected void onPostExecute(String result)
-        {
-        	try {
-        		_progressDialog.dismiss();
-        	}
-        	catch (Exception e)
-        	{
-        		
-        	}
-            
-            if (_exception != null)
-            {
-            	System.out.println("camupload: err");
-                ErrorDialog.display(ComposePostView.this, "Error", "Error posting:\n" + _exception.getMessage());
-            }
-            else if (result == null)
-            {
-            	System.out.println("camupload: err");
-                ErrorDialog.display(ComposePostView.this, "Error", "Couldn't find image URL after uploading.");
-            }
-            else
-            {
-            	final String result1 = result;
-            	runOnUiThread(new Runnable(){
-            		@Override public void run()
-            		{
-            			appendText(result1);
-            		}
-            	});
-            }
-        }
+				// resize jpg
+				if (ext == "jpg")
+				{
+					System.out.println("UPLOADuri: RESIZE");
+					Bitmap img = handleSamplingAndRotationBitmap(uri);
+					final BitmapFactory.Options options = new BitmapFactory.Options();
+					options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+					ByteArrayOutputStream stream = new ByteArrayOutputStream();
+					img.compress(CompressFormat.JPEG, 100, stream);
+					inputstream = new ByteArrayInputStream(stream.toByteArray());
+				}
+
+				String userName = _prefs.getString("chattyPicsUserName", null);
+				String password = _prefs.getString("chattyPicsPassword", null);
+
+				// attempt to log in so the image will appear in the user's gallery
+				String login_cookie = null;
+				if (userName != null && password != null)
+					login_cookie = ShackApi.loginToUploadImage(userName, password);
+
+				// actually upload the thing
+				String content = ShackApi.uploadImageFromInputStream(inputstream, login_cookie, ext);
+
+				Pattern p = Pattern.compile("http\\:\\/\\/chattypics\\.com\\/viewer\\.php\\?file=(.*?)\"");
+				Matcher match = p.matcher(content);
+
+				if (match.find())
+					return "http://chattypics.com/files/" + match.group(1);
+
+				return null;
+			}
+			catch (Exception e)
+			{
+				Log.e("shackbrowse", "Error posting image", e);
+				_exception = e;
+				return null;
+			}
+		}
+
+		public Bitmap handleSamplingAndRotationBitmap(Uri selectedImage) throws IOException {
+			int MAX_HEIGHT = 1600;
+			int MAX_WIDTH = 1600;
+
+			// First decode with inJustDecodeBounds=true to check dimensions
+			final BitmapFactory.Options options = new BitmapFactory.Options();
+			options.inJustDecodeBounds = true;
+			InputStream imageStream = ComposePostView.this.getContentResolver().openInputStream(selectedImage);
+			BitmapFactory.decodeStream(imageStream, null, options);
+			imageStream.close();
+
+			// Calculate inSampleSize
+			options.inSampleSize = calculateInSampleSize(options, MAX_WIDTH, MAX_HEIGHT);
+
+			// Decode bitmap with inSampleSize set
+			options.inJustDecodeBounds = false;
+			options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+			imageStream = ComposePostView.this.getContentResolver().openInputStream(selectedImage);
+			Bitmap img = BitmapFactory.decodeStream(imageStream, null, options);
+
+			img = rotateImageIfRequired(ComposePostView.this, img, selectedImage);
+			return img;
+		}
+		private int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+			// Raw height and width of image
+			final int height = options.outHeight;
+			final int width = options.outWidth;
+			int inSampleSize = 1;
+
+			if (height > reqHeight || width > reqWidth) {
+
+				// Calculate ratios of height and width to requested height and width
+				final int heightRatio = Math.round((float) height / (float) reqHeight);
+				final int widthRatio = Math.round((float) width / (float) reqWidth);
+
+				// Choose the smallest ratio as inSampleSize value, this will guarantee a final image
+				// with both dimensions larger than or equal to the requested height and width.
+				inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+
+				// This offers some additional logic in case the image has a strange
+				// aspect ratio. For example, a panorama may have a much larger
+				// width than height. In these cases the total pixels might still
+				// end up being too large to fit comfortably in memory, so we should
+				// be more aggressive with sample down the image (=larger inSampleSize).
+
+				final float totalPixels = width * height;
+
+				// Anything more than 2x the requested pixels we'll sample down further
+				final float totalReqPixelsCap = reqWidth * reqHeight * 2;
+
+				while (totalPixels / (inSampleSize * inSampleSize) > totalReqPixelsCap) {
+					inSampleSize++;
+				}
+			}
+			return inSampleSize;
+		}
+		private Bitmap rotateImageIfRequired(Context context, Bitmap img, Uri selectedImage) throws IOException {
+
+			InputStream input = context.getContentResolver().openInputStream(selectedImage);
+			ExifInterface ei;
+			if (Build.VERSION.SDK_INT > 23)
+				ei = new ExifInterface(input);
+			else
+				ei = new ExifInterface(selectedImage.getPath());
+
+			int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+
+			switch (orientation) {
+				case ExifInterface.ORIENTATION_ROTATE_90:
+					return rotateImage(img, 90);
+				case ExifInterface.ORIENTATION_ROTATE_180:
+					return rotateImage(img, 180);
+				case ExifInterface.ORIENTATION_ROTATE_270:
+					return rotateImage(img, 270);
+				default:
+					return img;
+			}
+		}
+		private Bitmap rotateImage(Bitmap img, int degree) {
+			Matrix matrix = new Matrix();
+			matrix.postRotate(degree);
+			Bitmap rotatedImg = Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
+			img.recycle();
+			return rotatedImg;
+		}
+
+		@Override
+		protected void onPostExecute(String result)
+		{
+			try {
+				_progressDialog.dismiss();
+			}
+			catch (Exception e)
+			{}
+
+			if (_exception != null)
+			{
+				System.out.println("imgupload: err");
+				ErrorDialog.display(ComposePostView.this, "Error", "Error posting:\n" + _exception.getMessage());
+			}
+			else if (result == null)
+			{
+				System.out.println("imgupload: err");
+				ErrorDialog.display(ComposePostView.this, "Error", "Couldn't find image URL after uploading.");
+			}
+			else
+			{
+				final String result1 = result;
+				runOnUiThread(new Runnable(){
+					@Override public void run()
+					{
+						appendText(result1);
+					}
+				});
+			}
+		}
 	}
 
 
@@ -1689,147 +1841,6 @@ public class ComposePostView extends AppCompatActivity {
 	    }
 	}
 
-    /**
-     * Get a file path from a Uri. This will get the the path for Storage Access
-     * Framework Documents, as well as the _data field for the MediaStore and
-     * other file-based ContentProviders.
-     *
-     * @param context The context.
-     * @param uri The Uri to query.
-     * @author paulburke
-     */
-    public static String getPath(final Context context, final Uri uri) {
-
-        final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
-
-        // DocumentProvider
-        if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
-            // ExternalStorageProvider
-            if (isExternalStorageDocument(uri)) {
-                final String docId = DocumentsContract.getDocumentId(uri);
-                final String[] split = docId.split(":");
-                final String type = split[0];
-
-                if ("primary".equalsIgnoreCase(type)) {
-                    return Environment.getExternalStorageDirectory() + "/" + split[1];
-                }
-
-                // TODO handle non-primary volumes
-            }
-            // DownloadsProvider
-            else if (isDownloadsDocument(uri)) {
-
-                final String id = DocumentsContract.getDocumentId(uri);
-                final Uri contentUri = ContentUris.withAppendedId(
-                        Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
-
-                return getDataColumn(context, contentUri, null, null);
-            }
-            // MediaProvider
-            else if (isMediaDocument(uri)) {
-                final String docId = DocumentsContract.getDocumentId(uri);
-                final String[] split = docId.split(":");
-                final String type = split[0];
-
-                Uri contentUri = null;
-                if ("image".equals(type)) {
-                    contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-                } else if ("video".equals(type)) {
-                    contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-                } else if ("audio".equals(type)) {
-                    contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-                }
-
-                final String selection = "_id=?";
-                final String[] selectionArgs = new String[] {
-                        split[1]
-                };
-
-                return getDataColumn(context, contentUri, selection, selectionArgs);
-            }
-        }
-        // MediaStore (and general)
-        else if ("content".equalsIgnoreCase(uri.getScheme())) {
-
-            // Return the remote address
-            if (isGooglePhotosUri(uri))
-                return uri.getLastPathSegment();
-
-            return getDataColumn(context, uri, null, null);
-        }
-        // File
-        else if ("file".equalsIgnoreCase(uri.getScheme())) {
-            return uri.getPath();
-        }
-
-        return null;
-    }
-
-    /**
-     * Get the value of the data column for this Uri. This is useful for
-     * MediaStore Uris, and other file-based ContentProviders.
-     *
-     * @param context The context.
-     * @param uri The Uri to query.
-     * @param selection (Optional) Filter used in the query.
-     * @param selectionArgs (Optional) Selection arguments used in the query.
-     * @return The value of the _data column, which is typically a file path.
-     */
-    public static String getDataColumn(Context context, Uri uri, String selection,
-                                       String[] selectionArgs) {
-
-        Cursor cursor = null;
-        final String column = "_data";
-        final String[] projection = {
-                column
-        };
-
-        try {
-            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs,
-                    null);
-            if (cursor != null && cursor.moveToFirst()) {
-                final int index = cursor.getColumnIndexOrThrow(column);
-                return cursor.getString(index);
-            }
-        } finally {
-            if (cursor != null)
-                cursor.close();
-        }
-        return null;
-    }
-
-
-    /**
-     * @param uri The Uri to check.
-     * @return Whether the Uri authority is ExternalStorageProvider.
-     */
-    public static boolean isExternalStorageDocument(Uri uri) {
-        return "com.android.externalstorage.documents".equals(uri.getAuthority());
-    }
-
-    /**
-     * @param uri The Uri to check.
-     * @return Whether the Uri authority is DownloadsProvider.
-     */
-    public static boolean isDownloadsDocument(Uri uri) {
-        return "com.android.providers.downloads.documents".equals(uri.getAuthority());
-    }
-
-    /**
-     * @param uri The Uri to check.
-     * @return Whether the Uri authority is MediaProvider.
-     */
-    public static boolean isMediaDocument(Uri uri) {
-        return "com.android.providers.media.documents".equals(uri.getAuthority());
-    }
-
-    /**
-     * @param uri The Uri to check.
-     * @return Whether the Uri authority is Google Photos.
-     */
-    public static boolean isGooglePhotosUri(Uri uri) {
-        return "com.google.android.apps.photos.content".equals(uri.getAuthority());
-    }
 
     // ***********************
 	// **** ZALGO  CRAP *****

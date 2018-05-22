@@ -23,6 +23,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.app.ListFragment;
@@ -55,6 +56,7 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Transformation;
+import android.widget.AbsListView;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -74,6 +76,28 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.PlaybackParameters;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
+import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
+import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.upstream.BandwidthMeter;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 import com.nhaarman.listviewanimations.itemmanipulation.ExpandCollapseListener;
 import com.pierfrancescosoffritti.youtubeplayer.player.AbstractYouTubePlayerListener;
 import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayer;
@@ -102,6 +126,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.ListIterator;
 
 
@@ -119,10 +144,6 @@ public class ThreadViewFragment extends ListFragment
     // String _currentPostAuthor;
     boolean _highlighting = false;
     public String _highlight = "";
-
-    final static int FRAGMENT_ID = 20;
-    final static int MENU_COPY_URL = 0;
-    final static int MENU_COPY_TEXT = 1;
 
 	int _lastExpanded = 0;
 
@@ -1232,6 +1253,39 @@ public class ThreadViewFragment extends ListFragment
 		private LruCache<String, Bitmap> mMemoryCache;
 		private boolean _fastScroll = false;
 		private NetworkInfo mWifi;
+	    private ArrayList<ExoPlayerTracker> mExoPlayers = new ArrayList<ExoPlayerTracker>();
+	    private class ExoPlayerTracker
+	    {
+		    PlayerView mPlayerView;
+		    SimpleExoPlayer mPlayer;
+		    int mPosition;
+		    String mTag;
+		    ExoPlayerTracker (int position, PlayerView playerView, SimpleExoPlayer player, String tag)
+		    {
+		    	mPlayer = player; mPlayerView = playerView; mPosition = position; mTag = tag;
+		    }
+	    }
+	    // -1 clears all players
+	    public void exoPlayerCleanup (int position)
+	    {
+		    Iterator it = mExoPlayers.iterator();
+		    while (it.hasNext())
+		    {
+			    ExoPlayerTracker item = (ExoPlayerTracker)it.next();
+
+			    if ((item.mPosition == position) || (position == -1))
+			    {
+				    item.mPlayer.stop();
+				    item.mPlayer.clearVideoSurface();
+				    item.mPlayer.release();
+				    item.mPlayer = null;
+				    item.mPlayerView.getVideoSurfaceView().setVisibility(View.GONE);
+				    item.mPlayerView.setPlayer(null);
+				    item.mPlayerView = null;
+				    it.remove();
+			    }
+		    }
+	    }
 
         public ExpandCollapseListener mExpandCollapseListener = new ExpandCollapseListener() {
             @Override
@@ -1247,6 +1301,9 @@ public class ThreadViewFragment extends ListFragment
 
             @Override
             public void onItemCollapsed(int i) {
+            	// this releases the embed exoplayer for .mp4 to prevent memory leaks
+	            exoPlayerCleanup(i);
+
                 View v = _adapter.getTitleParent(i);
                 if (v != null)
                 {
@@ -1343,7 +1400,7 @@ public class ThreadViewFragment extends ListFragment
             loadPrefs();
 
             // not used now that memcache is based on depthstring keys
-            // clearBitmapMemCache();
+            clearBitmapMemCache();
 
 
             _lastExpanded = 0;
@@ -1352,6 +1409,9 @@ public class ThreadViewFragment extends ListFragment
             for (int i=0; i < this.getCount(); i++) {
                 getListView().setItemChecked(i, false);
             }
+
+	        // this releases the embed exoplayer for .mp4 to prevent memory leaks
+	        exoPlayerCleanup(-1);
 
             super.clear();
         }
@@ -1774,7 +1834,7 @@ public class ThreadViewFragment extends ListFragment
 						FixedTextView postText = new FixedTextView(getContext());
 						Spannable postClipText = postClip.text;
 
-						if (_linkButtons && !((postClip.image != null) && (doEmbedItems)))
+						if (_linkButtons && !((postClip.type == PostClip.TYPE_IMAGE) && (postClip.url != null) && (doEmbedItems)))
 							postClipText = (Spannable) applyExtLink(postClipText, postText);
 
 						postText.setTextColor(getResources().getColor(R.color.nonpreview_post_text_color));
@@ -1810,9 +1870,9 @@ public class ThreadViewFragment extends ListFragment
 					}
 
 					// EMBED IMAGES
-					if ((postClip.image != null) && (doEmbedItems)) {
+					if ((postClip.type == PostClip.TYPE_IMAGE) && (postClip.url != null) && (doEmbedItems)) {
 						ImageView image = new ImageView(getContext());
-						final String url = postClip.image.getURL().trim();
+						final String url = postClip.url.getURL().trim();
 
 						System.out.println("EMBED:" + PopupBrowserFragment.imageUrlFixer(url));
 
@@ -1856,9 +1916,9 @@ public class ThreadViewFragment extends ListFragment
 								.into(image);
 					}
 					// TWITTER CRAP
-					if ((postClip.tweet != null) && (doEmbedItems)) {
+					if ((postClip.type == PostClip.TYPE_TWEET) && (postClip.url != null) && (doEmbedItems)) {
 						final LinearLayout tweetHolder = new LinearLayout(getContext());
-						final String url = postClip.tweet.getURL().trim();
+						final String url = postClip.url.getURL().trim();
 
 
 						System.out.println("EMBEDT:" + PopupBrowserFragment.imageUrlFixer(url));
@@ -1898,7 +1958,7 @@ public class ThreadViewFragment extends ListFragment
 
 					}
 					// YOUTUBE CRAP
-					if ((postClip.youtube != null) && (doEmbedItems)) {
+					if ((postClip.type == PostClip.TYPE_YOUTUBE) && (postClip.url != null) && (doEmbedItems)) {
 
 						ImageView playButton = new ImageView(getContext());
 
@@ -1908,12 +1968,132 @@ public class ThreadViewFragment extends ListFragment
 							@Override
 							public void onClick(View view)
 							{
-								mMainActivity.openYoutube(postClip.youtube.getURL().trim());
+								mMainActivity.openYoutube(postClip.url.getURL().trim());
 							}
 						});
 
 						holder.postContent.addView(playButton, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-						System.out.println("EMBEDY:" + PopupBrowserFragment.imageUrlFixer(postClip.youtube.getURL()));
+						System.out.println("EMBEDY:" + PopupBrowserFragment.imageUrlFixer(postClip.url.getURL()));
+
+					}
+					// MP4 CRAP
+					if ((postClip.type == PostClip.TYPE_MP4) && (postClip.url != null) && (doEmbedItems))
+					{
+
+						// check if player already exists, recycle view if it does
+						boolean recycle = false;
+						for (int j = 0; j < mExoPlayers.size(); j++)
+						{
+							ExoPlayerTracker item = mExoPlayers.get(j);
+
+							if ((item.mPosition == position) && (item.mTag == postClip.url.getURL()))
+							{
+								if (item.mPlayerView.getParent() != null)
+									((ViewGroup)item.mPlayerView.getParent()).removeView(item.mPlayerView);
+								holder.postContent.addView(item.mPlayerView, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+								recycle = true;
+							}
+						}
+
+						// couldnt recycle view, so make a new one
+						if (!recycle)
+						{
+							final PlayerView view = new PlayerView(getContext());
+							// 1. Create a default TrackSelector
+							Handler mainHandler = new Handler();
+							DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+							TrackSelection.Factory videoTrackSelectionFactory =
+									new AdaptiveTrackSelection.Factory(bandwidthMeter);
+							TrackSelector trackSelector =
+									new DefaultTrackSelector(videoTrackSelectionFactory);
+
+							// 2. Create the player
+							SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector);
+
+							view.setPlayer(player);
+
+							// track player items to avoid memory leaks
+							ExoPlayerTracker trackItem = new ExoPlayerTracker(position, view, player, postClip.url.getURL());
+							mExoPlayers.add(trackItem);
+
+	// Produces DataSource instances through which media data is loaded.
+							DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getContext(),
+									Util.getUserAgent(getContext(), "yourApplicationName"), bandwidthMeter);
+	// This is the MediaSource representing the media to be played.
+							MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(PopupBrowserFragment.getGIFVtoMP4(postClip.url.getURL())));
+	// Prepare the player with the source.
+							player.prepare(videoSource);
+							player.setPlayWhenReady(true);
+							player.setRepeatMode(Player.REPEAT_MODE_ALL);
+							view.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH);
+							//view.setControllerAutoShow(false);
+							player.addListener(new Player.EventListener()
+							{
+								@Override
+								public void onTimelineChanged(Timeline timeline, Object manifest, int reason)
+								{
+
+								}
+
+								@Override
+								public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections)
+								{
+
+								}
+
+								@Override
+								public void onLoadingChanged(boolean isLoading)
+								{
+
+								}
+
+								@Override
+								public void onPlayerStateChanged(boolean playWhenReady, int playbackState)
+								{
+									if (playbackState == SimpleExoPlayer.STATE_READY)
+									{
+										view.hideController();
+									}
+								}
+
+								@Override
+								public void onRepeatModeChanged(int repeatMode)
+								{
+
+								}
+
+								@Override
+								public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled)
+								{
+
+								}
+
+								@Override
+								public void onPlayerError(ExoPlaybackException error)
+								{
+
+								}
+
+								@Override
+								public void onPositionDiscontinuity(int reason)
+								{
+
+								}
+
+								@Override
+								public void onPlaybackParametersChanged(PlaybackParameters playbackParameters)
+								{
+
+								}
+
+								@Override
+								public void onSeekProcessed()
+								{
+
+								}
+							});
+							holder.postContent.addView(view, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+						}
 
 					}
 				}
@@ -2207,31 +2387,23 @@ public class ThreadViewFragment extends ListFragment
 
 		class PostClip
 		{
+			public static final int TYPE_YOUTUBE = 2;
+			public static final int TYPE_IMAGE = 0;
+			public static final int TYPE_TWEET = 1;
+			public static final int TYPE_MP4 = 3;
 			public Spannable text = null;
-			public CustomURLSpan image = null;
-			public CustomURLSpan tweet = null;
-			public CustomURLSpan youtube = null;
+			public CustomURLSpan url = null;
 			public Tweet tweetdata = null;
 			public int type = 0;
 			PostClip (Spannable ptext) { text = ptext; }
 			PostClip (CustomURLSpan pimage, int ptype) {
-				if (ptype == 0)
-					image = pimage;
-				if (ptype == 1)
-					tweet = pimage;
-				if (ptype == 2)
-					youtube = pimage;
+				url = pimage;
 				type = ptype;
 			}
 			PostClip (Spannable ptext, CustomURLSpan pimage, int ptype)
 			{
 				text = ptext;
-				if (ptype == 0)
-					image = pimage;
-				if (ptype == 1)
-					tweet = pimage;
-				if (ptype == 2)
-					youtube = pimage;
+				url = pimage;
 				type = ptype;
 			}
 		}
@@ -2260,15 +2432,15 @@ public class ThreadViewFragment extends ListFragment
 			for (int i = 0; i < spanList.size(); i++)
 			{
 				CustomURLSpan target = spanList.get(i);
-				if (PopupBrowserFragment.isImage(target.getURL().trim(),false)) {
+				if (PopupBrowserFragment.isImage(target.getURL().trim(),true)) {
 					if ((text.subSequence(startClip, text.getSpanEnd(target)).toString().length() > 0)) {
 						if (removeLinks) {
 							Spannable tempTxt = ((Spannable) text.subSequence(startClip, text.getSpanStart(target)));
 							tempTxt.removeSpan(target);
-							returnItem.add(0, new PostClip(tempTxt, target,0 ));
+							returnItem.add(0, new PostClip(tempTxt, target,PostClip.TYPE_IMAGE ));
 						}
 						else
-							returnItem.add(0,new PostClip((Spannable) text.subSequence(startClip, text.getSpanEnd(target)), target, 0));
+							returnItem.add(0,new PostClip((Spannable) text.subSequence(startClip, text.getSpanEnd(target)), target, PostClip.TYPE_IMAGE));
 					}
 					startClip = text.getSpanEnd(target);
 				}
@@ -2277,10 +2449,10 @@ public class ThreadViewFragment extends ListFragment
 						if (removeLinks) {
 							Spannable tempTxt = ((Spannable) text.subSequence(startClip, text.getSpanStart(target)));
 							tempTxt.removeSpan(target);
-							returnItem.add(0, new PostClip(tempTxt, target,1 ));
+							returnItem.add(0, new PostClip(tempTxt, target,PostClip.TYPE_TWEET));
 						}
 						else
-							returnItem.add(0,new PostClip((Spannable) text.subSequence(startClip, text.getSpanEnd(target)), target, 1));
+							returnItem.add(0,new PostClip((Spannable) text.subSequence(startClip, text.getSpanEnd(target)), target, PostClip.TYPE_TWEET));
 					}
 					startClip = text.getSpanEnd(target);
 				}
@@ -2289,10 +2461,22 @@ public class ThreadViewFragment extends ListFragment
 						if (removeLinks) {
 							Spannable tempTxt = ((Spannable) text.subSequence(startClip, text.getSpanStart(target)));
 							tempTxt.removeSpan(target);
-							returnItem.add(0, new PostClip(tempTxt, target,2 ));
+							returnItem.add(0, new PostClip(tempTxt, target,PostClip.TYPE_YOUTUBE ));
 						}
 						else
-							returnItem.add(0,new PostClip((Spannable) text.subSequence(startClip, text.getSpanEnd(target)), target, 2));
+							returnItem.add(0,new PostClip((Spannable) text.subSequence(startClip, text.getSpanEnd(target)), target, PostClip.TYPE_YOUTUBE));
+					}
+					startClip = text.getSpanEnd(target);
+				}
+				if (PopupBrowserFragment.isMP4(target.getURL().trim())) {
+					if ((text.subSequence(startClip, text.getSpanEnd(target)).toString().length() > 0)) {
+						if (removeLinks) {
+							Spannable tempTxt = ((Spannable) text.subSequence(startClip, text.getSpanStart(target)));
+							tempTxt.removeSpan(target);
+							returnItem.add(0, new PostClip(tempTxt, target,PostClip.TYPE_MP4));
+						}
+						else
+							returnItem.add(0,new PostClip((Spannable) text.subSequence(startClip, text.getSpanEnd(target)), target, PostClip.TYPE_MP4));
 					}
 					startClip = text.getSpanEnd(target);
 				}
@@ -3251,4 +3435,7 @@ public class ThreadViewFragment extends ListFragment
 		a.setInterpolator(new DecelerateInterpolator(1.0f));
 		v.startAnimation(a);
 	}
+
+
+
 }

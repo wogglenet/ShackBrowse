@@ -300,6 +300,40 @@ public class PopupBrowserFragment extends Fragment {
 			return false;
 		}
 	}
+	public static boolean isMP4 (String _href)
+	{
+		if (
+				(
+						((_href.length() >= 4) && (_href.trim().substring(_href.length() - 4).toLowerCase().contentEquals(".mp4")))
+								|| ((_href.length() >= 5) && (_href.trim().substring(_href.length() - 5).toLowerCase().contentEquals(".gifv")))
+								|| ((_href.length() >= 5) && (_href.trim().substring(_href.length() - 5).toLowerCase().contentEquals(".webm")))
+				)
+
+				)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	public static String getGIFVtoMP4 (String _href)
+	{
+		if (
+				_href.contains("i.imgur.com/")
+				&&
+						(_href.trim().substring(_href.length() - 5).toLowerCase().contentEquals(".gifv"))
+				)
+		{
+			System.out.println("GIFV CONVERT: " + _href + " " + _href.trim().substring(0, _href.length() - 5) + ".mp4");
+			return _href.trim().substring(0, _href.length() - 5) + ".mp4";
+		}
+		else
+		{
+			return _href;
+		}
+	}
 	public static boolean isTweet (String _href)
 	{
 		if (getTweetId(_href) != null)

@@ -14,7 +14,7 @@
                   android:layout_marginLeft="5dp"
 				  android:layout_marginRight="5dp">
 
-    <net.woggle.EditTextSelectionSaved
+    <net.woggle.EditTextSelectionSavedAllowImage
         android:id="@+id/textContent"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

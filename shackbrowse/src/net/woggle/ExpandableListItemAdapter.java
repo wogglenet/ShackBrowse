@@ -605,12 +605,12 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
         }
     }
 
-    private static class ViewHolder {
-        ViewGroup titleParent;
-        ViewGroup contentParent;
-        View titleView;
-        View contentView;
-        Animation currentAnim;
+    public static class ViewHolder {
+        public ViewGroup titleParent;
+        public ViewGroup contentParent;
+        public View titleView;
+        public View contentView;
+        public Animation currentAnim;
     }
     
     public static class AnimationResIds

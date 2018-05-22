@@ -63,6 +63,8 @@ import android.util.Log;
 import android.util.SparseIntArray;
 import android.widget.Toast;
 
+import com.google.android.gms.common.util.IOUtils;
+
 
 public class ShackApi
 {
@@ -229,12 +231,17 @@ public class ShackApi
         
         return null;
     }
-    
-    public static String uploadImage(String imageLocation, String cookie) throws Exception
+
+
+	public static String uploadImage(String imageLocation, String cookie) throws Exception
+	{
+		return uploadImage(imageLocation, cookie, "jpg");
+	}
+    public static String uploadImage(String imageLocation, String cookie, String extension) throws Exception
     {
         File file = new File(imageLocation);
         String name = file.getName();
-        name = "shackbrowseUpload.jpg";
+        name = "shackbrowseUpload." + extension;
         FileEntity e = new FileEntity(file, "image");
         
         String BOUNDARY = "648f67b67d304b01f84ceb0e0c56c8b7";
@@ -254,7 +261,7 @@ public class ShackApi
             DataOutputStream dos = new DataOutputStream(os);
             dos.writeBytes("--" + BOUNDARY + "\r\n");
             dos.writeBytes("Content-Disposition: form-data; name=\"userfile[]\";filename=\"" + name + "\"\r\n\r\n");
-            
+
             e.writeTo(os);
             
             dos.writeBytes("\r\n--" + BOUNDARY + "--\r\n");
@@ -276,6 +283,49 @@ public class ShackApi
             input.close();
         }
     }
+	public static String uploadImageFromInputStream(InputStream inputfile, String cookie, String extension) throws Exception
+	{
+		String name = "shackbrowseUpload." + extension;
+
+		String BOUNDARY = "648f67b67d304b01f84ceb0e0c56c8b7";
+
+		URL post_url = new URL(IMAGE_UPLOAD_URL);
+		URLConnection con = post_url.openConnection();
+		con.setRequestProperty("User-Agent", USER_AGENT);
+		if (cookie != null)
+			con.setRequestProperty("Cookie", cookie);
+		con.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + BOUNDARY);
+
+		// write our request
+		con.setDoOutput(true);
+		java.io.OutputStream os = con.getOutputStream();
+		try
+		{
+			DataOutputStream dos = new DataOutputStream(os);
+			dos.writeBytes("--" + BOUNDARY + "\r\n");
+			dos.writeBytes("Content-Disposition: form-data; name=\"userfile[]\";filename=\"" + name + "\"\r\n\r\n");
+
+			IOUtils.copyStream(inputfile,os);
+
+			dos.writeBytes("\r\n--" + BOUNDARY + "--\r\n");
+			os.flush();
+		}
+		finally
+		{
+			os.close();
+		}
+
+		// read the response
+		java.io.InputStream input = con.getInputStream();
+		try
+		{
+			return readStream(input);
+		}
+		finally
+		{
+			input.close();
+		}
+	}
     
     public static ArrayList<SearchResult> search(String term, String author, String parentAuthor, int pageNumber, Context context) throws Exception
     {

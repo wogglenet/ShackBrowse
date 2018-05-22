@@ -26,6 +26,8 @@ TODO
 * WHITE MODE
 * WIDGET FOR TOP POSTS
 * Easy notification reply
+* GIF gboard upload support
+* postcomposer upload image thumbnail preview
 
 SERVER
 * STAR OUT SPOILER TEXT
@@ -89,6 +91,20 @@ l[Can I see the source?]l
 https://github.com/bradsh/ShackBrowse It is a mess. I am not a professional programmer nor do I have any degrees in computer science. I just wanted a shack app so I learned to program.
 
 -->
+
+
+$ 5.8.0
+% v 5.8.0
+_ May 23, 2018
+* MP4 embed support, may be buggy on older phones
+* Imgur GIFV embed support
+* .gif embed support
+* Upload GIF directly from image keyboard/GBoard
+* Shack Emoji list in post composer
+* Rewrote all ChattyPics uploading code: check your cameras, they may be broken
+* Bug Fix: Memory leaks
+* Bug Fix: Refresh snackbar bugs
+* Bug Fix: Sharing text to Shack Browse = new root post
 
 $ 5.7.2
 % v 5.7.2

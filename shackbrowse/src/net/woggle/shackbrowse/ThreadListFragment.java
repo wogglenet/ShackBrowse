@@ -121,15 +121,9 @@ public class ThreadListFragment extends ListFragment
 
 	protected boolean _preventAutoLoad = false;
 
-	public boolean mTurboAPIAllowed = true;
-
 	private ArrayList<Integer> mCollapsed;
 
-
-	private boolean mUndoBarClosing = false;
-	private boolean mSnackBarOpen = false;
-	private boolean mSnackBarStuckOpen = false;
-	private Stack<SnackBarQueueItem> mSnackBarQueue = new Stack<SnackBarQueueItem>();
+	Snackbar mRefreshSnackbar;
 	private long _lastResumeTimeAndPrompt = 0L;
 	private boolean mGetAllThreadsMode;
 	private String mSortMode = "usual";
@@ -170,45 +164,20 @@ public class ThreadListFragment extends ListFragment
 						)
 						)
 				{
-			/*
-			SnackBar snackbar = new SnackBar(getActivity(), "Your threads are out of date by 3 or more hours", "Refresh", new View.OnClickListener()
-			{
-				@Override
-				public void onClick(View view)
-				{
-					refreshThreads();
-				}
-			});
-			snackbar.setDismissTimer(4000);
-			snackbar.setColorButton(getResources().getColor(R.color.SBmed));
-			snackbar.show();
-			*/
+
 					if (SNKVERBOSE) System.out.println("SNK: OPEN ONRESUME REFRESH");
 					_lastResumeTimeAndPrompt = System.currentTimeMillis();
 
-					Snackbar
-							.make(getListView(), "Your threads are out of date by 3 or more hours", Snackbar.LENGTH_INDEFINITE)
+					mRefreshSnackbar = Snackbar.make(getListView(), "Your threads are out of date by 3 or more hours", Snackbar.LENGTH_INDEFINITE)
 							.setAction("Refresh", new View.OnClickListener()
 							{
 								@Override
 								public void onClick(View view)
 								{
 									refreshThreads();
-									closeSnackBar(true);
 								}
-							})
-							.show(); // Don’t forget to show!
-					/*
-					openSnackBar("Your threads are out of date by 3 or more hours", "Refresh", new View.OnClickListener()
-					{
-						@Override
-						public void onClick(View view)
-						{
-							refreshThreads();
-							closeSnackBar(true);
-						}
-					});
-					*/
+							}); // Don’t forget to show!
+					mRefreshSnackbar.show();
 
 				}
 			}
@@ -260,12 +229,6 @@ public class ThreadListFragment extends ListFragment
    		_adapter = new ThreadLoadingAdapter(getActivity(), new ArrayList<Thread>());
    		setListAdapter(_adapter);
     }
-    
-    public boolean getDualPane()
-    {
-    	View singleThread = getActivity().findViewById(R.id.singleThread);
-       	return singleThread != null && singleThread.getVisibility() == View.VISIBLE;
-    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState)
@@ -284,16 +247,7 @@ public class ThreadListFragment extends ListFragment
        	
        	//this.getListView().setDivider(getActivity().getResources().getDrawable(R.drawable.divider));
        	this.getListView().setDividerHeight(0);
-       	// getListView().setBackgroundColor(getActivity().getResources().getColor(R.color.app_bg_color));
-       	/*
-       	getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
 
-            public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
-            	onListItemLongClick((ListView)arg0, arg1, pos, id);
-                return true;
-            }
-        });
-       	*/
        	if ((_adapter == null) && (savedInstanceState == null))
        	{
        		instantiateAdapter();
@@ -450,10 +404,10 @@ public class ThreadListFragment extends ListFragment
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 				if (_adapter != null)
 				{
-					if (mSnackBarOpen)
+					if (mRefreshSnackbar != null)
 					{
 						if (SNKVERBOSE) System.out.println("SNK: CLOSE SCROLL");
-						closeSnackBar(false);
+						closeRefreshSnackBar();
 					}
 					if ((++firstVisibleItem + visibleItemCount > (int)(totalItemCount * .9)) && (!mGetAllThreadsMode)) {
 						// make sure we did not open via external intent, and we are not currently loading, and last call was successful
@@ -523,74 +477,10 @@ public class ThreadListFragment extends ListFragment
 						undoCollapse(t, pos);
 					}
 				}).show();
-		/*
-		openSnackBar(t.getUserName() + " Thread Collapsed", "Undo", new View.OnClickListener()
-		{
-			@Override
-			public void onClick(View view)
-			{
-				undoCollapse(t, pos);
-			}
-		});
-		*/
-	}
-	
-	class SnackBarQueueItem
-	{
-		String mPrompt;
-		String mButton;
-		View.OnClickListener mOnc;
-		SnackBarQueueItem(String prompt, String button, View.OnClickListener onc) { mPrompt = prompt; mButton = button; mOnc = onc; }
 	}
 
 	private static final boolean SNKVERBOSE = false;
-	private Handler mSnackBarCloseHandler = new Handler();
-	private Runnable mSnackBarCloseRunnable = new Runnable(){
-		@Override
-		public void run() {
-			if (SNKVERBOSE) System.out.println("SNK: CLOSE TIMEOUT");
-			closeSnackBar(true);
-		}};
-	private Handler mSnackBarStuckHandler = new Handler();
-	private Runnable mSnackBarStuckRunnable = new Runnable(){
-		@Override
-		public void run() {
-			mSnackBarStuckOpen = false;
-			if (SNKVERBOSE) System.out.println("SNK: NO LONGER STUCK");
-		}};
 
-	public void openSnackBar(SnackBarQueueItem snqi) { System.out.println("SNK: OPEN QUEUE"); openSnackBar(snqi.mPrompt, snqi.mButton, snqi.mOnc); }
-    public void openSnackBar(final String promptText, final String buttonText, final View.OnClickListener onc)
-    {
-	    if (!mSnackBarOpen)
-	    {
-		    if (SNKVERBOSE) System.out.println("SNK: OPENING SET OPEN SET STUCK" + promptText);
-		    mUndoBarClosing = false;
-		    mSnackBarOpen = true;
-		    mSnackBarStuckOpen = true;
-
-		    // reset timers
-		    if (mSnackBarCloseRunnable != null)
-			    mSnackBarCloseHandler.removeCallbacks(mSnackBarCloseRunnable);
-		    if (mSnackBarStuckRunnable != null)
-			    mSnackBarStuckHandler.removeCallbacks(mSnackBarStuckRunnable);
-
-		    View undoBar = getActivity().findViewById(R.id.tlist_snackBar);
-		    ((TextView) getActivity().findViewById(R.id.tlist_snackBarText)).setText(promptText);
-		    ((ButtonFlat) getActivity().findViewById(R.id.tlist_snackBarButton)).setText(buttonText);
-		    MainActivity.anim anim = ((MainActivity) getActivity()).new anim(undoBar).toVisible();
-		    getActivity().findViewById(R.id.tlist_snackBarButton).setOnClickListener(onc);
-
-		    // make new timers
-		    mSnackBarCloseHandler.postDelayed(mSnackBarCloseRunnable, 6000);
-		    mSnackBarStuckHandler.postDelayed(mSnackBarStuckRunnable, 3000);
-	    }
-	    else
-	    {
-		    if (SNKVERBOSE) System.out.println("SNK: ALREADY OPEN CREATING QUEUE ITEM" + promptText);
-		    mSnackBarQueue.add(0, new SnackBarQueueItem(promptText,buttonText,onc));
-	    }
-    }
     public void undoCollapse(Thread t, int pos)
     {
     	if (t != null)
@@ -599,52 +489,17 @@ public class ThreadListFragment extends ListFragment
 	    	removeCollapsed(t.getThreadId());
 	    	_adapter.insert(t, pos);
 	    	_adapter.notifyDataSetChanged();
-		    if (SNKVERBOSE) System.out.println("SNK: CLOSE BUTTON");
-	    	closeSnackBar(true);
     	}
     }
-    public void closeSnackBar(boolean override)
+    public void closeRefreshSnackBar()
     {
 	    if (SNKVERBOSE) System.out.println("SNK: CLOSE CHK ACTIVITY");
-    	if (getActivity() != null)
-    	{
-		    if (SNKVERBOSE) System.out.println("SNK: CLOSE ACT OK" + override + mSnackBarStuckOpen + mSnackBarOpen);
-		    if ((mSnackBarOpen) && ((!mSnackBarStuckOpen) || (override)))
-		    {
-			    if (SNKVERBOSE) System.out.println("SNK: CLOSE OK GO // NOT STUCK OR OVERRIDE");
-			    final View undoBar = getActivity().findViewById(R.id.tlist_snackBar);
-			    mUndoBarClosing = true;
-
-			    final View view = getActivity().getWindow().getDecorView();
-			    MainActivity.anim anim = ((MainActivity) getActivity()).new anim(undoBar).toInvisible().setEndCall(new mAnimEnd()
-			    {
-				    @Override
-				    public void end()
-				    {
-					    mUndoBarClosing = false;
-					    mSnackBarOpen = false;
-					    if (SNKVERBOSE) System.out.println("SNK: mSBO false");
-					    if (!mSnackBarQueue.isEmpty())
-					    {
-						    if (SNKVERBOSE) System.out.println("SNK: QUE SIZE" + mSnackBarQueue.size());
-						    view.postDelayed(new Runnable()
-						    {
-							    @Override
-							    public void run()
-							    {
-								    if (!mSnackBarQueue.isEmpty())
-								    {
-									    if (SNKVERBOSE) System.out.println("SNK: QUEUE OPEN");
-									    openSnackBar(mSnackBarQueue.pop());
-								    }
-							    }
-						    }, 300);
-					    }
-				    }
-			    });
-		    }
-    	}
-    	else throw new RuntimeException();
+    	if (mRefreshSnackbar != null)
+	    {
+		    if (SNKVERBOSE) System.out.println("SNK: CLOSE ACT OK");
+		    mRefreshSnackbar.dismiss();
+		    mRefreshSnackbar = null;
+	    }
     }
     protected void toggleFavThread(Thread thread) {
     	if (((MainActivity)getActivity()).mOffline.toggleThread(thread.getThreadId(), thread.getPosted(), thread.getJson()))
@@ -659,8 +514,6 @@ public class ThreadListFragment extends ListFragment
 	    ((MainActivity)getActivity()).updateMenuStarredPostsCount();
  		((MainActivity)getActivity()).mRefreshOfflineThreadsWoReplies();
 	}
-    
-    
 
 	void refreshThreads()
     {
@@ -669,36 +522,14 @@ public class ThreadListFragment extends ListFragment
             if (_adapter != null)
                 _adapter.cancel();
             _silentLoad = false;
-    	
-    	/*
-        getListView().clearChoices();
-        _adapter.clear();
-        _adapter.notifyDataSetChanged();
-        if (_adapter.updatePrefs())
-        {
-        	System.out.println("zoom or other pref changed, redraw listview");
-        	getListView().invalidate();
-        	_adapter.notifyDataSetChanged();
-        	
-        }
-        
-        &&
-							( 
-									// prevent getting more than one page at a time due to empty listview when not filtering
-									(_filtering)
-									||
-									((_adapter._pageNumber == 0) && (totalItemCount == 0))
-									||
-									((_adapter._pageNumber > 0) && (totalItemCount > 0))
-							)
-							getListView().setOnScrollListener(null);
-    	getListView().setOnTouchListener(null);
-        */
 
             statInc(getActivity(), "RefreshedThreadList");
 
             MainActivity act = ((MainActivity) getActivity());
             act.showLoadingSplash();
+
+            if (mRefreshSnackbar != null)
+            	closeRefreshSnackBar();
 
             getView().postDelayed(new Runnable() {
                 @Override
@@ -795,74 +626,6 @@ public class ThreadListFragment extends ListFragment
             public void onNegative(MaterialDialog dialog) {
             }
         }).show();
-/*
-        MaterialDialogCompat.Builder builder = new MaterialDialogCompat.Builder(getActivity());
-        builder.setTitle("Choose which to show");
-        final String[] items = { "tangent","informative","nws","stupid","political","ontopic"};
-        final boolean[] checkedItems = { _showTangent,_showInformative,_showNWS,_showStupid,_showPolitical, _showOntopic};
-        builder.setMultiChoiceItems(items, checkedItems, new
-                DialogInterface.OnMultiChoiceClickListener()
-        		{
-
-				@Override
-				public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-					// TODO Auto-generated method stub
-					
-				}
-		});
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
-				
-			}});
-        builder.setPositiveButton("Update Filters", new DialogInterface.OnClickListener(){
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
-				Editor edit = _prefs.edit();
-				
-				ListView lw = ((AlertDialog)dialog).getListView();
-				SparseBooleanArray checkedItems = lw.getCheckedItemPositions();
-				
-				if (checkedItems.get(0) == true)
-					edit.putBoolean("showTangent", true);
-				else
-					edit.putBoolean("showTangent", false);
-				
-				if (checkedItems.get(1) == true)
-					edit.putBoolean("showInformative", true);
-				else
-					edit.putBoolean("showInformative", false);
-				
-				if (checkedItems.get(2) == true)
-					edit.putBoolean("showNWS", true);
-				else
-					edit.putBoolean("showNWS", false);
-				
-				if (checkedItems.get(3) == true)
-					edit.putBoolean("showStupid", true);
-				else
-					edit.putBoolean("showStupid", false);
-				
-				if (checkedItems.get(4) == true)
-					edit.putBoolean("showPolitical", true);
-				else
-					edit.putBoolean("showPolitical", false);
-				
-				if (checkedItems.get(5) == true)
-					edit.putBoolean("showOntopic", true);
-				else
-					edit.putBoolean("showOntopic", false);
-				
-				edit.commit();
-				refreshThreads();
-				
-			}});
-        AlertDialog alert = builder.create();
-        alert.setCanceledOnTouchOutside(true);
-        alert.show();
-        */
     }
     
     void openThreadView(int index)
@@ -1771,23 +1534,6 @@ public class ThreadListFragment extends ListFragment
             }
 
             holder.posted.setText(TimeDisplay.getNiceTimeSince(t.getPosted(), _showHoursSince));
-            /*
-            // threadage > 8760 == one year. optimization to prevent getyear from being run on every thread
-            if (threadAgeInHours > 8760f && !TimeDisplay.getYear(TimeDisplay.now()).equals(TimeDisplay.getYear(t.getPosted())))
-        		holder.posted.setText(TimeDisplay.convTime(t.getPosted(), "MMM dd, yyyy h:mma zzz"));
-        	else
-        	{
-	            if ((!_showHoursSince) || (threadAgeInHours > 24f))
-	            {
-	            	if (threadAgeInHours > 96f)
-	            		holder.posted.setText(TimeDisplay.convertTimeLong(t.getPosted()));
-	            	else
-	            		holder.posted.setText(TimeDisplay.convertTime(t.getPosted()));
-	            }
-	            else
-	            	holder.posted.setText(TimeDisplay.doubleThreadAgeToString(threadAgeInHours));
-        	}
-        	*/
             
             // reply count formatting
             holder.replyCount.setText(formatReplyCount(t));
@@ -2156,62 +1902,14 @@ public class ThreadListFragment extends ListFragment
         	
         	setLastCallSuccessful(_wasLastThreadGetSuccessful);
         	
-        	// all prefs are on, this is not a "next page" load, and the view is available
-        	/*
-        	 * SCROLLPASTPINNED PREFERENCE IS DEPRECATED
-        	 */
-        	/*
-        	if ((_showPinnedInTL) && (_scrollPastPinned) && (_viewAvailable) && ((!_silentLoad) || (_silentLoad)))
-            {
-        		boolean prevWasPinned = false;
-        		// start at 1 due to PULL TO REFRESH INTEGRATION
-        		for (int i = 0; i < getListView().getCount(); i++)
-        		{
-        			Thread t = ((Thread)getListView().getItemAtPosition(i));
-        			if (t != null)
-        			{
-	        			if (t.getPinned())
-	        			{
-	        				prevWasPinned = true;
-	        			}
-	        			else if (prevWasPinned == true)
-	        			{
-	        				getListView().setSelection(i);
-	    			        break;
-	        			}
-        			}
-        		}
-            }
-        	*/
+
         	if ((!_silentLoad) && (getActivity() != null))
         	{
 
+        		// hide splash
         		MainActivity act = ((MainActivity)getActivity());
                 act.hideLoadingSplash();
-                /*
-        		View view = null;
-				if (((View)ThreadListFragment.this.getView() != null) && (((View)ThreadListFragment.this.getView()).findViewById(R.id.tlist_FSLoad).getVisibility() == View.VISIBLE))
-				{
-					view = ((View)ThreadListFragment.this.getView()).findViewById(R.id.tlist_FSLoad);
-					if (view != null)
-						act.new anim(view).toInvisible();
-				}
-				if (((View)ThreadListFragment.this.getView() != null) && (((View)ThreadListFragment.this.getView()).findViewById(R.id.tlist_FSLoadSplash).getVisibility() == View.VISIBLE))
-				{
-					view = ((View)ThreadListFragment.this.getView()).findViewById(R.id.tlist_FSLoadSplash);
-					if (view != null)
-						act.new anim(view).toInvisible();
-				}
-				
-				act.new anim(getListView()).toVisible();
-				*/
-				/* getListView().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        getListView().setSelection(0);
-                    }
-                });
-*/
+
                 System.out.println("TLIST: SETSEL0");
                 getListView().setAdapter(null);
                 getListView().setAdapter(_adapter);

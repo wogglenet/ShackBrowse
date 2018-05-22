@@ -42,6 +42,8 @@
     <string name="compose_markup">Apply Markup</string>
     <string name="compose_gallery">Add Gallery Picture</string>
     <string name="compose_camera">Add Camera Shot</string>
+    <string name="compose_selectall">Select All</string>
+    <string name="compose_emoji">Shack \"Emoji\"</string>
     
     <string name="thread_title">Thread</string>
     <string name="note_title">Notifications</string>
