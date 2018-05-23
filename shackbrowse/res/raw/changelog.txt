@@ -93,6 +93,11 @@ https://github.com/bradsh/ShackBrowse It is a mess. I am not a professional prog
 -->
 
 
+$ 5.8.1
+% v 5.8.1
+_ May 23, 2018
+* Bug Fix: Camera upload crash on many devices
+
 $ 5.8.0
 % v 5.8.0
 _ May 23, 2018
@@ -101,10 +106,13 @@ _ May 23, 2018
 * .gif embed support
 * Upload GIF directly from image keyboard/GBoard
 * Shack Emoji list in post composer
+* Image thumbnails for chattypics upload confirmation dialog
 * Rewrote all ChattyPics uploading code: check your cameras, they may be broken
+* Image thumbnails for chattypics uploads
 * Bug Fix: Memory leaks
 * Bug Fix: Refresh snackbar bugs
 * Bug Fix: Sharing text to Shack Browse = new root post
+* Bug Fix: Uploading GIFs from gallery
 
 $ 5.7.2
 % v 5.7.2

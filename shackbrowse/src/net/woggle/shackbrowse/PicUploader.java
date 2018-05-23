@@ -141,9 +141,9 @@ public class PicUploader extends AppCompatActivity {
 		text.setPadding(3, 3, 3, 3);
 		ImageView image = new ImageView(this);
 		image.setAdjustViewBounds(true);
-		image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+		image.setScaleType(ImageView.ScaleType.FIT_CENTER);
 		if (imageUri != null) { image.setImageURI(imageUri); System.out.println("UPLOADIMAGEuri: " + imageUri.toString()); }
-		parent.addView(image);
+		parent.addView(image,  new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 		parent.addView(text);
 		new MaterialDialog.Builder(this)
 				.title("Really upload?")

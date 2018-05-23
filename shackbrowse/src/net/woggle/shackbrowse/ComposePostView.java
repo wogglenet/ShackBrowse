@@ -88,6 +88,7 @@ public class ComposePostView extends AppCompatActivity {
 	protected static final int TAKE_PICTURE = 1;
     protected static final int SELECT_IMAGE_KITKAT = 3;
     protected static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 50;
+	protected static final int PERMISSIONS_MULTIPLE_REQUEST = 41;
 	
 	static final long MAX_SIZE_LOGGED_IN = 6 * 1024 * 1024;
 	static final long MAX_SIZE_NOT_LOGGED_IN = 3 * 1024 * 1024;
@@ -301,31 +302,6 @@ public class ComposePostView extends AppCompatActivity {
         }
     }
 
-
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-                    Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-                    photoPickerIntent.setType("image/*");
-                    startActivityForResult(photoPickerIntent, SELECT_IMAGE);
-                } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                }
-                return;
-            }
-        }
-    }
     // HOME BUTTON
 	@Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -405,6 +381,37 @@ public class ComposePostView extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+	@Override
+	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+		switch (requestCode) {
+			case MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE: {
+				// If request is cancelled, the result arrays are empty.
+				if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+					sendPictureSelectIntent();
+				} else {
+					// permission denied, boo! Disable the
+					// functionality that depends on this permission.
+				}
+				return;
+			}
+			case PERMISSIONS_MULTIPLE_REQUEST: {
+				// If request is cancelled, the result arrays are empty.
+				if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+					sendCameraIntent();
+				} else {
+					// permission denied, boo! Disable the
+					// functionality that depends on this permission.
+				}
+				return;
+			}
+		}
+	}
+	private void sendPictureSelectIntent()
+	{
+		Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+		photoPickerIntent.setType("image/*");
+		startActivityForResult(photoPickerIntent, SELECT_IMAGE);
+	}
     private void openPictureSelector()
     {
         if (Build.VERSION.SDK_INT < 19)
@@ -435,7 +442,7 @@ public class ComposePostView extends AppCompatActivity {
 
                         // No explanation needed, we can request the permission.
 
-                        ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+
 
                         // MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE is an
                         // app-defined int constant. The callback method gets the
@@ -449,14 +456,85 @@ public class ComposePostView extends AppCompatActivity {
             }
             else
             {
-                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-                photoPickerIntent.setType("image/*");
-                startActivityForResult(photoPickerIntent, SELECT_IMAGE);
+                sendPictureSelectIntent();
             }
         }
     }
 
-    public void setupButtonBindings(Bundle extras)
+	public void openCameraSelector()
+	{
+		if (Build.VERSION.SDK_INT >= 23)
+		{
+			if ((ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) || (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED))
+			{
+				ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_MULTIPLE_REQUEST);
+			}
+			else
+				sendCameraIntent();
+		}
+		else
+		{
+			sendCameraIntent();
+		}
+	}
+	private void sendCameraIntent()
+	{
+		// store our image in a temp spot
+		String state = Environment.getExternalStorageState();
+		if (Environment.MEDIA_MOUNTED.equals(state))
+		{
+			// application directory, per Android Data Storage guidelines
+			File app_dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+			// make sure the directory exists
+			if (!app_dir.exists())
+			{
+				if (!app_dir.mkdirs())
+				{
+					ErrorDialog.display(ComposePostView.this, "Error", "Could not create application directory.");
+					return;
+				}
+			}
+
+			// our temp file for taking a picture, delete if we already have one
+			File image = null;
+			try
+			{
+				image = File.createTempFile(
+						"shackbrowseUpload",  /* prefix */
+						".jpg",         /* suffix */
+						app_dir     /* directory */
+				);
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+
+			if (image.exists())
+				image.delete();
+
+			// _cameraImage = Uri.fromFile(file);
+			mCurrentPhotoPath = image.getAbsolutePath();
+
+			_cameraImage = FileProvider.getUriForFile(ComposePostView.this, BuildConfig.APPLICATION_ID + ".provider", image);
+
+			// start the camera
+			Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+			i.putExtra(MediaStore.EXTRA_OUTPUT, _cameraImage);
+			startActivityForResult(i, TAKE_PICTURE);
+		}
+		else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state))
+		{
+			ErrorDialog.display(ComposePostView.this, "Error", "External storage is mounted as read only.");
+		}
+		else
+		{
+			ErrorDialog.display(ComposePostView.this, "Error", "External storage is in an unknown state.");
+		}
+	}
+
+
+	public void setupButtonBindings(Bundle extras)
 	{
 		if (extras == null)
 			extras = new Bundle();
@@ -1282,65 +1360,7 @@ public class ComposePostView extends AppCompatActivity {
         new PostTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, content);
 	}
 	
-	public void openCameraSelector()
-	{
 
-		// store our image in a temp spot
-	    String state = Environment.getExternalStorageState();
-	    if (Environment.MEDIA_MOUNTED.equals(state))
-	    {
-	        // application directory, per Android Data Storage guidelines
-	        File app_dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-	        
-	        // make sure the directory exists
-	        if (!app_dir.exists())
-	        {
-		        if (!app_dir.mkdirs())
-		        {
-    		        ErrorDialog.display(ComposePostView.this, "Error", "Could not create application directory.");
-    		        return;
-		        }
-	        }
-	        
-	        // our temp file for taking a picture, delete if we already have one
-		    File image = null;
-		    try
-		    {
-			    image = File.createTempFile(
-				    "shackbrowseUpload",  /* prefix */
-				    ".jpg",         /* suffix */
-				   app_dir     /* directory */
-		            );
-		    } catch (IOException e)
-		    {
-			    e.printStackTrace();
-		    }
-
-		    if (image.exists())
-		        image.delete();
-		    
-		    // _cameraImage = Uri.fromFile(file);
-		    mCurrentPhotoPath = image.getAbsolutePath();
-
-		    _cameraImage = FileProvider.getUriForFile(ComposePostView.this,
-				    BuildConfig.APPLICATION_ID + ".provider",
-				    image);
-		    
-		    // start the camera
-		    Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		    i.putExtra(MediaStore.EXTRA_OUTPUT, _cameraImage);
-		    startActivityForResult(i, TAKE_PICTURE);
-	    }
-	    else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state))
-	    {
-	        ErrorDialog.display(ComposePostView.this, "Error", "External storage is mounted as read only.");
-	    }
-	    else
-	    {
-	        ErrorDialog.display(ComposePostView.this, "Error", "External storage is in an unknown state.");
-	    }
-	}
-	
 	public String _messageSubject = null;
 	public String _messageRecipient = null;
 	
@@ -1401,9 +1421,9 @@ public class ComposePostView extends AppCompatActivity {
 		text.setPadding(3, 3, 3, 3);
 		ImageView image = new ImageView(this);
 		image.setAdjustViewBounds(true);
-		image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+		image.setScaleType(ImageView.ScaleType.FIT_CENTER);
 		if (imageUri != null) { image.setImageURI(imageUri); System.out.println("UPLOADIMAGEuri: " + imageUri.toString()); }
-		parent.addView(image);
+		parent.addView(image,  new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 		parent.addView(text);
 		new MaterialDialog.Builder(this)
 				.title("Really upload?")
