@@ -107,7 +107,7 @@ _ May 23, 2018
 * Upload GIF directly from image keyboard/GBoard
 * Shack Emoji list in post composer
 * Image thumbnails for chattypics upload confirmation dialog
-* Rewrote all ChattyPics uploading code: check your cameras, they may be broken
+* Rewrote all ChattyPics uploading code
 * Image thumbnails for chattypics uploads
 * Bug Fix: Memory leaks
 * Bug Fix: Refresh snackbar bugs
