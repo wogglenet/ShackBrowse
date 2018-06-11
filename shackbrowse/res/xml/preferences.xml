@@ -6,13 +6,21 @@
         android:title="@string/preferences_notifications"
         android:summary="@string/preferences_notifications_summary" />
         <ListPreference
-            android:key="embedItems"
+            android:key="embedImages"
             android:title="@string/preference_embed"
             android:entries="@array/preference_embed"
             android:entryValues="@array/preference_embed_vals"
             android:summary="@string/preference_embed_summary"
             android:defaultValue="2"
             />
+		<ListPreference
+			android:key="embedVideos"
+			android:title="@string/preference_embedvideo"
+			android:entries="@array/preference_embed"
+			android:entryValues="@array/preference_embed_vals"
+			android:summary="@string/preference_embedvideo_summary"
+			android:defaultValue="1"
+			/>
 
         <ListPreference
             android:key="splitView"
@@ -235,7 +243,7 @@
 	  	     android:defaultValue="true"
 	  	     />
 	    <CheckBoxPreference
-	  	     android:key="fastScroll"
+	  	     android:key="speedyScroll"
 	  	     android:title="@string/preference_fastscroll_title"
 	  	     android:summary="@string/preference_fastscroll_summary"
 	  	     android:defaultValue="false"

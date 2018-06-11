@@ -1228,7 +1228,8 @@ public class ThreadViewFragment extends ListFragment
         boolean _showModTools = false;
 		private boolean _showHoursSince = true;
 		private boolean _hideLinks = true;
-		private int _embedItems = 1;
+		private int _embedImages = 2;
+	    private int _embedVideos = 1;
 		private boolean _linkButtons = true;
         private String _userName = "";
 	    private boolean _verified = false;
@@ -1275,11 +1276,12 @@ public class ThreadViewFragment extends ListFragment
 
 			    if ((item.mPosition == position) || (position == -1))
 			    {
+				    item.mPlayerView.getVideoSurfaceView().setVisibility(View.GONE);
+				    item.mPlayerView.setVisibility(View.GONE);
 				    item.mPlayer.stop();
 				    item.mPlayer.clearVideoSurface();
 				    item.mPlayer.release();
 				    item.mPlayer = null;
-				    item.mPlayerView.getVideoSurfaceView().setVisibility(View.GONE);
 				    item.mPlayerView.setPlayer(null);
 				    item.mPlayerView = null;
 				    it.remove();
@@ -1426,9 +1428,10 @@ public class ThreadViewFragment extends ListFragment
             _showModTools = _prefs.getBoolean("showModTools", false);
             _showHoursSince  = _prefs.getBoolean("showHoursSince", true);
 			_hideLinks = _prefs.getBoolean("hideLinksWhenEmbed", false);
-			_embedItems = Integer.parseInt(_prefs.getString("embedItems", "2"));
+			_embedImages = Integer.parseInt(_prefs.getString("embedImages", "2"));
+	        _embedVideos = Integer.parseInt(_prefs.getString("embedVideos", "1"));
 			_linkButtons = _prefs.getBoolean("showLinkOptionsButton", true);
-            _fastScroll   = _prefs.getBoolean("fastScroll", false);
+            _fastScroll   = _prefs.getBoolean("speedyScroll", false);
             _donatorList = _prefs.getString("limeUsers", "");
             _donatorGoldList = _prefs.getString("goldLimeUsers", "");
             _donatorQuadList = _prefs.getString("quadLimeUsers", "");
@@ -1810,8 +1813,10 @@ public class ThreadViewFragment extends ListFragment
 				// dont bother recreating views
 				holder.postContent.removeAllViews();
 
-				boolean doEmbedItems = (_embedItems == 1 && mWifi.isConnected()) || _embedItems == 2;
-				boolean removeLinks = (_hideLinks && doEmbedItems);
+				boolean doEmbedItemsImages = (_embedImages == 1 && mWifi.isConnected()) || _embedImages == 2;
+	            boolean doEmbedItemsVideos = (_embedVideos == 1 && mWifi.isConnected()) || _embedVideos == 2;
+				boolean removeLinksImages = (_hideLinks && doEmbedItemsImages);
+	            boolean removeLinksVideos = (_hideLinks && doEmbedItemsVideos);
 
 	            ArrayList<PostClip> choppedPost;
 	            // try to load saved data
@@ -1822,7 +1827,7 @@ public class ThreadViewFragment extends ListFragment
 					System.out.println("POSTCHOP: USED CACHE");
 				}
 				else {
-					choppedPost = postTextChopper(postTextContent, removeLinks);
+					choppedPost = postTextChopper(postTextContent, removeLinksImages, removeLinksVideos);
 					getItem(position).setChoppedPost(choppedPost);
 					System.out.println("POSTCHOP: MADE NEW");
 				}
@@ -1834,7 +1839,7 @@ public class ThreadViewFragment extends ListFragment
 						FixedTextView postText = new FixedTextView(getContext());
 						Spannable postClipText = postClip.text;
 
-						if (_linkButtons && !((postClip.type == PostClip.TYPE_IMAGE) && (postClip.url != null) && (doEmbedItems)))
+						if (_linkButtons && !((postClip.type == PostClip.TYPE_IMAGE) && (postClip.url != null) && (doEmbedItemsImages)))
 							postClipText = (Spannable) applyExtLink(postClipText, postText);
 
 						postText.setTextColor(getResources().getColor(R.color.nonpreview_post_text_color));
@@ -1870,7 +1875,9 @@ public class ThreadViewFragment extends ListFragment
 					}
 
 					// EMBED IMAGES
-					if ((postClip.type == PostClip.TYPE_IMAGE) && (postClip.url != null) && (doEmbedItems)) {
+					if (((postClip.type == PostClip.TYPE_IMAGE) && (postClip.url != null) && (doEmbedItemsImages))
+							&& (PopupBrowserFragment.isImage(postClip.url.getURL(), false) || ((PopupBrowserFragment.isImage(postClip.url.getURL(), true)) && doEmbedItemsVideos)))
+					{
 						ImageView image = new ImageView(getContext());
 						final String url = postClip.url.getURL().trim();
 
@@ -1916,7 +1923,7 @@ public class ThreadViewFragment extends ListFragment
 								.into(image);
 					}
 					// TWITTER CRAP
-					if ((postClip.type == PostClip.TYPE_TWEET) && (postClip.url != null) && (doEmbedItems)) {
+					if ((postClip.type == PostClip.TYPE_TWEET) && (postClip.url != null) && (doEmbedItemsImages)) {
 						final LinearLayout tweetHolder = new LinearLayout(getContext());
 						final String url = postClip.url.getURL().trim();
 
@@ -1958,7 +1965,7 @@ public class ThreadViewFragment extends ListFragment
 
 					}
 					// YOUTUBE CRAP
-					if ((postClip.type == PostClip.TYPE_YOUTUBE) && (postClip.url != null) && (doEmbedItems)) {
+					if ((postClip.type == PostClip.TYPE_YOUTUBE) && (postClip.url != null) && (doEmbedItemsImages)) {
 
 						ImageView playButton = new ImageView(getContext());
 
@@ -1977,7 +1984,7 @@ public class ThreadViewFragment extends ListFragment
 
 					}
 					// MP4 CRAP
-					if ((postClip.type == PostClip.TYPE_MP4) && (postClip.url != null) && (doEmbedItems))
+					if ((postClip.type == PostClip.TYPE_MP4) && (postClip.url != null) && (doEmbedItemsVideos))
 					{
 
 						// check if player already exists, recycle view if it does
@@ -2024,7 +2031,7 @@ public class ThreadViewFragment extends ListFragment
 	// Prepare the player with the source.
 							player.prepare(videoSource);
 							player.setPlayWhenReady(true);
-							player.setRepeatMode(Player.REPEAT_MODE_ALL);
+							player.setRepeatMode(Player.REPEAT_MODE_OFF);
 							view.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH);
 							//view.setControllerAutoShow(false);
 							player.addListener(new Player.EventListener()
@@ -2407,7 +2414,7 @@ public class ThreadViewFragment extends ListFragment
 				type = ptype;
 			}
 		}
-		private ArrayList<PostClip> postTextChopper(final Spannable text, boolean removeLinks) {
+		private ArrayList<PostClip> postTextChopper(final Spannable text, boolean removeLinksImages, boolean removeLinksVideos) {
 			// this thing chops up posts that have image links into sets up preceeding text and image link following it.
 			CustomURLSpan[] list = text.getSpans(0, text.length(), CustomURLSpan.class);
 			ArrayList<CustomURLSpan> spanList = new ArrayList<CustomURLSpan>(Arrays.asList(list));
@@ -2434,7 +2441,7 @@ public class ThreadViewFragment extends ListFragment
 				CustomURLSpan target = spanList.get(i);
 				if (PopupBrowserFragment.isImage(target.getURL().trim(),true)) {
 					if ((text.subSequence(startClip, text.getSpanEnd(target)).toString().length() > 0)) {
-						if (removeLinks) {
+						if (removeLinksImages) {
 							Spannable tempTxt = ((Spannable) text.subSequence(startClip, text.getSpanStart(target)));
 							tempTxt.removeSpan(target);
 							returnItem.add(0, new PostClip(tempTxt, target,PostClip.TYPE_IMAGE ));
@@ -2446,7 +2453,7 @@ public class ThreadViewFragment extends ListFragment
 				}
 				if (PopupBrowserFragment.isTweet(target.getURL().trim())) {
 					if ((text.subSequence(startClip, text.getSpanEnd(target)).toString().length() > 0)) {
-						if (removeLinks) {
+						if (removeLinksImages) {
 							Spannable tempTxt = ((Spannable) text.subSequence(startClip, text.getSpanStart(target)));
 							tempTxt.removeSpan(target);
 							returnItem.add(0, new PostClip(tempTxt, target,PostClip.TYPE_TWEET));
@@ -2458,7 +2465,7 @@ public class ThreadViewFragment extends ListFragment
 				}
 				if (PopupBrowserFragment.isYoutube(target.getURL().trim()) && _verified) {
 					if ((text.subSequence(startClip, text.getSpanEnd(target)).toString().length() > 0)) {
-						if (removeLinks) {
+						if (removeLinksImages) {
 							Spannable tempTxt = ((Spannable) text.subSequence(startClip, text.getSpanStart(target)));
 							tempTxt.removeSpan(target);
 							returnItem.add(0, new PostClip(tempTxt, target,PostClip.TYPE_YOUTUBE ));
@@ -2470,7 +2477,7 @@ public class ThreadViewFragment extends ListFragment
 				}
 				if (PopupBrowserFragment.isMP4(target.getURL().trim())) {
 					if ((text.subSequence(startClip, text.getSpanEnd(target)).toString().length() > 0)) {
-						if (removeLinks) {
+						if (removeLinksVideos) {
 							Spannable tempTxt = ((Spannable) text.subSequence(startClip, text.getSpanStart(target)));
 							tempTxt.removeSpan(target);
 							returnItem.add(0, new PostClip(tempTxt, target,PostClip.TYPE_MP4));

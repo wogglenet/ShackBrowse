@@ -90,8 +90,16 @@ Like anything good in tech, turn it off and on again. If that doesn't work, clea
 l[Can I see the source?]l
 https://github.com/bradsh/ShackBrowse It is a mess. I am not a professional programmer nor do I have any degrees in computer science. I just wanted a shack app so I learned to program.
 
+b{Why does the thread open when I go from landscape to portrait?}b
+How am I supposed to tell if you were looking at the thread or the list of threads? You can disable split view/tablet view to fix this, or lock the orientation to portrait.
+
 -->
 
+$ 5.8.2
+% v 5.8.2
+_ Jun 11, 2018
+* Video embedding has its own preference, default wifi only
+* Embedded videos no longer loop
 
 $ 5.8.1
 % v 5.8.1
