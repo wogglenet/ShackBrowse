@@ -153,7 +153,6 @@ public class AppMenu extends ListFragment
     	        	
     	        	_adapter.add(new MenuItems(1, "Application v" + thisversion , 0, 0));
     	        	_adapter.add(new MenuItems(0, "Info / Limes" , 3, R.drawable.ic_action_action_info_outline));
-    	        	_adapter.add(new MenuItems(0, "Feedback / Bugs" , 1, R.drawable.ic_action_action_report_problem));
 
     		        if (verified) {
     		        	_adapter.add(new MenuItems(0, "Queued Posts", 10, R.drawable.ic_action_image_add_to_photos));
@@ -242,12 +241,6 @@ public class AppMenu extends ListFragment
     		Intent i = new Intent(getActivity(), DonateActivity.class);
             getActivity().startActivityForResult(i, ThreadListFragment.OPEN_PREFS);
             trackM("openDonateActivity");
-    	}
-    	if (mid == 1)
-    	{
-    		Post post = new Post(0, "bradsh", "", null, 0, "", false);
-    		((MainActivity)getActivity()).openComposerForMessageReply(ThreadViewFragment.POST_MESSAGE, post, "ShackBrowse Feedback");
-    		trackM("showfeedback");
     	}
     	if (mid == 4)
     	{

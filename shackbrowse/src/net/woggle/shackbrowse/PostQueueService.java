@@ -225,7 +225,7 @@ public class PostQueueService extends IntentService {
 								else
 								{
 
-                                    notify("Post Error", "Error X48. Please report this to bradsh.", 58416, 0);
+                                    notify("Post Error", "Error X48. Please report this.", 58416, 0);
 
 									// unknown error, use exponential backoff
                                     statInc(ctx, "PQPUnknownError");

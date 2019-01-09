@@ -1085,25 +1085,25 @@ public class ComposePostView extends AppCompatActivity {
 		{
 			for (int i = 0; i < _tagLabels.length; i++)
 			{
-				itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML(_tagLabels[i]), null, true, true));
+				itemList.add(PostFormatter.formatContent("", getPreviewFromHTML(_tagLabels[i]), null, true, true));
 			}
 		}
 		if (macrosInstead)
 		{
 			// AMERICA item
-			itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML("Macro: r{A}rMb{E}br{R}rIb{C}br{A}r"), null, true, true));
+			itemList.add(PostFormatter.formatContent("", getPreviewFromHTML("Macro: r{A}rMb{E}br{R}rIb{C}br{A}r"), null, true, true));
 			// random
-			itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML("Macro: r{R}rs[A]sb{N}b-[D]-l[O]l/[M]/p[!]p"), null, true, true));
+			itemList.add(PostFormatter.formatContent("", getPreviewFromHTML("Macro: r{R}rs[A]sb{N}b-[D]-l[O]l/[M]/p[!]p"), null, true, true));
 			// ALLCAPS
-			itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML("Macro: ALLCAPS"), null, true, true));
+			itemList.add(PostFormatter.formatContent("", getPreviewFromHTML("Macro: ALLCAPS"), null, true, true));
 			// Christmas
-			itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML("Macro: r{C}rg{H}gr{R}rg{I}gr{S}rg{T}gr{M}rg{A}gr{S}r"), null, true, true));
+			itemList.add(PostFormatter.formatContent("", getPreviewFromHTML("Macro: r{C}rg{H}gr{R}rg{I}gr{S}rg{T}gr{M}rg{A}gr{S}r"), null, true, true));
 			// N U K E ' D
-			itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML("Macro: *[r{*" + "&nbsp;" + "N" + "&nbsp;" + "U" + "&nbsp;" + "K" + "&nbsp;" + "E" + "&nbsp;" + "'" + "&nbsp;" + "D*}r]*"), null, true, true));
+			itemList.add(PostFormatter.formatContent("", getPreviewFromHTML("Macro: *[r{*" + "&nbsp;" + "N" + "&nbsp;" + "U" + "&nbsp;" + "K" + "&nbsp;" + "E" + "&nbsp;" + "'" + "&nbsp;" + "D*}r]*"), null, true, true));
 			// RAINBOW
-			itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML("Macro: r{R}rn[A]ny{I}yl[N]lg{B}gb{O}bp[W]p"), null, true, true));
+			itemList.add(PostFormatter.formatContent("", getPreviewFromHTML("Macro: r{R}rn[A]ny{I}yl[N]lg{B}gb{O}bp[W]p"), null, true, true));
 			// ZA???L?????G???O??????!???
-			itemList.add(PostFormatter.formatContent("bradsh", getPreviewFromHTML("Macro: " + zalgo_text("Zalgo / Cthulhu")), null, true, true));
+			itemList.add(PostFormatter.formatContent("", getPreviewFromHTML("Macro: " + zalgo_text("Zalgo / Cthulhu")), null, true, true));
 
 		}
 

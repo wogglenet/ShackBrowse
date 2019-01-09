@@ -435,7 +435,7 @@ public class NotifierReceiver extends FirebaseMessagingService
 	private NotificationCompat.BigTextStyle getBigTextFor(String title, String text)
 	{
 		BigTextStyle big = new NotificationCompat.BigTextStyle();
-		big.bigText(PostFormatter.formatContent("bradsh", text, null, false, true));
+		big.bigText(PostFormatter.formatContent("w", text, null, false, true));
 		big.setBigContentTitle(title);
 		return big;
 	}

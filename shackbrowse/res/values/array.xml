@@ -85,7 +85,7 @@
     </string-array>
     <string-array name="preference_theme">
         <item>lime green</item>
-        <item>bradsh\'s darkshack</item>
+        <item>darkshack</item>
 		<item>briefcase purple</item>
     </string-array>
     <string-array name="preference_theme_vals">
