@@ -18,9 +18,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
-/**
- * Created by brad on 6/22/2016.
- */
 public class ShackMessageCheck
 {
 	private String _userName;
