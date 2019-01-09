@@ -88,7 +88,7 @@ y{My Notifications are jacked up.}y
 Like anything good in tech, turn it off and on again. If that doesn't work, clear app data and then log back in, close the app, and open it again. If that doesn't work, try the option in notifications to delete all other devices. You can also visit https://woggle.net/notifications to see what that shows.
 
 l[Can I see the source?]l
-https://github.com/bradsh/ShackBrowse It is a mess. I am not a professional programmer nor do I have any degrees in computer science. I just wanted a shack app so I learned to program.
+https://github.com/wogglenet/ShackBrowse It is a mess. I am not a professional programmer nor do I have any degrees in computer science. I just wanted a shack app so I learned to program.
 
 b{Why does the thread open when I go from landscape to portrait?}b
 How am I supposed to tell if you were looking at the thread or the list of threads? You can disable split view/tablet view to fix this, or lock the orientation to portrait.
@@ -139,7 +139,7 @@ $ 5.7.0
 % v 5.7.0
 _ Apr 19, 2018
 * New theme: briefcase purple
-* bradsh's darkshack now default, like it always should have been
+* woggle's darkshack now default, like it always should have been
 * Reply view highlighter button moved back to the overflow button
 * Autocomplete for submitted searches and page filters
 * Redesigned the search page a little since search seems to be working although the man with the briefcase will not say if he fixed it
