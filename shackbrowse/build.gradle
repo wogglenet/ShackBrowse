@@ -96,7 +96,7 @@ android {
     defaultConfig {
         applicationId "net.woggle.shackbrowse"
         minSdkVersion 17
-        targetSdkVersion 25
+        targetSdkVersion 28
         // multiDexEnabled true
     }
     productFlavors {

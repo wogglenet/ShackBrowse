@@ -20,6 +20,7 @@ import net.woggle.AutocompleteProvider;
 import net.woggle.shackbrowse.ChangeLog.onChangeLogCloseListener;
 import net.woggle.shackbrowse.NetworkNotificationServers.OnGCMInteractListener;
 import net.woggle.shackbrowse.PullToRefreshAttacher.Options;
+import net.woggle.shackbrowse.notifier.NotifierReceiver;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,6 +31,8 @@ import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -45,6 +48,7 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -237,6 +241,31 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		// set up preferences
         reloadPrefs();
 
+
+        // set up android oreo notification channels
+		// Create the NotificationChannel, but only on API 26+ because
+		// the NotificationChannel class is new and not in the support library
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			NotificationManager notificationManager = getSystemService(NotificationManager.class);
+
+			NotificationChannel channel = new NotificationChannel(NotifierReceiver.CHANNEL_VANITY, "Vanity Notifications", NotificationManager.IMPORTANCE_DEFAULT);
+			channel.setDescription("Notifications when someone mentions your shack name"); channel.enableLights(true); channel.setLightColor(Color.GREEN); channel.enableVibration(true);
+			notificationManager.createNotificationChannel(channel);
+			channel = new NotificationChannel(NotifierReceiver.CHANNEL_REPLY, "Reply Notifications", NotificationManager.IMPORTANCE_DEFAULT);
+			channel.setDescription("Notifications when someone replies to your posts"); channel.enableLights(true); channel.setLightColor(Color.GREEN); channel.enableVibration(true);
+			notificationManager.createNotificationChannel(channel);
+			channel = new NotificationChannel(NotifierReceiver.CHANNEL_KEYWORD, "Keyword Notifications", NotificationManager.IMPORTANCE_DEFAULT);
+			channel.setDescription("Notifications when someone mentions a keyword you set"); channel.enableLights(true); channel.setLightColor(Color.GREEN); channel.enableVibration(true);
+			notificationManager.createNotificationChannel(channel);
+			channel = new NotificationChannel(NotifierReceiver.CHANNEL_SHACKMSG, "Shack Message Notifications", NotificationManager.IMPORTANCE_HIGH);
+			channel.setDescription("Notifications when someone sends you a private message"); channel.enableLights(true); channel.setLightColor(Color.GREEN); channel.enableVibration(true);
+			notificationManager.createNotificationChannel(channel);
+			channel = new NotificationChannel(NotifierReceiver.CHANNEL_SYSTEM, "System Notifications", NotificationManager.IMPORTANCE_LOW);
+			channel.setDescription("Notifications from the app, such as post queue notifications"); channel.enableLights(true); channel.setLightColor(Color.GREEN); channel.enableVibration(false);
+			notificationManager.createNotificationChannel(channel);
+		}
+
+
 		// notifications registrator, works mostly automatically
 		OnGCMInteractListener GCMlistener = new OnGCMInteractListener(){
 			@Override	public void networkResult(String res)
@@ -387,7 +416,8 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         // clean up postqueue
 	    Intent msgIntent = new Intent(this, PostQueueService.class);
 	    msgIntent.putExtra("appinit", true);
-	    startService(msgIntent);
+		PostQueueService.enqueueWork(this, msgIntent);
+	    //startService(msgIntent);
         
         // initialize slide frame handle
         _tviewFrame = ((SlideFrame)findViewById(R.id.singleThread));
@@ -2092,7 +2122,8 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		
 		// start the postqueue service
 	    Intent msgIntent = new Intent(this, PostQueueService.class);
-	    startService(msgIntent);
+	    PostQueueService.enqueueWork(this, msgIntent);
+	    // startService(msgIntent);
     }
 
     public void restartApp()
@@ -2569,6 +2600,10 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
                 	return CANHANDLEINTENT;
             }
         }
+        else if (intent.getCategories().contains("android.intent.category.NOTIFICATION_PREFERENCES"))
+        {
+	        return CANHANDLEINTENT;
+        }
         else if (Intent.ACTION_VIEW.equals(action) && uri != null)
     	{
     		String id = uri.getQueryParameter("id");
@@ -2618,6 +2653,9 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	        // SHACKSM NOTIFICATIONS
 	        else if (extras.containsKey("notificationOpenMessages"))
 				return CANHANDLEINTENT;
+		    // PQS NOTIFICATIONS
+	        else if (extras.containsKey("notificationOpenPostQueue"))
+		        return CANHANDLEINTENT;
         }
 		return CANNOTHANDLEINTENT;
 	}
@@ -2652,6 +2690,15 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	                	return true;
 	                }
 	            }
+	        }
+	        else if (intent.getCategories().contains("android.intent.category.NOTIFICATION_PREFERENCES"))
+	        {
+		        if (_prefs.getBoolean("noteEnabled", false))
+		        {
+			        cleanUpViewer();
+			        setContentTo(MainActivity.CONTENT_NOTEPREFS);
+		        }
+		        return true;
 	        }
 	        else if (Intent.ACTION_VIEW.equals(action) && uri != null)
 	    	{
@@ -2850,6 +2897,11 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 					
 					return true;
 					
+		        }
+		        // PQS NOTIFICATIONS
+		        else if (extras.containsKey("notificationOpenPostQueue"))
+		        {
+			        openPostQueueManager();
 		        }
 	        }
 		}

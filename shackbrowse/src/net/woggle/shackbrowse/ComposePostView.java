@@ -1458,8 +1458,8 @@ public class ComposePostView extends AppCompatActivity {
 	    setResult(RESULT_OK, reply);
 	    
 	    // start the postqueue service
-	    Intent msgIntent = new Intent(this, PostQueueService.class);
-	    startService(msgIntent);
+		PostQueueService.enqueueWork(this, new Intent(this, PostQueueService.class));
+	    // startService(msgIntent);
 	    
 	    // lets get the hell out of here!
 	    _preventDraftSave = true;

@@ -19,7 +19,8 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
         {
         	// start the postqueue service
     	    Intent msgIntent = new Intent(context, PostQueueService.class);
-    	    context.startService(msgIntent);
+            PostQueueService.enqueueWork(context, msgIntent);
+    	    // context.startService(msgIntent);
     	    System.out.println("POSTQU: SENDING START MSG");
         }
     }

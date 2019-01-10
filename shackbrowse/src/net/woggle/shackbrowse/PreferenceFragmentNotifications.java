@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import net.woggle.shackbrowse.NetworkNotificationServers.OnGCMInteractListener;
+import net.woggle.shackbrowse.notifier.NotifierReceiver;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -22,13 +23,16 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
+import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -90,6 +94,7 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
 
         });
 
+
         Preference testNote = (Preference) findPreference("pref_testnote");
         testNote.setOnPreferenceClickListener(new OnPreferenceClickListener(){
 
@@ -99,7 +104,7 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
 
                                                       Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
                                                       NotificationCompat.Builder mBuilder =
-                                                              new NotificationCompat.Builder(getActivity())
+                                                              new NotificationCompat.Builder(getActivity(), NotifierReceiver.CHANNEL_REPLY)
                                                                       .setSmallIcon(R.drawable.note_logo)
                                                                       .setLargeIcon(largeIcon)
                                                                       .setContentTitle("Test")
@@ -419,6 +424,48 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
         };
         _repliesNotification.setOnPreferenceChangeListener(replOnPrefListener);
         _vanityNotification.setOnPreferenceChangeListener(vanOnPrefListener);
+
+        Preference channelNote = (Preference) findPreference("notificationChannels");
+        Preference vibeNote = (Preference) findPreference("notificationVibrate");
+        Preference soundNote = (Preference) findPreference("notificationSound");
+        Preference blinkspdNote = (Preference) findPreference("LEDBlinkInMS");
+        Preference vibespdNote = (Preference) findPreference("limitVibrateSpamInMS");
+        channelNote.setOnPreferenceClickListener(new OnPreferenceClickListener()
+                                                 {
+                                                     @Override
+                                                     public boolean onPreferenceClick(Preference preference)
+                                                     {
+                                                         Intent intent = new Intent();
+                                                         if(android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1){
+                                                             intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+                                                             intent.putExtra("android.provider.extra.APP_PACKAGE", getActivity().getPackageName());
+                                                         }else if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                                                             intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+                                                             intent.putExtra("app_package", getActivity().getPackageName());
+                                                             intent.putExtra("app_uid", getActivity().getApplicationInfo().uid);
+                                                         }else {
+                                                             intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                                             intent.addCategory(Intent.CATEGORY_DEFAULT);
+                                                             intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
+                                                         }
+
+                                                         getActivity().startActivity(intent);
+                                                         return false;
+                                                     }
+                                                 });
+                PreferenceCategory pCategory = (PreferenceCategory) findPreference("notificationCat");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+        {
+            pCategory.removePreference(colorNote);
+            pCategory.removePreference(vibeNote);
+            pCategory.removePreference(soundNote);
+            pCategory.removePreference(blinkspdNote);
+            pCategory.removePreference(vibespdNote);
+        }
+        else
+        {
+            pCategory.removePreference(channelNote);
+        }
 
     }
 

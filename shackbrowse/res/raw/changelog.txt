@@ -32,6 +32,7 @@ TODO
 SERVER
 * STAR OUT SPOILER TEXT
 * NO NOTIFICATIONS FROM SELF
+
 -->
 <!--
 new version post
@@ -89,6 +90,13 @@ b{Why does the thread open when I go from landscape to portrait?}b
 How am I supposed to tell if you were looking at the thread or the list of threads? You can disable split view/tablet view to fix this, or lock the orientation to portrait.
 
 -->
+
+$ 5.9.0
+% v 5.9.0
+_ Jan 9, 2019
+* Support for notification channels
+* PRL'd notification links you directly to post queue manager
+* Bug Fix: Double posts. Maybe. It's complicated.
 
 $ 5.8.2
 % v 5.8.2

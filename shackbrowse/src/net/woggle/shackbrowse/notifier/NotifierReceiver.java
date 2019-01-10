@@ -44,6 +44,12 @@ public class NotifierReceiver extends FirebaseMessagingService
 {
 	public static final int icon_res = R.drawable.note_logo;
 
+	public static final String CHANNEL_VANITY = "sbnotechannel_vanity";
+	public static final String CHANNEL_REPLY = "sbnotechannel_reply";
+	public static final String CHANNEL_KEYWORD = "sbnotechannel_keyword";
+	public static final String CHANNEL_SHACKMSG = "sbnotechannel_shackmsg";
+	public static final String CHANNEL_SYSTEM = "sbnotechannel_system";
+
 	@Override
 	public void onMessageReceived(RemoteMessage message){
 
@@ -65,7 +71,7 @@ public class NotifierReceiver extends FirebaseMessagingService
 			if (data.get("type").toString().equalsIgnoreCase("reply"))
 			{
 				NotificationCompat.Builder mBuilder =
-				        new NotificationCompat.Builder(context)
+				        new NotificationCompat.Builder(context, NotifierReceiver.CHANNEL_REPLY)
 				        .setSmallIcon(icon_res)
 				        .setLargeIcon(largeIcon)
 				        .setContentTitle(data.get("username").toString() + " replied to your post")
@@ -137,7 +143,7 @@ public class NotifierReceiver extends FirebaseMessagingService
 			{
 			  
 				NotificationCompat.Builder mBuilder =
-				        new NotificationCompat.Builder(context)
+				        new NotificationCompat.Builder(context, NotifierReceiver.CHANNEL_VANITY)
 				        .setSmallIcon(icon_res)
 				        .setLargeIcon(largeIcon)
 				        .setContentTitle(data.get("username").toString() + " mentioned you in a post")
@@ -205,7 +211,7 @@ public class NotifierReceiver extends FirebaseMessagingService
 			{
 			  
 				NotificationCompat.Builder mBuilder =
-				        new NotificationCompat.Builder(context)
+				        new NotificationCompat.Builder(context, NotifierReceiver.CHANNEL_KEYWORD)
 				        .setSmallIcon(icon_res)
 				        .setLargeIcon(largeIcon)
 				        .setContentTitle(data.get("username").toString() + " mentioned " + data.get("keyword").toString())
@@ -272,7 +278,7 @@ public class NotifierReceiver extends FirebaseMessagingService
 			{
 			  
 				NotificationCompat.Builder mBuilder =
-				        new NotificationCompat.Builder(context)
+				        new NotificationCompat.Builder(context, NotifierReceiver.CHANNEL_SHACKMSG)
 				        .setSmallIcon(icon_res)
 				        .setLargeIcon(largeIcon)
 				        .setContentTitle(data.get("username").toString() + " sent you a shackmessage")

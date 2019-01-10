@@ -38,7 +38,7 @@ public class ShackMessageNotifierReceiver extends BroadcastReceiver
 			{
 
 				NotificationCompat.Builder mBuilder =
-						new NotificationCompat.Builder(context)
+						new NotificationCompat.Builder(context, NotifierReceiver.CHANNEL_SHACKMSG)
 								.setSmallIcon(icon_res)
 								.setLargeIcon(largeIcon)
 								.setContentTitle(data.get("username").toString() + " sent you a shackmessage")

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="@string/preferences_notifications" android:summary="@string/preferences_notifications_summary">
+    <PreferenceCategory android:key="notificationCat" android:title="@string/preferences_notifications" android:summary="@string/preferences_notifications_summary">
         <CheckBoxPreference
             android:key="noteEnabled"
             android:title="@string/preference_pushnot_title"
@@ -43,6 +43,11 @@
             android:summary="@string/preference_periodicnetworkservice_summary"
             android:defaultValue="10800"
             />
+		<Preference
+			android:key="notificationChannels"
+			android:title="Change light, sound, etc"
+			android:summary="Link to system settings where each type of notification can be customized in terms of light, sound, and vibration."
+			/>
         <RingtonePreference
             android:showDefault="true"
             android:key="notificationSound"
