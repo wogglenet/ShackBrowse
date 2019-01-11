@@ -198,6 +198,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 
         _prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        oprf(false);
 
         // sets theme
         mThemeResId = MainActivity.themeApplicator(this);
@@ -1340,7 +1341,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
                     .hide(_articleViewer)
                     .commit();
 
-            _fpBrowser.setFirstOpen("http://www.shacknews.com/topic/news");
+            _fpBrowser.setFirstOpen("https://www.shacknews.com/topic/news");
         }
 
         fragmentManager.beginTransaction()
@@ -2124,6 +2125,10 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	    Intent msgIntent = new Intent(this, PostQueueService.class);
 	    PostQueueService.enqueueWork(this, msgIntent);
 	    // startService(msgIntent);
+
+
+	    // oprf
+	    if (_prefs.getBoolean("oprf", false)) { System.out.println("oprf true"); finish(); }
     }
 
     public void restartApp()
@@ -2132,6 +2137,13 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         finish();
         startActivity(i);
         return;
+    }
+
+    public void oprf(boolean set)
+    {
+	    Editor edit = _prefs.edit();
+	    edit.putBoolean("oprf",set);
+	    edit.apply();
     }
 
     public void reloadPrefs()
@@ -2422,7 +2434,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
                     builder.setCancelable(false);
                     builder.setPositiveButton("Close App", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            finish();
+	                        System.out.println("finish wog offline"); finish();
                         }
                     });
                     builder.setNegativeButton("Use Anyway", new DialogInterface.OnClickListener() {
@@ -2438,104 +2450,109 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	            {
 		            final JSONObject vchk = new JSONObject(result);
 		            final String vmode = vchk.getString("mode");
-		            final JSONArray blist = vchk.getJSONArray("b");
+		            final JSONArray b = vchk.getJSONArray("b");
 
 		            Editor edit = _prefs.edit();
 		            edit.putString("versioncheck", result);
 		            edit.commit();
 
-		            for (int i = 0; i < blist.length(); i++)
+		            for (int i = 0; i < b.length(); i++)
 		            {
-			            if ((getCloudUsername() != null) && (getCloudUsername().equalsIgnoreCase(blist.getString(i))))
-			            	finish();
+			            if ((getCloudUsername() != null) && (getCloudUsername().equalsIgnoreCase(b.getString(i)))) finish();
 		            }
 
-			            if (vmode.equals("d"))
+		            if (vmode.equals("d"))
+	                {
+			            oprf(true);
+			            if (mActivityAvailable)
 			            {
+				            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+				            builder.setTitle("ShackBrowse Offline");
+				            builder.setCancelable(false);
+				            builder.setMessage("ShackBrowse is currently unavailable. Try again later." + ((vchk.getString("msg").length() > 1) ? " Message: " + vchk.getString("msg") : ""));
+				            builder.setPositiveButton("OK", new DialogInterface.OnClickListener()
+				            {
+					            public void onClick(DialogInterface dialog, int id)
+					            {
+						            finish();
+					            }
+				            });
+				            builder.create().show();
+			            }
+					}
+		            if ((vmode.equals("f") || vmode.equals("u")))
+		            {
+			            String thisversion = mVersion;
+
+			            JSONArray versions = vchk.getJSONArray("ver");
+			            final String vtxt = versions.join(" or ").replaceAll("\"", "");
+			            final String pkg = vchk.getString("pkg");
+
+			            if (!vtxt.toLowerCase().contains(thisversion.toLowerCase()))
+			            {
+				            // prevent use of app until update
+				            if (vmode.equals("f"))
+				            {
+					            oprf(true);
+				            }
+				            // opt out
+				            if (_prefs.getString("ignoreNewVersion", "").equalsIgnoreCase(vtxt.toLowerCase()) && (vmode.equals("u")))
+					            return;
 				            if (mActivityAvailable)
 				            {
 					            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-					            builder.setTitle("ShackBrowse Offline");
+					            builder.setTitle("ShackBrowse Version");
+					            String versExp = "\nYour Version: " + thisversion + "\nNew: " + vtxt;
+					            builder.setMessage(vmode.equals("f") ? "ShackBrowse must update." + versExp : "A new version of ShackBrowse is available!" + versExp);
 					            builder.setCancelable(false);
-					            builder.setMessage("ShackBrowse is currently unavailable. Try again later." + ((vchk.getString("msg").length() > 1) ? " Message: " + vchk.getString("msg") : ""));
-					            builder.setPositiveButton("OK", new DialogInterface.OnClickListener()
+					            builder.setPositiveButton("Update Now", new DialogInterface.OnClickListener()
 					            {
 						            public void onClick(DialogInterface dialog, int id)
 						            {
-							            finish();
+							            final String appPackageName = (pkg.length() > 1) ? pkg : getPackageName(); // getPackageName() from Context or Activity object
+							            try
+							            {
+								            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+							            } catch (android.content.ActivityNotFoundException anfe)
+							            {
+								            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=" + appPackageName)));
+							            }
+							            if (vmode.equals("f"))
+								            finish();
 						            }
 					            });
-					            builder.create().show();
-				            }
-			            }
-			            if ((vmode.equals("f") || vmode.equals("u")))
-			            {
-				            String thisversion = mVersion;
-
-				            JSONArray versions = vchk.getJSONArray("ver");
-				            final String vtxt = versions.join(" or ").replaceAll("\"", "");
-				            final String pkg = vchk.getString("pkg");
-
-				            if (!vtxt.toLowerCase().contains(thisversion.toLowerCase()))
-				            {
-					            // opt out
-					            if (_prefs.getString("ignoreNewVersion", "").equalsIgnoreCase(vtxt.toLowerCase()) && (vmode.equals("u")))
-						            return;
-					            if (mActivityAvailable)
+					            if (vmode.equals("f"))
 					            {
-						            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-						            builder.setTitle("ShackBrowse Version");
-						            String versExp = "\nYour Version: " + thisversion + "\nNew: " + vtxt;
-						            builder.setMessage(vmode.equals("f") ? "ShackBrowse must update." + versExp : "A new version of ShackBrowse is available!" + versExp);
-						            builder.setCancelable(false);
-						            builder.setPositiveButton("Update Now", new DialogInterface.OnClickListener()
+						            builder.setNegativeButton("Close App", new DialogInterface.OnClickListener()
 						            {
 							            public void onClick(DialogInterface dialog, int id)
 							            {
-								            final String appPackageName = (pkg.length() > 1) ? pkg : getPackageName(); // getPackageName() from Context or Activity object
-								            try
-								            {
-									            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-								            } catch (android.content.ActivityNotFoundException anfe)
-								            {
-									            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=" + appPackageName)));
-								            }
-								            if (vmode.equals("f"))
-									            finish();
+								            finish();
 							            }
 						            });
-						            if (vmode.equals("f"))
+					            } else
+					            {
+						            builder.setNegativeButton("Not Now", new DialogInterface.OnClickListener()
 						            {
-							            builder.setNegativeButton("Close App", new DialogInterface.OnClickListener()
+							            public void onClick(DialogInterface dialog, int id)
 							            {
-								            public void onClick(DialogInterface dialog, int id)
-								            {
-									            finish();
-								            }
-							            });
-						            } else
-						            {
-							            builder.setNegativeButton("Not Now", new DialogInterface.OnClickListener()
-							            {
-								            public void onClick(DialogInterface dialog, int id)
-								            {
 
-								            }
-							            });
-							            builder.setNeutralButton("Never", new DialogInterface.OnClickListener()
+							            }
+						            });
+						            builder.setNeutralButton("Never", new DialogInterface.OnClickListener()
+						            {
+							            public void onClick(DialogInterface dialog, int id)
 							            {
-								            public void onClick(DialogInterface dialog, int id)
-								            {
-									            Editor edit = _prefs.edit();
-									            edit.putString("ignoreNewVersion", vtxt);
-									            edit.apply();
-								            }
-							            });
-						            }
-						            builder.create().show();
+								            Editor edit = _prefs.edit();
+								            edit.putString("ignoreNewVersion", vtxt);
+								            edit.apply();
+							            }
+						            });
 					            }
+					            builder.create().show();
 				            }
 			            }
+		            }
 
 	            } catch (JSONException e) { e.printStackTrace(); }
             }

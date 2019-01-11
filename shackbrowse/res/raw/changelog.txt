@@ -20,14 +20,11 @@
   <body>
 <!--
 TODO
-* TODO SUPPORT NOTIFICATION CHANNELS FOR API 26
 * TODO NO NETWORK ICON
 * QUOTES FROM TEXT SELECTION
 * WHITE MODE
 * WIDGET FOR TOP POSTS
 * Easy notification reply
-* GIF gboard upload support
-* postcomposer upload image thumbnail preview
 
 SERVER
 * STAR OUT SPOILER TEXT
@@ -96,6 +93,7 @@ $ 5.9.0
 _ Jan 9, 2019
 * Support for notification channels
 * PRL'd notification links you directly to post queue manager
+* Fixed frontpage mostly
 * Bug Fix: Double posts. Maybe. It's complicated.
 
 $ 5.8.2
