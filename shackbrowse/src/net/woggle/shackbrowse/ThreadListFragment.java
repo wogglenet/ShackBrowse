@@ -18,6 +18,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Random;
 import java.util.Stack;
 
 import net.woggle.AutocompleteProvider;
@@ -41,6 +42,7 @@ import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.LightingColorFilter;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -50,6 +52,7 @@ import android.os.Handler;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.app.ListFragment;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.text.InputType;
 import android.text.Spannable;
@@ -58,6 +61,7 @@ import android.text.Spanned;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -76,6 +80,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AbsListView.OnScrollListener;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import com.gc.materialdesign.views.ButtonFlat;
@@ -639,7 +644,6 @@ public class ThreadListFragment extends ListFragment
         
         // markFavoriteAsRead(thread);
 	    // this now happens afterDisplay
-        
         _itemChecked = index -1;
         _adapter.notifyDataSetChanged();
         getListView().setItemChecked(index, true);
@@ -659,8 +663,52 @@ public class ThreadListFragment extends ListFragment
 	        		.get(Integer.toString(thread.getThreadId()));
 	    	}
         }
-        
-        ((MainActivity)getActivity()).openThreadView(thread.getThreadId(), thread, lol);
+
+        final LolObj flol = lol;
+	    if (thread.getModeration().equalsIgnoreCase("political"))
+	    {
+		    String[] strArr = {"Life is pain","My obsession knows no bounds","You don't control me","I hate my life","I have to check though","It's really important","I already took xanax","But what if something happens!?", "I love anxiety and depression", "I'm already depressed","FML","One more won't hurt","Sadness is life" };
+		    Random r = new Random();
+		    String okbutton = strArr[r.nextInt(strArr.length)];
+
+		    MaterialDialog.Builder build = new MaterialDialog.Builder(getActivity());
+		    build.title("Warning");
+		    build.iconRes(R.drawable.ic_action_action_report_problem);
+		    build.positiveColor(Color.RED);
+		    final SpannableString s = new SpannableString("Studies show excessive political activity on social media can lead to anxiety and depression." + "\n" +
+				    "\n" + "https://www.ncbi.nlm.nih.gov/pubmed/29631796");
+		    Linkify.addLinks(s, Linkify.WEB_URLS);
+		    build.content(s);
+		    build.positiveText(okbutton);
+		    build.neutralText("Turn off political filter");
+		    build.neutralColor(Color.GREEN);
+		    build.negativeColor(Color.YELLOW);
+		    build.negativeText("Run");
+		    build.onPositive(new MaterialDialog.SingleButtonCallback()
+		    {
+			    @Override
+			    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which)
+			    {
+				    ((MainActivity)getActivity()).openThreadView(thread.getThreadId(), thread, flol);
+			    }
+		    });
+		    build.onNeutral(new MaterialDialog.SingleButtonCallback()
+		    {
+			    @Override
+			    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which)
+			    {
+				    Editor e = _prefs.edit(); e.putBoolean("showPolitical", false); e.commit();
+				    refreshThreads();
+			    }
+		    });
+		    build.show();
+	    }
+	    else
+	    {
+	    	System.out.println("TLIST: NOT POLITICAL");
+		    ((MainActivity)getActivity()).openThreadView(thread.getThreadId(), thread, flol);
+	    }
+
     }
     
     public void markFavoriteAsRead (int threadId, int replyCount)

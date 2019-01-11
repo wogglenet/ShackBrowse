@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
       package="net.woggle.shackbrowse"
-      android:versionCode="438"
-      android:versionName="5.9.0Beta">
+      android:versionCode="440"
+      android:versionName="5.9.02Beta">
 <uses-permission android:name="android.permission.INTERNET"></uses-permission>
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -16,7 +16,7 @@
 	<uses-permission android:name="android.permission.WAKE_LOCK" />
 
 
-    <application android:theme="@style/AppTheme" android:hardwareAccelerated="true" android:icon="@drawable/ic_launcher" android:label="@string/app_name" android:largeHeap="true" android:name=".SBApplication">
+    <application android:theme="@style/AppTheme" android:usesCleartextTraffic="true" android:hardwareAccelerated="true" android:icon="@drawable/ic_launcher" android:label="@string/app_name" android:largeHeap="true" android:name=".SBApplication">
 		<provider
 			android:name="android.support.v4.content.FileProvider"
 			android:authorities="net.woggle.shackbrowse.provider"
@@ -136,5 +136,8 @@
         <meta-data android:name="com.sec.android.multiwindow.MINIMUM_SIZE_H" android:resource="@dimen/app_minimumsize_h" />
 
 
+
+		<!-- fix for pie -->
+		<uses-library android:name="org.apache.http.legacy" android:required="false"/>
     </application>
 </manifest>

@@ -88,8 +88,8 @@ How am I supposed to tell if you were looking at the thread or the list of threa
 
 -->
 
-$ 5.9.0Beta
-% v 5.9.0Beta
+$ 5.9.02Beta
+% v 5.9.02Beta
 _ Jan 9, 2019
 * Support for notification channels
 * PRL'd notification links you directly to post queue manager
