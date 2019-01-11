@@ -104,12 +104,12 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.color.ColorChooserDialog;
 //FIREBASE import com.google.firebase.analytics.FirebaseAnalytics;
-import com.pierfrancescosoffritti.youtubeplayer.player.AbstractYouTubePlayerListener;
-import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayer;
-import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerFullScreenListener;
-import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerInitListener;
-import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerView;
-import com.pierfrancescosoffritti.youtubeplayer.ui.PlayerUIController;
+import com.pierfrancescosoffritti.androidyoutubeplayer.player.listeners.AbstractYouTubePlayerListener;
+import com.pierfrancescosoffritti.androidyoutubeplayer.player.YouTubePlayer;
+import com.pierfrancescosoffritti.androidyoutubeplayer.player.listeners.YouTubePlayerInitListener;
+import com.pierfrancescosoffritti.androidyoutubeplayer.player.YouTubePlayerView;
+import com.pierfrancescosoffritti.androidyoutubeplayer.player.listeners.YouTubePlayerFullScreenListener;
+import com.pierfrancescosoffritti.androidyoutubeplayer.ui.PlayerUIController;
 import com.twitter.sdk.android.core.Twitter;
 
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
@@ -1256,7 +1256,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		{
 			mTitle = "Latest Chatty";
 			if (isBeta)
-				mTitle = "Beta " + mVersion;
+				mTitle = "Beta " + mVersion.replace("Beta","");
 			fragment = _threadList;
 		}
 		if (type == CONTENT_MESSAGES)
@@ -2617,7 +2617,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
                 	return CANHANDLEINTENT;
             }
         }
-        else if (intent.getCategories().contains("android.intent.category.NOTIFICATION_PREFERENCES"))
+        else if (intent.getCategories() != null && intent.getCategories().contains("android.intent.category.NOTIFICATION_PREFERENCES"))
         {
 	        return CANHANDLEINTENT;
         }
@@ -2708,7 +2708,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	                }
 	            }
 	        }
-	        else if (intent.getCategories().contains("android.intent.category.NOTIFICATION_PREFERENCES"))
+	        else if (intent.getCategories() != null && intent.getCategories().contains("android.intent.category.NOTIFICATION_PREFERENCES"))
 	        {
 		        if (_prefs.getBoolean("noteEnabled", false))
 		        {

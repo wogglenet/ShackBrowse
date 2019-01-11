@@ -88,12 +88,13 @@ How am I supposed to tell if you were looking at the thread or the list of threa
 
 -->
 
-$ 5.9.0
-% v 5.9.0
+$ 5.9.0Beta
+% v 5.9.0Beta
 _ Jan 9, 2019
 * Support for notification channels
 * PRL'd notification links you directly to post queue manager
 * Fixed frontpage mostly
+* Libraries updated. gifv/mp4/gif embedding seems to be less buggy
 * Bug Fix: Double posts. Maybe. It's complicated.
 
 $ 5.8.2

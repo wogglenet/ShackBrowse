@@ -99,10 +99,10 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.nhaarman.listviewanimations.itemmanipulation.ExpandCollapseListener;
-import com.pierfrancescosoffritti.youtubeplayer.player.AbstractYouTubePlayerListener;
-import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayer;
-import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerInitListener;
-import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerView;
+import com.pierfrancescosoffritti.androidyoutubeplayer.player.listeners.AbstractYouTubePlayerListener;
+import com.pierfrancescosoffritti.androidyoutubeplayer.player.YouTubePlayer;
+import com.pierfrancescosoffritti.androidyoutubeplayer.player.listeners.YouTubePlayerInitListener;
+import com.pierfrancescosoffritti.androidyoutubeplayer.player.YouTubePlayerView;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterException;
@@ -130,6 +130,7 @@ import java.util.Iterator;
 import java.util.ListIterator;
 
 
+import static com.google.android.exoplayer2.Player.STATE_READY;
 import static net.woggle.shackbrowse.StatsFragment.statInc;
 import static net.woggle.shackbrowse.StatsFragment.statMax;
 import static net.woggle.shackbrowse.notifier.NotifierReceiver.checkIfMuted;
@@ -2057,7 +2058,7 @@ public class ThreadViewFragment extends ListFragment
 								@Override
 								public void onPlayerStateChanged(boolean playWhenReady, int playbackState)
 								{
-									if (playbackState == SimpleExoPlayer.STATE_READY)
+									if (playbackState == Player.STATE_READY)
 									{
 										view.hideController();
 									}
