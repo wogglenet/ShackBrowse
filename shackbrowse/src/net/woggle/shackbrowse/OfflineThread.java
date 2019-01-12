@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.http.client.ClientProtocolException;
@@ -716,7 +717,6 @@ public class OfflineThread
 
 			try {
 				SparseIntArray reply_counts = ShackApi.getReplyCounts(params[0], _activity);
-
 
 				// first loop updates content
 				for (int key: params[0])

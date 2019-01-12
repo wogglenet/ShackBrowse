@@ -421,7 +421,7 @@ public class ShackApi
         HttpsURLConnection con = (HttpsURLConnection) post_url.openConnection();
         con.setReadTimeout(30000);
         con.setRequestProperty("connection", "close");
-        con.setConnectTimeout(10000);
+        con.setConnectTimeout(20000);
         con.setChunkedStreamingMode(0);
         con.setRequestProperty("User-Agent", USER_AGENT);
         con.setRequestProperty("Authorization", "Basic " + android.util.Base64.encodeToString((userName + ":" + password).getBytes(), android.util.Base64.NO_WRAP));
@@ -991,7 +991,6 @@ public class ShackApi
         	connection.setConnectTimeout(socketTimeoutSec * 1000);
         	connection.setReadTimeout(connectionTimeOutSec * 1000);
     	}
-        
         try
         {
             connection.setRequestProperty("User-Agent", USER_AGENT);
@@ -1013,9 +1012,7 @@ public class ShackApi
         String content = get(url);
         return new JSONObject(content);
     }
-    
-    
-    
+
     private static String readStream(java.io.InputStream stream) throws IOException
     {
         StringBuilder output = new StringBuilder();
@@ -1307,43 +1304,66 @@ public class ShackApi
     
     public static SparseIntArray getReplyCounts(ArrayList<Integer> threadIDs, Context context) throws Exception
     {
-    	SparseIntArray results = new SparseIntArray(threadIDs.size());
-    	
-    	if (threadIDs.size() == 0)
-    		return results;
-    	
-    	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-    	// v2
-    	if (getBaseUrl(context).isV2())
-    	{
-    		String commaSepList = "";
-    		for (Integer threadID : threadIDs)
-	    	{
-    			if (commaSepList.equals(""))
-    				commaSepList = Integer.toString(threadID);
-    			else
-    				commaSepList = commaSepList + "," + Integer.toString(threadID);
-	    	}
-    		String url = getBaseUrl(context).getUrl() + "getThreadPostCount?id=" + commaSepList;
-    		JSONArray response = getJson(url).getJSONArray("threads");
-    		for (int i = 0; i < response.length(); i++)
-    		{
-    			results.put(((JSONObject)response.get(i)).getInt("threadId"), ((JSONObject)response.get(i)).getInt("postCount"));
-    		}
-    	}
-    	// droid chatty api
-    	else
-    	{
-	    	for (Integer threadID : threadIDs)
-	    	{
-	    		String url = getBaseUrl(context).getUrl() + "replies.php?id=" + Integer.toString(threadID);
-	    		String replyCount = get(url);
-	    		// the -1 is because we do not count root posts and the api server does
-	    		results.put(threadID, (tryParseInt(replyCount)));
-	    	}
-    	}
-        return results;
+	    // getReplyCounts dies if the list is too long, have to break into multiple parts
+
+	    if (threadIDs.size() == 0)
+		    return new SparseIntArray(threadIDs.size());
+
+		int partitionSize = 40;
+		SparseIntArray reply_counts = new SparseIntArray(threadIDs.size());
+
+		for (int i = 0; i < threadIDs.size(); i += partitionSize)
+		{
+			ArrayList<Integer> sublist = new ArrayList<Integer>();
+			sublist.addAll(threadIDs.subList(i, Math.min(i + partitionSize, threadIDs.size())));
+			SparseIntArray reply_counts_part = ShackApi.getReplyCountsPart(sublist, context);
+			for (int j = 0; j < reply_counts_part.size(); j++)
+			{
+				reply_counts.put(reply_counts_part.keyAt(j), reply_counts_part.valueAt(j));
+			}
+		}
+
+        return reply_counts;
     }
+	public static SparseIntArray getReplyCountsPart(ArrayList<Integer> threadIDs, Context context) throws Exception
+	{
+		SparseIntArray results = new SparseIntArray(threadIDs.size());
+
+		if (threadIDs.size() == 0)
+			return results;
+
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		// v2
+		if (getBaseUrl(context).isV2())
+		{
+			String commaSepList = "";
+			for (Integer threadID : threadIDs)
+			{
+				if (commaSepList.equals(""))
+					commaSepList = Integer.toString(threadID);
+				else
+					commaSepList = commaSepList + "," + Integer.toString(threadID);
+			}
+			String url = getBaseUrl(context).getUrl() + "getThreadPostCount?id=" + commaSepList;
+			JSONArray response = getJson(url).getJSONArray("threads");
+			for (int i = 0; i < response.length(); i++)
+			{
+				results.put(((JSONObject)response.get(i)).getInt("threadId"), ((JSONObject)response.get(i)).getInt("postCount"));
+			}
+		}
+		// droid chatty api
+		else
+		{
+			for (Integer threadID : threadIDs)
+			{
+				String url = getBaseUrl(context).getUrl() + "replies.php?id=" + Integer.toString(threadID);
+				String replyCount = get(url);
+				// the -1 is because we do not count root posts and the api server does
+				results.put(threadID, (tryParseInt(replyCount)));
+			}
+		}
+		return results;
+	}
     
     public static ArrayList<Thread> processThreadsAndUpdReplyCounts (JSONObject json, Context activity) throws Exception
     {
