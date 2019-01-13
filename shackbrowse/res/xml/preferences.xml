@@ -264,7 +264,7 @@
   	     />
 
     </PreferenceCategory>
-        <PreferenceCategory android:title="@string/preferences_chattypics_login">
+    <PreferenceCategory android:title="@string/preferences_chattypics_login">
 	  	<EditTextPreference
 	  	     android:key="chattyPicsUserName"
 	  	     android:title="@string/preference_username_title"
@@ -276,7 +276,14 @@
 	  	     android:summary="@string/preference_chattypics_password_summary"
 	  	     android:singleLine="true"
 	  	     android:password="true"/>
-	  </PreferenceCategory>
+	</PreferenceCategory>
+	<PreferenceCategory android:title="@string/preferences_imgur_login">
+		<Preference
+			android:key="imgurLogin"
+			android:title="@string/preference_imgur_login_title"
+			android:summary="@string/preference_imgur_login_summary"
+			android:singleLine="true"/>
+	</PreferenceCategory>
     <PreferenceCategory android:title="@string/preftools"></PreferenceCategory>
     <Preference
         android:key="pref_ping"

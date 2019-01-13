@@ -42,6 +42,12 @@ public class ImgurAuthorization {
 		return !TextUtils.isEmpty(prefs.getString("access_token", null));
 	}
 
+	public String getUsername() {
+		Context context = SBApplication.getAppContext();
+		SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, 0);
+		return prefs.getString("username", "");
+	}
+
 	public void addToHttpURLConnection(HttpURLConnection conn) {
 		Context context = SBApplication.getAppContext();
 		SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, 0);
@@ -55,12 +61,13 @@ public class ImgurAuthorization {
 		}
 	}
 
-	public void saveRefreshToken(String refreshToken, String accessToken, long expiresIn) {
+	public void saveRefreshToken(String refreshToken, String accessToken, long expiresIn, String username) {
 		Context context = SBApplication.getAppContext();
 		context.getSharedPreferences(SHARED_PREFERENCES_NAME, 0)
 				.edit()
 				.putString("access_token", accessToken)
 				.putString("refresh_token", refreshToken)
+				.putString("username", username)
 				.putLong("expires_in", expiresIn)
 				.commit();
 	}

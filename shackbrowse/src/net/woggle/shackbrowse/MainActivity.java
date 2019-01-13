@@ -398,10 +398,10 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         	clIsShowing = true;
             cl.getLogDialog().show();
             cl.setChangeLogCloseListener(new onChangeLogCloseListener() {
-				
+
 				@Override
 				public void onClose() {
-					annoyBrowserZoomDialog();
+					// annoyBrowserZoomDialog();
 				}
 			});
             StatsFragment.statInc(this, "AppUpgradedToNewVersion");
@@ -543,7 +543,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         	if (!clIsShowing)
         	{
 	        	// no external intent, do annoyance dialogs
-	        	annoyBrowserZoomDialog();
+	        	// annoyBrowserZoomDialog();
 	        }
         }
         else if (canHandleIntent(intent) != CANNOTHANDLEINTENT)

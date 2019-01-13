@@ -667,7 +667,7 @@ public class ThreadListFragment extends ListFragment
         final LolObj flol = lol;
 	    if (thread.getModeration().equalsIgnoreCase("political"))
 	    {
-		    String[] strArr = {"Life is pain","My obsession knows no bounds","You don't control me","I hate my life","I have to check though","It's really important","I already took xanax","But what if something happens!?", "I love anxiety and depression", "I'm already depressed","FML","One more won't hurt","Sadness is life" };
+		    String[] strArr = {"Life is pain","My obsession knows no bounds","You don't control me","Whatever","I hate my life","I have to check though","It's really important","I already took xanax","I love anxiety and depression", "I'm already depressed","FML","One more won't hurt","Sadness is life","But I must click","This is my life now", "I promise to stop tomorrow","I see, I click" };
 		    Random r = new Random();
 		    String okbutton = strArr[r.nextInt(strArr.length)];
 
@@ -675,15 +675,15 @@ public class ThreadListFragment extends ListFragment
 		    build.title("Warning");
 		    build.iconRes(R.drawable.ic_action_action_report_problem);
 		    build.positiveColor(Color.RED);
-		    final SpannableString s = new SpannableString("Studies show excessive political activity on social media can lead to anxiety and depression." + "\n" +
+		    final SpannableString s = new SpannableString("Studies show excessive/obsessive political activity on social media leads to anxiety and depression." + "\n" +
 				    "\n" + "https://www.ncbi.nlm.nih.gov/pubmed/29631796");
 		    Linkify.addLinks(s, Linkify.WEB_URLS);
 		    build.content(s);
 		    build.positiveText(okbutton);
-		    build.neutralText("Turn off political filter");
+		    build.neutralText("Filter out political again");
 		    build.neutralColor(Color.GREEN);
 		    build.negativeColor(Color.YELLOW);
-		    build.negativeText("Run");
+		    build.negativeText("Ok");
 		    build.onPositive(new MaterialDialog.SingleButtonCallback()
 		    {
 			    @Override

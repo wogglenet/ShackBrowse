@@ -8,6 +8,8 @@ import org.json.JSONObject;
 
 import net.woggle.ApiUrl;
 import net.woggle.shackbrowse.NetworkNotificationServers.OnGCMInteractListener;
+import net.woggle.shackbrowse.imgur.ImgurAuthorization;
+import net.woggle.shackbrowse.imgur.LoginActivity;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -52,6 +54,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
@@ -72,9 +75,10 @@ public class PreferenceView extends PreferenceFragment
 
 	private Preference _keyNotification;
     private CheckBoxPreference mChattyPicsEnable;
+	private boolean mLoggedIn;
 
 
-    @Override
+	@Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -148,7 +152,29 @@ public class PreferenceView extends PreferenceFragment
 			}}
         );
         */
-        Preference bAutoImageZoomPref = (Preference) findPreference("openBrowserImageZoom");
+
+
+	    Preference imgurLogin = (Preference) findPreference("imgurLogin");
+	    imgurLogin.setOnPreferenceClickListener(new OnPreferenceClickListener(){
+		    @Override
+		    public boolean onPreferenceClick(Preference preference) {
+			    if (mLoggedIn)
+			    {
+				    ImgurAuthorization.getInstance().logout();
+				    Toast.makeText(getActivity(), "Logged out of Imgur", Toast.LENGTH_SHORT).show();
+				    setImgurLoginText();
+			    }
+			    else
+			    {
+				    startActivity(new Intent(getActivity(), LoginActivity.class));
+			    }
+			    return true;
+		    }}
+	    );
+
+
+
+	    Preference bAutoImageZoomPref = (Preference) findPreference("openBrowserImageZoom");
         bAutoImageZoomPref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
 			@Override
 			public boolean onPreferenceClick(Preference preference) {
@@ -156,6 +182,8 @@ public class PreferenceView extends PreferenceFragment
 				return true;
 			}}
         );
+
+
         
         Preference orientLock = (Preference)findPreference("orientLock");
         orientLock.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -205,125 +233,7 @@ public class PreferenceView extends PreferenceFragment
             }
 
         });
-        /*
-        final OnGCMInteractListener GCMlistener = new OnGCMInteractListener(){
-			@Override
-			public void networkResult(String res) {
-				System.out.println("NETWORKSERVERS RESULT" + res);
-				Editor edit = _prefs.edit();
-				if (res.contains("remove device"))
-				{
-					edit.putBoolean("noteEnabled", false);
-					_noteEnabled.setChecked(false);
-					_vanityNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
-					_keyNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
-					if (_progressDialog != null)
-					{
-						_progressDialog.dismiss();
-						_progressDialog = null;
-					}
-				}
-				else if (res.contains("add device"))
-				{
-					edit.putBoolean("noteEnabled", true);
-					_noteEnabled.setChecked(true);
-					_GCMAccess.doUserInfoTask();
-					/*
-					_vanityNotification.setChecked(false);
-					_repliesNotification.setChecked(true);
-					edit.putBoolean("noteReplies", true);
-					edit.putBoolean("noteVanity", false); */ /*
-					_vanityNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
-					_keyNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
-				}
-				else if (res.contains("already exists"))
-				{
-					// likely a vanity.repl update
-					_GCMAccess.doUserInfoTask();
-				}
-				else
-				{
-					if (_progressDialog != null)
-					{
-						_progressDialog.dismiss();
-						_progressDialog = null;
-					}
-				}
-				edit.commit();
-			}
 
-			@Override
-			public void userResult(JSONObject result) {
-				Editor edit = _prefs.edit();
-				try{
-					if (result == null)
-					{
-						edit.putBoolean("noteVanity", false);
-						_vanityNotification.setChecked(false);
-						edit.putBoolean("noteReplies", false);
-						_repliesNotification.setChecked(false);
-						_noteEnabled.setChecked(false);
-						_vanityNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
-						_keyNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
-						mNoteKeywords = new ArrayList<String>();
-						edit.putBoolean("noteEnabled", false);
-					}
-					else
-					{
-						System.out.println("TRYING TO READ USERINFO" + result.getString("get_vanity") + result.getString("get_replies"));
-						if ("1".equals(result.getString("get_vanity")))
-						{
-							edit.putBoolean("noteVanity", true);
-							_vanityNotification.setChecked(true);
-						}
-						else
-						{
-							edit.putBoolean("noteVanity", false);
-							_vanityNotification.setChecked(false);
-						}
-						if ("1".equals(result.getString("get_replies")))
-						{
-							edit.putBoolean("noteReplies", true);
-							_repliesNotification.setChecked(true);
-						}
-						else
-						{
-							edit.putBoolean("noteReplies", false);
-							_repliesNotification.setChecked(false);
-						}
-						if (result.getJSONArray("devices").join("::").contains(_GCMAccess.getRegistrationId()))
-						{
-							edit.putBoolean("noteEnabled", true);
-							_noteEnabled.setChecked(true);
-							_vanityNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
-							_keyNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
-						}
-						else
-						{
-							edit.putBoolean("noteEnabled", false);
-							_noteEnabled.setChecked(false);
-							_vanityNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
-							_keyNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
-						}
-						mNoteKeywords = new ArrayList<String>();
-						JSONArray keywordArr = result.getJSONArray("keywords");
-						if ((keywordArr != null) && (keywordArr.length() > 0))
-						{
-							for (int i=0;i<keywordArr.length();i++)
-							{ 
-								mNoteKeywords.add(keywordArr.get(i).toString());
-							} 
-						}
-					}
-				} catch (Exception e) {}
-				edit.commit();
-				if (_progressDialog != null)
-				{
-					_progressDialog.dismiss();
-					_progressDialog = null;
-				}
-			}};
-        */
         Preference notePref = (Preference) findPreference("notifications");
         notePref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
 
@@ -331,11 +241,6 @@ public class PreferenceView extends PreferenceFragment
 			public boolean onPreferenceClick(Preference preference) {
                 ((MainActivity)getActivity()).cleanUpViewer();
                 ((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_NOTEPREFS);
-                /*
-	        	_progressDialog = MaterialProgressDialog.show(getActivity(), "Checking Notification Status", "Communicating with Shack Browse server...", true, true);
-	        	_GCMAccess = new NetworkNotificationServers(getActivity(), GCMlistener);
-	        	_GCMAccess.doUserInfoTask();
-                */
 		    	return false;
 			}}
         );
@@ -362,156 +267,6 @@ public class PreferenceView extends PreferenceFragment
             mChattyPicsEnable.setChecked(false);
         }
 
-/*
-        _keyNotification = (Preference) findPreference("noteKeywords");
-        _keyNotification.setOnPreferenceClickListener(new OnPreferenceClickListener(){
-			@Override
-			public boolean onPreferenceClick(Preference preference) {
-				showKeywords();
-				return true;
-				
-			}
-        });
-        
-        _repliesNotification = (CheckBoxPreference)findPreference("noteReplies");
-        _vanityNotification = (CheckBoxPreference)findPreference("noteVanity");
-        _noteEnabled = (CheckBoxPreference)findPreference("noteEnabled");
-        // "enableDonatorFeatures"
-        _Venabled = true;
-        _vanityNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
-        _keyNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
-        
-			
-        OnPreferenceChangeListener notificationOnPrefListener = new Preference.OnPreferenceChangeListener() {
-			@Override
-			public boolean onPreferenceChange(final Preference preference, Object newValue) {
-		        if(newValue instanceof Boolean){
-		            final Boolean checked = (Boolean)newValue;
-		            
-	                    boolean verified = _prefs.getBoolean("usernameVerified", false);
-	    		        if (!verified)
-	    		        {
-	    		        	LoginForm login = new LoginForm(getActivity());
-	    		        	login.setOnVerifiedListener(new LoginForm.OnVerifiedListener() {
-	    						
-								@Override
-	    						public void onSuccess() {
-	    							_progressDialog = MaterialProgressDialog.show(getActivity(), "Changing Notification Status", "Communicating with Shack Browse server...", true, true);
-	    							
-	    							_GCMAccess = new NetworkNotificationServers(getActivity(), GCMlistener);
-	    							if (checked)
-	    								_GCMAccess.doRegisterTask("reg");
-	    							else
-	    								_GCMAccess.doRegisterTask("unreg");
-	    						}
-
-	    						@Override
-	    						public void onFailure() {
-	    							_noteEnabled.setChecked(false);
-	    							_vanityNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
-	    							_keyNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
-	    						}
-	    					});
-	    		        }
-	    		        else
-	    		        {
-							_progressDialog = MaterialProgressDialog.show(getActivity(), "Changing Notification Status", "Communicating with Shack Browse server...", true, true);
-							
-							_GCMAccess = new NetworkNotificationServers(getActivity(), GCMlistener);
-							if (checked)
-								_GCMAccess.doRegisterTask("reg");
-							else
-								_GCMAccess.doRegisterTask("unreg");
-	    		        }
-		        }
-		        return false;
-		    }
-					
-		};
-        
-        _noteEnabled.setOnPreferenceChangeListener(notificationOnPrefListener);
-        
-        OnPreferenceChangeListener replOnPrefListener = new Preference.OnPreferenceChangeListener() {
-			@Override
-			public boolean onPreferenceChange(final Preference preference, Object newValue) {
-		        if(newValue instanceof Boolean){
-		            final Boolean checked = (Boolean)newValue;
-							_progressDialog = MaterialProgressDialog.show(getActivity(), "Changing Notification Status", "Communicating with Shack Browse server...", true, true);
-							_GCMAccess = new NetworkNotificationServers(getActivity(), GCMlistener);
-							if (checked)
-								_GCMAccess.updReplVan(true,_prefs.getBoolean("noteVanity", false));
-							else
-								_GCMAccess.updReplVan(false,_prefs.getBoolean("noteVanity", false));
-		        }
-		        return false;
-		    }	
-		};
-		OnPreferenceChangeListener vanOnPrefListener = new Preference.OnPreferenceChangeListener() {
-			@Override
-			public boolean onPreferenceChange(final Preference preference, Object newValue) {
-		        if(newValue instanceof Boolean){
-		            final Boolean checked = (Boolean)newValue;
-							_progressDialog = MaterialProgressDialog.show(getActivity(), "Changing Notification Status", "Communicating with Shack Browse server...", true, true);
-							_GCMAccess = new NetworkNotificationServers(getActivity(), GCMlistener);
-							if (checked)
-								_GCMAccess.updReplVan(_prefs.getBoolean("noteReplies", true), true);
-							else
-								_GCMAccess.updReplVan(_prefs.getBoolean("noteReplies", true), false);
-		        }
-		        return false;
-		    }	
-		};
-        _repliesNotification.setOnPreferenceChangeListener(replOnPrefListener);
-        _vanityNotification.setOnPreferenceChangeListener(vanOnPrefListener);
-        
-        final Preference apiUrl = (Preference)findPreference("apiUrl2");
-        apiUrl.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-			@Override
-			public boolean onPreferenceChange(Preference preference, Object newValue) {
-				int i = 0;
-				try 
-				{
-					i = Integer.parseInt((String) newValue);
-				}
-				catch (NumberFormatException e)
-				{}
-				
-				if (i == 2)
-				{
-					AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			        builder.setTitle("Custom API");
-			        final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_customapi, null);
-			        final EditText input = (EditText) view.findViewById(R.id.apitext);
-			        input.setText(_prefs.getString("apiCustom", ""));
-			        builder.setView(view);
-			        builder.setPositiveButton("Set API", new DialogInterface.OnClickListener() {
-			            public void onClick(DialogInterface dialog, int id) {
-			            	SharedPreferences.Editor editor = _prefs.edit();
-			            	editor.putString("apiCustom", input.getText().toString());
-			            	editor.commit();
-			            }
-			        });
-			        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-			            @SuppressLint("NewApi")
-						public void onClick(DialogInterface dialog, int id) {
-			            	
-			            	SharedPreferences.Editor editor = apiUrl.getEditor();
-			            	editor.remove("apiUrl2");
-			            	editor.commit();
-			            	if (android.os.Build.VERSION.SDK_INT>=android.os.Build.VERSION_CODES.HONEYCOMB) {
-                                // reload preference fragment
-                                ((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_PREFS);
-			            	}
-			            }
-			        });
-			        AlertDialog d = builder.create();
-			        d.show();
-				}
-				return true;
-			}
-					
-		});
-        */
         Preference pingPref = (Preference) findPreference("pref_ping");
         pingPref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
 
@@ -522,8 +277,25 @@ public class PreferenceView extends PreferenceFragment
 		    	return false;
 			}}
         );
+    }
 
-		
+    @Override
+    public void onResume()
+    {
+	    super.onResume();
+	    setImgurLoginText();
+    }
+
+    public void setImgurLoginText() {
+	    Preference imgurLogin = (Preference) findPreference("imgurLogin");
+	    mLoggedIn = ImgurAuthorization.getInstance().isLoggedIn();
+	    if (mLoggedIn) {
+		    imgurLogin.setTitle("Click to log out");
+	    }
+	    else {
+		    imgurLogin.setTitle("Click to log in");
+	    }
+	    imgurLogin.setSummary(getResources().getString(R.string.preference_imgur_login_summary) + " Currently uploading " + (mLoggedIn ? "as \"" + ImgurAuthorization.getInstance().getUsername() + "\" - uploads will appear in your Imgur account." : "anonymously - cannot delete uploads."));
     }
 	
 	final static int OPEN_BROWSER_ZOOM_SETUP = 37;
@@ -547,91 +319,7 @@ public class PreferenceView extends PreferenceFragment
         if (_orientLock == 4)
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
     }
-	
-	/*
-	 * KEYWORDS
-	 *
-	ArrayList<String> mNoteKeywords = new ArrayList<String>();
-	public void addKeyword()
-    {
-    	AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-    	builder.setTitle("Add Keyword Notification");
-    	// Set up the input
-    	final LinearLayout lay = new LinearLayout(getActivity());
-    	lay.setOrientation(LinearLayout.VERTICAL);
-    	final TextView tv = new TextView(getActivity());
-    	tv.setText("A notification will be sent to you whenever this keyword is posted by another user.");
-		final EditText input = new EditText(getActivity());
-		// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-		input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
-		lay.addView(tv);
-		lay.addView(input);
-		builder.setView(lay);
-		
-    	builder.setPositiveButton("Add Keyword", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				mNoteKeywords.add(input.getText().toString());
-				_progressDialog = MaterialProgressDialog.show(getActivity(), "Adding Keyword", "Communicating with Shack Browse server...", true, true);
-				_GCMAccess.doUserInfoTask("addkeyword", input.getText().toString());
-				showKeywords();
-			}
-		});
-    	builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				showKeywords();
-			}
-		});
-    	AlertDialog alert = builder.create();
-        alert.setCanceledOnTouchOutside(false);
-        alert.show();
-    }
-	public void removeKeyword(final String keyword)
-    {
-    	AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-    	builder.setTitle("Remove Notification Keyword");
-    	
-    	builder.setMessage("Stop notifications for " + keyword + "?");
-		
-    	builder.setPositiveButton("Stop Notifying", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				mNoteKeywords.remove(keyword);
-				_GCMAccess.doUserInfoTask("removekeyword", keyword);
-			}
-		});
-    	builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				showKeywords();
-			}
-		});
-    	AlertDialog alert = builder.create();
-        alert.setCanceledOnTouchOutside(false);
-        alert.show();
-    }
-    public void showKeywords()
-    {
-    	AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Keyword Notifications");
-        final CharSequence[] items = mNoteKeywords.toArray(new CharSequence[mNoteKeywords.size()]);
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-            	removeKeyword(mNoteKeywords.get(item));
-                }});
-        builder.setNegativeButton("Close", null);
-        builder.setPositiveButton("Add Keyword", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				addKeyword();
-			}
-		});
-        AlertDialog alert = builder.create();
-        alert.setCanceledOnTouchOutside(false);
-        alert.show();
-    }
-	*/
+
 	/*
 	 * 
 	 * PING TASK

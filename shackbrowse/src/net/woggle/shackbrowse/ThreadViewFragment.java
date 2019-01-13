@@ -2032,7 +2032,7 @@ public class ThreadViewFragment extends ListFragment
 	// Prepare the player with the source.
 							player.prepare(videoSource);
 							player.setPlayWhenReady(true);
-							player.setRepeatMode(Player.REPEAT_MODE_OFF);
+							player.setRepeatMode(Player.REPEAT_MODE_ONE);
 							view.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH);
 							//view.setControllerAutoShow(false);
 							player.addListener(new Player.EventListener()
@@ -2040,19 +2040,16 @@ public class ThreadViewFragment extends ListFragment
 								@Override
 								public void onTimelineChanged(Timeline timeline, Object manifest, int reason)
 								{
-
 								}
 
 								@Override
 								public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections)
 								{
-
 								}
 
 								@Override
 								public void onLoadingChanged(boolean isLoading)
 								{
-
 								}
 
 								@Override
@@ -2061,43 +2058,53 @@ public class ThreadViewFragment extends ListFragment
 									if (playbackState == Player.STATE_READY)
 									{
 										view.hideController();
+
+										// no longer loading, set tag
+										Integer i = 0;
+										view.setTag(i);
 									}
+									System.out.println("VIDonplayerstatecha" + playbackState + playWhenReady);
 								}
 
 								@Override
 								public void onRepeatModeChanged(int repeatMode)
 								{
-
 								}
 
 								@Override
 								public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled)
 								{
-
 								}
 
 								@Override
 								public void onPlayerError(ExoPlaybackException error)
 								{
-
 								}
 
 								@Override
 								public void onPositionDiscontinuity(int reason)
 								{
-
+									// this is the restart from a repeating video
+									// view tag just happens to be a place i can store data
+									Integer i = (Integer)view.getTag() + 1;
+									// this causes the video to repeat a total of 3 times total before stopping
+									// this is only needed because some dummy left his phone on a long video overnight on cell data and SB used 20 gigs repeating the video
+									if (i > 1)
+									{
+										player.setRepeatMode(Player.REPEAT_MODE_OFF);
+										System.out.println("STOPPED VIDEO REPEAT");
+									}
+									view.setTag(i);
 								}
 
 								@Override
 								public void onPlaybackParametersChanged(PlaybackParameters playbackParameters)
 								{
-
 								}
 
 								@Override
 								public void onSeekProcessed()
 								{
-
 								}
 							});
 							holder.postContent.addView(view, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));

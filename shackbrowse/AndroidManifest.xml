@@ -61,6 +61,7 @@
 					android:gravity="top|end"
 				/>
         </activity>
+		<activity android:name=".imgur.LoginActivity"></activity>
         <meta-data android:name="android.app.default_searchable" android:value=".MainActivity" />
         <activity android:name=".ComposePostView" android:windowSoftInputMode="stateVisible|adjustResize" android:configChanges="orientation|screenSize|keyboard|keyboardHidden">
             <meta-data

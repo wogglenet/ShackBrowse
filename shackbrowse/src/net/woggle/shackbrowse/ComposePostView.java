@@ -11,6 +11,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.woggle.EditTextSelectionSavedAllowImage;
+import net.woggle.shackbrowse.imgur.ImgurAuthorization;
 import net.woggle.shackbrowse.imgur.ImgurTools;
 
 import android.app.Activity;
@@ -78,7 +79,9 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.StackingBehavior;
 import com.gc.materialdesign.views.ButtonFloatSmall;
 
 import org.json.JSONObject;
@@ -1434,7 +1437,9 @@ public class ComposePostView extends AppCompatActivity {
 		new MaterialDialog.Builder(this)
 				.title("Really upload?")
 				.customView(parent, true)
-				.positiveText("Upload It")
+				.btnStackedGravity(GravityEnum.END)
+				.stackingBehavior(StackingBehavior.ALWAYS)
+				.positiveText("Upload to ChattyPics")
 				.onPositive(new MaterialDialog.SingleButtonCallback()
 				{
 					@Override
@@ -1443,7 +1448,7 @@ public class ComposePostView extends AppCompatActivity {
 						_progressDialog = MaterialProgressDialog.show(ComposePostView.this, "Upload", "Uploading image to chattypics");
 						if (imageUri != null)
 						{
-							new UploadUriAndInsertTask().execute(imageUri);
+							new UploadUriAndInsertTask().execute(imageUri.toString(),"chattypics");
 							statInc(ComposePostView.this, "ImagesToChattyPics");
 						}
 						else
@@ -1451,7 +1456,26 @@ public class ComposePostView extends AppCompatActivity {
 							_progressDialog.dismiss();
 						}
 					}
-				}).negativeText("Do NOT Upload").show();
+				})
+				.negativeText("Upload to Imgur (" + (ImgurAuthorization.getInstance().isLoggedIn() ? "as " + ImgurAuthorization.getInstance().getUsername() + ")" : "not logged in)"))
+				.onNegative(new MaterialDialog.SingleButtonCallback()
+				{
+					@Override
+					public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which)
+					{
+						_progressDialog = MaterialProgressDialog.show(ComposePostView.this, "Upload", "Uploading image to imgur");
+						if (imageUri != null)
+						{
+							new UploadUriAndInsertTask().execute(imageUri.toString(),"imgur");
+							statInc(ComposePostView.this, "ImagesToImgur");
+						}
+						else
+						{
+							_progressDialog.dismiss();
+						}
+					}
+				})
+				.neutralText("Do NOT Upload").show();
 	}
 	
 	void postSuccessful(PostReference pr)
@@ -1585,16 +1609,16 @@ public class ComposePostView extends AppCompatActivity {
 		return mime.getExtensionFromMimeType(opt.outMimeType);
 	}
 
-	class UploadUriAndInsertTask extends AsyncTask<Uri, Void, String>
+	class UploadUriAndInsertTask extends AsyncTask<String, Void, String>
 	{
 		Exception _exception;
 
 		@Override
-		protected String doInBackground(Uri... params)
+		protected String doInBackground(String... params)
 		{
 			try
 			{
-				Uri uri = params[0];
+				Uri uri = Uri.parse(params[0]);
 				String ext = getMimeTypeOfUri(ComposePostView.this, uri);
 				InputStream inputstream = getContentResolver().openInputStream(uri);
 
@@ -1616,6 +1640,10 @@ public class ComposePostView extends AppCompatActivity {
 				}
 
 				boolean chattyPics = false;
+				if (params[1].equalsIgnoreCase("chattypics"))
+				{
+					chattyPics = true;
+				}
 				if (chattyPics)
 				{
 					String userName = _prefs.getString("chattyPicsUserName", null);
@@ -1637,16 +1665,18 @@ public class ComposePostView extends AppCompatActivity {
 				}
 				else
 				{
-					// TODO do imgur login
+					String userName = _prefs.getString("imgurUserName", null);
+					String password = _prefs.getString("imgurPassword", null);
+
 					JSONObject response = uploadImageToImgur(inputstream);
 					if (response != null)
 					{
 						String link = "";
-						if (response.getJSONObject("data").getString("gifv") != null)
+						if (response.getJSONObject("data").has("gifv"))
 						{
 							link = response.getJSONObject("data").getString("gifv");
 						}
-						else if (response.getJSONObject("data").getString("link") != null)
+						else if (response.getJSONObject("data").has("link"))
 						{
 							link = response.getJSONObject("data").getString("link");
 						}
@@ -1811,7 +1841,7 @@ public class ComposePostView extends AppCompatActivity {
         markup = markup
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
-        .replaceAll("(?i)(\\A|\\s)((http|https|ftp|mailto):\\S+)(\\s|\\z)","$1<a href=\"$2\">$2</a>$4")
+        .replaceAll("(?i)(https?:\\/\\/(?:www\\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|www\\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|https?:\\/\\/(?:www\\.|(?!www))[a-zA-Z0-9]\\.[^\\s]{2,}|www\\.[a-zA-Z0-9]\\.[^\\s]{2,})","<a href=\"$1\">$1</a>")
 		.replaceAll("\\}r|\\}g|\\}b|\\]q|\\}y|\\]s|\\]e|\\]l|\\]-|\\]n|\\]p|\\]o", "</span>")
 		.replaceAll("r\\{", "<span class=\"jt_red\">")
 		.replaceAll("g\\{", "<span class=\"jt_green\">")

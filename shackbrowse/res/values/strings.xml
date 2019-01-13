@@ -112,7 +112,10 @@
     <string name="preferences_chattypics_login">PicUploader Chattypics Account</string>
     <string name="preference_chattypics_username_summary">Chattypics username</string>
     <string name="preference_chattypics_password_summary">Chattypics password</string>
-    
+
+    <string name="preferences_imgur_login">PicUploader Imgur Account</string>
+    <string name="preference_imgur_login_title">Click to :undefined</string>
+    <string name="preference_imgur_login_summary">Use this to log in and out of Imgur. If logged in, images you upload should be attached to your account and therefore deletable and editable online.</string>
     <string name="preferences_header">Application Options</string>
     <string name="preferences_popupbrowser">Popup Browser</string>
     <string name="preferences_popupbrowser_summary">Choose when popup browser is used and how to scale images.</string>
@@ -294,6 +297,7 @@
     <string name="statsItemSentShackMessage">Shackmessages sent</string>
     <string name="statsItemLessThanSixChars">Posts made less than six characters</string>
     <string name="statsItemImagesToChattyPics">Images uploaded to chattypics</string>
+    <string name="statsItemImagesToImgur">Images uploaded to Imgur</string>
     <string name="statsItemClickedOnLoadingSplashScreen">Times clicked on tagline in splash screen</string>
     <string name="statsItemClickedLink">Links clicked</string>
     <string name="statsItemFavoritedAThread">Threads favorited</string>
@@ -398,6 +402,7 @@
         <item>statsItemSentShackMessage</item>
         <item>statsItemLessThanSixChars</item>
         <item>statsItemImagesToChattyPics</item>
+        <item>statsItemImagesToImgur</item>
         <item>statsItemClickedOnLoadingSplashScreen</item>
         <item>statsItemClickedLink</item>
         <item>statsItemFavoritedAThread</item>
@@ -430,7 +435,7 @@
     <string name="com.twitter.sdk.android.CONSUMER_KEY">XwN2M5eEu3MxGsQMvSTDqzRh0</string>
     <string name="com.twitter.sdk.android.CONSUMER_SECRET">lelldQpAX0rERpvaLxb37cS6ycN2Sd9GBckbm6WozpqwQTT2bH</string>
 
-	<bool name="com.twitter.sdk.android.TRACE_ENABLED">true</bool>
+    <bool name="com.twitter.sdk.android.TRACE_ENABLED">true</bool>
     <bool name="com.twitter.sdk.android.COLLECT_IDENTIFIERS_ENABLED">false</bool>
 
 </resources>
