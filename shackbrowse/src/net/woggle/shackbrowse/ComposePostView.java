@@ -11,6 +11,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.woggle.EditTextSelectionSavedAllowImage;
+import net.woggle.shackbrowse.imgur.ImgurTools;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -80,7 +81,10 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.gc.materialdesign.views.ButtonFloatSmall;
 
+import org.json.JSONObject;
+
 import static net.woggle.shackbrowse.StatsFragment.statInc;
+import static net.woggle.shackbrowse.imgur.ImgurTools.uploadImageToImgur;
 
 public class ComposePostView extends AppCompatActivity {
 
@@ -915,6 +919,8 @@ public class ComposePostView extends AppCompatActivity {
         super.onResume();
         mLastResumeTime = TimeDisplay.now();
 
+        new ImgurTools.RefreshAccessTokenTask().execute();
+
         _forcePostPreview = Integer.parseInt(_prefs.getString("forcePostPreview", "1"));
     }
 	
@@ -1609,22 +1615,44 @@ public class ComposePostView extends AppCompatActivity {
 					inputstream = new ByteArrayInputStream(stream.toByteArray());
 				}
 
-				String userName = _prefs.getString("chattyPicsUserName", null);
-				String password = _prefs.getString("chattyPicsPassword", null);
+				boolean chattyPics = false;
+				if (chattyPics)
+				{
+					String userName = _prefs.getString("chattyPicsUserName", null);
+					String password = _prefs.getString("chattyPicsPassword", null);
 
-				// attempt to log in so the image will appear in the user's gallery
-				String login_cookie = null;
-				if (userName != null && password != null)
-					login_cookie = ShackApi.loginToUploadImage(userName, password);
+					// attempt to log in so the image will appear in the user's gallery
+					String login_cookie = null;
+					if (userName != null && password != null)
+						login_cookie = ShackApi.loginToUploadImage(userName, password);
 
-				// actually upload the thing
-				String content = ShackApi.uploadImageFromInputStream(inputstream, login_cookie, ext);
+					// actually upload the thing
+					String content = ShackApi.uploadImageFromInputStream(inputstream, login_cookie, ext);
 
-				Pattern p = Pattern.compile("http\\:\\/\\/chattypics\\.com\\/viewer\\.php\\?file=(.*?)\"");
-				Matcher match = p.matcher(content);
+					Pattern p = Pattern.compile("http\\:\\/\\/chattypics\\.com\\/viewer\\.php\\?file=(.*?)\"");
+					Matcher match = p.matcher(content);
 
-				if (match.find())
-					return "http://chattypics.com/files/" + match.group(1);
+					if (match.find())
+						return "http://chattypics.com/files/" + match.group(1);
+				}
+				else
+				{
+					// TODO do imgur login
+					JSONObject response = uploadImageToImgur(inputstream);
+					if (response != null)
+					{
+						String link = "";
+						if (response.getJSONObject("data").getString("gifv") != null)
+						{
+							link = response.getJSONObject("data").getString("gifv");
+						}
+						else if (response.getJSONObject("data").getString("link") != null)
+						{
+							link = response.getJSONObject("data").getString("link");
+						}
+						return link;
+					}
+				}
 
 				return null;
 			}

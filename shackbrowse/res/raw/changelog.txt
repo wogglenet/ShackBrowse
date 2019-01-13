@@ -25,6 +25,9 @@ TODO
 * WHITE MODE
 * WIDGET FOR TOP POSTS
 * Easy notification reply
+* drag n drop DeX file support
+* DeX transparency issues
+* Frontpage http intercept issues
 
 SERVER
 * STAR OUT SPOILER TEXT
@@ -91,9 +94,16 @@ How am I supposed to tell if you were looking at the thread or the list of threa
 $ 5.9.03Beta
 % v 5.9.03Beta
 _ Jan 9, 2019
+* TODO * New logo - SB6?
+* Imgur uploading
+* TODO ** GIFV auto conversion for gif upload
+* TODO ** imgur uploading gives file name
 * Support for notification channels
 * PRL'd notification links you directly to post queue manager
 * Fixed frontpage mostly
+* TODO ** Fix frontpage intercepts to prevent occasional loading hang
+* Samsung DeX support / Android freeform multitasking support
+* TODO ** Fix DeX transparency issues
 * Libraries updated. gifv/mp4/gif embedding seems to be less buggy on all android versions
 * Bug Fix: Double posts. Maybe. It's complicated.
 * Bug Fix: Starred posts not showing up if too many starred posts
