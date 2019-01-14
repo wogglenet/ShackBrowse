@@ -73,9 +73,10 @@
              />
             <ImageView
             android:id="@+id/previewLimeHolder"
-            android:layout_gravity="center_vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+			android:layout_width="17dp"
+			android:layout_height="17dp"
+			android:layout_marginTop="1dip"
+			android:layout_gravity="center_vertical"
             ></ImageView>
             <ProgressBar
                  android:id="@+id/postingThrobber"

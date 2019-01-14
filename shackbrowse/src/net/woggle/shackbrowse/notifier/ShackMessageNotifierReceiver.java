@@ -21,7 +21,7 @@ import net.woggle.shackbrowse.StatsFragment;
 
 public class ShackMessageNotifierReceiver extends BroadcastReceiver
 {
-	public static final int icon_res = R.drawable.note_logo;
+	public static final int icon_res = R.drawable.note_logo2018;
 
 	@Override
 	public void onReceive(Context context, Intent intent)
@@ -29,7 +29,7 @@ public class ShackMessageNotifierReceiver extends BroadcastReceiver
 		Log.i("SBNOTIFIER", "NotifierReceiver invoked, starting service");
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher);
+		Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher);
 
 		Bundle data = intent.getExtras();
 		if ((data != null) && (data.getString("type") != null))

@@ -9,10 +9,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -665,7 +668,11 @@ public class ThreadListFragment extends ListFragment
         }
 
         final LolObj flol = lol;
-	    if (thread.getModeration().equalsIgnoreCase("political"))
+	    Date todayDate = Calendar.getInstance().getTime();
+	    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+	    String todayString = formatter.format(todayDate);
+	    System.out.println("TLIST: poldate " + _prefs.getString("lastPoliticalClickDate","") + " " + todayString);
+	    if (thread.getModeration().equalsIgnoreCase("political") && _prefs.getString("lastPoliticalClickDate","").equalsIgnoreCase(todayString))
 	    {
 		    String[] strArr = {"Life is pain","My obsession knows no bounds","You don't control me","Whatever","I hate my life","I have to check though","It's really important","I already took xanax","I love anxiety and depression", "I'm already depressed","FML","One more won't hurt","Sadness is life","But I must click","This is my life now", "I promise to stop tomorrow","I see, I click" };
 		    Random r = new Random();
@@ -705,10 +712,12 @@ public class ThreadListFragment extends ListFragment
 	    }
 	    else
 	    {
+	    	Editor e = _prefs.edit();
+	    	e.putString("lastPoliticalClickDate", todayString);
+	    	e.apply();
 	    	System.out.println("TLIST: NOT POLITICAL");
 		    ((MainActivity)getActivity()).openThreadView(thread.getThreadId(), thread, flol);
 	    }
-
     }
     
     public void markFavoriteAsRead (int threadId, int replyCount)

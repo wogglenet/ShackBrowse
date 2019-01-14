@@ -8,7 +8,7 @@
     </item>
     <item>
         <bitmap
-            android:src="@drawable/menubg"
+            android:src="@drawable/menubg2018"
             android:alpha="1"
             android:tileMode="clamp" />
     </item>

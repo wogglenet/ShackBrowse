@@ -349,11 +349,11 @@ public class PostQueueService extends JobIntentService
 		return ret;
 	}
 
-	public static final int icon_res = R.drawable.note_logo;
+	public static final int icon_res = R.drawable.note_logo2018;
 
 	private void notify(String title, String text, int mId, int postId) {
 
-		Bitmap largeIcon = BitmapFactory.decodeResource(ctx.getResources(), R.drawable.ic_launcher);
+		Bitmap largeIcon = BitmapFactory.decodeResource(ctx.getResources(), R.mipmap.ic_launcher);
 		NotificationCompat.Builder mBuilder =
 				new NotificationCompat.Builder(ctx, NotifierReceiver.CHANNEL_SYSTEM)
 						.setSmallIcon(icon_res)

@@ -102,10 +102,10 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
                                                   public boolean onPreferenceClick(Preference preference) {
                                                       SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
-                                                      Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
+                                                      Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
                                                       NotificationCompat.Builder mBuilder =
                                                               new NotificationCompat.Builder(getActivity(), NotifierReceiver.CHANNEL_REPLY)
-                                                                      .setSmallIcon(R.drawable.note_logo)
+                                                                      .setSmallIcon(R.drawable.note_logo2018)
                                                                       .setLargeIcon(largeIcon)
                                                                       .setContentTitle("Test")
                                                                       .setContentText("Only a test")

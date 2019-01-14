@@ -223,7 +223,7 @@ public class StatsFragment extends ListFragment {
             }
             catch (Exception e)
             {
-                e.printStackTrace();
+                // e.printStackTrace();
             }
         }
         public StatsItem calcDesc()

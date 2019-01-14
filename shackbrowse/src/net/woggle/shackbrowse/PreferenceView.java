@@ -116,7 +116,7 @@ public class PreferenceView extends PreferenceFragment
 			public boolean onPreferenceClick(Preference preference) {
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 				
-				Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
+				Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher_old);
 				NotificationCompat.Builder mBuilder =
 				        new NotificationCompat.Builder(getActivity())
 				        .setSmallIcon(R.drawable.note_logo)

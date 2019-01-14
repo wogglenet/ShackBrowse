@@ -2,21 +2,21 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
       package="net.woggle.shackbrowse"
-      android:versionCode="441"
-      android:versionName="5.9.03Beta">
+      android:versionCode="443"
+      android:versionName="5.9.04Beta">
 <uses-permission android:name="android.permission.INTERNET"></uses-permission>
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-	<permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+<permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 <uses-permission android:name="android.permission.VIBRATE" />
 <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /><!-- used for periodic network service -->
 <uses-permission android:name="android.permission.CAMERA" />
-	<uses-permission android:name="android.permission.WAKE_LOCK" />
+<uses-permission android:name="android.permission.WAKE_LOCK" />
 
 
-    <application android:theme="@style/AppTheme" android:usesCleartextTraffic="true" android:hardwareAccelerated="true" android:icon="@drawable/ic_launcher" android:label="@string/app_name" android:largeHeap="true" android:name=".SBApplication">
+    <application android:theme="@style/AppTheme" android:usesCleartextTraffic="true" android:hardwareAccelerated="true" android:icon="@mipmap/ic_launcher" android:label="@string/app_name" android:largeHeap="true" android:name=".SBApplication">
 		<provider
 			android:name="android.support.v4.content.FileProvider"
 			android:authorities="net.woggle.shackbrowse.provider"
@@ -31,7 +31,7 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter android:icon="@drawable/ic_launcher" android:label="@string/app_name">
+            <intent-filter android:icon="@mipmap/ic_launcher" android:label="@string/app_name">
                 <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
         		<action android:name="android.intent.action.VIEW"></action>
         		<category android:name="android.intent.category.DEFAULT"></category>
@@ -69,7 +69,7 @@
             android:value="net.woggle.MainActivity" />
         </activity>
         <activity android:name=".DonateActivity" android:configChanges="orientation|screenSize|keyboard|keyboardHidden"></activity>
-		<activity android:name=".PicUploader" android:icon="@drawable/ic_launcher" android:label="@string/picuploader_name" android:configChanges="orientation|screenSize|keyboard|keyboardHidden">
+		<activity android:name=".PicUploader" android:icon="@mipmap/ic_launcher" android:label="@string/picuploader_name" android:configChanges="orientation|screenSize|keyboard|keyboardHidden">
 		    <intent-filter>
 		        <action android:name="android.intent.action.SEND" />
 		        <category android:name="android.intent.category.DEFAULT" />
@@ -77,7 +77,6 @@
 		    </intent-filter>
         </activity>
         <!-- <meta-data android:name="com.google.android.backup.api_key" android:value="AEdPqrEAAAAINYb8pl9xts7OT2boxSmcxRPcaTdG_J6wNhE71Q" /> -->
-    
 
     	<receiver android:name="net.woggle.shackbrowse.notifier.BootReceiver">
 			<intent-filter>
@@ -106,7 +105,6 @@
 
     	<service android:permission="android.permission.BIND_JOB_SERVICE" android:exported="true" android:enabled="true" android:name="net.woggle.shackbrowse.PostQueueService" />
 
-
         <!-- used for widget and for shackmessage updates -->
 		<service
 			android:exported="false"
@@ -115,9 +113,6 @@
 				<action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>
 			</intent-filter>
 		</service>
-
-
-
 
     	<!-- For starting postqueueservice when network becomes available -->
     	<receiver
@@ -139,8 +134,6 @@
         <meta-data android:name="com.sec.android.multiwindow.DEFAULT_SIZE_H" android:resource="@dimen/app_defaultsize_h" />
         <meta-data android:name="com.sec.android.multiwindow.MINIMUM_SIZE_W" android:resource="@dimen/app_minimumsize_w" />
         <meta-data android:name="com.sec.android.multiwindow.MINIMUM_SIZE_H" android:resource="@dimen/app_minimumsize_h" />
-
-
 
 		<!-- fix for pie -->
 		<uses-library android:name="org.apache.http.legacy" android:required="false"/>

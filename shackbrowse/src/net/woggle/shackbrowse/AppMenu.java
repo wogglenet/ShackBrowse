@@ -136,7 +136,7 @@ public class AppMenu extends ListFragment
                     _adapter.add(new MenuItems(0, "Frontpage" , 11, R.drawable.ic_action_action_home));
     	        	_adapter.add(new MenuItems(0, "Latest Chatty" , 4, R.drawable.ic_action_communication_forum));
     	        	if (_prefs.getBoolean("noteEnabled", false))
-    	        		_adapter.add(new MenuItems(0, "Notifications" , 9, R.drawable.note_logo, null, new View.OnClickListener(){
+    	        		_adapter.add(new MenuItems(0, "Notifications" , 9, R.drawable.note_logo2018, null, new View.OnClickListener(){
                             @Override
                             public void onClick(View v) {
                                 ((MainActivity)getActivity()).cleanUpViewer();

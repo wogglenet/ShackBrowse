@@ -42,7 +42,7 @@ import org.json.JSONArray;
 
 public class NotifierReceiver extends FirebaseMessagingService
 {
-	public static final int icon_res = R.drawable.note_logo;
+	public static final int icon_res = R.drawable.note_logo2018;
 
 	public static final String CHANNEL_VANITY = "sbnotechannel_vanity";
 	public static final String CHANNEL_REPLY = "sbnotechannel_reply";
@@ -58,7 +58,7 @@ public class NotifierReceiver extends FirebaseMessagingService
 		Context context = getApplicationContext();
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher);
+		Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher);
 
 
 		String from = message.getFrom();

@@ -2322,15 +2322,16 @@ public class ThreadViewFragment extends ListFragment
                 holder.previewLimeHolder.setClickable(false);
                 if (_displayLimes)
                 {
+	                holder.previewLimeHolder.setVisibility(View.VISIBLE);
                     if (_donatorList.contains(":" + p.getUserName().toLowerCase() + ";"))
                     {
                         holder.previewLimeHolder.setImageDrawable(_donatorIcon);
                     }
-                    if (_donatorGoldList.contains(":" + p.getUserName().toLowerCase() + ";"))
+                    else if (_donatorGoldList.contains(":" + p.getUserName().toLowerCase() + ";"))
                     {
                         holder.previewLimeHolder.setImageDrawable(_donatorGoldIcon);
                     }
-                    if (_donatorQuadList.contains(":" + p.getUserName().toLowerCase() + ";"))
+                    else if (_donatorQuadList.contains(":" + p.getUserName().toLowerCase() + ";"))
                     {
                         holder.previewLimeHolder.setImageDrawable(_donatorQuadIcon);
                         // easter egg
@@ -2349,10 +2350,16 @@ public class ThreadViewFragment extends ListFragment
 
                         */
                     }
-                    if (p.getUserName().toLowerCase().equals("the man with the briefcase"))
+                    else if (p.getUserName().toLowerCase().equals("the man with the briefcase"))
                     {
                         holder.previewLimeHolder.setImageDrawable(_briefcaseIcon);
                     }
+                    else {
+                    	holder.previewLimeHolder.setVisibility(View.GONE);
+                    }
+                }
+                else {
+	                holder.previewLimeHolder.setVisibility(View.GONE);
                 }
 
             	// tree branch
@@ -2797,7 +2804,7 @@ public class ThreadViewFragment extends ListFragment
             // bm.setColorFilter(new ColorMatrixColorFilter(cm));
         	_donatorIcon = bm;
 
-            bm = new BitmapDrawable(getContext().getResources(), Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.limegold), size, size, false));
+            bm = new BitmapDrawable(getContext().getResources(), Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.limegold2018), size, size, false));
             bm.setColorFilter(new LightingColorFilter(Color.argb(1, 175, 175, 175), 0));
             _donatorGoldIcon = bm;
 
