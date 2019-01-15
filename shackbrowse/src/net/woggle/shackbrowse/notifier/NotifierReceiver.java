@@ -77,6 +77,7 @@ public class NotifierReceiver extends FirebaseMessagingService
 				        .setContentTitle(data.get("username").toString() + " replied to your post")
 						.setContentText(PostFormatter.formatContent(data.get("username").toString(), data.get("text").toString(), null, false, true))
 						.setTicker(data.get("username").toString() + " replied to your post")
+						.setColor(getResources().getColor(R.color.notificationColor))
 						.setAutoCancel(true);
 				
 				
@@ -149,6 +150,7 @@ public class NotifierReceiver extends FirebaseMessagingService
 				        .setContentTitle(data.get("username").toString() + " mentioned you in a post")
 						.setContentText(PostFormatter.formatContent(data.get("username").toString(), data.get("text").toString(), null, false, true))
 						.setTicker(data.get("username").toString() + " mentioned you in a post")
+						.setColor(getResources().getColor(R.color.notificationColor))
 						.setAutoCancel(true);
 				
 				
@@ -217,6 +219,7 @@ public class NotifierReceiver extends FirebaseMessagingService
 				        .setContentTitle(data.get("username").toString() + " mentioned " + data.get("keyword").toString())
 						.setContentText(PostFormatter.formatContent(data.get("username").toString(), data.get("text").toString(), null, false, true))
 						.setTicker(data.get("username").toString() + " mentioned " + data.get("keyword").toString())
+						.setColor(getResources().getColor(R.color.notificationColor))
 						.setAutoCancel(true);
 				
 				
@@ -284,6 +287,7 @@ public class NotifierReceiver extends FirebaseMessagingService
 				        .setContentTitle(data.get("username").toString() + " sent you a shackmessage")
 						.setContentText(data.get("text").toString())
 						.setTicker(data.get("username").toString() + " sent you a shackmessage")
+						.setColor(getResources().getColor(R.color.notificationColor))
 						.setAutoCancel(true);
 				
 				

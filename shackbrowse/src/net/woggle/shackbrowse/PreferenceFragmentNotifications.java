@@ -109,6 +109,7 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
                                                                       .setLargeIcon(largeIcon)
                                                                       .setContentTitle("Test")
                                                                       .setContentText("Only a test")
+                                                                      .setColor(getResources().getColor(R.color.notificationColor))
                                                                       .setTicker("Test Notification")
                                                                       .setAutoCancel(true);
 

@@ -674,7 +674,7 @@ public class ThreadListFragment extends ListFragment
 	    System.out.println("TLIST: poldate " + _prefs.getString("lastPoliticalClickDate","") + " " + todayString);
 	    if (thread.getModeration().equalsIgnoreCase("political") && _prefs.getString("lastPoliticalClickDate","").equalsIgnoreCase(todayString))
 	    {
-		    String[] strArr = {"Life is pain","My obsession knows no bounds","You don't control me","Whatever","I hate my life","I have to check though","It's really important","I already took xanax","I love anxiety and depression", "I'm already depressed","FML","One more won't hurt","Sadness is life","But I must click","This is my life now", "I promise to stop tomorrow","I see, I click" };
+		    String[] strArr = {"Life is pain anyway","My obsession knows no bounds","You don't control me","Whatever","I have to check though","It's really important","I already took xanax","I'm already depressed","I can't not","One more won't hurt","Sadness is life","But I must click","This is my life now", "I promise to stop tomorrow","I see, I click" };
 		    Random r = new Random();
 		    String okbutton = strArr[r.nextInt(strArr.length)];
 
