@@ -19,7 +19,7 @@ import java.util.List;
 import net.woggle.AutocompleteProvider;
 import net.woggle.shackbrowse.ChangeLog.onChangeLogCloseListener;
 import net.woggle.shackbrowse.NetworkNotificationServers.OnGCMInteractListener;
-import net.woggle.shackbrowse.PullToRefreshAttacher.Options;
+
 import net.woggle.shackbrowse.notifier.NotifierReceiver;
 
 import org.json.JSONArray;
@@ -65,6 +65,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -112,9 +113,6 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.player.listeners.YouTubeP
 import com.pierfrancescosoffritti.androidyoutubeplayer.ui.PlayerUIController;
 import com.twitter.sdk.android.core.Twitter;
 
-import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
-import fr.castorflex.android.smoothprogressbar.SmoothProgressDrawable;
-
 import static net.woggle.shackbrowse.StatsFragment.statInc;
 
 public class MainActivity extends AppCompatActivity implements ColorChooserDialog.ColorCallback
@@ -155,7 +153,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	private DrawerLayout mDrawerLayout;
 	private ActionBarDrawerToggle mDrawerToggle;
 	private FrameLayout _menuFrame;
-	PullToRefreshAttacher mPullToRefreshAttacher;
 	private boolean mPopupBrowserOpen = false;
 	private FrameLayout mBrowserFrame;
 	private PopupBrowserFragment mPBfragment;
@@ -167,7 +164,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	private PQPServiceReceiver mPQPServiceReceiver;
 	private ClickLinkReceiver mClickLinkReceiver;
 	private NetworkConnectivityReceiver mNetworkConnectivityReceiver;
-    public boolean mSOPBFPTRL;
     public FrontpageBrowserFragment _articleViewer;
     private boolean mArticleViewerIsOpen = false;
     private boolean mSplashOpen;
@@ -185,11 +181,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	private YouTubePlayerView mYoutubeView;
 	private boolean mYoutubeFullscreen = false;
 
-
-	public PullToRefreshAttacher getRefresher()
-	{
-		return mPullToRefreshAttacher;
-	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -371,13 +362,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-
-        // set up pull to refresh
-        // Create a PullToRefreshAttacher instance
-        Options ptro = new PullToRefreshAttacher.Options();
-        ptro.headerLayout = R.layout.ptr_header;
-        ptro.refreshScrollDistance = 0.4f;
-        mPullToRefreshAttacher = PullToRefreshAttacher.get(this, ptro);
         
         mFrame = (FrameLayout)findViewById(R.id.content_frame);
 
@@ -1305,9 +1289,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 		
 		// turn off any refresher bars so the new fragment can work
-		getRefresher().setRefreshComplete();
-        mSOPBFPTRL = true;
-		showOnlyProgressBarFromPTRLibrary(false);
 		
 		FragmentManager fragmentManager = getFragmentManager();
 
@@ -3178,82 +3159,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         return userName.trim();
     }
 	
-	public void showOnlyProgressBarFromPTRLibrary(boolean showOnlyProgressBarWithoutHeader)
-	{
-		// only do this hack if the PTR library did not start the refresh
-		if (getRefresher() != null && !getRefresher().isRefreshing())
-    	{
-            // prevent unnecessary changes
-            if (showOnlyProgressBarWithoutHeader != mSOPBFPTRL) {
-                mSOPBFPTRL = showOnlyProgressBarWithoutHeader;
-                // hack it so only the progress bar shows up, but do it in the same way the library does so it will be set up for next PTR
-                final SmoothProgressBar ptr_bar = ((SmoothProgressBar) getRefresher().getHeaderView().findViewById(R.id.ptr_progress));
-                View ptr_head = getRefresher().getHeaderView().findViewById(R.id.ptr_content);
-                ptr_head.setAlpha(showOnlyProgressBarWithoutHeader ? 0f : 1.0f);
-                ptr_head.setTranslationY(showOnlyProgressBarWithoutHeader ? -ptr_head.getHeight() : ptr_head.getHeight());
-
-                Drawable chkrunning = ptr_bar.getIndeterminateDrawable();
-                boolean useDelayedKill = true;
-                if (chkrunning == null || !(chkrunning instanceof SmoothProgressDrawable) || ((SmoothProgressDrawable) chkrunning).isRunning() == false)
-                    useDelayedKill = false;
-
-                if (showOnlyProgressBarWithoutHeader) {
-                    ptr_bar.setVisibility(View.VISIBLE);
-                    getRefresher().getHeaderView().setVisibility(showOnlyProgressBarWithoutHeader ? View.VISIBLE : View.GONE);
-                    getRefresher().getHeaderView().setAlpha(showOnlyProgressBarWithoutHeader ? 1.0f : 0f);
-                    ptr_bar.setIndeterminate(showOnlyProgressBarWithoutHeader);
-                } else {
-                    if (useDelayedKill) {
-                        ptr_bar.setSmoothProgressDrawableCallbacks(new SmoothProgressDrawable.Callbacks() {
-                            @Override
-                            public void onStop() {
-                                ptr_bar.setVisibility(View.GONE);
-                                getRefresher().getHeaderView().setVisibility(View.GONE);
-                                getRefresher().getHeaderView().setAlpha(0f);
-                                ptr_bar.setProgressDrawable(getResources().getDrawable(R.drawable.progress_bar_centered));
-                                ptr_bar.setIndeterminate(false);
-                            }
-
-                            @Override
-                            public void onStart() {
-
-                            }
-                        });
-                        ptr_bar.progressiveStop();
-                    }
-                    else
-                    {
-                        ptr_bar.setVisibility(View.GONE);
-                        getRefresher().getHeaderView().setVisibility(View.GONE);
-                        getRefresher().getHeaderView().setAlpha(0f);
-                        ptr_bar.setProgressDrawable(getResources().getDrawable(R.drawable.progress_bar_centered));
-                        ptr_bar.setIndeterminate(false);
-                    }
-
-                }
-                System.out.println("PROGBAR: " + (showOnlyProgressBarWithoutHeader ? " START " : " STOP"));
-            }
-    	}
-	}
-	public void showOnlyProgressBarFromPTRLibraryDeterminate(boolean show, int prog)
-	{
-		// only do this hack if the PTR library did not start the refresh
-		if (!getRefresher().isRefreshing())
-    	{
-    		// hack it so only the progress bar shows up, but do it in the same way the library does so it will be set up for next PTR
-    		ProgressBar ptr_bar = ((ProgressBar)getRefresher().getHeaderView().findViewById(R.id.ptr_progress));
-			View ptr_head = getRefresher().getHeaderView().findViewById(R.id.ptr_content);
-			ptr_head.setAlpha(show ? 0f : 1.0f);
-			ptr_head.setTranslationY(show ? - ptr_head.getHeight() : ptr_head.getHeight());
-			ptr_bar.setVisibility(show ? View.VISIBLE : View.GONE);
-			ptr_bar.setIndeterminate(false);
-			ptr_bar.setProgressDrawable(getResources().getDrawable(R.drawable.progress_bar_states));
-			ptr_bar.setProgress(prog);
-			getRefresher().getHeaderView().setVisibility(show ? View.VISIBLE : View.GONE);
-			getRefresher().getHeaderView().setAlpha(show ? 1.0f : 0f);
-    	}
-	}
-	
 	private boolean restoreCollapsed() {
 		FileOutputStream _output = null;
 		try
@@ -3390,9 +3295,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
                         if (onEnd != null)
                             onEnd.end();
 
-                        // setting this field first forces a refresh of the progress bar
-                        mSOPBFPTRL = true;
-                        showOnlyProgressBarFromPTRLibrary(false);
                     }
                 };
 

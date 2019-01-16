@@ -10,60 +10,72 @@
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
         >
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="5"
-            android:fontFamily="sans-serif-condensed"
-            android:textStyle="bold|italic"
-            android:textSize="150dp"
-            android:textColor="@color/gnushackdark"
-            android:layout_gravity="center_horizontal"
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"
             android:layout_alignRight="@+id/splashText"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_horizontal"
+            android:fontFamily="sans-serif-condensed"
+            android:paddingLeft="70dp"
+            android:paddingBottom="50dp"
+            android:text="6"
+            android:textColor="@color/gnushackdark"
             android:textIsSelectable="true"
-            android:paddingLeft="60dp"
-            android:paddingBottom="10dp"/>
-        <LinearLayout
+            android:textSize="180dp"
+            android:textStyle="bold|italic"/>
+
+        <RelativeLayout
             android:id="@id/splashText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_centerInParent="true"
             android:layout_marginTop="14dp"
+            android:paddingLeft="10dp"
             android:layout_alignParentBottom="false">
+
             <LinearLayout
+                android:id="@+id/splash_linear"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:orientation="horizontal"
-                android:layout_gravity="center" >
+                android:paddingLeft="3.5dp"
+                android:paddingTop="1.5dp">
+
                 <ImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
+                    android:layout_gravity="center"
                     android:scaleType="fitXY"
-                    android:src="@mipmap/ic_launcher"
-                    android:layout_gravity="center" />
+                    android:src="@mipmap/ic_launcher"/>
+
                 <TextView
+                    android:id="@+id/splash_sbname"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Shack Browse"
-                    android:id="@+id/splash_sbname"
-                    android:textSize="26dp"
-                    android:paddingLeft="3dp"
-                    android:textColor="@color/nonpreview_post_text_color"
                     android:layout_gravity="center"
-                    android:textIsSelectable="true" />
+                    android:paddingLeft="8dp"
+                    android:text="Shack Browse"
+                    android:textColor="@color/nonpreview_post_text_color"
+                    android:textIsSelectable="true"
+                    android:textSize="26dp"/>
             </LinearLayout>
+
             <ProgressBar
                 style="@style/WidgetThrobber"
-                android:layout_marginTop="5dp"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
+                android:layout_width="47dp"
+                android:layout_height="47dp"
+                android:layout_alignLeft="@id/splash_linear"
                 android:layout_gravity="center"
-                android:layout_marginBottom="5dp" />
+                android:layout_marginLeft="-5dp"
+                android:layout_marginTop="-5dp"
+                android:layout_marginBottom="0dp"/>
 
-        </LinearLayout>
+        </RelativeLayout>
         <net.woggle.FontFitTextView
             android:id="@+id/splash_tagline"
             android:layout_marginTop="0dp"

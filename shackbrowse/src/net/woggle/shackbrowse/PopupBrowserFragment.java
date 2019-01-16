@@ -98,14 +98,13 @@ public class PopupBrowserFragment extends Fragment {
 		mWebview.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
 
 		mWebview.setBackgroundColor(0x00000000);
-        if (getActivity() != null)
-    		((MainActivity)getActivity()).showOnlyProgressBarFromPTRLibrary(true);
         
         mWebview.setWebChromeClient(new WebChromeClient() {
 			public void onProgressChanged(WebView view, int progress) {
-				if ((getActivity() != null) && (progress > 9) && (progress < 100)) {
-					((MainActivity) getActivity()).showOnlyProgressBarFromPTRLibraryDeterminate(true, progress);
-				}
+				//
+				//if ((getActivity() != null) && (progress > 9) && (progress < 100)) {
+				//	((MainActivity) getActivity()).showOnlyProgressBarFromPTRLibraryDeterminate(true, progress);
+				//}
             	/*
             	if (pb != null && progress < 100)
             	{
@@ -118,8 +117,8 @@ public class PopupBrowserFragment extends Fragment {
             	*/
 				System.out.println("prog:" + progress);
 				if (progress >= 100) {
-					if (getActivity() != null)
-						((MainActivity) getActivity()).showOnlyProgressBarFromPTRLibrary(false);
+					//if (getActivity() != null)
+					//	((MainActivity) getActivity()).showOnlyProgressBarFromPTRLibrary(false);
 				}
 				if (progress >= 50) {
 					// way to tell if showing image or not
@@ -177,15 +176,7 @@ public class PopupBrowserFragment extends Fragment {
     @Override
     public void onDetach()
     {
-	    try
-	    {
-		    if (getActivity() != null)
-			    ((MainActivity) getActivity()).showOnlyProgressBarFromPTRLibrary(false);
-	    }
-	    catch (Exception e)
-	    {
 
-	    }
 
 
     	super.onDetach();
@@ -431,8 +422,6 @@ public class PopupBrowserFragment extends Fragment {
 
 
 		((MainActivity)getActivity()).setTitleContextually();
-		if (getActivity() != null)
-			((MainActivity)getActivity()).showOnlyProgressBarFromPTRLibrary(false);
 	}
 
 	private void showZoomSetup()

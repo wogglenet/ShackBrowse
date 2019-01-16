@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.app.ListFragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
 import android.text.InputType;
 import android.util.Log;
@@ -60,8 +61,9 @@ public class MessageFragment extends ListFragment
 	private SharedPreferences _prefs;
 
 	private View _header;
-    
-    @Override
+	private SwipeRefreshLayout ptrLayout;
+
+	@Override
     public void onCreate(Bundle savedInstanceState)
     {
     	super.onCreate(savedInstanceState);
@@ -127,13 +129,18 @@ public class MessageFragment extends ListFragment
        	}
        	
         // pull to fresh integration
-       	((MainActivity)getActivity()).getRefresher().addRefreshableView(getListView(), new PullToRefreshAttacher.OnRefreshListener(){
+	    // Retrieve the PullToRefreshLayout from the content view
+	    ptrLayout = (SwipeRefreshLayout)getView().findViewById(R.id.mlist_swiperefresh);
 
-			@Override
-			public void onRefreshStarted(View view) {
-				refreshMessages();
-				
-			}});
+	    // Give the PullToRefreshAttacher to the PullToRefreshLayout, along with a refresh listener.
+	    ptrLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
+	    {
+		    @Override
+		    public void onRefresh()
+		    {
+			    refreshMessages();
+		    }
+	    });
        	
        	initAutoLoader();
     }
@@ -406,6 +413,9 @@ public class MessageFragment extends ListFragment
         public void setCurrentlyLoading (final boolean set)
         {
         	super.setCurrentlyLoading(set);
+
+
+
         	if (getActivity() != null)
         	{
 	        	if (set == true)
@@ -419,8 +429,10 @@ public class MessageFragment extends ListFragment
 	            				{
 		            				((View)getParentView()).findViewById(R.id.mlist_FSLoad).setVisibility(View.VISIBLE);
 		            				getListView().setVisibility(View.GONE);
+
+						            if (ptrLayout != null)
+							            ptrLayout.setRefreshing(set);
 	            				}
-	            				((MainActivity)getActivity()).showOnlyProgressBarFromPTRLibrary(set);
 		        			}
 	            		}
 	            	});
@@ -434,8 +446,10 @@ public class MessageFragment extends ListFragment
 	            			{
 	            				((View)getParentView()).findViewById(R.id.mlist_FSLoad).setVisibility(View.GONE);
 	            				getListView().setVisibility(View.VISIBLE);
-	            				
-	            				((MainActivity)getActivity()).showOnlyProgressBarFromPTRLibrary(set);
+
+					            if (ptrLayout != null)
+						            ptrLayout.setRefreshing(set);
+
 	            			}
 	            			
 	            		}
@@ -618,7 +632,7 @@ public class MessageFragment extends ListFragment
             System.out.println("MSG refreshcomplete");
         	if (getActivity() != null){
                 System.out.println("MSG refresh setting now");
-                ((MainActivity)getActivity()).getRefresher().setRefreshComplete();
+                ptrLayout.setRefreshing(false);
             }
 
         	

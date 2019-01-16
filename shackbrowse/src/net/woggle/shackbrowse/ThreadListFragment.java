@@ -57,6 +57,7 @@ import android.preference.PreferenceManager;
 import android.app.ListFragment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.InputType;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -135,6 +136,8 @@ public class ThreadListFragment extends ListFragment
 	private long _lastResumeTimeAndPrompt = 0L;
 	private boolean mGetAllThreadsMode;
 	private String mSortMode = "usual";
+
+	private SwipeRefreshLayout ptrLayout;
 
 	// handle collapsed saving
 	public void onPause()
@@ -303,13 +306,19 @@ public class ThreadListFragment extends ListFragment
        	
        	
        	// pull to fresh integration
-       	((MainActivity)getActivity()).getRefresher().addRefreshableView(getListView(), new PullToRefreshAttacher.OnRefreshListener(){
+	    // pull to fresh integration
+	    // Retrieve the PullToRefreshLayout from the content view
+	    ptrLayout = (SwipeRefreshLayout)getView().findViewById(R.id.tlist_swiperefresh);
 
-			@Override
-			public void onRefreshStarted(View view) {
-				refreshThreads();
-				
-			}});
+	    // Give the PullToRefreshAttacher to the PullToRefreshLayout, along with a refresh listener.
+	    ptrLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
+	    {
+		    @Override
+		    public void onRefresh()
+		    {
+			    refreshThreads();
+		    }
+	    });
        	
        	// this will also fix the ontouchlistener which was setup by the PTR
        	initAutoLoader();
@@ -385,16 +394,17 @@ public class ThreadListFragment extends ListFragment
 								return true;
 							}
                         });
+
         getListView().setOnTouchListener(new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				((MainActivity)getActivity()).getRefresher().onTouch(v, event);
+				// ((MainActivity)getActivity()).getRefresher().onTouch(v, event);
 				if (_swipecollapse > 0)
 					_touchListener.onTouch(v, event);
 				return false;
 			}
 		});
-        
+
         // swipe directional pref
         if (_swipecollapse == 1)
         {
@@ -672,7 +682,7 @@ public class ThreadListFragment extends ListFragment
 	    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 	    String todayString = formatter.format(todayDate);
 	    System.out.println("TLIST: poldate " + _prefs.getString("lastPoliticalClickDate","") + " " + todayString);
-	    if (thread.getModeration().equalsIgnoreCase("political") && _prefs.getString("lastPoliticalClickDate","").equalsIgnoreCase(todayString))
+	    if (thread.getModeration().equalsIgnoreCase("political") && _prefs.getString("lastPoliticalClickDate","").equalsIgnoreCase(todayString) && false)
 	    {
 		    String[] strArr = {"Life is pain anyway","My obsession knows no bounds","You don't control me","Whatever","I have to check though","It's really important","I already took xanax","I'm already depressed","I can't not","One more won't hurt","Sadness is life","But I must click","This is my life now", "I promise to stop tomorrow","I see, I click" };
 		    Random r = new Random();
@@ -1308,34 +1318,26 @@ public class ThreadListFragment extends ListFragment
         public void setCurrentlyLoading (final boolean set)
         {
         	super.setCurrentlyLoading(set);
-        	if (getActivity() != null)
-        	{
-        		final MainActivity act = (MainActivity) getActivity();
-	        	if (set)
-	        	{
-	        		act.runOnUiThread(new Runnable(){
-	            		@Override public void run()
-	            		{
-	            			if (_viewAvailable)
-	            			{
-	            				act.showOnlyProgressBarFromPTRLibrary(set);
-		        			}
-	            		}
-	            	});
-	        	}
-	        	else
-	        	{
-	        		act.runOnUiThread(new Runnable(){
-	            		@Override public void run()
-	            		{
-	            			if (_viewAvailable)
-	            			{
-	            				act.showOnlyProgressBarFromPTRLibrary(set);
-	            			}
-	            		}
-	            	});
-	        	}
-        	}
+
+	        if (_viewAvailable)
+	        {
+		        if (getActivity () != null)
+		        {
+			        getActivity().runOnUiThread(new Runnable()
+			        {
+				        @Override
+				        public void run()
+				        {
+					        if (_viewAvailable)
+					        {
+
+						        if (ptrLayout != null)
+							        ptrLayout.setRefreshing(set);
+					        }
+				        }
+			        });
+		        }
+	        }
         }
         
         public boolean updatePrefs()
@@ -1951,8 +1953,7 @@ public class ThreadListFragment extends ListFragment
         protected void afterDisplay()
         {
         	// pull to refresh integration
-        	if (getActivity() != null)
-        		((MainActivity)getActivity()).getRefresher().setRefreshComplete();
+        	ptrLayout.setRefreshing(false);
         	
         	if (_viewAvailable)
         		getFilter().filter(((ThreadFilter)getFilter()).lastFilterString);

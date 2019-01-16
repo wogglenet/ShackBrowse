@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.app.ListFragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -54,8 +55,9 @@ public class NotificationFragment extends ListFragment
 	public int _swipecollapse = 2;
 
 	private SwipeDismissListViewTouchListener _touchListener;
-    
-    @Override
+	private SwipeRefreshLayout ptrLayout;
+
+	@Override
     public void onCreate(Bundle savedInstanceState)
     {
     	super.onCreate(savedInstanceState);
@@ -128,13 +130,19 @@ public class NotificationFragment extends ListFragment
        	}
        	
         // pull to fresh integration
-       	((MainActivity)getActivity()).getRefresher().addRefreshableView(getListView(), new PullToRefreshAttacher.OnRefreshListener(){
+	    // pull to fresh integration
+	    // Retrieve the PullToRefreshLayout from the content view
+	    ptrLayout = (SwipeRefreshLayout)getView().findViewById(R.id.mlist_swiperefresh);
 
-			@Override
-			public void onRefreshStarted(View view) {
-				refreshNotes();
-				
-			}});
+	    // Give the PullToRefreshAttacher to the PullToRefreshLayout, along with a refresh listener.
+	    ptrLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
+	    {
+		    @Override
+		    public void onRefresh()
+		    {
+			    refreshNotes();
+		    }
+	    });
        	// this will also fix the ontouchlistener which was setup by the PTR
        	initAutoLoader();
        	
@@ -179,16 +187,18 @@ public class NotificationFragment extends ListFragment
 								return true;
 							}
                         });
+
         getListView().setOnTouchListener(new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				((MainActivity)getActivity()).getRefresher().onTouch(v, event);
+				// ((MainActivity)getActivity()).getRefresher().onTouch(v, event);
 				if (_swipecollapse > 0)
 					_touchListener.onTouch(v, event);
 				return false;
 			}
 		});
-        
+
+
         // swipe directional pref
         if (_swipecollapse == 1)
         {
@@ -286,6 +296,8 @@ public class NotificationFragment extends ListFragment
         public void setCurrentlyLoading (final boolean set)
         {
         	super.setCurrentlyLoading(set);
+
+
         	if (getActivity() != null)
         	{
 	        	if (set == true)
@@ -299,8 +311,10 @@ public class NotificationFragment extends ListFragment
 	            				{
 		            				((View)getParentView()).findViewById(R.id.mlist_FSLoad).setVisibility(View.VISIBLE);
 		            				getListView().setVisibility(View.GONE);
+
+						            if (ptrLayout != null)
+							            ptrLayout.setRefreshing(set);
 	            				}
-	            				((MainActivity)getActivity()).showOnlyProgressBarFromPTRLibrary(set);
 		        			}
 	            		}
 	            	});
@@ -314,8 +328,10 @@ public class NotificationFragment extends ListFragment
 	            			{
 	            				((View)getParentView()).findViewById(R.id.mlist_FSLoad).setVisibility(View.GONE);
 	            				getListView().setVisibility(View.VISIBLE);
-	            				
-	            				((MainActivity)getActivity()).showOnlyProgressBarFromPTRLibrary(set);
+
+					            if (ptrLayout != null)
+						            ptrLayout.setRefreshing(set);
+
 	            			}
 	            			
 	            		}
@@ -497,8 +513,7 @@ public class NotificationFragment extends ListFragment
         		_silentLoad = true;
         	
         	// pull to refresh integration
-        	if (getActivity() != null)
-        		((MainActivity)getActivity()).getRefresher().setRefreshComplete();
+        	ptrLayout.setRefreshing(false);
         	
         }
         private class ViewHolder

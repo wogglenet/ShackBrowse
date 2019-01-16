@@ -28,6 +28,7 @@ import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.app.ListFragment;
 import android.support.v4.util.LruCache;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.ClipboardManager;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -172,7 +173,7 @@ public class ThreadViewFragment extends ListFragment
 	private AsyncTask<String, Void, Integer> _curTask;
 	protected boolean _showFavSaved = false;
 	protected boolean _showUnFavSaved = false;
-	private PullToRefreshLayout ptrLayout;
+	private SwipeRefreshLayout ptrLayout;
 	private SharedPreferences _prefs;
 	private boolean _isSelectPostIdAfterLoadingIdaPQPId = false;
 	private boolean _showThreadExpired = false;
@@ -325,17 +326,17 @@ public class ThreadViewFragment extends ListFragment
 
        	// pull to fresh integration
         // Retrieve the PullToRefreshLayout from the content view
-        ptrLayout = (PullToRefreshLayout)getView().findViewById(R.id.ptr_layout);
+        ptrLayout = getView().findViewById(R.id.tview_swiperefresh);
 
         // Give the PullToRefreshAttacher to the PullToRefreshLayout, along with a refresh listener.
-        ptrLayout.setPullToRefreshAttacher(mMainActivity.getRefresher(), new PullToRefreshAttacher.OnRefreshListener(){
-
-			@Override
-			public void onRefreshStarted(View view) {
-				refreshThreadReplies();
-			}});
-
-
+	    ptrLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
+	    {
+		    @Override
+		    public void onRefresh()
+		    {
+			    refreshThreadReplies();
+		    }
+	    });
 
        	updateThreadViewUi();
     }
@@ -362,7 +363,7 @@ public class ThreadViewFragment extends ListFragment
 	    			_showFavSaved = false;
 	    			_showUnFavSaved = false;
 	    			// disable PTR for message mode
-	    			((PullToRefreshLayout)getView().findViewById(R.id.ptr_layout)).setPullToRefreshAttacher(null, null);
+	    			ptrLayout.setEnabled(false);
 	    		}
 	    		else if (_messageId == 0)
 		       	{
@@ -385,26 +386,22 @@ public class ThreadViewFragment extends ListFragment
 		            }
 
 		            // enable PTR because we are not in message mode
-		            ((PullToRefreshLayout)getView().findViewById(R.id.ptr_layout)).setPullToRefreshAttacher(mMainActivity.getRefresher(), new PullToRefreshAttacher.OnRefreshListener(){
-
-		    			@Override
-		    			public void onRefreshStarted(View view) {
-		    				refreshThreadReplies();
-		    			}});
+			        if (ptrLayout != null)
+		                ptrLayout.setEnabled(true);
 		       	}
 
 	    		// handle the fullscreen throbber
 	    		RelativeLayout FSLoad = (RelativeLayout)getView().findViewById(R.id.tview_FSLoad);
 	    		if ((_adapter != null) && (_adapter.isCurrentlyLoading()) && (_adapter.getCount() == 0))
 	    		{
-	    			((PullToRefreshLayout)getView().findViewById(R.id.ptr_layout)).setVisibility(View.GONE);
+				    // ptrLayout.setEnabled(false);
 	    			FSLoad.setVisibility(View.VISIBLE);
 	    		}
 	    		else
 	    		{
 	    			if ((_rootPostId > 0) || (_messageId > 0))
 	    			{
-	    				((PullToRefreshLayout)getView().findViewById(R.id.ptr_layout)).setVisibility(View.VISIBLE);
+					    // ptrLayout.setEnabled(true);
 	    			}
 	    			FSLoad.setVisibility(View.GONE);
 	    		}
@@ -1493,8 +1490,8 @@ public class ThreadViewFragment extends ListFragment
 	        			if (_viewAvailable)
 	                	{
 	        	        	updateThreadViewUi();
-
-	        	        	mMainActivity.showOnlyProgressBarFromPTRLibrary(set);
+	        	        	if (ptrLayout != null)
+								ptrLayout.setRefreshing(true);
 	                	}
 	        		}
     			});
@@ -2912,8 +2909,8 @@ public class ThreadViewFragment extends ListFragment
             expandAndCheckPostWithoutAnimation(0);
 
             // pull to refresh integration
-            if (mMainActivity != null)
-                mMainActivity.getRefresher().setRefreshComplete();
+		    ptrLayout.setRefreshing(false);
+
             System.out.println("TIMER: SRC: " + (TimeDisplay.now() - timer)); timer = TimeDisplay.now();
 
 

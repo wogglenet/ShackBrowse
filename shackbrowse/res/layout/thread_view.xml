@@ -48,21 +48,17 @@
 			android:layout_alignParentRight="true"
 			/>
 	</LinearLayout>
-	<net.woggle.shackbrowse.PullToRefreshLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ptr_layout"
-        android:layout_width="fill_parent"
-		android:layout_height="0dp"
-		android:layout_weight="1"
-    	android:visibility="gone"
-    >
-    <ListView android:id="@android:id/list"
-               android:layout_width="fill_parent"
-    			android:layout_height="fill_parent"
-
-               android:orientation="vertical"
-               />
-    </net.woggle.shackbrowse.PullToRefreshLayout>
+	<android.support.v4.widget.SwipeRefreshLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@+id/tview_swiperefresh"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+		<ListView android:id="@android:id/list"
+				  android:layout_width="fill_parent"
+				  android:layout_height="fill_parent"
+			   android:orientation="vertical"
+				   />
+	</android.support.v4.widget.SwipeRefreshLayout>
     <RelativeLayout 
      android:id="@+id/tview_FSLoad"
      android:visibility="gone"

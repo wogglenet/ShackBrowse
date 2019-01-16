@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.app.ListFragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,7 +51,7 @@ public class SearchResultFragment extends ListFragment
 	CacheSeenSearch _seen;
 	private Bundle _lastArgs;
 	private View _header;
-    
+	private SwipeRefreshLayout ptrLayout;
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -140,13 +141,17 @@ public class SearchResultFragment extends ListFragment
         });
         
         // pull to fresh integration
-       	((MainActivity)getActivity()).getRefresher().addRefreshableView(getListView(), new PullToRefreshAttacher.OnRefreshListener(){
+	    ptrLayout = (SwipeRefreshLayout)getView().findViewById(R.id.tlist_swiperefresh);
 
-			@Override
-			public void onRefreshStarted(View view) {
-				retrySearch();
-				
-			}});
+	    // Give the PullToRefreshAttacher to the PullToRefreshLayout, along with a refresh listener.
+	    ptrLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
+	    {
+		    @Override
+		    public void onRefresh()
+		    {
+			    retrySearch();
+		    }
+	    });
         /*
         ((View)getView()).findViewById(R.id.sres_close)
        	.setOnClickListener(new View.OnClickListener() {
@@ -221,7 +226,7 @@ public class SearchResultFragment extends ListFragment
         				View lv = getListView();
         	        	if (lv != null)
         	        	{
-    	((View)getListView().getParent()).findViewById(R.id.tlist_FSnoResults).setVisibility((set2) ? View.VISIBLE : View.GONE);
+    	((View)getListView().getParent().getParent()).findViewById(R.id.tlist_FSnoResults).setVisibility((set2) ? View.VISIBLE : View.GONE);
     	// getListView().setVisibility((set) ? View.VISIBLE : View.GONE);
         	        	}
                 	}
@@ -418,6 +423,8 @@ public class SearchResultFragment extends ListFragment
         public void setCurrentlyLoading (boolean set)
         {
         	super.setCurrentlyLoading(set);
+
+
         	
         	final boolean set2 = set;
         	if (_viewAvailable)
@@ -435,11 +442,12 @@ public class SearchResultFragment extends ListFragment
 		            			if ((_adapter != null) && (_adapter.getCount() < 1))
 		        				{
 
-		            				((View)getListView().getParent()).findViewById(R.id.tlist_FSLoad).setVisibility((set2) ? View.VISIBLE : View.GONE);
+		            				((View)getListView().getParent().getParent()).findViewById(R.id.tlist_FSLoad).setVisibility((set2) ? View.VISIBLE : View.GONE);
 		            				getListView().setVisibility((!set2) ? View.VISIBLE : View.GONE);
+
+							        if (ptrLayout != null)
+								        ptrLayout.setRefreshing(set);
 		        				}
-		            			else
-		            				((MainActivity) getActivity()).showOnlyProgressBarFromPTRLibrary(set2);
             	        	}
                     	}
             		}
@@ -610,8 +618,7 @@ public class SearchResultFragment extends ListFragment
         protected void afterDisplay()
         {
         	// pull to refresh integration
-        	if (getActivity() != null)
-        		((MainActivity)getActivity()).getRefresher().setRefreshComplete();
+        	ptrLayout.setRefreshing(false);
         }
         
     }

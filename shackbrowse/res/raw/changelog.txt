@@ -91,9 +91,9 @@ How am I supposed to tell if you were looking at the thread or the list of threa
 
 -->
 
-$ 5.9.04Beta
-% v 5.9.04Beta
-_ Jan 14, 2019
+$ 6.05Beta
+% v 6.05Beta
+_ Jan 16, 2019
 * New Icon, also works as Android N adaptive icon
 * Imgur uploading
 * GIFV auto conversion for gif upload to imgur
@@ -105,8 +105,11 @@ _ Jan 14, 2019
 * Libraries updated: gifv/mp4/gif embedding seems to be less buggy on all android versions
 * Embedded videos repeat again, but after repeating 3 times they stop repeating so you don't leave your phone on and fall asleep and download 20 gigs on cell data like that one guy did
 * Health and safety warning on political threads
+* TODO ** Adjust this
+* New pull to refresh
 * TODO ** Fix frontpage intercepts to prevent occasional loading hang
 * TODO ** Fix DeX transparency issues
+* TODO ** BUG FIX not asking permissions for gallery upload
 * Bug Fix: Double posts. Maybe. It's complicated.
 * Bug Fix: Starred posts not showing up if too many starred posts
 * Bug Fix: Odd bug where if user posted multiple links or image links with only line break between only half of them would show as links until thread refreshed

@@ -104,7 +104,6 @@ public class FrontpageBrowserFragment extends Fragment {
                                             {
                                                 if ((getActivity() != null) && (mSplashSuppress == false)) {
                                                     ((MainActivity) getActivity()).hideLoadingSplash();
-                                                    ((MainActivity) getActivity()).showOnlyProgressBarFromPTRLibrary(false);
                                                 }
                                                 mSplashSuppress = false;
                                                 mLoading = false;
@@ -207,7 +206,6 @@ public class FrontpageBrowserFragment extends Fragment {
                     public void onPageStarted(WebView view, String url, Bitmap favicon) {
                         if ((getActivity() != null) && (mSplashSuppress == false)) {
                             ((MainActivity) getActivity()).showLoadingSplash();
-                            ((MainActivity) getActivity()).showOnlyProgressBarFromPTRLibrary(true);
                             mLoading = true;
                         }
                     }
