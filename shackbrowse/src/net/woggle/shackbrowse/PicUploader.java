@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -80,14 +81,14 @@ public class PicUploader extends AppCompatActivity {
 		        
 		        
 		        if (ContextCompat.checkSelfPermission(this,
-				        Manifest.permission.READ_EXTERNAL_STORAGE)
+				        android.Manifest.permission.READ_EXTERNAL_STORAGE)
 				        != PackageManager.PERMISSION_GRANTED) {
 
 
 				        // No explanation needed, we can request the permission.
 
 				        ActivityCompat.requestPermissions(this,
-						        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+						        new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},
 						        MY_PERMISSIONS_REQUEST_READ_EXT);
 
 				        // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
