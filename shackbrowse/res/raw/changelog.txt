@@ -98,6 +98,7 @@ _ Jan 16, 2019
 * Imgur uploading
 * GIFV auto conversion for gif upload to imgur
 * Can login to upload to Imgur account
+* TODO ** FIX CRASH HERE
 * Support for notification channels on Android O
 * PRL'd notification links you directly to post queue manager
 * Fixed frontpage mostly
@@ -107,6 +108,8 @@ _ Jan 16, 2019
 * Health and safety warning on political threads
 * TODO ** Adjust this
 * New pull to refresh
+* Toolbar on bottom option
+* Autohiding toolbar option: default on
 * TODO ** Fix frontpage intercepts to prevent occasional loading hang
 * TODO ** Fix DeX transparency issues
 * TODO ** BUG FIX not asking permissions for gallery upload

@@ -49,6 +49,8 @@ dependencies {
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.8'
     //  implementation 'com.google.firebase:firebase-crash:11.8.0'
 
+    implementation 'me.zhanghai.android.materialprogressbar:library:1.6.1'
+
     // twitter
     implementation ('com.twitter.sdk.android:twitter:3.2.0@aar') {
         transitive = true

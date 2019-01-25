@@ -70,6 +70,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.text.ClipboardManager;
 import android.text.Editable;
 import android.text.InputType;
@@ -86,7 +87,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewPropertyAnimator;
 import android.view.WindowManager;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.AdapterView;
@@ -143,6 +147,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	boolean _showPinnedInTL = true;
 	private long _lastOpenedThreadViewEpochSeconds = 0l;
 	boolean _swappedSplit = false;
+	boolean mBottomToolbar = false;
 	Seen _seen;
 	NetworkNotificationServers _GCMAccess;
 	private ThreadListFragment _threadList;
@@ -180,8 +185,11 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	//FIREBASE 	private FirebaseAnalytics mFirebaseAnalytics;
 	private YouTubePlayerView mYoutubeView;
 	private boolean mYoutubeFullscreen = false;
+	private Toolbar mToolbar;
+	private boolean mToolbarAnimating = false;
+	private boolean mToolbarHidden = false;
 
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -223,6 +231,10 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 		// load loading splash
 		this.setContentView(R.layout.main_splitview);
+
+		// set up toolbar
+		mToolbar = (Toolbar) findViewById(R.id.app_toolbar);
+		setSupportActionBar(mToolbar);
 
 		initFragments(savedInstanceState);
 
@@ -360,8 +372,8 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         // Set the drawer toggle as the DrawerListener
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
+       getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+       getSupportActionBar().setHomeButtonEnabled(true);
         
         mFrame = (FrameLayout)findViewById(R.id.content_frame);
 
@@ -499,6 +511,24 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 		// default content setting
 		setContentTo(Integer.parseInt(_prefs.getString("APP_DEFAULTPANE", Integer.toString(CONTENT_THREADLIST))));
+
+
+		mBottomToolbar = _prefs.getBoolean("enableBottomBar", false);
+
+		if (mBottomToolbar)
+		{
+			// swap bar
+			RelativeLayout contentCont = (RelativeLayout) findViewById(R.id.contentContainer);
+			RelativeLayout.LayoutParams paramsCont = (RelativeLayout.LayoutParams) contentCont.getLayoutParams();
+			paramsCont.removeRule(RelativeLayout.BELOW);
+			paramsCont.addRule(RelativeLayout.ABOVE, R.id.app_toolbar);
+			contentCont.setLayoutParams(paramsCont);
+
+			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mToolbar.getLayoutParams();
+			params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+			params.removeRule(RelativeLayout.ALIGN_PARENT_TOP);
+			mToolbar.setLayoutParams(params); //causes layout update
+		}
 
 		// analytics
 		// Obtain the FirebaseAnalytics instance.
@@ -677,10 +707,10 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
     }
 
     protected void setTitleContextually() {
-		getSupportActionBar().setSubtitle(null);
+		mToolbar.setSubtitle(null);
 		if (mDrawerLayout.isDrawerOpen(_menuFrame))
 		{
-        	getSupportActionBar().setTitle(mDrawerTitle);
+        	mToolbar.setTitle(mDrawerTitle);
         	mDrawerToggle.setDrawerIndicatorEnabled(true);
 		}
 		else if (mPopupBrowserOpen)
@@ -694,51 +724,51 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	        
 	        if (!browserZoomMode && !browserPhotoMode) {
 				if (!TextUtils.isEmpty(mBrowserPageTitle) && !TextUtils.isEmpty(mBrowserPageSubTitle)) {
-					getSupportActionBar().setTitle(mBrowserPageTitle);
-					getSupportActionBar().setSubtitle(mBrowserPageSubTitle);
+					mToolbar.setTitle(mBrowserPageTitle);
+					mToolbar.setSubtitle(mBrowserPageSubTitle);
 				}
 				else if (!TextUtils.isEmpty(mBrowserPageTitle)) {
-					getSupportActionBar().setTitle(mBrowserPageTitle);
+					mToolbar.setTitle(mBrowserPageTitle);
 				}
 				else {
-					getSupportActionBar().setTitle(getResources().getString(R.string.browser_title));
+					mToolbar.setTitle(getResources().getString(R.string.browser_title));
 				}
 			}
 			else if (browserPhotoMode) {
-				getSupportActionBar().setTitle(getResources().getString(R.string.browser_photo_title));
+				mToolbar.setTitle(getResources().getString(R.string.browser_photo_title));
 			}
 	        else {
-				getSupportActionBar().setTitle(getResources().getString(R.string.browserZoom_title));
+				mToolbar.setTitle(getResources().getString(R.string.browserZoom_title));
 			}
 			mDrawerToggle.setDrawerIndicatorEnabled(false);
 		}
 		else if (_tviewFrame.isOpened() && (_currentFragmentType == CONTENT_MESSAGES) && !getDualPane())
 		{
-        	getSupportActionBar().setTitle(getResources().getString(R.string.message_title));
+        	mToolbar.setTitle(getResources().getString(R.string.message_title));
         	mDrawerToggle.setDrawerIndicatorEnabled(false);
 		}
         else if (_tviewFrame.isOpened() && (_currentFragmentType == CONTENT_FRONTPAGE || _currentFragmentType == CONTENT_NOTIFICATIONS || _currentFragmentType == CONTENT_THREADLIST || _currentFragmentType == CONTENT_FAVORITES) && !getDualPane())
         {
-        	getSupportActionBar().setTitle(getResources().getString(R.string.thread_title));
+        	mToolbar.setTitle(getResources().getString(R.string.thread_title));
         	mDrawerToggle.setDrawerIndicatorEnabled(false);
         }
         else if (_sresFrame.isOpened())
         {
-        	getSupportActionBar().setTitle(_searchResults._title);
+        	mToolbar.setTitle(_searchResults._title);
         	mDrawerToggle.setDrawerIndicatorEnabled(false);
         }
         else if (_currentFragmentType == CONTENT_MESSAGES)
 		{
 			if (getMessageType())
-				getSupportActionBar().setTitle("SMsg Inbox");
+				mToolbar.setTitle("SMsg Inbox");
 			else
-				getSupportActionBar().setTitle("SMsg Sent");
+				mToolbar.setTitle("SMsg Sent");
 
 			mDrawerToggle.setDrawerIndicatorEnabled(true);
 		}
         else
         {
-        	getSupportActionBar().setTitle(mTitle);
+        	mToolbar.setTitle(mTitle);
         	mDrawerToggle.setDrawerIndicatorEnabled(true);
         }
 
@@ -1445,6 +1475,8 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         if (!mPopupBrowserOpen)
             // make sure the browser is closed
             closeBrowser(true, null, true);
+
+        setTitleContextually();
 	}
 	
 	public void toggleMenu() {
@@ -2134,6 +2166,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
             _zoom = Float.parseFloat(_prefs.getString("fontZoom", "1.0"));
             _showPinnedInTL = _prefs.getBoolean("showPinnedInTL", true);
             _swappedSplit = _prefs.getBoolean("swappedSplit", false);
+
             if (_threadView != null) {
                 if (_threadView._adapter != null) {
                     _threadView._adapter.loadPrefs();
@@ -2148,8 +2181,28 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
             }
             evaluateDualPane(getResources().getConfiguration());
             _appMenu.updateMenuUi();
+
+            // check bottom toolbar
+	        boolean newmbt = _prefs.getBoolean("enableBottomBar", false);
+			if (newmbt != mBottomToolbar)
+			{
+				// swap bar if pref changed
+				RelativeLayout contentCont = (RelativeLayout) findViewById(R.id.contentContainer);
+				RelativeLayout.LayoutParams paramsCont = (RelativeLayout.LayoutParams) contentCont.getLayoutParams();
+				paramsCont.removeRule((newmbt ? RelativeLayout.BELOW : RelativeLayout.ABOVE));
+				paramsCont.addRule((!newmbt ? RelativeLayout.BELOW : RelativeLayout.ABOVE), R.id.app_toolbar);
+				contentCont.setLayoutParams(paramsCont);
+
+				RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mToolbar.getLayoutParams();
+				params.addRule((newmbt ? RelativeLayout.ALIGN_PARENT_BOTTOM : RelativeLayout.ALIGN_PARENT_TOP));
+				params.removeRule((!newmbt ? RelativeLayout.ALIGN_PARENT_BOTTOM : RelativeLayout.ALIGN_PARENT_TOP));
+				mToolbar.setLayoutParams(params); //causes layout update
+
+				mBottomToolbar = newmbt;
+			}
         }
     }
+
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     	System.out.println("MAINACTIVITY: activity result recv R_OK=" +Activity.RESULT_OK + " reqCodes: PostThread OTV PR" + ThreadListFragment.POST_NEW_THREAD + " " + ThreadListFragment.OPEN_THREAD_VIEW + " " + ThreadViewFragment.POST_REPLY + " data: " + requestCode + " " + resultCode);
     	if (requestCode == ThreadListFragment.OPEN_PREFS)
@@ -3295,6 +3348,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
                         if (onEnd != null)
                             onEnd.end();
 
+
                     }
                 };
 
@@ -3318,6 +3372,8 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	{
 		private mAnimEnd mCallBack = null;
 		private View mView;
+		private ViewPropertyAnimator mAnimator;
+
 		anim (View view)
 		{
 			mView = view;
@@ -3368,13 +3424,8 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 				mView.setAlpha(1f);
 				mView.setVisibility(View.VISIBLE);
 				mView.animate().alpha(0f).setDuration(mShortAnimationDuration).setListener(new AnimatorListener(){
-		
 					@Override
-					public void onAnimationCancel(Animator animation) {
-						// TODO Auto-generated method stub
-						
-					}
-		
+					public void onAnimationCancel(Animator animation) {}
 					@Override
 					public void onAnimationEnd(Animator animation) {
 						mView.setAlpha(0f);
@@ -3384,19 +3435,85 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 						
 						mView.setVisibility(View.GONE);
 					}
-		
 					@Override
-					public void onAnimationRepeat(Animator animation) {
-						// TODO Auto-generated method stub
-						
-					}
-		
+					public void onAnimationRepeat(Animator animation) {}
 					@Override
-					public void onAnimationStart(Animator animation) {
-						
-					}});
+					public void onAnimationStart(Animator animation) {}});
 			}
 			return this;
+		}
+		public anim toolBarUp()
+		{
+			if (mView != null)
+			{
+				if (mView instanceof Toolbar)
+				{
+					mAnimator = mView.animate().translationY(mView.getY() - mView.getHeight()).setInterpolator(new AccelerateInterpolator(2)).setListener(new AnimatorListener()	{
+						@Override
+						public void onAnimationCancel(Animator animation) {}
+						@Override
+						public void onAnimationEnd(Animator animation) {
+							if (mCallBack != null)
+								mCallBack.end();
+						}
+						@Override
+						public void onAnimationRepeat(Animator animation) {}
+						@Override
+						public void onAnimationStart(Animator animation) {}
+					});
+					mAnimator.start();
+				}
+			}
+			return this;
+		}
+		public anim toolBarDown()
+		{
+			if (mView != null)
+			{
+				if (mView instanceof Toolbar)
+				{
+					mAnimator = mView.animate().translationY(mView.getY() + mView.getHeight()).setInterpolator(new DecelerateInterpolator(2)).setListener(new AnimatorListener()	{
+						@Override
+						public void onAnimationCancel(Animator animation) {}
+						@Override
+						public void onAnimationEnd(Animator animation) {
+							if (mCallBack != null)
+								mCallBack.end();
+						}
+						@Override
+						public void onAnimationRepeat(Animator animation) {}
+						@Override
+						public void onAnimationStart(Animator animation) {}
+					});
+					mAnimator.start();
+				}
+			}
+			return this;
+		}
+	}
+	// this class is such garbage everything is just a jumbled mess
+	public void showToolbar()
+	{
+		if ((!mToolbarAnimating) && (mToolbarHidden))
+		{
+			mToolbarHidden = false;
+			mToolbarAnimating = true;
+			mAnimEnd closeAction = () -> { mToolbarAnimating = false; };
+			anim anim = new anim(mToolbar).setEndCall(closeAction);
+			if (mBottomToolbar) anim.toolBarUp();
+			else anim.toolBarDown();
+		}
+	}
+	public void hideToolbar()
+	{
+		if ((!mToolbarAnimating) && (!mToolbarHidden))
+		{
+			mToolbarHidden = true;
+			mToolbarAnimating = true;
+			mAnimEnd closeAction = () -> { mToolbarAnimating = false; };
+			anim anim = new anim(mToolbar).setEndCall(closeAction);
+			if (!mBottomToolbar) anim.toolBarUp();
+			else anim.toolBarDown();
 		}
 	}
 	
@@ -3833,8 +3950,8 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			public void onYouTubePlayerEnterFullScreen()
 			{
 				mYoutubeFullscreen = true;
-				ActionBar actionBar = getSupportActionBar();
-				actionBar.hide();
+				// ActionBar actionBar = mToolbar;
+				// actionBar.hide();
 				View decorView = getWindow().getDecorView();
 				// Hide the status bar.
 				int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
@@ -3849,8 +3966,8 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			public void onYouTubePlayerExitFullScreen()
 			{
 				mYoutubeFullscreen = false;
-				ActionBar actionBar = getSupportActionBar();
-				actionBar.show();
+				// ActionBar actionBar = mToolbar;
+				// actionBar.show();
 				View decorView = getWindow().getDecorView();
 				// Show the status bar.
 				int uiOptions = View.SYSTEM_UI_FLAG_VISIBLE;
@@ -3885,8 +4002,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 		if (mYoutubeFullscreen)
 		{
-			ActionBar actionBar = getSupportActionBar();
-			actionBar.show();
+			// ActionBar actionBar = mToolbar.show();
 			View decorView = getWindow().getDecorView();
 			// Show the status bar.
 			int uiOptions = View.SYSTEM_UI_FLAG_VISIBLE;

@@ -26,8 +26,12 @@
       <item name="android:actionOverflowButtonStyle">@style/OverFlow</item>
       <!-- Set AppCompat’s color theming attrs -->
       <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
-      <item name="windowActionBar">true</item>
-      <item name="android:theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+
+      <item name="windowActionBar">false</item>
+      <item name="windowNoTitle">true</item>
+
+      <!-- <item name="android:theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item> -->
+      <item name="android:theme">@style/Theme.AppCompat.NoActionBar</item>
       <item name="android:textAppearanceMedium">@style/MyTextAppearance</item>
       <item name="md_dark_theme">true</item>
 
