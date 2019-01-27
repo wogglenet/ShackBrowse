@@ -2,6 +2,11 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/donateappbarlayout"
         android:layout_width="match_parent"
@@ -14,14 +19,8 @@
             android:minHeight="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             android:layout_alignParentTop="true"
-            app:layout_scrollFlags="scroll|enterAlways|snap"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
     </com.google.android.material.appbar.AppBarLayout>
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical" >
-    
     <LinearLayout
         android:layout_width="match_parent"
     android:layout_height="match_parent"
