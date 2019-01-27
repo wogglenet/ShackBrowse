@@ -4,13 +4,15 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent">
+	android:layout_height="match_parent"
+	>
 <RelativeLayout
     android:id="@+id/tlist_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_app_ics"
-    android:orientation="vertical">
+    android:orientation="vertical"
+	>
     <RelativeLayout 
          android:id="@+id/tlist_FSnoResults"
          android:visibility="gone"
@@ -26,16 +28,19 @@
 	      	   android:text="@string/tlist_emptyText"
       		   />
     </RelativeLayout>
-	<android.support.v4.widget.SwipeRefreshLayout
+	<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 		xmlns:android="http://schemas.android.com/apk/res/android"
 		android:id="@+id/tlist_swiperefresh"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent">
-		<net.woggle.NestedListView android:id="@id/android:list"
+		android:layout_height="match_parent"
+		>
+		<net.woggle.NestedScrollingListView android:id="@id/android:list"
 				   android:layout_width="match_parent"
 				   android:layout_height="match_parent"
-				   android:orientation="vertical" />
-	</android.support.v4.widget.SwipeRefreshLayout>
+				   android:orientation="vertical"
+								   />
+
+	</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     <RelativeLayout
         android:id="@+id/tlist_FSLoad"
         android:visibility="gone"

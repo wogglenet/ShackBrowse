@@ -49,7 +49,7 @@
 		<CheckBoxPreference
 			android:key="enableBottomBar"
 			android:title="Toolbar on Bottom"
-			android:summary="Enable to show the toolbar on the bottom"
+			android:summary="DO NOT ENABLE CAUSES CRASH"
 			android:defaultValue="false"
 			/>
         <ListPreference

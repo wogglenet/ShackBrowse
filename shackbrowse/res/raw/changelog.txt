@@ -91,8 +91,8 @@ How am I supposed to tell if you were looking at the thread or the list of threa
 
 -->
 
-$ 6.05Beta
-% v 6.05Beta
+$ 6.06Beta
+% v 6.06Beta
 _ Jan 16, 2019
 * New Icon, also works as Android N adaptive icon
 * Imgur uploading
@@ -109,6 +109,7 @@ _ Jan 16, 2019
 * TODO ** Adjust this
 * New pull to refresh
 * Toolbar on bottom option
+** FIX CRASH
 * Autohiding toolbar option: default on
 * TODO ** Fix frontpage intercepts to prevent occasional loading hang
 * TODO ** Fix DeX transparency issues

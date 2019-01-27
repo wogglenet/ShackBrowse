@@ -22,13 +22,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Random;
-import java.util.Stack;
 
 import net.woggle.AutocompleteProvider;
 import net.woggle.CheckableLinearLayout;
 import net.woggle.SwipeDismissListViewTouchListener;
 import net.woggle.SwipeDismissListViewTouchListener.DismissCallbacks;
-import net.woggle.shackbrowse.MainActivity.mAnimEnd;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,14 +49,13 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.app.ListFragment;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v4.view.MotionEventCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
+import androidx.annotation.NonNull;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.core.view.MotionEventCompat;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.text.InputType;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -87,8 +84,6 @@ import android.widget.AbsListView.OnScrollListener;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-
-import com.gc.materialdesign.views.ButtonFlat;
 
 import static net.woggle.shackbrowse.StatsFragment.statInc;
 
@@ -375,7 +370,6 @@ public class ThreadListFragment extends ListFragment
     }
 
 
-	@SuppressLint("ClickableViewAccessibility")
 	public void initAutoLoader ()
     {        
     	_offlineThread = ((MainActivity)getActivity()).mOffline;
@@ -398,42 +392,11 @@ public class ThreadListFragment extends ListFragment
                         });
 
         getListView().setOnTouchListener(new View.OnTouchListener() {
-	        float initialY, finalY;
-	        boolean isScrollingUp;
-
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				// ((MainActivity)getActivity()).getRefresher().onTouch(v, event);
 				if (_swipecollapse > 0)
 					_touchListener.onTouch(v, event);
-
-
-				int action = MotionEventCompat.getActionMasked(event);
-
-				switch(action) {
-					case (MotionEvent.ACTION_DOWN):
-						initialY = event.getY();
-					case (MotionEvent.ACTION_UP):
-						finalY = event.getY();
-
-						if (initialY < finalY) {
-							// "Scrolling up
-							isScrollingUp = true;
-						} else if (initialY > finalY) {
-							//"Scrolling down");
-							isScrollingUp = false;
-						}
-					default:
-				}
-
-				if (isScrollingUp) {
-					// ((MainActivity)getActivity()).showToolbar();
-					// coordinatorlayout stuff
-				} else {
-					// do animation for scrolling down
-					// ((MainActivity)getActivity()).hideToolbar();
-				}
-
 				return false;
 			}
 		});

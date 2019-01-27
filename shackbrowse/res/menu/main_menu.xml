@@ -18,7 +18,7 @@
 		  android:icon="@drawable/ic_action_action_search"
 		  android:title="@string/findOnPage"
 		  android:orderInCategory="3"
-		  app:actionViewClass="android.support.v7.widget.SearchView" />
+		  app:actionViewClass="androidx.appcompat.widget.SearchView" />
 	<item android:id="@+id/menu_keywordFilter"
 		  app:showAsAction="never"
 		  android:icon="@drawable/ic_action_image_add_to_photos"
@@ -63,7 +63,7 @@
 		  android:icon="@drawable/marker"
 		  android:title="@string/findInThread"
 		  android:orderInCategory="30"
-        app:actionViewClass="android.support.v7.widget.SearchView" />
+        app:actionViewClass="androidx.appcompat.widget.SearchView" />
 <!-- MESSAGE OPTIONS -->
 	<item android:id="@+id/menu_refreshMsg"
         app:showAsAction="always"

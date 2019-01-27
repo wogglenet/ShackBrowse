@@ -2,7 +2,7 @@ package net.woggle.shackbrowse;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.text.style.ClickableSpan;
 import android.view.View;
 

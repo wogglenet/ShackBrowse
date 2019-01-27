@@ -10,10 +10,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.NotificationCompat;
+import androidx.core.app.NotificationCompat;
 import android.util.Log;
-
-import com.google.firebase.messaging.RemoteMessage;
 
 import net.woggle.shackbrowse.MainActivity;
 import net.woggle.shackbrowse.R;

@@ -12,7 +12,6 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -44,10 +43,7 @@ import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -60,17 +56,15 @@ import android.preference.PreferenceManager;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.core.view.MenuItemCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import android.text.ClipboardManager;
 import android.text.Editable;
 import android.text.InputType;
@@ -100,7 +94,6 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -109,6 +102,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.color.ColorChooserDialog;
 //FIREBASE import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.android.material.appbar.AppBarLayout;
 import com.pierfrancescosoffritti.androidyoutubeplayer.player.listeners.AbstractYouTubePlayerListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.player.listeners.YouTubePlayerInitListener;
@@ -517,6 +511,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 		if (mBottomToolbar)
 		{
+			/*
 			// swap bar
 			RelativeLayout contentCont = (RelativeLayout) findViewById(R.id.contentContainer);
 			RelativeLayout.LayoutParams paramsCont = (RelativeLayout.LayoutParams) contentCont.getLayoutParams();
@@ -528,6 +523,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 			params.removeRule(RelativeLayout.ALIGN_PARENT_TOP);
 			mToolbar.setLayoutParams(params); //causes layout update
+			*/
 		}
 
 		// analytics
@@ -1166,7 +1162,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         menu.findItem(R.id.menu_findOnPage).setVisible(showTListItems);
 
         // hack to do autocomplete sview2
-	    AutoCompleteTextView searchAutoCompleteTextView = (AutoCompleteTextView) menu.findItem(R.id.menu_findOnPage).getActionView().findViewById(android.support.v7.appcompat.R.id.search_src_text);
+	    AutoCompleteTextView searchAutoCompleteTextView = (AutoCompleteTextView) menu.findItem(R.id.menu_findOnPage).getActionView().findViewById(androidx.appcompat.R.id.search_src_text);
 	    searchAutoCompleteTextView.setAdapter(new AutocompleteProvider(MainActivity.this, "Finder", 5).getSuggestionAdapter());
 	    searchAutoCompleteTextView.setThreshold(0);
 
@@ -1180,7 +1176,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	    });
 
 	    // hack to do autocomplete sview1
-	    AutoCompleteTextView searchAutoCompleteTextView2 = (AutoCompleteTextView) menu.findItem(R.id.menu_findInThread).getActionView().findViewById(android.support.v7.appcompat.R.id.search_src_text);
+	    AutoCompleteTextView searchAutoCompleteTextView2 = (AutoCompleteTextView) menu.findItem(R.id.menu_findInThread).getActionView().findViewById(androidx.appcompat.R.id.search_src_text);
 	    searchAutoCompleteTextView2.setAdapter(new AutocompleteProvider(MainActivity.this,"Highlighter",5).getSuggestionAdapter());
 	    searchAutoCompleteTextView2.setThreshold(0);
 	    searchAutoCompleteTextView2.setOnItemClickListener(new AdapterView.OnItemClickListener()
@@ -1262,6 +1258,10 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		setContentTo(type, null);
 	}
 	void setContentTo(int type, Bundle bundle) {
+
+		AppBarLayout appBarLayout = (AppBarLayout)findViewById(R.id.appbarlayout);
+		appBarLayout.setExpanded(true, true);
+
 		Fragment fragment = null;
 		if (bundle == null)
 			bundle = new Bundle();
@@ -2187,6 +2187,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			if (newmbt != mBottomToolbar)
 			{
 				// swap bar if pref changed
+				/*
 				RelativeLayout contentCont = (RelativeLayout) findViewById(R.id.contentContainer);
 				RelativeLayout.LayoutParams paramsCont = (RelativeLayout.LayoutParams) contentCont.getLayoutParams();
 				paramsCont.removeRule((newmbt ? RelativeLayout.BELOW : RelativeLayout.ABOVE));
@@ -2199,6 +2200,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 				mToolbar.setLayoutParams(params); //causes layout update
 
 				mBottomToolbar = newmbt;
+				*/
 			}
         }
     }

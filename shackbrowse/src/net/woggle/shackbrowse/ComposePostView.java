@@ -16,8 +16,6 @@ import net.woggle.shackbrowse.imgur.ImgurTools;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
@@ -27,7 +25,6 @@ import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
@@ -40,17 +37,17 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.renderscript.ScriptGroup;
-import android.support.annotation.NonNull;
-import android.support.v13.view.inputmethod.InputContentInfoCompat;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NavUtils;
-import android.support.v4.app.TaskStackBuilder;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.inputmethod.InputContentInfoCompat;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NavUtils;
+import androidx.core.app.TaskStackBuilder;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.CharacterStyle;
@@ -131,6 +128,7 @@ public class ComposePostView extends AppCompatActivity {
     private Long mLastResumeTime = 0L;
     private boolean mEditBarEnabled;
 	private String mCurrentPhotoPath;
+	private Toolbar mToolbar;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -171,6 +169,9 @@ public class ComposePostView extends AppCompatActivity {
         	setContentView(R.layout.edit_post_lollipop);
             _landscape  = false;
         }
+
+		mToolbar = (Toolbar) findViewById(R.id.edit_app_toolbar);
+		setSupportActionBar(mToolbar);
 
         decideEditBar();
 

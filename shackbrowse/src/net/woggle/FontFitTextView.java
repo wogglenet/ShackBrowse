@@ -4,9 +4,8 @@ import android.content.Context;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.TypedValue;
-import android.widget.TextView;
 
-public class FontFitTextView extends android.support.v7.widget.AppCompatTextView {
+public class FontFitTextView extends androidx.appcompat.widget.AppCompatTextView {
 
     public FontFitTextView(Context context) {
         super(context);

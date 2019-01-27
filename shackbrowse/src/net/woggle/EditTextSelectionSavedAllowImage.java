@@ -2,16 +2,15 @@ package net.woggle;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v13.view.inputmethod.EditorInfoCompat;
-import android.support.v13.view.inputmethod.InputConnectionCompat;
-import android.support.v13.view.inputmethod.InputContentInfoCompat;
-import android.support.v4.os.BuildCompat;
+import androidx.core.view.inputmethod.EditorInfoCompat;
+import androidx.core.view.inputmethod.InputConnectionCompat;
+import androidx.core.view.inputmethod.InputContentInfoCompat;
+import androidx.core.os.BuildCompat;
 import android.util.AttributeSet;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
-import android.widget.EditText;
 
-public class EditTextSelectionSavedAllowImage extends android.support.v7.widget.AppCompatEditText {
+public class EditTextSelectionSavedAllowImage extends androidx.appcompat.widget.AppCompatEditText {
 
 	private String[] imgTypeString;
 	private KeyBoardInputCallbackListener keyBoardInputCallbackListener;

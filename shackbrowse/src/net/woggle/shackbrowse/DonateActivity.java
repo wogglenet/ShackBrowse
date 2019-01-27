@@ -14,9 +14,11 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.NavUtils;
-import android.support.v4.app.TaskStackBuilder;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NavUtils;
+import androidx.core.app.TaskStackBuilder;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.Html;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
@@ -57,13 +59,16 @@ public class DonateActivity extends AppCompatActivity {
     private boolean _goldLime;
     private int mThemeResId;
     private boolean _quadLime;
+	private Toolbar mToolbar;
 
-    @Override
+	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         _prefs = PreferenceManager.getDefaultSharedPreferences(this);
         mThemeResId = MainActivity.themeApplicator(this);
         setContentView(R.layout.donate);
+	    mToolbar = (Toolbar) findViewById(R.id.donateapp_toolbar);
+	    setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 

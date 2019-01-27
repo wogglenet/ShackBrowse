@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
       package="net.woggle.shackbrowse"
-      android:versionCode="444"
-      android:versionName="6.05Beta">
+      android:versionCode="445"
+      android:versionName="6.06Beta">
 <uses-permission android:name="android.permission.INTERNET"></uses-permission>
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -18,7 +18,7 @@
 
     <application android:theme="@style/AppTheme" android:usesCleartextTraffic="true" android:hardwareAccelerated="true" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:label="@string/app_name" android:largeHeap="true" android:name=".SBApplication">
 		<provider
-			android:name="android.support.v4.content.FileProvider"
+			android:name="androidx.core.content.FileProvider"
 			android:authorities="net.woggle.shackbrowse.provider"
 			android:exported="false"
 			android:grantUriPermissions="true">
