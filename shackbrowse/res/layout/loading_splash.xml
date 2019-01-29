@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/post_divider_color"
-    >
+    android:background="@color/post_divider_color">
     <RelativeLayout
         android:id="@+id/splash_FSLoadSplash"
         android:layout_width="match_parent"
@@ -23,7 +24,9 @@
             android:paddingBottom="50dp"
             android:text="6"
             android:textColor="@color/gnushackdark"
-            android:textIsSelectable="true"
+            android:textIsSelectable="false"
+            android:focusable="false"
+            android:longClickable="false"
             android:textSize="180dp"
             android:textStyle="bold|italic"/>
 
@@ -31,7 +34,6 @@
             android:id="@id/splashText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layout_centerInParent="true"
             android:layout_marginTop="14dp"
             android:paddingLeft="10dp"
@@ -45,13 +47,26 @@
                 android:orientation="horizontal"
                 android:paddingLeft="3.5dp"
                 android:paddingTop="1.5dp">
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="3dp"
+                    >
 
                 <ImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_gravity="center"
+                    android:layout_centerInParent="true"
                     android:scaleType="fitXY"
-                    android:src="@mipmap/ic_launcher"/>
+                    android:src="@drawable/ic_launcher"/>
+                <net.woggle.CircularProgress
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    app:cpb_style="1"
+                    android:layout_gravity="center"
+                    />
+                </RelativeLayout>
 
                 <TextView
                     android:id="@+id/splash_sbname"
@@ -60,12 +75,14 @@
                     android:layout_gravity="center"
                     android:paddingLeft="8dp"
                     android:text="Shack Browse"
+                    android:textIsSelectable="false"
+                    android:focusable="false"
+                    android:longClickable="false"
                     android:textColor="@color/nonpreview_post_text_color"
-                    android:textIsSelectable="true"
                     android:textSize="26dp"/>
             </LinearLayout>
 
-            <ProgressBar
+           <!-- <ProgressBar
                 style="@style/WidgetThrobber"
                 android:layout_width="47dp"
                 android:layout_height="47dp"
@@ -73,7 +90,7 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="-5dp"
                 android:layout_marginTop="-5dp"
-                android:layout_marginBottom="0dp"/>
+                android:layout_marginBottom="0dp"/> -->
 
         </RelativeLayout>
         <net.woggle.FontFitTextView

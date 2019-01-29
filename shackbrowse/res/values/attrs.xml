@@ -7,6 +7,8 @@
     <attr name="menuSelectorDrawable" format="reference" />
     <attr name="colorHighlight" format="reference" />
 
+    <declare-styleable name="CircularProgressBar"><attr format="integer" name="cpb_style"/></declare-styleable>
+
 
     <declare-styleable name="modtype">
         <attr name="state_nws" format="boolean" />

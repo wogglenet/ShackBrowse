@@ -221,9 +221,9 @@
 		<item>2</item>
 	</string-array>
 	<string-array name="preference_apiUrl">
-		<item>shackapi.hughes.cc</item>
-		<item>woggle.net/shackbrowseAPI</item>
-		<item>shackbrowseapi.appspot.com</item>
+		<item>(old) shackapi.hughes.cc</item>
+		<item>(old) woggle.net/shackbrowseAPI</item>
+		<item>(old) shackbrowseapi.appspot.com</item>
 		<item>WinChatty V2 (faster)</item>
 		<item>Woggle V2 (faster)</item>
 		<item>Custom API</item>

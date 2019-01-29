@@ -445,8 +445,13 @@ public class SearchResultFragment extends ListFragment
 		            				((View)getListView().getParent().getParent()).findViewById(R.id.tlist_FSLoad).setVisibility((set2) ? View.VISIBLE : View.GONE);
 		            				getListView().setVisibility((!set2) ? View.VISIBLE : View.GONE);
 
-							        if (ptrLayout != null)
-								        ptrLayout.setRefreshing(set);
+									if (set)
+										((MainActivity)getActivity()).startProgressBar();
+									else
+										((MainActivity)getActivity()).stopProgressBar();
+
+							        // if (ptrLayout != null)
+								    //    ptrLayout.setRefreshing(set);
 		        				}
             	        	}
                     	}

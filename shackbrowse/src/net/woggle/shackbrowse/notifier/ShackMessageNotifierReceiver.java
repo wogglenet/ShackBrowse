@@ -42,7 +42,7 @@ public class ShackMessageNotifierReceiver extends BroadcastReceiver
 								.setLargeIcon(largeIcon)
 								.setContentTitle(data.get("username").toString() + " sent you a shackmessage")
 								.setContentText(data.get("text").toString())
-								.setColor(Color.parseColor("#52c334"))
+								.setColor(Color.GREEN)
 								.setTicker(data.get("username").toString() + " sent you a shackmessage")
 								.setAutoCancel(true);
 

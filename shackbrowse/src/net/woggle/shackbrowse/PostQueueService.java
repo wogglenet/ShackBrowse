@@ -354,7 +354,7 @@ public class PostQueueService extends JobIntentService
 						.setLargeIcon(largeIcon)
 						.setContentTitle(title)
 						.setContentText(text)
-						.setColor(getResources().getColor(R.color.notificationColor))
+						.setColor(Color.GREEN)
 						.setTicker(title +": "+ text)
 						.setAutoCancel(true);
 

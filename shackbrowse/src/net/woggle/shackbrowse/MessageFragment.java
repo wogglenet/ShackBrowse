@@ -430,8 +430,13 @@ public class MessageFragment extends ListFragment
 		            				((View)getParentView()).findViewById(R.id.mlist_FSLoad).setVisibility(View.VISIBLE);
 		            				getListView().setVisibility(View.GONE);
 
-						            if (ptrLayout != null)
-							            ptrLayout.setRefreshing(set);
+                                    if (set)
+                                        ((MainActivity)getActivity()).startProgressBar();
+                                    else
+                                        ((MainActivity)getActivity()).stopProgressBar();
+
+						            // if (ptrLayout != null)
+							        //    ptrLayout.setRefreshing(set);
 	            				}
 		        			}
 	            		}
@@ -447,8 +452,13 @@ public class MessageFragment extends ListFragment
 	            				((View)getParentView()).findViewById(R.id.mlist_FSLoad).setVisibility(View.GONE);
 	            				getListView().setVisibility(View.VISIBLE);
 
-					            if (ptrLayout != null)
-						            ptrLayout.setRefreshing(set);
+                                if (set)
+                                    ((MainActivity)getActivity()).startProgressBar();
+                                else
+                                    ((MainActivity)getActivity()).stopProgressBar();
+
+					            // if (ptrLayout != null)
+						        //    ptrLayout.setRefreshing(set);
 
 	            			}
 	            			

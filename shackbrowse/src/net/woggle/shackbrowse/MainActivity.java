@@ -273,19 +273,19 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			NotificationManager notificationManager = getSystemService(NotificationManager.class);
 
 			NotificationChannel channel = new NotificationChannel(NotifierReceiver.CHANNEL_VANITY, "Vanity Notifications", NotificationManager.IMPORTANCE_DEFAULT);
-			channel.setDescription("Notifications when someone mentions your shack name"); channel.enableLights(true); channel.setLightColor(Color.parseColor("#52c334")); channel.enableVibration(true);
+			channel.setDescription("Notifications when someone mentions your shack name"); channel.enableLights(true); channel.setLightColor(Color.GREEN); channel.enableVibration(true);
 			notificationManager.createNotificationChannel(channel);
 			channel = new NotificationChannel(NotifierReceiver.CHANNEL_REPLY, "Reply Notifications", NotificationManager.IMPORTANCE_DEFAULT);
-			channel.setDescription("Notifications when someone replies to your posts"); channel.enableLights(true); channel.setLightColor(Color.parseColor("#52c334")); channel.enableVibration(true);
+			channel.setDescription("Notifications when someone replies to your posts"); channel.enableLights(true); channel.setLightColor(Color.GREEN); channel.enableVibration(true);
 			notificationManager.createNotificationChannel(channel);
 			channel = new NotificationChannel(NotifierReceiver.CHANNEL_KEYWORD, "Keyword Notifications", NotificationManager.IMPORTANCE_DEFAULT);
-			channel.setDescription("Notifications when someone mentions a keyword you set"); channel.enableLights(true); channel.setLightColor(Color.parseColor("#52c334")); channel.enableVibration(true);
+			channel.setDescription("Notifications when someone mentions a keyword you set"); channel.enableLights(true); channel.setLightColor(Color.GREEN); channel.enableVibration(true);
 			notificationManager.createNotificationChannel(channel);
 			channel = new NotificationChannel(NotifierReceiver.CHANNEL_SHACKMSG, "Shack Message Notifications", NotificationManager.IMPORTANCE_HIGH);
-			channel.setDescription("Notifications when someone sends you a private message"); channel.enableLights(true); channel.setLightColor(Color.parseColor("#52c334")); channel.enableVibration(true);
+			channel.setDescription("Notifications when someone sends you a private message"); channel.enableLights(true); channel.setLightColor(Color.GREEN); channel.enableVibration(true);
 			notificationManager.createNotificationChannel(channel);
 			channel = new NotificationChannel(NotifierReceiver.CHANNEL_SYSTEM, "System Notifications", NotificationManager.IMPORTANCE_LOW);
-			channel.setDescription("Notifications from the app, such as post queue notifications"); channel.enableLights(true); channel.setLightColor(Color.parseColor("#52c334")); channel.enableVibration(false);
+			channel.setDescription("Notifications from the app, such as post queue notifications"); channel.enableLights(true); channel.setLightColor(Color.GREEN); channel.enableVibration(false);
 			notificationManager.createNotificationChannel(channel);
 		}
 
