@@ -7,21 +7,23 @@
         <item name="colorPrimary">@color/SBdark</item>
         <item name="colorPrimaryDark">@color/SBdark</item>
         <item name="colorAccent">@color/SBlight</item>
-        <item name="ptrHeaderBackground">@color/SBdark</item>
         <item name="menuBGdrawable">@drawable/bg_menu</item>
         <item name="menuSelectorDrawable">@color/selector_appmenu</item>
 		<item name="colorHighlight">@color/gnushack</item>
+        <item name="statusBarColor">@color/SBdark</item>
+        <item name="navigationBarColor">@color/SBvdark</item>
     </style>
     <style name="AppThemePurple" parent="AppTheme">
         <item name="colorPrimary">@color/briefcasepurple</item>
         <item name="colorPrimaryDark">@color/briefcasepurple</item>
         <item name="colorAccent">@color/brightbriefcase</item>
-        <item name="ptrHeaderBackground">@color/briefcasepurple</item>
         <item name="menuBGdrawable">@drawable/bg_menu_purple</item>
         <item name="menuSelectorDrawable">@color/selector_appmenu_purple</item>
         <item name="colorHighlight">@color/briefcasemedium</item>
+        <item name="statusBarColor">@color/briefcasepurple</item>
+        <item name="navigationBarColor">@color/selected_postbg</item>
     </style>
-  <style name="AppTheme" parent="Theme.AppCompat">
+  <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
       <!-- <item name="android:actionBarStyle">@style/SBActionBar</item> -->
       <item name="android:actionOverflowButtonStyle">@style/OverFlow</item>
       <!-- Set AppCompat’s color theming attrs -->
@@ -31,17 +33,18 @@
       <item name="windowNoTitle">true</item>
 
       <!-- <item name="android:theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item> -->
-      <item name="android:theme">@style/Theme.AppCompat.NoActionBar</item>
       <item name="android:textAppearanceMedium">@style/MyTextAppearance</item>
       <item name="md_dark_theme">true</item>
 
       <item name="colorPrimary">@color/gnushackdark</item>
       <item name="colorPrimaryDark">@color/gnushackdark</item>
       <item name="colorAccent">@color/SBlight</item>
-      <item name="ptrHeaderBackground">@color/gnushackdark</item>
       <item name="menuBGdrawable">@drawable/bg_menu_dark</item>
       <item name="menuSelectorDrawable">@color/selector_appmenu</item>
       <item name="colorHighlight">@color/gnushack</item>
+
+      <item name="statusBarColor">@color/gnushackdark</item>
+      <item name="navigationBarColor">@color/selected_postbg</item>
 
       <item name="android:navigationBarColor">@color/selected_postbg</item>
       <!-- colorPrimary is used for the default action bar background -->

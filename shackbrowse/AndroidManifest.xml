@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
       package="net.woggle.shackbrowse"
-      android:versionCode="446"
-      android:versionName="6.06Beta">
+      android:versionCode="447"
+      android:versionName="6.07Beta">
 <uses-permission android:name="android.permission.INTERNET"></uses-permission>
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -69,7 +69,7 @@
             android:value="net.woggle.MainActivity" />
         </activity>
         <activity android:name=".DonateActivity" android:configChanges="orientation|screenSize|keyboard|keyboardHidden"></activity>
-		<activity android:name=".PicUploader" android:icon="@mipmap/ic_launcher" android:label="@string/picuploader_name" android:configChanges="orientation|screenSize|keyboard|keyboardHidden">
+		<activity android:name=".PicUploader" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:label="@string/picuploader_name" android:configChanges="orientation|screenSize|keyboard|keyboardHidden">
 		    <intent-filter>
 		        <action android:name="android.intent.action.SEND" />
 		        <category android:name="android.intent.category.DEFAULT" />

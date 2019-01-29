@@ -19,7 +19,7 @@
             android:minHeight="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             android:layout_alignParentTop="true"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+            />
     </com.google.android.material.appbar.AppBarLayout>
     <LinearLayout
         android:layout_width="match_parent"

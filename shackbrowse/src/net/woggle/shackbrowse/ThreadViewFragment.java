@@ -318,7 +318,7 @@ public class ThreadViewFragment extends ListFragment
        	// pull to fresh integration
         // Retrieve the PullToRefreshLayout from the content view
         ptrLayout = getView().findViewById(R.id.tview_swiperefresh);
-
+		MainActivity.setupSwipeRefreshColors(getActivity(), ptrLayout);
         // Give the PullToRefreshAttacher to the PullToRefreshLayout, along with a refresh listener.
 	    ptrLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
 	    {
@@ -1481,8 +1481,14 @@ public class ThreadViewFragment extends ListFragment
 	        			if (_viewAvailable)
 	                	{
 	        	        	updateThreadViewUi();
-	        	        	if (ptrLayout != null)
-								ptrLayout.setRefreshing(true);
+
+							if (set)
+								((MainActivity)getActivity()).startProgressBar();
+							else
+								((MainActivity)getActivity()).stopProgressBar();
+
+	        	        	// if (ptrLayout != null)
+							// 	ptrLayout.setRefreshing(true);
 	                	}
 	        		}
     			});

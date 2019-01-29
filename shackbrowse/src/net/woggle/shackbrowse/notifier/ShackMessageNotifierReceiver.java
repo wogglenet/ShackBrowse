@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import androidx.core.app.NotificationCompat;
@@ -41,7 +42,7 @@ public class ShackMessageNotifierReceiver extends BroadcastReceiver
 								.setLargeIcon(largeIcon)
 								.setContentTitle(data.get("username").toString() + " sent you a shackmessage")
 								.setContentText(data.get("text").toString())
-								.setColor(context.getResources().getColor(R.color.notificationColor))
+								.setColor(Color.parseColor("#52c334"))
 								.setTicker(data.get("username").toString() + " sent you a shackmessage")
 								.setAutoCancel(true);
 

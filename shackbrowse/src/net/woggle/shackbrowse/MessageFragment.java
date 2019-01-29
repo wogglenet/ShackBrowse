@@ -131,7 +131,7 @@ public class MessageFragment extends ListFragment
         // pull to fresh integration
 	    // Retrieve the PullToRefreshLayout from the content view
 	    ptrLayout = (SwipeRefreshLayout)getView().findViewById(R.id.mlist_swiperefresh);
-
+        MainActivity.setupSwipeRefreshColors(getActivity(), ptrLayout);
 	    // Give the PullToRefreshAttacher to the PullToRefreshLayout, along with a refresh listener.
 	    ptrLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
 	    {

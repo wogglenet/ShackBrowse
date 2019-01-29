@@ -43,6 +43,7 @@ import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -56,6 +57,8 @@ import android.preference.PreferenceManager;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -65,6 +68,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
+import fr.castorflex.android.smoothprogressbar.SmoothProgressDrawable;
+
 import android.text.ClipboardManager;
 import android.text.Editable;
 import android.text.InputType;
@@ -141,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	boolean _showPinnedInTL = true;
 	private long _lastOpenedThreadViewEpochSeconds = 0l;
 	boolean _swappedSplit = false;
-	boolean mBottomToolbar = false;
+
 	Seen _seen;
 	NetworkNotificationServers _GCMAccess;
 	private ThreadListFragment _threadList;
@@ -180,21 +187,20 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	private YouTubePlayerView mYoutubeView;
 	private boolean mYoutubeFullscreen = false;
 	private Toolbar mToolbar;
-	private boolean mToolbarAnimating = false;
-	private boolean mToolbarHidden = false;
+	private boolean mEnableAutoHide = true;
+	public SmoothProgressBar mProgressBar;
 
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
+		_prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		oprf(false);
+
+		// sets theme
+		mThemeResId = MainActivity.themeApplicator(this);
+
 		super.onCreate(savedInstanceState);
-
-
-        _prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        oprf(false);
-
-        // sets theme
-        mThemeResId = MainActivity.themeApplicator(this);
 
         // app open stat
         StatsFragment.statInc(this, "AppOpenedFresh");
@@ -229,12 +235,32 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		// set up toolbar
 		mToolbar = (Toolbar) findViewById(R.id.app_toolbar);
 		setSupportActionBar(mToolbar);
+		mProgressBar = (SmoothProgressBar) findViewById(R.id.app_progress);
+		mProgressBar.bringToFront();
+		mProgressBar.setSmoothProgressDrawableCallbacks(new SmoothProgressDrawable.Callbacks() {
+		@Override
+		public void onStop() {
+			mProgressBar.setVisibility(View.INVISIBLE);
+		}
+
+		@Override
+		public void onStart() {
+			mProgressBar.setVisibility(View.VISIBLE);
+		}
+	});
+
+		mEnableAutoHide = _prefs.getBoolean("enableAutoHide", true);
+		if (!mEnableAutoHide) {
+			AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) mToolbar.getLayoutParams();
+			params.setScrollFlags(0);  // clear all scroll flags
+            ((AppBarLayout)findViewById(R.id.appbarlayout)).requestLayout();
+		}
 
 		initFragments(savedInstanceState);
 
 		mShortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime) * 1;
 
-		getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+		getWindow().setBackgroundDrawable(new ColorDrawable(Color.BLACK));
 
 		// set up preferences
         reloadPrefs();
@@ -247,19 +273,19 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			NotificationManager notificationManager = getSystemService(NotificationManager.class);
 
 			NotificationChannel channel = new NotificationChannel(NotifierReceiver.CHANNEL_VANITY, "Vanity Notifications", NotificationManager.IMPORTANCE_DEFAULT);
-			channel.setDescription("Notifications when someone mentions your shack name"); channel.enableLights(true); channel.setLightColor(Color.GREEN); channel.enableVibration(true);
+			channel.setDescription("Notifications when someone mentions your shack name"); channel.enableLights(true); channel.setLightColor(Color.parseColor("#52c334")); channel.enableVibration(true);
 			notificationManager.createNotificationChannel(channel);
 			channel = new NotificationChannel(NotifierReceiver.CHANNEL_REPLY, "Reply Notifications", NotificationManager.IMPORTANCE_DEFAULT);
-			channel.setDescription("Notifications when someone replies to your posts"); channel.enableLights(true); channel.setLightColor(Color.GREEN); channel.enableVibration(true);
+			channel.setDescription("Notifications when someone replies to your posts"); channel.enableLights(true); channel.setLightColor(Color.parseColor("#52c334")); channel.enableVibration(true);
 			notificationManager.createNotificationChannel(channel);
 			channel = new NotificationChannel(NotifierReceiver.CHANNEL_KEYWORD, "Keyword Notifications", NotificationManager.IMPORTANCE_DEFAULT);
-			channel.setDescription("Notifications when someone mentions a keyword you set"); channel.enableLights(true); channel.setLightColor(Color.GREEN); channel.enableVibration(true);
+			channel.setDescription("Notifications when someone mentions a keyword you set"); channel.enableLights(true); channel.setLightColor(Color.parseColor("#52c334")); channel.enableVibration(true);
 			notificationManager.createNotificationChannel(channel);
 			channel = new NotificationChannel(NotifierReceiver.CHANNEL_SHACKMSG, "Shack Message Notifications", NotificationManager.IMPORTANCE_HIGH);
-			channel.setDescription("Notifications when someone sends you a private message"); channel.enableLights(true); channel.setLightColor(Color.GREEN); channel.enableVibration(true);
+			channel.setDescription("Notifications when someone sends you a private message"); channel.enableLights(true); channel.setLightColor(Color.parseColor("#52c334")); channel.enableVibration(true);
 			notificationManager.createNotificationChannel(channel);
 			channel = new NotificationChannel(NotifierReceiver.CHANNEL_SYSTEM, "System Notifications", NotificationManager.IMPORTANCE_LOW);
-			channel.setDescription("Notifications from the app, such as post queue notifications"); channel.enableLights(true); channel.setLightColor(Color.GREEN); channel.enableVibration(false);
+			channel.setDescription("Notifications from the app, such as post queue notifications"); channel.enableLights(true); channel.setLightColor(Color.parseColor("#52c334")); channel.enableVibration(false);
 			notificationManager.createNotificationChannel(channel);
 		}
 
@@ -507,25 +533,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		setContentTo(Integer.parseInt(_prefs.getString("APP_DEFAULTPANE", Integer.toString(CONTENT_THREADLIST))));
 
 
-		mBottomToolbar = _prefs.getBoolean("enableBottomBar", false);
-
-		if (mBottomToolbar)
-		{
-			/*
-			// swap bar
-			RelativeLayout contentCont = (RelativeLayout) findViewById(R.id.contentContainer);
-			RelativeLayout.LayoutParams paramsCont = (RelativeLayout.LayoutParams) contentCont.getLayoutParams();
-			paramsCont.removeRule(RelativeLayout.BELOW);
-			paramsCont.addRule(RelativeLayout.ABOVE, R.id.app_toolbar);
-			contentCont.setLayoutParams(paramsCont);
-
-			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mToolbar.getLayoutParams();
-			params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-			params.removeRule(RelativeLayout.ALIGN_PARENT_TOP);
-			mToolbar.setLayoutParams(params); //causes layout update
-			*/
-		}
-
 		// analytics
 		// Obtain the FirebaseAnalytics instance.
 		//FIREBASE mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
@@ -677,30 +684,47 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 		if (appTheme.equals("2")) {
 			themeId = R.style.AppThemePurple;
-			lightBarColor = R.color.briefcasepurple;
-			darkBarColor = R.color.selected_postbg;
+			// lightBarColor = R.color.briefcasepurple;
+			// darkBarColor = R.color.selected_postbg;
 		}
         else if (appTheme.equals("0")) {
             themeId = R.style.AppThemeGreen;
-			lightBarColor = R.color.SBdark;
-			darkBarColor = R.color.SBvdark;
+			// lightBarColor = R.color.SBdark;
+			// darkBarColor = R.color.SBvdark;
         }
         else {
             themeId = R.style.AppTheme;
-			lightBarColor = R.color.gnushackdark;
-			darkBarColor = R.color.selected_postbg;
+			// lightBarColor = R.color.gnushackdark;
+			// darkBarColor = R.color.selected_postbg;
         }
 
         context.setTheme(themeId);
 
+		TypedValue typedValue = new TypedValue();
+		Resources.Theme theme = context.getTheme();
+		theme.resolveAttribute(R.attr.statusBarColor, typedValue, true);
+		lightBarColor = typedValue.data;
+		theme.resolveAttribute(R.attr.navigationBarColor, typedValue, true);
+		darkBarColor = typedValue.data;
+
+
         //We need to manually change statusbar color, otherwise, it remains green.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            context.getWindow().setNavigationBarColor(context.getResources().getColor(darkBarColor));
-	        context.getWindow().setStatusBarColor(context.getResources().getColor(lightBarColor));
+            context.getWindow().setNavigationBarColor(darkBarColor);
+	        context.getWindow().setStatusBarColor(lightBarColor);
         }
 
         return themeId;
     }
+    public static void setupSwipeRefreshColors(Context context, SwipeRefreshLayout layout)
+	{
+		TypedValue typedValue = new TypedValue();
+		Resources.Theme theme = context.getTheme();
+		theme.resolveAttribute(R.attr.colorAccent, typedValue, true);
+		@ColorInt int color = typedValue.data;
+		layout.setColorSchemeColors(color);
+		layout.setProgressBackgroundColorSchemeResource(R.color.swipeRefreshBackground);
+	}
 
     protected void setTitleContextually() {
 		mToolbar.setSubtitle(null);
@@ -2182,25 +2206,18 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
             evaluateDualPane(getResources().getConfiguration());
             _appMenu.updateMenuUi();
 
-            // check bottom toolbar
-	        boolean newmbt = _prefs.getBoolean("enableBottomBar", false);
-			if (newmbt != mBottomToolbar)
+	        boolean neah = _prefs.getBoolean("enableAutoHide", true);
+			if ((neah != mEnableAutoHide) && (!mEnableAutoHide))
 			{
-				// swap bar if pref changed
-				/*
-				RelativeLayout contentCont = (RelativeLayout) findViewById(R.id.contentContainer);
-				RelativeLayout.LayoutParams paramsCont = (RelativeLayout.LayoutParams) contentCont.getLayoutParams();
-				paramsCont.removeRule((newmbt ? RelativeLayout.BELOW : RelativeLayout.ABOVE));
-				paramsCont.addRule((!newmbt ? RelativeLayout.BELOW : RelativeLayout.ABOVE), R.id.app_toolbar);
-				contentCont.setLayoutParams(paramsCont);
-
-				RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mToolbar.getLayoutParams();
-				params.addRule((newmbt ? RelativeLayout.ALIGN_PARENT_BOTTOM : RelativeLayout.ALIGN_PARENT_TOP));
-				params.removeRule((!newmbt ? RelativeLayout.ALIGN_PARENT_BOTTOM : RelativeLayout.ALIGN_PARENT_TOP));
-				mToolbar.setLayoutParams(params); //causes layout update
-
-				mBottomToolbar = newmbt;
-				*/
+				AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) mToolbar.getLayoutParams();
+				params.setScrollFlags(0);  // clear all scroll flags
+                ((AppBarLayout)findViewById(R.id.appbarlayout)).requestLayout();
+			}
+			else
+			{
+				AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) mToolbar.getLayoutParams();
+				params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP | AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);  //set all scroll flags
+                ((AppBarLayout)findViewById(R.id.appbarlayout)).requestLayout();
 			}
         }
     }
@@ -3493,31 +3510,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			return this;
 		}
 	}
-	// this class is such garbage everything is just a jumbled mess
-	public void showToolbar()
-	{
-		if ((!mToolbarAnimating) && (mToolbarHidden))
-		{
-			mToolbarHidden = false;
-			mToolbarAnimating = true;
-			mAnimEnd closeAction = () -> { mToolbarAnimating = false; };
-			anim anim = new anim(mToolbar).setEndCall(closeAction);
-			if (mBottomToolbar) anim.toolBarUp();
-			else anim.toolBarDown();
-		}
-	}
-	public void hideToolbar()
-	{
-		if ((!mToolbarAnimating) && (!mToolbarHidden))
-		{
-			mToolbarHidden = true;
-			mToolbarAnimating = true;
-			mAnimEnd closeAction = () -> { mToolbarAnimating = false; };
-			anim anim = new anim(mToolbar).setEndCall(closeAction);
-			if (!mBottomToolbar) anim.toolBarUp();
-			else anim.toolBarDown();
-		}
-	}
+
 	
 	/*
 	 * This annoying dialog pops up if you havent setup autozoom
@@ -3788,6 +3781,23 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
     {
         return mArticleViewerIsOpen && (_currentFragmentType == CONTENT_FRONTPAGE);
     }
+
+    /*
+    * PROGRESS BAR
+     */
+
+    public void startProgressBar ()
+	{
+		mProgressBar.setIndeterminate(true);
+		mProgressBar.progressiveStart();
+		// mProgressBar.setVisibility(View.VISIBLE);
+	}
+	public void stopProgressBar ()
+	{
+		mProgressBar.setIndeterminate(true);
+		mProgressBar.progressiveStop();
+		// mProgressBar.setVisibility(View.INVISIBLE);
+	}
 
     /*
      * Loading Splash Fragment

@@ -120,6 +120,8 @@ public class AppMenu extends ListFragment
     	        	// menu items
                     boolean verified = _prefs.getBoolean("usernameVerified", false);
 
+                    _adapter.add(new MenuItems(0,"", 9999, 0));
+
                     if (!verified)
                         _adapter.add(new MenuItems(0, "Log In" , 2, R.drawable.ic_action_action_account_box));
                     else {
@@ -400,7 +402,14 @@ public class AppMenu extends ListFragment
                     holder.settings.setScaleX(_zoom);
                     holder.settings.setScaleY(_zoom);
 
-
+					if (m.getText().equalsIgnoreCase(""))
+					{
+						// no click empty item
+						holder.menuItemCont.setEnabled(false);
+						holder.menuItemCont.setClickable(false);
+						holder.menuItemCont.setFocusable(false);
+						holder.menuItemCont.setOnClickListener(null);
+					}
 	                
 	                vi.setTag(holder);
 	            }

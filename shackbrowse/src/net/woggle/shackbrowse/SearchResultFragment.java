@@ -142,7 +142,7 @@ public class SearchResultFragment extends ListFragment
         
         // pull to fresh integration
 	    ptrLayout = (SwipeRefreshLayout)getView().findViewById(R.id.tlist_swiperefresh);
-
+		MainActivity.setupSwipeRefreshColors(getActivity(), ptrLayout);
 	    // Give the PullToRefreshAttacher to the PullToRefreshLayout, along with a refresh listener.
 	    ptrLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
 	    {

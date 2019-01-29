@@ -106,7 +106,8 @@
 	<color name="SBTbriefcasepurple">#304e4560</color>
 	<color name="SBTXbriefcasepurple">#CC4e4560</color>
 	<color name="SBTlightbriefcasepurple">#AA908a9d</color>
-	<color name="notificationColor">#52c334</color>
 
 	<color name="iconOutlineColor">#4f9d40</color>
+
+    <color name="swipeRefreshBackground">#444444</color>
 </resources>

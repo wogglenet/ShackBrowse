@@ -47,10 +47,10 @@
             android:defaultValue="1"
             />
 		<CheckBoxPreference
-			android:key="enableBottomBar"
-			android:title="Toolbar on Bottom"
-			android:summary="DO NOT ENABLE CAUSES CRASH"
-			android:defaultValue="false"
+			android:key="enableAutoHide"
+			android:title="Toolbar Autohide"
+			android:summary="Hides toolbar with scrolling"
+			android:defaultValue="true"
 			/>
         <ListPreference
             android:key="usePopupBrowser2"

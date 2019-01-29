@@ -52,33 +52,52 @@ public class LoginActivity extends Activity {
 				boolean tokensURL = false;
 				if (url.startsWith(ImgurConstants.MY_IMGUR_REDIRECT_URL)) {
 					tokensURL = true;
-					Matcher m;
+					Matcher m; String refreshToken = null; String accessToken = null; long expiresIn = 0L; String username = null;
 
 					m = refreshTokenPattern.matcher(url);
 					m.find();
-					String refreshToken = m.group(1);
-
+					if (m.matches()) {
+						refreshToken = m.group(1);
+					}
 					m = accessTokenPattern.matcher(url);
 					m.find();
-					String accessToken = m.group(1);
-
+					if (m.matches()) {
+						accessToken = m.group(1);
+					}
 					m = expiresInPattern.matcher(url);
 					m.find();
-					long expiresIn = Long.valueOf(m.group(1));
+					if (m.matches()) {
+						expiresIn = Long.valueOf(m.group(1));
+					}
 
 					m = usernamePattern.matcher(url);
 					m.find();
-					String username = m.group(1);
+					if (m.matches()) {
+						username = m.group(1);
+					}
 
-					ImgurAuthorization.getInstance().saveRefreshToken(refreshToken, accessToken, expiresIn, username);
+					if (refreshToken != null) {
+						ImgurAuthorization.getInstance().saveRefreshToken(refreshToken, accessToken, expiresIn, username);
 
-					runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							Toast.makeText(LoginActivity.this, "Logged in as " + username, Toast.LENGTH_SHORT).show();
-							finish();
-						}
-					});
+						final String usernamef = username;
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								Toast.makeText(LoginActivity.this, "Logged in as " + usernamef, Toast.LENGTH_SHORT).show();
+								finish();
+							}
+						});
+					}
+					else
+					{
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								Toast.makeText(LoginActivity.this, "Login Failed", Toast.LENGTH_SHORT).show();
+								finish();
+							}
+						});
+					}
 				}
 				return tokensURL;
 			}

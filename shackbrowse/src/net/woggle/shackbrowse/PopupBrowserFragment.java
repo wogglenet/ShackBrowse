@@ -97,14 +97,20 @@ public class PopupBrowserFragment extends Fragment {
 	   // mWebview.getSettings().setUserAgentString("Mozilla/5.0 (Linux; U; Android 2.0; en-us; Droid Build/ESD20) AppleWebKit/530.17 (KHTML, like Gecko) Version/4.0 Mobile Safari/530.17");
 		mWebview.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
 
+		((MainActivity) getActivity()).mProgressBar.setVisibility(View.VISIBLE);
+		((MainActivity) getActivity()).mProgressBar.progressiveStart();
+
 		mWebview.setBackgroundColor(0x00000000);
         
         mWebview.setWebChromeClient(new WebChromeClient() {
 			public void onProgressChanged(WebView view, int progress) {
-				//
-				//if ((getActivity() != null) && (progress > 9) && (progress < 100)) {
-				//	((MainActivity) getActivity()).showOnlyProgressBarFromPTRLibraryDeterminate(true, progress);
-				//}
+
+
+				if ((getActivity() != null) && (progress > 9) && (progress < 100)) {
+					((MainActivity) getActivity()).mProgressBar.setVisibility(View.VISIBLE);
+					((MainActivity) getActivity()).mProgressBar.setIndeterminate(false);
+					((MainActivity) getActivity()).mProgressBar.setProgress(progress);
+				}
             	/*
             	if (pb != null && progress < 100)
             	{
@@ -117,8 +123,12 @@ public class PopupBrowserFragment extends Fragment {
             	*/
 				System.out.println("prog:" + progress);
 				if (progress >= 100) {
-					//if (getActivity() != null)
-					//	((MainActivity) getActivity()).showOnlyProgressBarFromPTRLibrary(false);
+					if (getActivity() != null)
+					{
+						((MainActivity) getActivity()).mProgressBar.setIndeterminate(true);
+						((MainActivity) getActivity()).mProgressBar.progressiveStop();
+						((MainActivity) getActivity()).mProgressBar.setVisibility(View.INVISIBLE);
+					}
 				}
 				if (progress >= 50) {
 					// way to tell if showing image or not
@@ -174,19 +184,23 @@ public class PopupBrowserFragment extends Fragment {
     
     // reset the progress bars when we are detached from the activity
     @Override
-    public void onDetach()
-    {
+    public void onDetach() {
 
 
+		super.onDetach();
 
-    	super.onDetach();
 
+		if (mWebview != null) {
+			mWebview.removeAllViews();
+			mWebview.destroy();
+		}
 
-	    if (mWebview != null)
-	    {
-		    mWebview.removeAllViews();
-		    mWebview.destroy();
-	    }
+		if (getActivity() != null) {
+			((MainActivity) getActivity()).mProgressBar.setIndeterminate(true);
+			((MainActivity) getActivity()).mProgressBar.progressiveStop();
+			((MainActivity) getActivity()).mProgressBar.setVisibility(View.INVISIBLE);
+		}
+
     }
     
     public void open(String... hrefs)

@@ -39,11 +39,11 @@ public class NotifierReceiver extends FirebaseMessagingService
 {
 	public static final int icon_res = R.drawable.note_logo2018;
 
-	public static final String CHANNEL_VANITY = "sbnotechannel_vanity";
-	public static final String CHANNEL_REPLY = "sbnotechannel_reply";
-	public static final String CHANNEL_KEYWORD = "sbnotechannel_keyword";
-	public static final String CHANNEL_SHACKMSG = "sbnotechannel_shackmsg";
-	public static final String CHANNEL_SYSTEM = "sbnotechannel_system";
+	public static final String CHANNEL_VANITY = "sbnotechannel_vanity2";
+	public static final String CHANNEL_REPLY = "sbnotechannel_reply2";
+	public static final String CHANNEL_KEYWORD = "sbnotechannel_keyword2";
+	public static final String CHANNEL_SHACKMSG = "sbnotechannel_shackmsg2";
+	public static final String CHANNEL_SYSTEM = "sbnotechannel_system2";
 
 	@Override
 	public void onMessageReceived(RemoteMessage message){
@@ -72,10 +72,9 @@ public class NotifierReceiver extends FirebaseMessagingService
 				        .setContentTitle(data.get("username").toString() + " replied to your post")
 						.setContentText(PostFormatter.formatContent(data.get("username").toString(), data.get("text").toString(), null, false, true))
 						.setTicker(data.get("username").toString() + " replied to your post")
-						.setColor(getResources().getColor(R.color.notificationColor))
+						.setColor(Color.parseColor("#52c334"))
 						.setAutoCancel(true);
-				
-				
+
 				// Creates an explicit intent for an Activity in your app
 				Intent resultIntent = new Intent(context, MainActivity.class);
 				
@@ -145,7 +144,7 @@ public class NotifierReceiver extends FirebaseMessagingService
 				        .setContentTitle(data.get("username").toString() + " mentioned you in a post")
 						.setContentText(PostFormatter.formatContent(data.get("username").toString(), data.get("text").toString(), null, false, true))
 						.setTicker(data.get("username").toString() + " mentioned you in a post")
-						.setColor(getResources().getColor(R.color.notificationColor))
+						.setColor(Color.parseColor("#52c334"))
 						.setAutoCancel(true);
 				
 				
@@ -214,7 +213,7 @@ public class NotifierReceiver extends FirebaseMessagingService
 				        .setContentTitle(data.get("username").toString() + " mentioned " + data.get("keyword").toString())
 						.setContentText(PostFormatter.formatContent(data.get("username").toString(), data.get("text").toString(), null, false, true))
 						.setTicker(data.get("username").toString() + " mentioned " + data.get("keyword").toString())
-						.setColor(getResources().getColor(R.color.notificationColor))
+						.setColor(Color.parseColor("#52c334"))
 						.setAutoCancel(true);
 				
 				
@@ -282,7 +281,7 @@ public class NotifierReceiver extends FirebaseMessagingService
 				        .setContentTitle(data.get("username").toString() + " sent you a shackmessage")
 						.setContentText(data.get("text").toString())
 						.setTicker(data.get("username").toString() + " sent you a shackmessage")
-						.setColor(getResources().getColor(R.color.notificationColor))
+						.setColor(Color.parseColor("#52c334"))
 						.setAutoCancel(true);
 				
 				

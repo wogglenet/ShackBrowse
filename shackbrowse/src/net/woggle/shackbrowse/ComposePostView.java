@@ -161,12 +161,12 @@ public class ComposePostView extends AppCompatActivity {
         
         if (_orientLock == 2 || _orientLock == 4 || getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
         {
-        	setContentView(R.layout.edit_post_lollipop);
+        	setContentView(R.layout.edit_post);
             _landscape  = true;
         }
         else
         {
-        	setContentView(R.layout.edit_post_lollipop);
+        	setContentView(R.layout.edit_post);
             _landscape  = false;
         }
 
@@ -939,15 +939,15 @@ public class ComposePostView extends AppCompatActivity {
 		doOrientation();
 		if (((_orientLock == 0) && (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT)) || (_orientLock == 1) || (_orientLock == 3))
 		{
-			//setContentView(R.layout.edit_post_lollipop);
+			//setContentView(R.layout.edit_post);
 			_landscape  = false;
 		}
 		else
 		{
-			//setContentView(R.layout.edit_post_lollipop);
+			//setContentView(R.layout.edit_post);
 			_landscape = true;
 		}
-        //setContentView(R.layout.edit_post_lollipop);
+        //setContentView(R.layout.edit_post);
         if (decideEditBar())
         {
 
@@ -1458,7 +1458,7 @@ public class ComposePostView extends AppCompatActivity {
 						}
 					}
 				})
-				.negativeText("Upload to Imgur (" + (ImgurAuthorization.getInstance().isLoggedIn() ? "as " + ImgurAuthorization.getInstance().getUsername() + ")" : "not logged in)"))
+				.negativeText("Upload to Imgur (" + (ImgurAuthorization.getInstance().isLoggedIn() ? "as " + ImgurAuthorization.getInstance().getUsername() + ")" : "anonymously)"))
 				.onNegative(new MaterialDialog.SingleButtonCallback()
 				{
 					@Override
