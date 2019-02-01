@@ -55,10 +55,10 @@
 
 
                 <net.woggle.CircularProgress
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
                     app:cpb_style="1"
-                    app:cpb_stroke_width="7dp"
+                    app:cpb_stroke_width="5dp"
                     android:layout_gravity="center"
                     />
                     <ImageView

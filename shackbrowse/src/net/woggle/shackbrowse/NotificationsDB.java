@@ -131,6 +131,6 @@ public class NotificationsDB {
 
 	public void pruneNotes() // keep only most recent 200
 	{
-		database.execSQL("DELETE FROM "+DatabaseHelper.TABLE_NOTES+" WHERE ROWID IN (SELECT ROWID FROM "+DatabaseHelper.TABLE_NOTES+" ORDER BY ROWID DESC LIMIT -1 OFFSET 300);");
+		database.execSQL("DELETE FROM "+DatabaseHelper.TABLE_NOTES+ " WHERE ROWID IN (SELECT ROWID FROM "+DatabaseHelper.TABLE_NOTES+" ORDER BY ROWID DESC LIMIT -1 OFFSET 300);");
 	}
 }
