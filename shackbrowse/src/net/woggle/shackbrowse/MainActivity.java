@@ -249,12 +249,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		}
 	});
 
-		mEnableAutoHide = _prefs.getBoolean("enableAutoHide", true);
-		if (!mEnableAutoHide) {
-			AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) mToolbar.getLayoutParams();
-			params.setScrollFlags(0);  // clear all scroll flags
-            ((AppBarLayout)findViewById(R.id.appbarlayout)).requestLayout();
-		}
+		evaluateAutoHide();
 
 		initFragments(savedInstanceState);
 
@@ -452,6 +447,9 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
                 }
 				
 				setTitleContextually();
+
+				// send message to thread view to finish loading
+				_threadView._adapter.setViewIsOpened(true);
 			}
 			
 			@Override
@@ -460,7 +458,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			
 			@Override
 			public void onClosed() {
-				setTitleContextually();
+				setTitleContextually(); _threadView._adapter.setViewIsOpened(false);
 			}
 			
 			@Override
@@ -724,6 +722,23 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		@ColorInt int color = typedValue.data;
 		layout.setColorSchemeColors(color);
 		layout.setProgressBackgroundColorSchemeResource(R.color.swipeRefreshBackground);
+	}
+	public void evaluateAutoHide()
+	{
+
+		mEnableAutoHide = _prefs.getBoolean("enableAutoHide", true);
+		System.out.println("TOOLBAR AUTOHIDE EVAL" + mEnableAutoHide);
+		AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) mToolbar.getLayoutParams();
+		if (!mEnableAutoHide)
+		{
+			params.setScrollFlags(0);  // clear all scroll flags
+		}
+		else
+		{
+			params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP | AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);  //set all scroll flags
+		}
+		mToolbar.setLayoutParams(params);
+		findViewById(R.id.app_toolbar).requestLayout();
 	}
 
     protected void setTitleContextually() {
@@ -1681,6 +1696,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         	
         	if (view._adapter != null)
         	{
+        		if (!_dualPane) { view._adapter.setHoldPostExecute(true); }
 	        	view._adapter.clear();
 	        	view._adapter.triggerLoadMore();
         	}
@@ -2095,6 +2111,8 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 		_dualPane = dualPane;
 		_threadView.updateThreadViewUi();
+		if (_threadView._adapter != null)
+			_threadView._adapter.setViewIsOpened(dualPane);
 
 		if (_appMenu != null)
 			_appMenu.updateMenuUi();
@@ -2206,19 +2224,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
             evaluateDualPane(getResources().getConfiguration());
             _appMenu.updateMenuUi();
 
-	        boolean neah = _prefs.getBoolean("enableAutoHide", true);
-			if ((neah != mEnableAutoHide) && (!mEnableAutoHide))
-			{
-				AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) mToolbar.getLayoutParams();
-				params.setScrollFlags(0);  // clear all scroll flags
-                ((AppBarLayout)findViewById(R.id.appbarlayout)).requestLayout();
-			}
-			else
-			{
-				AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) mToolbar.getLayoutParams();
-				params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP | AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);  //set all scroll flags
-                ((AppBarLayout)findViewById(R.id.appbarlayout)).requestLayout();
-			}
+            evaluateAutoHide();
         }
     }
 
@@ -3592,7 +3598,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			Bundle ext = intent.getExtras();
-			System.out.println("CLICLINKWORKS");
 			String href = ext.getString("URL");
 
 			MainActivity mAct = MainActivity.this;
@@ -3619,6 +3624,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			{
 				if (href.contains("shacknews.com/article")) // simple removal of article viewer
 				{
+					/*
 					if (mAct.getSliderOpen() && !mAct.getDualPane())
 					{
 						mAct._tviewFrame.closeLayer(true);
@@ -3627,6 +3633,8 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 						mAct._sresFrame.closeLayer(true);
 					}
 					mAct.openInArticleViewer(href);
+					*/
+					mAct.openBrowser(href);
 					return;
 				} else
 				{

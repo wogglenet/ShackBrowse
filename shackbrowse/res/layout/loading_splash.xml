@@ -53,19 +53,21 @@
                     android:padding="3dp"
                     >
 
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="center"
-                    android:layout_centerInParent="true"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/ic_launcher"/>
+
                 <net.woggle.CircularProgress
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
                     app:cpb_style="1"
+                    app:cpb_stroke_width="7dp"
                     android:layout_gravity="center"
                     />
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center"
+                        android:layout_centerInParent="true"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/ic_launcher"/>
                 </RelativeLayout>
 
                 <TextView

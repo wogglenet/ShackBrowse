@@ -1,5 +1,6 @@
 package net.woggle.shackbrowse;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -10,6 +11,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
+
+import static java.lang.Thread.sleep;
 
 public abstract class ExpandableLoadingAdapter<T> extends ExpandableListItemAdapter<T>
 {
@@ -26,6 +29,13 @@ public abstract class ExpandableLoadingAdapter<T> extends ExpandableListItemAdap
 	private boolean _clearBeforeAddOnPostExecute = false;
 	AsyncTask<UUID, Void, ArrayList<T>> mTask;
 	private Context _context;
+
+	// hold post execute is used to allow the sliding frame to fully open before filling it. this solves a UI frame drop and makes thing smoother in the UI thread
+    private volatile boolean mHoldPostExecute = false;
+    public void setHoldPostExecute (boolean hold)
+    {
+        mHoldPostExecute = hold;
+    }
     
     public ExpandableLoadingAdapter(Context context, List<T> objects)
     {
@@ -140,7 +150,19 @@ public abstract class ExpandableLoadingAdapter<T> extends ExpandableListItemAdap
                 if (_verbose) System.out.println("LOADINGADAPTER: LOADING new task " + _loadingId);
                 try
                 {
-                    return loadData();
+                    ArrayList <T> data = loadData();
+
+                    // allows threadview to hold post execute for up to 500 milliseconds
+                    for (int i = 0; mHoldPostExecute; i++)
+                    {
+                        System.out.println("LOADINGADAPTER: SLEEP HOLD");
+                        sleep(50);
+                        if (i > 10)
+                        {
+                            mHoldPostExecute = false;
+                        }
+                    }
+                    return data;
                 }
                 catch (Exception e)
                 {

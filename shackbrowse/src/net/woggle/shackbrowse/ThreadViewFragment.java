@@ -351,6 +351,7 @@ public class ThreadViewFragment extends ListFragment
 	    		{
 	    			// messages mode
 	    			getView().findViewById(R.id.tview_FSIcon).setVisibility(View.GONE);
+					getListView().setVisibility(View.VISIBLE);
 	    			_showFavSaved = false;
 	    			_showUnFavSaved = false;
 	    			// disable PTR for message mode
@@ -358,8 +359,14 @@ public class ThreadViewFragment extends ListFragment
 	    		}
 	    		else if (_messageId == 0)
 		       	{
+		       		System.out.println("TVIEW: SHOW FSICON");
 		       		// show the icon and start message if no threads or messages have been loaded
 	    			getView().findViewById(R.id.tview_FSIcon).setVisibility((_rootPostId > 0) ? View.GONE : View.VISIBLE);
+					getListView().setVisibility((_rootPostId > 0) ? View.VISIBLE : View.GONE);
+					System.out.println("TVIEW: LISTVIEW " + ((_rootPostId > 0) ? View.VISIBLE : View.GONE));
+
+					getView().findViewById(R.id.tview_FSIcon).setOnClickListener(o -> { Toast.makeText(getActivity(), "TVIEW:LVVIS "+getListView().getVisibility(), Toast.LENGTH_LONG).show(); getListView().setVisibility(View.GONE); });
+
 
 		            // and provided a way to save thread
 		            if ((_lastThreadJson != null) && (_adapter != null) && (_adapter.getCount() > 0) && (_adapter.getItem(0) != null))
@@ -385,14 +392,16 @@ public class ThreadViewFragment extends ListFragment
 	    		RelativeLayout FSLoad = (RelativeLayout)getView().findViewById(R.id.tview_FSLoad);
 	    		if ((_adapter != null) && (_adapter.isCurrentlyLoading()) && (_adapter.getCount() == 0))
 	    		{
-				    // ptrLayout.setEnabled(false);
+				    ptrLayout.setEnabled(false);
+				    getListView().setVisibility(View.GONE);
 	    			FSLoad.setVisibility(View.VISIBLE);
 	    		}
 	    		else
 	    		{
 	    			if ((_rootPostId > 0) || (_messageId > 0))
 	    			{
-					    // ptrLayout.setEnabled(true);
+					    ptrLayout.setEnabled(true);
+						getListView().setVisibility(View.VISIBLE);
 	    			}
 	    			FSLoad.setVisibility(View.GONE);
 	    		}
@@ -1215,6 +1224,7 @@ public class ThreadViewFragment extends ListFragment
         private String _donatorQuadList = "";
         boolean _replyNotificationsEnabled;
         boolean _showModTools = false;
+        private boolean mViewIsOpen = false;
 		private boolean _showHoursSince = true;
 		private boolean _hideLinks = true;
 		private int _embedImages = 2;
@@ -1277,6 +1287,28 @@ public class ThreadViewFragment extends ListFragment
 			    }
 		    }
 	    }
+
+		public void setViewIsOpened(boolean isOpened)
+		{
+			if (isOpened)
+			{
+				mViewIsOpen = true;
+				setHoldPostExecute(false);
+			}
+			else
+			{
+				if (((MainActivity)getActivity()).getDualPane())
+				{
+					mViewIsOpen = true;
+					setHoldPostExecute(false);
+				}
+				else
+				{
+					mViewIsOpen = false;
+					setHoldPostExecute(true);
+				}
+			}
+		}
 
         public ExpandCollapseListener mExpandCollapseListener = new ExpandCollapseListener() {
             @Override
@@ -1341,6 +1373,14 @@ public class ThreadViewFragment extends ListFragment
         {
             super(context, items);
             loadPrefs();
+
+            if (((MainActivity)getActivity()).getDualPane()) {
+            	setViewIsOpened(true);
+			}
+			else
+			{
+				setHoldPostExecute(true);
+			}
 
             // Get max available VM memory, exceeding this amount will throw an
             // OutOfMemory exception. Stored in kilobytes as LruCache takes an

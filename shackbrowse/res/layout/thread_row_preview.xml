@@ -81,12 +81,12 @@
 
 				<net.woggle.CircularProgress
 					android:id="@+id/postingThrobber"
-					android:layout_width="17dp"
-					android:layout_height="17dp"
-					android:layout_margin="0dip"
+					android:layout_width="13dp"
+					android:layout_height="13dp"
+					android:layout_margin="3dip"
 					android:layout_gravity="center_vertical"
 					android:visibility="gone"
-					app:cpb_stroke_width="2dp"
+					app:cpb_stroke_width="1dp"
 					app:cpb_style="0"
 					/>
 				<!--

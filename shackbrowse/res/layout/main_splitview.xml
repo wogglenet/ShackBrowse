@@ -21,7 +21,6 @@
 				android:layout_height="wrap_content"
 				android:layout_width="match_parent"
 				android:minHeight="?attr/actionBarSize"
-
 				android:layout_alignParentTop="true"
 				app:layout_scrollFlags="scroll|enterAlways|snap"
 				/>
@@ -93,8 +92,8 @@
 						   android:layout_height="wrap_content"
 						   android:padding="0dp"
 						   android:background="@color/modtag_nws"
-						   android:layout_alignParentBottom="true">
-					   </RelativeLayout>
+						   android:layout_alignParentBottom="true"
+						   app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 		</RelativeLayout>
 	</androidx.coordinatorlayout.widget.CoordinatorLayout>
    <!-- The navigation drawer -->

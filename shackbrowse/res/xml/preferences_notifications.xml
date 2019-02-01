@@ -45,8 +45,8 @@
             />
 		<Preference
 			android:key="notificationChannels"
-			android:title="Change light, sound, etc"
-			android:summary="Link to system settings where each type of notification can be customized in terms of light, sound, and vibration."
+			android:title="Change LED light, sound, etc"
+			android:summary="Link to system settings where each type of notification can be customized in terms of light, sound, and vibration. Some phones may not support changing LED settings. Blame Google."
 			/>
         <RingtonePreference
             android:showDefault="true"

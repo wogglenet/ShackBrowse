@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>    
-    <string name="drawer_open">SBO</string>
-    <string name="drawer_close">SBC</string>
+    <string name="drawer_open"></string>
+    <string name="drawer_close"></string>
     
     <string name="app_name">Shack Browse</string>
     <string name="picuploader_name">ChattyPics Uploader</string>

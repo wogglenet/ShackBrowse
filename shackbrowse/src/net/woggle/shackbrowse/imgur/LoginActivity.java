@@ -21,9 +21,10 @@ public class LoginActivity extends Activity {
 	private WebView mWebView;
 
 	private static final Pattern accessTokenPattern = Pattern.compile("access_token=([^&]*)");
-	private static final Pattern usernamePattern = Pattern.compile("account_username=([^&]*)");
 	private static final Pattern refreshTokenPattern = Pattern.compile("refresh_token=([^&]*)");
 	private static final Pattern expiresInPattern = Pattern.compile("expires_in=(\\d+)");
+
+	private static final Pattern usernamePattern = Pattern.compile("account_username=([^&]*)");
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,24 +56,24 @@ public class LoginActivity extends Activity {
 					Matcher m; String refreshToken = null; String accessToken = null; long expiresIn = 0L; String username = null;
 
 					m = refreshTokenPattern.matcher(url);
-					m.find();
-					if (m.matches()) {
+
+					if (m.find()) {
 						refreshToken = m.group(1);
 					}
 					m = accessTokenPattern.matcher(url);
-					m.find();
-					if (m.matches()) {
+
+					if (m.find()) {
 						accessToken = m.group(1);
 					}
 					m = expiresInPattern.matcher(url);
-					m.find();
-					if (m.matches()) {
+
+					if (m.find()) {
 						expiresIn = Long.valueOf(m.group(1));
 					}
 
 					m = usernamePattern.matcher(url);
-					m.find();
-					if (m.matches()) {
+
+					if (m.find()) {
 						username = m.group(1);
 					}
 

@@ -71,7 +71,7 @@ public class ShackMessageCheck
 					String msgs = ShackApi.getShackMessageAPIText(userName, password);
 					if (msgs.contentEquals(""))
 						return 0;
-
+					// System.out.println("SMCHK: " + msgs);
 					String md5cur = md5(msgs);
 					String previous = _prefs.getString("PreviousMsgAPIReturnTextHash", null);
 					if (previous == null)

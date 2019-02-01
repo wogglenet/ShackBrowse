@@ -136,6 +136,7 @@ public class PostQueueDB {
 
 	public void cleanUpFinalizedPosts() {
 		// removes day old final posts from postqueue
+		System.out.println("PQDB: CLEANUP");
 		database.delete(DatabaseHelper.TABLE_POSTQUEUE, DatabaseHelper.COLUMN_PFINALID + " != 0 AND " + DatabaseHelper.COLUMN_PFINALIZEDTIME + " < " + (TimeDisplay.now() - (1000L * 60L * 60L * 24L)), null);
 	}
 }

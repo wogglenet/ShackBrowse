@@ -4,7 +4,7 @@
     android:id="@+id/tview_swiperefresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/singleThread"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -56,9 +56,11 @@
 
 		<net.woggle.NestedScrollingListView android:id="@android:id/list"
 			android:layout_below="@id/tview_thread_expired"
-				  android:layout_width="fill_parent"
-				  android:layout_height="fill_parent"
-			   android:orientation="vertical"
+			android:layout_width="fill_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1"
+			android:orientation="vertical"
+			android:visibility="gone"
 				   />
     <RelativeLayout 
      android:id="@+id/tview_FSLoad"
@@ -117,5 +119,5 @@
 	                android:layout_gravity="center"/>
             </LinearLayout>
 	</RelativeLayout>
-</RelativeLayout>
+</LinearLayout>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

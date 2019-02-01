@@ -495,7 +495,7 @@ public class ThreadListFragment extends ListFragment
 				}).show();
 	}
 
-	private static final boolean SNKVERBOSE = false;
+	private static final boolean SNKVERBOSE = true;
 
     public void undoCollapse(Thread t, int pos)
     {
@@ -676,13 +676,39 @@ public class ThreadListFragment extends ListFragment
         }
 
         final LolObj flol = lol;
-	    Date todayDate = Calendar.getInstance().getTime();
-	    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-	    String todayString = formatter.format(todayDate);
-	    System.out.println("TLIST: poldate " + _prefs.getString("lastPoliticalClickDate","") + " " + todayString);
-	    if (thread.getModeration().equalsIgnoreCase("political") && _prefs.getString("lastPoliticalClickDate","").equalsIgnoreCase(todayString) && false)
+        boolean irritate = false;
+
+		// determine if should irritate user
+	    if (thread.getModeration().equalsIgnoreCase("political")) {
+			Date todayDate = Calendar.getInstance().getTime();
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+			String todayString = formatter.format(todayDate);
+
+			System.out.println("TLIST: poldate " + _prefs.getString("lastPoliticalClickDate","") + " " + todayString + " " + _prefs.getInt("politicalClicksToday", 0));
+
+			if (_prefs.getString("lastPoliticalClickDate", "").equalsIgnoreCase(todayString)) {
+				int clicksToday = _prefs.getInt("politicalClicksToday", 0);
+				clicksToday++;
+				Editor e = _prefs.edit();
+				e.putInt("politicalClicksToday", clicksToday);
+				e.apply();
+				if (clicksToday > 2) {
+					Random r2 = new Random();
+					if (r2.nextInt(4) < 1) {
+						irritate = true;
+					}
+				}
+			} else {
+				Editor e = _prefs.edit();
+				e.putString("lastPoliticalClickDate", todayString);
+				e.putInt("politicalClicksToday", 0);
+				e.apply();
+			}
+		}
+
+	    if (irritate)
 	    {
-		    String[] strArr = {"Life is pain anyway","My obsession knows no bounds","You don't control me","Whatever","I have to check though","It's really important","I already took xanax","I'm already depressed","I can't not","One more won't hurt","Sadness is life","But I must click","This is my life now", "I promise to stop tomorrow","I see, I click" };
+		    String[] strArr = {"My obsession knows no bounds","You don't control me","Whatever","I have to check though","It's really important","I can't not","One more won't hurt","But I must click","This is my life now", "I promise to stop tomorrow","I see, I click" };
 		    Random r = new Random();
 		    String okbutton = strArr[r.nextInt(strArr.length)];
 
@@ -720,10 +746,6 @@ public class ThreadListFragment extends ListFragment
 	    }
 	    else
 	    {
-	    	Editor e = _prefs.edit();
-	    	e.putString("lastPoliticalClickDate", todayString);
-	    	e.apply();
-	    	System.out.println("TLIST: NOT POLITICAL");
 		    ((MainActivity)getActivity()).openThreadView(thread.getThreadId(), thread, flol);
 	    }
     }
