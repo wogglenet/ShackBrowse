@@ -692,7 +692,7 @@ public class ThreadListFragment extends ListFragment
 				Editor e = _prefs.edit();
 				e.putInt("politicalClicksToday", clicksToday);
 				e.apply();
-				if (clicksToday > 2) {
+				if (clicksToday > 3) {
 					Random r2 = new Random();
 					if (r2.nextInt(4) < 1) {
 						irritate = true;

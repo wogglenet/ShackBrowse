@@ -431,10 +431,6 @@
         <item>statsItemTimeInComposer</item>
     </string-array>
 
-
-    <string name="com.twitter.sdk.android.CONSUMER_KEY">XwN2M5eEu3MxGsQMvSTDqzRh0</string>
-    <string name="com.twitter.sdk.android.CONSUMER_SECRET">lelldQpAX0rERpvaLxb37cS6ycN2Sd9GBckbm6WozpqwQTT2bH</string>
-
     <bool name="com.twitter.sdk.android.TRACE_ENABLED">true</bool>
     <bool name="com.twitter.sdk.android.COLLECT_IDENTIFIERS_ENABLED">false</bool>
 

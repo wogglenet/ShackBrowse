@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
@@ -12,6 +11,8 @@ import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+
+import net.woggle.shackbrowse.APIConstants;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,7 +42,7 @@ public class LoginActivity extends Activity {
 		clearCookies(this);
 		setupWebView();
 
-		mWebView.loadUrl("https://api.imgur.com/oauth2/authorize?client_id=" + ImgurConstants.MY_IMGUR_CLIENT_ID + "&response_type=token");
+		mWebView.loadUrl("https://api.imgur.com/oauth2/authorize?client_id=" + APIConstants.MY_IMGUR_CLIENT_ID + "&response_type=token");
 	}
 
 	private void setupWebView() {
@@ -51,7 +52,7 @@ public class LoginActivity extends Activity {
 				// intercept the tokens
 				// http://example.com#access_token=ACCESS_TOKEN&token_type=Bearer&expires_in=3600
 				boolean tokensURL = false;
-				if (url.startsWith(ImgurConstants.MY_IMGUR_REDIRECT_URL)) {
+				if (url.startsWith(APIConstants.MY_IMGUR_REDIRECT_URL)) {
 					tokensURL = true;
 					Matcher m; String refreshToken = null; String accessToken = null; long expiresIn = 0L; String username = null;
 

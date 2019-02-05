@@ -91,9 +91,9 @@ How am I supposed to tell if you were looking at the thread or the list of threa
 
 -->
 
-$ 6.0.0RC1
-% v 6.0.0RC1
-_ Feb 1, 2019
+$ 6.0.0RC2
+% v 6.0.0RC2
+_ Feb 5, 2019
 * New Adaptive/Round Icon
 * New pull to refresh
 * Autohiding toolbar option (default on)

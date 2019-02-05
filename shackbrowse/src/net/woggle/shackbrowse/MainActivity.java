@@ -2278,17 +2278,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
     {
     	_threadIdBackStack = new ArrayList<Integer>();
     }
-	
-    @Override
-    public boolean onKeyDown(int keycode, KeyEvent e) {
-        switch(keycode) {
-            case KeyEvent.KEYCODE_MENU:
-                toggleMenu();
-                return true;
-        }
 
-        return super.onKeyDown(keycode, e);
-    }
     
 	// back button overriding
 	@Override
@@ -2369,11 +2359,20 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			}
 		}
 	}
-		
+
+
 	// VOLUME KEY SCROLLING
 	@Override
     public boolean dispatchKeyEvent(KeyEvent event)
     {
+
+		if (event.getKeyCode() == KeyEvent.KEYCODE_MENU)
+		{
+			if (event.getAction() == KeyEvent.ACTION_DOWN)
+				toggleMenu();
+
+			return true;
+		}
 		/*
 		ThreadViewFragment TVfragment = (ThreadViewFragment)getSupportFragmentManager().findFragmentById(R.id.singleThread);
         
@@ -2381,7 +2380,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		ThreadListFragment TLfragment = (ThreadListFragment) a.instantiateItem(mPager, 1);
         */
         Boolean handleVolume = _prefs.getBoolean("useVolumeButtons", false);
-        
+
         // do not do volume scroll with open web browser
         if (handleVolume && !mPopupBrowserOpen && !isYTOpen())
         {
@@ -3341,7 +3340,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		mBrowserPageSubTitle = title;
 		setTitleContextually();
 	}
-	private void closeBrowser() {
+	protected void closeBrowser() {
 		closeBrowser(false, null, false);
 	}
 	private void closeBrowser(boolean immediate, final mAnimEnd onEnd, final boolean quiet) {

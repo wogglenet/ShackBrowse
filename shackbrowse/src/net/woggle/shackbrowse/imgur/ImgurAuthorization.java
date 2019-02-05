@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.text.TextUtils;
 import android.util.Log;
 
+import net.woggle.shackbrowse.APIConstants;
 import net.woggle.shackbrowse.SBApplication;
 
 import org.apache.http.NameValuePair;
@@ -57,7 +58,7 @@ public class ImgurAuthorization {
 			conn.setRequestProperty("Authorization", "Bearer " + accessToken);
 		}
 		else {
-			conn.setRequestProperty("Authorization", "Client-ID " + ImgurConstants.MY_IMGUR_CLIENT_ID);
+			conn.setRequestProperty("Authorization", "Client-ID " + APIConstants.MY_IMGUR_CLIENT_ID);
 		}
 	}
 
@@ -89,12 +90,12 @@ public class ImgurAuthorization {
 		try {
 			conn = (HttpURLConnection) new URL("https://api.imgur.com/oauth2/token").openConnection();
 			conn.setDoOutput(true);
-			conn.setRequestProperty("Authorization", "Client-ID " + ImgurConstants.MY_IMGUR_CLIENT_ID);
+			conn.setRequestProperty("Authorization", "Client-ID " + APIConstants.MY_IMGUR_CLIENT_ID);
 
 			ArrayList<NameValuePair> nvps = new ArrayList<NameValuePair>();
 			nvps.add(new BasicNameValuePair("refresh_token", refreshToken));
-			nvps.add(new BasicNameValuePair("client_id", ImgurConstants.MY_IMGUR_CLIENT_ID));
-			nvps.add(new BasicNameValuePair("client_secret", ImgurConstants.MY_IMGUR_CLIENT_SECRET));
+			nvps.add(new BasicNameValuePair("client_id", APIConstants.MY_IMGUR_CLIENT_ID));
+			nvps.add(new BasicNameValuePair("client_secret", APIConstants.MY_IMGUR_CLIENT_SECRET));
 			nvps.add(new BasicNameValuePair("grant_type", "refresh_token"));
 
 			UrlEncodedFormEntity entity = new UrlEncodedFormEntity(nvps);

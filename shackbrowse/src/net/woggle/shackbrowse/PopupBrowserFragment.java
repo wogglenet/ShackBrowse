@@ -152,7 +152,20 @@ public class PopupBrowserFragment extends Fragment {
 			}
         });
         
-        mWebview.setWebViewClient(new WebViewClient() { @Override public boolean shouldOverrideUrlLoading(WebView view,String _href) { return false; } });
+        mWebview.setWebViewClient(new WebViewClient() {
+        	@Override
+			public boolean shouldOverrideUrlLoading(WebView view,String _href) {
+				Uri uri = Uri.parse(_href);
+				String id = uri.getQueryParameter("id");
+				if ((uri.getHost().equalsIgnoreCase("www.shacknews.com") || uri.getHost().equalsIgnoreCase("shacknews.com")) && id != null) {
+					System.out.println("open LINK chatty " + _href);
+					((MainActivity) getActivity()).closeBrowser();
+					((MainActivity) getActivity()).openThreadViewAndSelect(Integer.parseInt(id));
+					return true;
+				}
+        		return false;
+       		}
+        });
 
         mWebview.getSettings().setUseWideViewPort(true);
         mWebview.getSettings().setLoadWithOverviewMode(true);
