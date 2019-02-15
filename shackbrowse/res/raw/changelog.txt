@@ -91,9 +91,9 @@ How am I supposed to tell if you were looking at the thread or the list of threa
 
 -->
 
-$ 6.0.0RC2
-% v 6.0.0RC2
-_ Feb 5, 2019
+$ 6.0.0
+% v 6.0.0
+_ Feb 16, 2019
 * New Adaptive/Round Icon
 * New pull to refresh
 * Autohiding toolbar option (default on)
@@ -106,7 +106,6 @@ _ Feb 5, 2019
 * Samsung DeX support / Android freeform multitasking support
 * Libraries updated: gifv/mp4/gif embedding seems to be less buggy on all android versions
 * Embedded videos repeat again, but after repeating 3 times they stop repeating so you don't leave your phone on and fall asleep and download 20 gigs on cell data like that one guy did
-* Health and safety warning on political threads
 * Bug Fix: Not asking permissions for gallery upload
 * Bug Fix: Double posts. Maybe. It's complicated.
 * Bug Fix: Starred posts not showing up if too many starred posts

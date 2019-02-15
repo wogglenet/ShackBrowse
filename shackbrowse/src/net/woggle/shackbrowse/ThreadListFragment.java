@@ -677,6 +677,7 @@ public class ThreadListFragment extends ListFragment
 
         final LolObj flol = lol;
         boolean irritate = false;
+		int pco = _prefs.getInt("flagsPC", 3);
 
 		// determine if should irritate user
 	    if (thread.getModeration().equalsIgnoreCase("political")) {
@@ -692,7 +693,7 @@ public class ThreadListFragment extends ListFragment
 				Editor e = _prefs.edit();
 				e.putInt("politicalClicksToday", clicksToday);
 				e.apply();
-				if (clicksToday > 3) {
+				if (clicksToday > pco) {
 					Random r2 = new Random();
 					if (r2.nextInt(4) < 1) {
 						irritate = true;

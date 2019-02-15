@@ -725,8 +725,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	}
 	public void evaluateAutoHide()
 	{
-
-		mEnableAutoHide = _prefs.getBoolean("enableAutoHide", true);
+		mEnableAutoHide = (_prefs.getBoolean("enableAutoHide", true) && !isYTOpen());
 		System.out.println("TOOLBAR AUTOHIDE EVAL" + mEnableAutoHide);
 		AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) mToolbar.getLayoutParams();
 		if (!mEnableAutoHide)
@@ -2509,8 +2508,14 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		            final JSONObject vchk = new JSONObject(result);
 		            final String vmode = vchk.getString("mode");
 		            final JSONArray b = vchk.getJSONArray("b");
+					Editor edit = _prefs.edit();
 
-		            Editor edit = _prefs.edit();
+		            if (vchk.has("pc"))
+					{
+						edit.putInt("flagsPC", vchk.getInt("pc"));
+					}
+
+
 		            edit.putString("versioncheck", result);
 		            edit.commit();
 
@@ -4014,6 +4019,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		new getYTTitleTask().execute(youtubeId);
 
 		resizeOtherContentHeightsForYoutube();
+		evaluateAutoHide();
 	}
 
 	public void closeYoutube()
@@ -4036,6 +4042,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		ytHolder.removeAllViews();
 
 		resizeOtherContentHeightsForYoutube();
+		evaluateAutoHide();
 	}
 	public boolean isYTOpen() { return ((mYoutubeView != null && mYoutubeView.getVisibility() == View.VISIBLE) ? true : false); }
 

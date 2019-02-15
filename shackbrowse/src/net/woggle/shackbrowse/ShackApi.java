@@ -1138,8 +1138,8 @@ public class ShackApi
                         		Long newTime = System.currentTimeMillis();
                         		// read date in milliseconds
                         		
-                        		// six minute wait to refresh
-                        		if ((newTime - (60000 * 6)) < oldTime)
+                        		// four minute wait to refresh
+                        		if ((newTime - (60000 * 4)) < oldTime)
                         		{
                         			mustRefresh = false;
                         		}
@@ -1194,7 +1194,7 @@ public class ShackApi
     	            DataOutputStream out = new DataOutputStream(output);
     	            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out));
     	            
-    	            // write timestamp, should cause us to wait another 5 minutes
+    	            // write timestamp, should cause us to wait another 4 minutes
     	            writer.write(Long.toString(System.currentTimeMillis()));
     	            writer.newLine();
     	            // cache json
