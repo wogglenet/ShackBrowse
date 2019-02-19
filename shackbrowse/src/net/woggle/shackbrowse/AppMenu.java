@@ -154,6 +154,7 @@ public class AppMenu extends ListFragment
     	        	setupBasicSearchList(_adapter);
     	        	
     	        	_adapter.add(new MenuItems(1, "Application v" + thisversion , 0, 0));
+					_adapter.add(new MenuItems(0, "Posting Guidelines" , 1, R.drawable.ic_action_action_report_problem));
     	        	_adapter.add(new MenuItems(0, "Info / Limes" , 3, R.drawable.ic_action_action_info_outline));
 
     		        if (verified) {
@@ -243,6 +244,10 @@ public class AppMenu extends ListFragment
     		Intent i = new Intent(getActivity(), DonateActivity.class);
             getActivity().startActivityForResult(i, ThreadListFragment.OPEN_PREFS);
             trackM("openDonateActivity");
+    	}
+    	if (mid == 1)
+    	{
+			((MainActivity)getActivity()).openBrowser("https://www.shacknews.com/guidelines");
     	}
     	if (mid == 4)
     	{
@@ -739,7 +744,7 @@ public class AppMenu extends ListFragment
 		    	
 		    	for (int i = 0; i < savedSearches.length(); i++)
 		    	{
-		    		_adapter.insert(new MenuItems(new PremadeSearch("Saved: " + savedSearches.getJSONObject(i).getString("name"), savedSearches.getJSONObject(i).getInt("typeIsLol"), SearchViewFragment.deserializeBundle(savedSearches.getJSONObject(i).getString("args")), false)), (_prefs.getBoolean("noteEnabled", false)) ? 10 : 9);
+		    		_adapter.insert(new MenuItems(new PremadeSearch("Saved: " + savedSearches.getJSONObject(i).getString("name"), savedSearches.getJSONObject(i).getInt("typeIsLol"), SearchViewFragment.deserializeBundle(savedSearches.getJSONObject(i).getString("args")), false)), (_prefs.getBoolean("noteEnabled", false)) ? 11 : 10);
 		    	}
 	        }
 	        catch (JSONException e)

@@ -27,7 +27,6 @@ TODO
 * Easy notification reply
 * drag n drop DeX file support
 * DeX transparency issues
-* Frontpage http intercept issues
 
 SERVER
 * STAR OUT SPOILER TEXT
