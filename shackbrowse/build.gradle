@@ -64,6 +64,8 @@ dependencies {
 
     // mp4
     implementation 'com.google.android.exoplayer:exoplayer:2.9.3'
+
+    implementation 'com.github.wax911:android-emojify:0.1.7'
 }
 
 android {

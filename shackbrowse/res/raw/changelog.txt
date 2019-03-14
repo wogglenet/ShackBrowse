@@ -90,6 +90,13 @@ How am I supposed to tell if you were looking at the thread or the list of threa
 
 -->
 
+$ 6.0.1
+% v 6.0.1
+_ Mar 15, 2019
+* Emoji support
+* Built in browser works with toolbar autohide
+* Decreased frontpage bugginess
+
 $ 6.0.0
 % v 6.0.0
 _ Feb 16, 2019

@@ -48,6 +48,8 @@ import androidx.core.app.TaskStackBuilder;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.appcompat.app.AppCompatActivity;
+import io.wax911.emojify.EmojiUtils;
+
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.CharacterStyle;
@@ -1187,8 +1189,8 @@ public class ComposePostView extends AppCompatActivity {
         // check if text is selected. if so, apply tags. if no text selected, ask for text
         int start = edit.getSelectionStart();
         int end = edit.getSelectionEnd();
-        String seltext = edit.getText().toString().substring(start, end);
-        if (seltext.length() > 0)
+        String str = edit.getText().toString().substring(start, end);
+        if (str.length() > 0)
         {
 	        String textToInsert = "";
 	        if (mIsMacroItem)
@@ -1197,18 +1199,20 @@ public class ComposePostView extends AppCompatActivity {
 		        {
 			        case 0:
 				        // AMERICA
-				        for (int i = 0; i < seltext.length(); i++)
+				        for (int i = 0; i < str.length(); )
 				        {
 					        String curTag = ""; String curOpenBracket = "{"; String curCloseBracket = "}";
 					        if ((i % 3) == 0) { curTag = "r"; curOpenBracket = "{"; curCloseBracket = "}"; }
 					        if ((i % 3) == 1) { curTag = ""; curOpenBracket = ""; curCloseBracket = ""; }
 					        if ((i % 3) == 2) { curTag = "b"; curOpenBracket = "{"; curCloseBracket = "}"; }
-					        textToInsert = textToInsert + curTag + curOpenBracket + seltext.charAt(i) + curCloseBracket + curTag;
+					        textToInsert = textToInsert + curTag + curOpenBracket + new StringBuilder().appendCodePoint(str.codePointAt(i)).toString() + curCloseBracket + curTag;
+
+							i += Character.charCount(str.codePointAt(i));
 				        }
 				        break;
 			        case 1:
 				        // RANDOM
-				        for (int i = 0; i < seltext.length(); i++)
+						for (int i = 0; i < str.length(); )
 				        {
 					        String curTag = ""; String curOpenBracket = "{"; String curCloseBracket = "}";
 
@@ -1228,26 +1232,30 @@ public class ComposePostView extends AppCompatActivity {
 					        if (j == 11) { curTag = "_"; curOpenBracket = "["; curCloseBracket = "]"; }
 					        if (j == 12) { curTag = "-"; curOpenBracket = "["; curCloseBracket = "]"; }
 
-					        textToInsert = textToInsert + curTag + curOpenBracket + seltext.charAt(i) + curCloseBracket + curTag;
+					        textToInsert = textToInsert + curTag + curOpenBracket + new StringBuilder().appendCodePoint(str.codePointAt(i)).toString() + curCloseBracket + curTag;
+
+							i += Character.charCount(str.codePointAt(i));
 				        }
 				        break;
 			        case 2:
 				        // ALLCAPS
-				        textToInsert = seltext.toUpperCase();
+				        textToInsert = str.toUpperCase();
 				        break;
 			        case 3:
 				        // CHRISTMAS
-				        for (int i = 0; i < seltext.length(); i++)
+						for (int i = 0; i < str.length(); )
 				        {
 					        String curTag = ""; String curOpenBracket = "{"; String curCloseBracket = "}";
 					        if ((i % 2) == 0) { curTag = "r"; curOpenBracket = "{"; curCloseBracket = "}"; }
 					        if ((i % 2) == 1) { curTag = "g"; curOpenBracket = "{"; curCloseBracket = "}"; }
-					        textToInsert = textToInsert + curTag + curOpenBracket + seltext.charAt(i) + curCloseBracket + curTag;
+					        textToInsert = textToInsert + curTag + curOpenBracket + new StringBuilder().appendCodePoint(str.codePointAt(i)).toString() + curCloseBracket + curTag;
+
+							i += Character.charCount(str.codePointAt(i));
 				        }
 				        break;
 			        case 4:
 				        // NUKE'D
-				        String textToStart = seltext.replaceAll("\\s+",""); // remove whitespace
+				        String textToStart = str.replaceAll("\\s+",""); // remove whitespace
 				        textToStart = textToStart.toUpperCase(); // uppercase
 
 				        for (int i = 0; i < textToStart.length(); i++)
@@ -1266,11 +1274,12 @@ public class ComposePostView extends AppCompatActivity {
 			        case 5:
 				        // RAINBOW
 				        int j = 0;
-				        for (int i = 0; i < seltext.length(); i++)
+						for (int i = 0; i < str.length(); )
 				        {
-					        if (Character.toString(seltext.charAt(i)).equals(" "))
+					        if (Character.toString(str.charAt(i)).equals(" "))
 					        {
 						        textToInsert = textToInsert + " ";
+						        i++;
 						        continue;
 					        }
 					        else
@@ -1284,21 +1293,22 @@ public class ComposePostView extends AppCompatActivity {
 						        if ((j % 7) == 5) { curTag = "b"; curOpenBracket = "{"; curCloseBracket = "}"; }
 						        if ((j % 7) == 6) { curTag = "p"; curOpenBracket = "["; curCloseBracket = "]"; }
 
-						        textToInsert = textToInsert + curTag + curOpenBracket + seltext.charAt(i) + curCloseBracket + curTag;
+						        textToInsert = textToInsert + curTag + curOpenBracket + new StringBuilder().appendCodePoint(str.codePointAt(i)).toString() + curCloseBracket + curTag;
 
 						        j++;
 					        }
+							i += Character.charCount(str.codePointAt(i));
 				        }
 				        break;
 			        case 6:
 				        //  ZA???L?????G???O??????!???
-				        textToInsert = zalgo_text(seltext);
+				        textToInsert = zalgo_text(str);
 				        break;
 		        }
 	        }
 	        else
 	        {
-		        textToInsert = tags[which].substring(0, 2) + seltext + tags[which].substring(5);
+		        textToInsert = tags[which].substring(0, 2) + str + tags[which].substring(5);
 	        }
 	        edit.getText().replace(Math.min(start, end), Math.max(start, end), textToInsert, 0, textToInsert.length());
 	        System.out.println("EDIT: SETSELECTION" + start + " " + end + " " + (Math.min(start, end) + textToInsert.length()));
@@ -1359,7 +1369,7 @@ public class ComposePostView extends AppCompatActivity {
 	{
 		// grab the content to post
 	    EditText et = (EditText)findViewById(R.id.textContent);
-        String content = et.getText().toString();
+        String content = EmojiUtils.htmlify(et.getText().toString());
 
 	    if (content.length() < 6)
 	    {

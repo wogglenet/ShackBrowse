@@ -52,6 +52,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.app.Fragment;
@@ -189,6 +190,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	private Toolbar mToolbar;
 	private boolean mEnableAutoHide = true;
 	public SmoothProgressBar mProgressBar;
+	private long mTimeStartedToShowSplash = 0L;
 
 
 	@Override
@@ -3818,7 +3820,9 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
     public void showLoadingSplash()
     {
         System.out.println("SHOW:STATUSMSPLASHOPEN:" + mSplashOpen);
+
         if (mSplashOpen == false) {
+        	mTimeStartedToShowSplash = System.currentTimeMillis();
             mSplashOpen = true;
             FragmentManager fM = getFragmentManager();
             FragmentTransaction fT = fM.beginTransaction();
@@ -3840,33 +3844,49 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
     public void hideLoadingSplash()
     {
-        System.out.println("HIDE:STATUSMSPLASHOPEN:" + mSplashOpen);
+    	System.out.println("HIDE:STATUSMSPLASHOPEN:" + mSplashOpen);
         if (mSplashOpen == true) {
-            mSplashOpen = false;
-            FragmentManager fragmentManager = getFragmentManager();
-            fragmentManager.beginTransaction()
-                    .hide(_loadingSplash)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .commitAllowingStateLoss();
 
-            if (isArticleOpen()) {
-                fragmentManager.beginTransaction()
-                        .hide(mCurrentFragment)
-                        .show(_articleViewer)
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                        .commitAllowingStateLoss();
-            } else if (_currentFragmentType == CONTENT_FRONTPAGE) {
-                fragmentManager.beginTransaction()
-                        .show(mCurrentFragment)
-                        .hide(_articleViewer)
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                        .commitAllowingStateLoss();
-            } else {
-                fragmentManager.beginTransaction()
-                        .show(mCurrentFragment)
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                        .commitAllowingStateLoss();
-            }
+			long difference = System.currentTimeMillis() - mTimeStartedToShowSplash;
+			long postDelay = 0L;
+			if (difference < 500L)
+				postDelay = 500L;
+
+			// delay solves bug that happens if splash screen is only up for a few millis where content never shows
+			final Handler handler = new Handler();
+			handler.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					mSplashOpen = false;
+					FragmentManager fragmentManager = getFragmentManager();
+					fragmentManager.beginTransaction()
+							.hide(_loadingSplash)
+							.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+							.commitAllowingStateLoss();
+
+					if (isArticleOpen()) {
+						fragmentManager.beginTransaction()
+								.hide(mCurrentFragment)
+								.show(_articleViewer)
+								.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+								.commitAllowingStateLoss();
+					} else if (_currentFragmentType == CONTENT_FRONTPAGE) {
+						fragmentManager.beginTransaction()
+								.show(mCurrentFragment)
+								.hide(_articleViewer)
+								.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+								.commitAllowingStateLoss();
+					} else {
+						fragmentManager.beginTransaction()
+								.show(mCurrentFragment)
+								.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+								.commitAllowingStateLoss();
+					}
+				}
+			}, postDelay);
+
+
+
         }
     }
 
