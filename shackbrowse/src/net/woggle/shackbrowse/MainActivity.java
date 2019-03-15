@@ -191,6 +191,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	private boolean mEnableAutoHide = true;
 	public SmoothProgressBar mProgressBar;
 	private long mTimeStartedToShowSplash = 0L;
+	private YouTubePlayer mYoutubePlayer;
 
 
 	@Override
@@ -739,6 +740,15 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP | AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);  //set all scroll flags
 		}
 		mToolbar.setLayoutParams(params);
+
+		if (mYoutubeFullscreen)
+		{
+			mToolbar.setVisibility(View.GONE);
+		}
+		else
+		{
+			mToolbar.setVisibility(View.VISIBLE);
+		}
 		findViewById(R.id.app_toolbar).requestLayout();
 	}
 
@@ -1446,6 +1456,11 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	protected void onPause()
 	{
 		super.onPause();
+
+		if (isYTOpen())
+		{
+			mYoutubePlayer.pause();
+		}
 		
 		mOffline.endCloudUpdates();
 
@@ -4031,6 +4046,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 					@Override
 					public void onReady() {
 						initializedYouTubePlayer.loadVideo(youtubeId, 0);
+						mYoutubePlayer = initializedYouTubePlayer;
 					}
 				});
 			}

@@ -55,6 +55,7 @@ public class PopupBrowserFragment extends Fragment {
 	public static final int SHOW_ZOOM_CONTROLS = 200;
 	public static final int SHOW_PHOTO_VIEW = 300;
 	private boolean mIsCustomView = false;
+	private boolean mShouldPause = false;
 
 	@Override
     public void onCreate(Bundle savedInstanceState)
@@ -165,6 +166,11 @@ public class PopupBrowserFragment extends Fragment {
 				}
         		return false;
        		}
+			@Override
+			public void onLoadResource(WebView webview, String url) {
+				super.onLoadResource(webview, url);
+				if (url.contains("youtube.com")) mShouldPause = true;
+			}
         });
 
         mWebview.getSettings().setUseWideViewPort(true);
@@ -215,6 +221,25 @@ public class PopupBrowserFragment extends Fragment {
 		}
 
     }
+
+	@Override
+	public void onPause() {
+		super.onPause();
+
+		if (mShouldPause) {
+			mWebview.onPause();
+		}
+
+	}
+
+	@Override
+	public void onResume()
+	{
+		super.onResume();
+		if (mShouldPause) {
+			mWebview.onResume();
+		}
+	}
     
     public void open(String... hrefs)
     {
