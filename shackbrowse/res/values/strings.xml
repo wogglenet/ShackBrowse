@@ -374,6 +374,8 @@
     <string name="preference_LEDBlinkInMS_summary">Changes the LED blink rate</string>
 	<string name="preference_backbuttonguard_title">Prevent Back Button Exit</string>
     <string name="preference_backbuttonguard_summary">Pops up a dialog asking if you meant to exit the app when you hit back in a root view instead of just exiting the app.</string>
+    <string name="preference_derelict_title">Replace derelict515 posts</string>
+    <string name="preference_derelict_summary">Replace derelict515\'s terrible posts with more palatable emoji. May also replace other very angry posters\' text.</string>
     <!-- items in  the array will show up even when not yet registered -->
     <string-array name="statsItems">
         <item>statsItemAnnoyedByStartupZoomDialog</item>

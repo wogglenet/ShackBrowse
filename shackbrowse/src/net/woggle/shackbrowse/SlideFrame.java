@@ -69,7 +69,7 @@ public class SlideFrame extends FrameLayout {
     public static final int STICK_TO_MIDDLE = -3;
 
     private static final int MAX_SCROLLING_DURATION = 300; // in ms
-    private static final int MIN_DISTANCE_FOR_FLING = 100; // in dip
+    private static final int MIN_DISTANCE_FOR_FLING = 25; // in dip
 
     private static final Interpolator sMenuInterpolator = new Interpolator() {
         @Override
@@ -160,7 +160,7 @@ public class SlideFrame extends FrameLayout {
         final Context context = getContext();
         mScroller = new Scroller(context, sMenuInterpolator);
         final ViewConfiguration configuration = ViewConfiguration.get(context);
-        mTouchSlop = ViewConfigurationCompat.getScaledPagingTouchSlop(configuration);
+        mTouchSlop = ViewConfigurationCompat.getScaledPagingTouchSlop(configuration) * 2;
         mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
         mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
 

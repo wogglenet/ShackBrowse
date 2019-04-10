@@ -90,6 +90,13 @@ How am I supposed to tell if you were looking at the thread or the list of threa
 
 -->
 
+$ 6.0.2
+% v 6.0.2
+_ Apr 10, 2019
+* Posts over 4900 characters will be auto divided into multiple parts instead of never posting and breaking the app
+* Fix for pie devices not putting focus on editbox when opening compose view
+* Swipe gestures are now more difficult to initiate
+
 $ 6.0.1
 % v 6.0.1
 _ Mar 15, 2019

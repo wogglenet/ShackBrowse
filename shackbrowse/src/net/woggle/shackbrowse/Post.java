@@ -153,7 +153,33 @@ public class Post implements Comparable<Post> {
         setUserType();
         preSetModeration();
     }
-    
+
+    public void recreatePost (int postId, String userName, String content, Long postedTime, int level, String moderation, boolean expanded, boolean seen, boolean isPQP)
+    {
+        _postId = postId;
+        _userName = userName;
+        _content = content;
+        _postedTime = postedTime;
+        _level = level;
+        _moderation = moderation;
+        _expanded = expanded;
+        _seen = seen;
+        // post queue post
+        _isPQP  = isPQP;
+
+        setLevel(level);
+
+        _spoiled = new HashMap<Integer, Boolean>();
+        Spannable prePreview = PostFormatter.formatContent(this, false);
+        // this limits the amount of work the ui thread has to do when displaying single line previews
+        _preview = (Spannable)prePreview.subSequence(0, Math.min(prePreview.length(), 100));
+
+        // _formattedContent = PostFormatter.formatContent(this, true);
+
+        // imageUrls = new ArrayList<String>();
+        setUserType();
+        preSetModeration();
+    }
     public void setLevel(int level) {
     	_level = level;
     	if (level > 1)
@@ -325,4 +351,6 @@ public class Post implements Comparable<Post> {
 	{
 		_postedTime = posted;
 	}
+	public void setContent(String content) { _content = content; }
+	public void setPreview(Spannable preview) { _preview = preview; }
 }

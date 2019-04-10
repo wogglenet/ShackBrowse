@@ -930,6 +930,9 @@ public class ComposePostView extends AppCompatActivity {
 
         new ImgurTools.RefreshAccessTokenTask().execute();
 
+		EditText editBox = (EditText)findViewById(R.id.textContent);
+		editBox.requestFocus();
+
         _forcePostPreview = Integer.parseInt(_prefs.getString("forcePostPreview", "1"));
     }
 	
@@ -1379,10 +1382,68 @@ public class ComposePostView extends AppCompatActivity {
 
 	    }
 
-        // post in the background
-        new PostTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, content);
+		if ((content.length() > 3000) && (_replyToPostId == 0) && (!_messageMode))
+		{
+			AlertDialog.Builder builder = new AlertDialog.Builder(ComposePostView.this);
+			builder.setTitle("Giant Post");
+			builder.setMessage("This post is way too big for a root post. You must trim it down.");
+			builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					findViewById(R.id.composeButtonPost).setVisibility(View.VISIBLE);
+				}
+			});
+			builder.create().show();
+		}
+	    else if ((content.length() > 4900) && (_replyToPostId != 0) && (!_messageMode))
+		{
+			final String fincontent = content;
+			AlertDialog.Builder builder = new AlertDialog.Builder(ComposePostView.this);
+			builder.setTitle("Giant Post");
+			builder.setMessage("This post is way too big. It will be posted in multiple parts. Continue?");
+			builder.setPositiveButton("Post in parts", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					String[] parts = splitInParts(fincontent, 4900);
+					for (int i = 0; i < parts.length; i++)
+					{
+						new PostTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "Part " + (i + 1) + "\r\n\r\n" + parts[i]);
+					}
+				}
+			});
+			builder.setNegativeButton("Let me edit", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					findViewById(R.id.composeButtonPost).setVisibility(View.VISIBLE);
+				}
+			});
+			builder.create().show();
+
+		}
+		else {
+			// post in the background
+			new PostTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, content);
+		}
 	}
-	
+
+
+	public String[] splitInParts(String s, int partLength)
+	{
+		int len = s.length();
+
+		// Number of parts
+		int nparts = (len + partLength - 1) / partLength;
+		String parts[] = new String[nparts];
+
+		// Break into parts
+		int offset= 0;
+		int i = 0;
+		while (i < nparts)
+		{
+			parts[i] = s.substring(offset, Math.min(offset + partLength, len));
+			offset += partLength;
+			i++;
+		}
+
+		return parts;
+	}
 
 	public String _messageSubject = null;
 	public String _messageRecipient = null;

@@ -2532,6 +2532,13 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 						edit.putInt("flagsPC", vchk.getInt("pc"));
 					}
 
+					if (vchk.has("f"))
+					{
+						JSONArray fusers = vchk.getJSONArray("f");
+						final String ftxt = fusers.join(" ").replaceAll("\"", "");
+						edit.putString("fusers", ftxt);
+					}
+
 
 		            edit.putString("versioncheck", result);
 		            edit.commit();

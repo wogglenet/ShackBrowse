@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="derelictposts">
+        <item>Be happy, friend! &#x1F60B;</item>
+        <item>Wee &#x1F600;</item>
+        <item>Love cats &#x1F63B;</item>
+        <item>Cool &#x1F60E;</item>
+        <item>Peace to all people &#x270C;</item>
+        <item>I love you &#x1F495;</item>
+        <item>Love this post &#x1F496;</item>
+        <item>I like kittens &#x1F431;</item>
+        <item>I like puppies &#x1F436;</item>
+        <item>Horses are silly &#x1F434;</item>
+        <item>&#x1F44D; great post</item>
+        <item>&#x1F917; free hugs!!</item>
+        <item>&#x1F910; no comment lol!</item>
+        <item>&#x1F920; I like cowboys! Giddy-up!</item>
+    </string-array>
     <string-array name="taglines">
         <item>Grim Fandango coming to PC, Mac, and Linux too</item>
         <item>It gets you chicks!</item>

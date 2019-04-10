@@ -123,6 +123,7 @@ import java.util.Iterator;
 import java.util.ListIterator;
 
 
+import static net.woggle.shackbrowse.LoadingSplashFragment.randInt;
 import static net.woggle.shackbrowse.StatsFragment.statInc;
 import static net.woggle.shackbrowse.StatsFragment.statMax;
 import static net.woggle.shackbrowse.notifier.NotifierReceiver.checkIfMuted;
@@ -1230,6 +1231,7 @@ public class ThreadViewFragment extends ListFragment
 		private int _embedImages = 2;
 	    private int _embedVideos = 1;
 		private boolean _linkButtons = true;
+        private boolean _derelictfilter = false;
         private String _userName = "";
 	    private boolean _verified = false;
 		private String _OPuserName = "";
@@ -1254,7 +1256,9 @@ public class ThreadViewFragment extends ListFragment
 		private boolean _fastScroll = false;
 		private NetworkInfo mWifi;
 	    private ArrayList<ExoPlayerTracker> mExoPlayers = new ArrayList<ExoPlayerTracker>();
-	    private class ExoPlayerTracker
+		private String _fusers = "";
+
+		private class ExoPlayerTracker
 	    {
 		    PlayerView mPlayerView;
 		    SimpleExoPlayer mPlayer;
@@ -1449,6 +1453,8 @@ public class ThreadViewFragment extends ListFragment
 
         void loadPrefs()
         {
+			_fusers = _prefs.getString("fusers", "");
+			_derelictfilter = _prefs.getBoolean("derelictFilter", false);
             _userName = _prefs.getString("userName", "").trim();
             _verified = _prefs.getBoolean("usernameVerified", false);
             _lolsInPost = _prefs.getBoolean("showPostLolsThreadView", true);
@@ -2891,6 +2897,11 @@ public class ThreadViewFragment extends ListFragment
 	            	{
 	            		p.setLolObj(_threadloldata.get(Integer.toString(p.getPostId())));
 	            	}
+
+	            	// derelict filter
+					if ((_fusers.contains(p.getUserName())) && (_derelictfilter)) {
+						p.recreatePost(p.getPostId(), p.getUserName(), getVastlyImprovedDerelictPost(), p.getPosted(), p.getLevel(), p.getModeration(), p.getExpanded(), p.getSeen(), p.isPQP());
+					}
 	            }
 	            
 	            // fast scroll on mega threads
@@ -3493,5 +3504,12 @@ public class ThreadViewFragment extends ListFragment
 	}
 
 
-
+	public String getVastlyImprovedDerelictPost() {
+		if (getView() != null) {
+			TextView tline = (TextView) ((View) getView()).findViewById(R.id.splash_tagline);
+			String[] array = getResources().getStringArray(R.array.derelictposts);
+			return array[randInt(0, (array.length - 1))];
+		}
+		return "Error creating palatable derelict515 post";
+	}
 }
