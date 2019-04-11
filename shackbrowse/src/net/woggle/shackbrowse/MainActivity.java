@@ -743,11 +743,16 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 		if (mYoutubeFullscreen)
 		{
+			AppBarLayout appBarLayout = (AppBarLayout)findViewById(R.id.appbarlayout);
+			appBarLayout.setExpanded(false, false);
 			mToolbar.setVisibility(View.GONE);
 		}
 		else
 		{
 			mToolbar.setVisibility(View.VISIBLE);
+			AppBarLayout appBarLayout = (AppBarLayout)findViewById(R.id.appbarlayout);
+			appBarLayout.setExpanded(true, false);
+
 		}
 		findViewById(R.id.app_toolbar).requestLayout();
 	}
@@ -3301,6 +3306,9 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	private void openBrowser(boolean showZoomSetup, String... hrefs) { openBrowser(false, showZoomSetup, hrefs); }
 	public void openBrowserPhotoView(String... hrefs) { openBrowser(true, false, hrefs); }
 	private void openBrowser(boolean showPhotoView, boolean showZoomSetup, String... hrefs) {
+		AppBarLayout appBarLayout = (AppBarLayout)findViewById(R.id.appbarlayout);
+		appBarLayout.setExpanded(true, true);
+
 		FragmentManager fm = getFragmentManager();
 		FragmentTransaction ft = fm.beginTransaction();
 		Bundle args = new Bundle();
@@ -4026,6 +4034,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
 				resizeOtherContentHeightsForYoutube();
+				evaluateAutoHide();
 			}
 
 			@Override
@@ -4042,6 +4051,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 				setOrientLock();
 
 				resizeOtherContentHeightsForYoutube();
+				evaluateAutoHide();
 			}
 		});
 
@@ -4070,6 +4080,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 		if (mYoutubeFullscreen)
 		{
+			mYoutubeFullscreen = false;
 			// ActionBar actionBar = mToolbar.show();
 			View decorView = getWindow().getDecorView();
 			// Show the status bar.
@@ -4077,6 +4088,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			decorView.setSystemUiVisibility(uiOptions);
 
 			setOrientLock();
+
 		}
 
 		mYoutubeView.release();

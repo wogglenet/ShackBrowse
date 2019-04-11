@@ -5,14 +5,11 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:orientation="vertical"
 	android:background="@drawable/bg_app_ics">
-	<net.woggle.shackbrowse.NestedWebView
-	    android:id="@+id/popup_webView"
-	    android:layout_width="match_parent"
-	    android:layout_height="0dp"
-	    android:layout_weight="1"
-	    android:orientation="vertical"
-		app:layout_behavior="@string/appbar_scrolling_view_behavior"
-		/>
+		<WebView
+			android:id="@+id/popup_webView"
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1" />
 	<ImageView
 		android:id="@+id/popup_photoView"
 		android:layout_width="match_parent"
