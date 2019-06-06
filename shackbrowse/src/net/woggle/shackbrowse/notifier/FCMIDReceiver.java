@@ -24,7 +24,7 @@ public class FCMIDReceiver extends FirebaseMessagingService {
 		sendRegistrationToServer(s);
 		Log.d("NEW_TOKEN",s);
 	}
-	// [END refresh_token]
+	/// [END refresh_token]
 
 	/**
 	 * Persist token to third-party servers.
