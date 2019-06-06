@@ -1215,7 +1215,7 @@ public class ThreadViewFragment extends ListFragment
     class PostLoadingAdapter extends ExpandableLoadingAdapter<Post>
     {
         boolean _lolsInPost = true;
-        boolean _getLols = true;
+        boolean _getLols = (true && MainActivity.LOLENABLED);
         float _zoom = 1.0f;
         int _maxWidth = 400;
         int _bulletWidth = 20;
@@ -1458,7 +1458,7 @@ public class ThreadViewFragment extends ListFragment
             _userName = _prefs.getString("userName", "").trim();
             _verified = _prefs.getBoolean("usernameVerified", false);
             _lolsInPost = _prefs.getBoolean("showPostLolsThreadView", true);
-            _getLols = _prefs.getBoolean("getLols", true);
+            _getLols = (_prefs.getBoolean("getLols", true) && MainActivity.LOLENABLED);
             _zoom = Float.parseFloat(_prefs.getString("fontZoom", "1.0"));
             _showModTools = _prefs.getBoolean("showModTools", false);
             _showHoursSince  = _prefs.getBoolean("showHoursSince", true);
@@ -1839,7 +1839,9 @@ public class ThreadViewFragment extends ListFragment
 	            if ((_messageId == 0) && (!p.isPQP()))
 	            {
 	            	// is a real post in a thread, not queued or shack message
-		            holder.buttonLol.setVisibility(View.VISIBLE);
+		            if (MainActivity.LOLENABLED) { holder.buttonLol.setVisibility(View.VISIBLE); }
+		            else { holder.buttonLol.setVisibility(View.GONE); }
+
 		            if ((_showModTools) && (_rootPostId != 0))
 		            {
 			            holder.buttonOther.setVisibility(View.VISIBLE);

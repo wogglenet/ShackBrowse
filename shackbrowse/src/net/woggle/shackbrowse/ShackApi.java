@@ -1100,11 +1100,11 @@ public class ShackApi
     
     public static HashMap<String, HashMap<String, LolObj>> getLols (Context activity) throws ClientProtocolException, IOException, JSONException
     {
-    	boolean _getLols = true;
+    	boolean _getLols = (true && MainActivity.LOLENABLED);
     	if (activity != null)
         {
     		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-            _getLols = prefs.getBoolean("getLols", true);
+            _getLols = (prefs.getBoolean("getLols", true) && MainActivity.LOLENABLED);
         }
         else return new HashMap<String, HashMap<String,LolObj>>();
         

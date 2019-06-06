@@ -165,7 +165,7 @@
     <string name="preferences_pageloltag">LOLtag Support</string>
     <string name="preferences_pageloltag_summary">Turn support for ThomW\'s tagging system on and off, and change how tags are displayed</string>
     <string name="preference_getlols_title">User Moderation API</string>
-    <string name="preference_getlols_summary">Retrieve ThomW ShackLOL tag data for display. User created. Cached; refresh maximum once per five minutes. Incurs additional data use and slows load times when refreshing. Default ON.</string>
+    <string name="preference_getlols_summary">NON-FUNCTIONAL CURRENTLY: Retrieve ThomW ShackLOL tag data for display. User created. Cached; refresh maximum once per five minutes. Incurs additional data use and slows load times when refreshing. Default ON.</string>
     <string name="preference_threadlist_threadlols_title">Show User Mod Tags</string>
     <string name="preference_threadlist_threadlols_summary">Displays ThomW Shack[LOL] data contained in a thread in the topic listing view. Must be enabled in appwide settings first.</string>
     <string name="preference_threadview_postlols_title">User Mod Tags</string>

@@ -1223,7 +1223,7 @@ public class ThreadListFragment extends ListFragment
         private Boolean _stripNewLines;
         private int _previewLines;
         
-        boolean _getLols = true;
+        boolean _getLols = (true && MainActivity.LOLENABLED);
         boolean _lolsContained = false;
         private String _userName = "";
         float _zoom = 1.0f;
@@ -1284,7 +1284,7 @@ public class ThreadListFragment extends ListFragment
             // prefs
             _zoom = Float.parseFloat(_prefs.getString("fontZoom", "1.0"));
             _lolsContained = _prefs.getBoolean("showThreadLolsThreadList", true);
-            _getLols = _prefs.getBoolean("getLols", true);
+            _getLols = (_prefs.getBoolean("getLols", true) && MainActivity.LOLENABLED);
             _showOntopic = _prefs.getBoolean("showOntopic", true);
             _showHoursSince = _prefs.getBoolean("showHoursSince", true);
             _userName = _prefs.getString("userName", "").trim();
@@ -1386,9 +1386,9 @@ public class ThreadListFragment extends ListFragment
             	_lolsContained = _prefs.getBoolean("showThreadLolsThreadList", true);
             	changed = true;
             }
-            if (_getLols != _prefs.getBoolean("getLols", true))
+            if (_getLols != (_prefs.getBoolean("getLols", true) && MainActivity.LOLENABLED))
             {
-            	_getLols = _prefs.getBoolean("getLols", true);
+            	_getLols = (_prefs.getBoolean("getLols", true) && MainActivity.LOLENABLED);
             	changed = true;
             }
             if (_showOntopic != _prefs.getBoolean("showOntopic", true))

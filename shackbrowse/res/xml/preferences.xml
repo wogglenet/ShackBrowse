@@ -126,12 +126,14 @@
           android:summary="Enables or disables ability to share image files to the standalone chattypics uploader app packaged with Shack Browse"
           android:defaultValue="true"
           />
+	  <!--
     <CheckBoxPreference
 	  	     android:key="getLols"
 	  	     android:title="@string/preference_getlols_title"
 	  	     android:summary="@string/preference_getlols_summary"
-	  	     android:defaultValue="true"
+	  	     android:defaultValue="false"
 	  	     />
+	  	     -->
     <CheckBoxPreference
   	     android:key="showHoursSince"
   	     android:title="@string/preference_show_hours_since_title"
@@ -173,6 +175,7 @@
   	     android:summary="@string/preference_tag_thread_list_summary"
   	     android:defaultValue="true"
   	     />
+		<!--
         <CheckBoxPreference
 	  	     android:key="showThreadLolsThreadList"
 	  	     android:title="@string/preference_threadlist_threadlols_title"
@@ -180,6 +183,7 @@
 	  	     android:defaultValue="true"
             android:dependency="getLols"
 	  	     />
+	  	     -->
   	<CheckBoxPreference
   	     android:key="showShackTagsInThreadList"
   	     android:title="@string/preference_shacktag_thread_list_title"
@@ -251,6 +255,7 @@
 	  	     android:summary="@string/preference_fastscroll_summary"
 	  	     android:defaultValue="false"
 	  	     />
+		<!--
 	      <CheckBoxPreference
 	  	     android:key="showPostLolsThreadView"
 	  	     android:title="@string/preference_threadview_postlols_title"
@@ -258,7 +263,7 @@
 	  	     android:defaultValue="true"
               android:dependency="getLols"
 	  	     />
-
+-->
 	    <CheckBoxPreference
   	     android:key="showModTools"
   	     android:title="@string/preference_show_mod_tools_title"

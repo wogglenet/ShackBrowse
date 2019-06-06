@@ -79,6 +79,7 @@ No.
 g{Where do I get it?}g
 s[_[b[On g{Android}g?]b]_ l[Shack Browse]l is available on Google Play: https://play.google.com/store/apps/details?id=net.woggle.shackbrowse
 
+
 y{My Notifications are jacked up.}y
 Like anything good in tech, turn it off and on again. If that doesn't work, clear app data and then log back in, close the app, and open it again. If that doesn't work, try the option in notifications to delete all other devices. You can also visit https://woggle.net/notifications to see what that shows.
 
@@ -89,6 +90,12 @@ b{Why does the thread open when I go from landscape to portrait?}b
 How am I supposed to tell if you were looking at the thread or the list of threads? You can disable split view/tablet view to fix this, or lock the orientation to portrait.
 
 -->
+
+$ 6.0.4
+% v 6.0.4
+_ Jun 6, 2019
+* Shack[LOL] support removed
+* Post search / advanced search speed massively improved
 
 $ 6.0.3
 % v 6.0.3

@@ -58,7 +58,8 @@
 						android:layout_weight="50"
 						android:gravity="right"
 						android:orientation="vertical"
-						android:padding="10dip">
+						android:padding="10dip"
+						android:visibility="gone">
 
 						<TextView
 							android:layout_width="match_parent"
