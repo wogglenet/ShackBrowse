@@ -23,14 +23,16 @@ repositories {
 }
 
 dependencies {
+    implementation 'androidx.multidex:multidex:2.0.1'
+
     implementation fileTree(include: '*.jar', dir: 'libs')
 
     implementation 'com.google.android.material:material:1.1.+'
 
-    implementation 'com.google.android.gms:play-services-base:16.0.1'
+    implementation 'com.google.android.gms:play-services-base:16.1.0'
 
     implementation 'com.firebase:firebase-jobdispatcher:0.8.5'
-    implementation "com.google.firebase:firebase-messaging:17.3.4"
+    implementation "com.google.firebase:firebase-messaging:18.0.0"
 
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
     implementation 'com.afollestad.material-dialogs:commons:0.9.6.0'
@@ -46,8 +48,8 @@ dependencies {
 
     implementation 'org.ccil.cowan.tagsoup:tagsoup:1.2.1'
 
-    implementation 'com.google.firebase:firebase-core:16.0.6'
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.8'
+    implementation 'com.google.firebase:firebase-core:16.0.9'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
     //  implementation 'com.google.firebase:firebase-crash:11.8.0'
 
     implementation 'com.github.castorflex.smoothprogressbar:library:1.1.0'
@@ -103,7 +105,7 @@ android {
         applicationId "net.woggle.shackbrowse"
         minSdkVersion 17
         targetSdkVersion 28
-        // multiDexEnabled true
+        multiDexEnabled true
     }
     productFlavors {
     }
