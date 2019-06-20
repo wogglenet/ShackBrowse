@@ -685,7 +685,7 @@ public class AppMenu extends ListFragment
 		args.putString("author", "");
 		_adapter.add(new MenuItems(new PremadeSearch("My Posts", 0, args, true)));
 
-		if (MainActivity.LOLENABLED) {
+		if (false) {
 			args = new Bundle();
 			args.putString("userNameField", "author");
 			args.putString("author", "");

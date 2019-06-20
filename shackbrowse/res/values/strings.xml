@@ -163,13 +163,13 @@
     <string name="preferences_compose">Post Composer Options</string>
     <string name="preferences_compose_summary">Force Post Preview Option</string>
     <string name="preferences_pageloltag">LOLtag Support</string>
-    <string name="preferences_pageloltag_summary">Turn support for ThomW\'s tagging system on and off, and change how tags are displayed</string>
+    <string name="preferences_pageloltag_summary">Turn support for ShackLOL tagging system on and off, and change how tags are displayed</string>
     <string name="preference_getlols_title">User Moderation API</string>
-    <string name="preference_getlols_summary">NON-FUNCTIONAL CURRENTLY: Retrieve ThomW ShackLOL tag data for display. User created. Cached; refresh maximum once per five minutes. Incurs additional data use and slows load times when refreshing. Default ON.</string>
+    <string name="preference_getlols_summary">Retrieve ShackLOL tag data for display. User created. Cached; refresh maximum once per five minutes. Incurs additional data use and slows load times when refreshing. Default ON.</string>
     <string name="preference_threadlist_threadlols_title">Show User Mod Tags</string>
-    <string name="preference_threadlist_threadlols_summary">Displays ThomW Shack[LOL] data contained in a thread in the topic listing view. Must be enabled in appwide settings first.</string>
+    <string name="preference_threadlist_threadlols_summary">Displays Shack[LOL] data contained in a thread in the topic listing view. Must be enabled in appwide settings first.</string>
     <string name="preference_threadview_postlols_title">User Mod Tags</string>
-    <string name="preference_threadview_postlols_summary">Displays ThomW ShackLOL tags in the reply view. Must be enabled in appwide settings first.</string>
+    <string name="preference_threadview_postlols_summary">Displays ShackLOL tags in the reply view. Must be enabled in appwide settings first.</string>
     
     <string name="preference_swappedsplit_title">Backwards Tablet View</string>
     <string name="preference_swappedsplit_summary">Swap left/right panes in split view</string>
@@ -316,14 +316,14 @@
     <string name="statsItemGaveALOLTag">Gave a LOLTag</string>
     <string name="statsItemGaveALOLTaglol">LOLTag: LOL\'d</string>
     <string name="statsItemGaveALOLTagtag">LOLTag: TAG\'d</string>
-    <string name="statsItemGaveALOLTagugh">LOLTag: UGH\'d</string>
+    <string name="statsItemGaveALOLTagwow">LOLTag: WOW\'d</string>
     <string name="statsItemGaveALOLTagwtf">LOLTag: WTF\'d</string>
     <string name="statsItemGaveALOLTaginf">LOLTag: INF\'d</string>
     <string name="statsItemGaveALOLTagunf">LOLTag: UNF\'d</string>
     <string name="statsItemRemovedALOLTag">Removed a LOLTag</string>
     <string name="statsItemRemovedALOLTaglol">LOLTag removed: unLOL\'d</string>
     <string name="statsItemRemovedALOLTagtag">LOLTag removed: unTAG\'d</string>
-    <string name="statsItemRemovedALOLTagugh">LOLTag removed: unUGH\'d</string>
+    <string name="statsItemRemovedALOLTagugh">LOLTag removed: unWOW\'d</string>
     <string name="statsItemRemovedALOLTagwtf">LOLTag removed: unWTF\'d</string>
     <string name="statsItemRemovedALOLTaginf">LOLTag removed: unINF\'d</string>
     <string name="statsItemRemovedALOLTagunf">LOLTag removed: unUNF\'d</string>

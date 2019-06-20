@@ -91,11 +91,16 @@ How am I supposed to tell if you were looking at the thread or the list of threa
 
 -->
 
+$ 6.0.5
+% v 6.0.5
+_ Jun 20, 2019
+* Shack[LOL] support partially restored
+* Removed "My posts which were LOL'd", "Top LOLs Today", "Top LOLs this Month", "Posts I LOL'd", "Posts I TAG'd", and custom LOL search. ShackNews will not support these functions
+
 $ 6.0.4
 % v 6.0.4
 _ Jun 6, 2019
 * Shack[LOL] support removed
-* Post search / advanced search speed massively improved
 
 $ 6.0.3
 % v 6.0.3

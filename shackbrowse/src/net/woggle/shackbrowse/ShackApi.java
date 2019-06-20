@@ -61,7 +61,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.SparseIntArray;
-import android.widget.Toast;
 
 import com.google.android.gms.common.util.IOUtils;
 
@@ -83,9 +82,15 @@ public class ShackApi
     static final String POST_URL_NEW = "https://www.shacknews.com/post_chatty.x";
     static final String MSG_POST_URL = "https://www.shacknews.com/messages/send";
     static final String LOL_URL = "http://www.lmnopc.com/greasemonkey/shacklol/report.php";
+    static final String LOL_SN_URL = "https://www.shacknews.com/api2/api-index.php";
+
+    static final String LOL_CACHE_FILE = "shacklol.cache";
+
+    // {"status":"1","data":[{"tag_id":"1","tag":"lol","color":"#FF8800"},{"tag_id":"4","tag":"inf","color":"#0099CC"},{"tag_id":"3","tag":"unf","color":"#FF0000"},{"tag_id":"5","tag":"tag","color":"#77BB22"},{"tag_id":"2","tag":"wtf","color":"#C000C0"},{"tag_id":"6","tag":"wow","color":"#C4A3B3"},{"tag_id":"7","tag":"aww","color":"#13A4A7"}],"message":""}
+    // the following array converts numbers to string text
+    static final String[] SN_LOL_TAG_TYPE = { "zero", "lol" , "wtf", "unf", "inf", "tag", "wow", "aww" };
+
     static final String GET_LOL_URL = "http://lmnopc.com/greasemonkey/shacklol/api.php";
-    
-    static final String LOL_VERSION = "20090513";
     
     static final String PUSHSERV_URL = "http://shackbrowsepublic.appspot.com/";
     static final String FASTPUSHSERV_URL = "http://shackbrowse.appspot.com/";
@@ -868,39 +873,34 @@ public class ShackApi
         return posts;
     }
     
-    public static int tagPost(int postId, String tag, String userName) throws Exception
+    public static int tagPost(int postId, String tag, String userName, boolean untag) throws Exception
     {
+        // damn thomw to hell for abandoning his api
     	BasicResponseHandler response_handler = new BasicResponseHandler();
         DefaultHttpClient client = new DefaultHttpClient();
         final HttpParams httpParameters = client.getParams();
         HttpConnectionParams.setConnectionTimeout(httpParameters, connectionTimeOutSec * 1000);
         HttpConnectionParams.setSoTimeout(httpParameters, socketTimeoutSec * 1000);
-        HttpPost post = new HttpPost(LOL_URL);
+        HttpPost post = new HttpPost(LOL_SN_URL);
         post.setHeader("User-Agent", USER_AGENT);
         
         List<NameValuePair> values = new ArrayList<NameValuePair>();
-        values.add(new BasicNameValuePair("who", userName));
-        values.add(new BasicNameValuePair("what", Integer.toString(postId)));
+        values.add(new BasicNameValuePair("action2", "ext_create_tag_via_api"));
+        values.add(new BasicNameValuePair("user", userName));
+        values.add(new BasicNameValuePair("id", Integer.toString(postId)));
         values.add(new BasicNameValuePair("tag", tag));
-        values.add(new BasicNameValuePair("version", URLEncoder.encode(LOL_VERSION, "UTF-8")));
+        values.add(new BasicNameValuePair("untag", Integer.toString(untag ? 1 : 0)));
+        values.add(new BasicNameValuePair("secret", APIConstants.SHACKNEWS_LOL_API_KEY));
         
         UrlEncodedFormEntity e = new UrlEncodedFormEntity(values,"UTF-8");
         post.setEntity(e);
         
         String content = client.execute(post, response_handler);
         System.out.println("TAGGED POST" + postId + " RESPONSE: " + content);
-    	/* THOMW UPDATES LOLAPI
-        // construct the lol stuff
-        String url = LOL_URL + "?who=" + URLEncoder.encode(userName, "UTF8") + "&what=" + postId + "&tag=" + URLEncoder.encode(tag, "UTF8") + "&version=" + URLEncoder.encode(LOL_VERSION, "UTF-8");
-        
-        // make things work
-        String content = get(url);
-        
-        Log.d("shackbrowse", "LOL response: " + content);
-        */
     	
         // see if it did work
-        if (!content.contains("ok")) {
+        if (!content.contains("status\":\"1\"")) {
+            /*
             if (content.contains("already tagged"))
             {
                 values.add(new BasicNameValuePair("action", "untag"));
@@ -917,9 +917,11 @@ public class ShackApi
                     return -1;
                 }
             }
-            else{
-                throw new Exception(content);
-            }
+            else{ */
+
+            throw new Exception(content);
+
+            // }
         }
         else
         {
@@ -1116,11 +1118,11 @@ public class ShackApi
         JSONObject json = new JSONObject();
         boolean mustRefresh = true;
         
-        if ((activity != null) && (activity.getFileStreamPath("shacklol.cache").exists()))
+        if ((activity != null) && (activity.getFileStreamPath(LOL_CACHE_FILE).exists()))
         {
             // look at that, we got a file
             try {
-                FileInputStream input = activity.openFileInput("shacklol.cache");
+                FileInputStream input = activity.openFileInput(LOL_CACHE_FILE);
                 try
                 {
                     DataInputStream in = new DataInputStream(input);
@@ -1171,7 +1173,7 @@ public class ShackApi
         	boolean lolTimedOut = false;
         	// refresh
         	try {
-        		newJson = getJson(GET_LOL_URL + "?special=getcounts");
+        		newJson = getJson(LOL_SN_URL + "?action2=ext_get_counts");
         	}
         	catch (Exception e)
         	{
@@ -1188,7 +1190,7 @@ public class ShackApi
              	});*/
         		
         		// cache it
-    	        FileOutputStream output = activity.openFileOutput("shacklol.cache", Activity.MODE_PRIVATE);
+    	        FileOutputStream output = activity.openFileOutput(LOL_CACHE_FILE, Activity.MODE_PRIVATE);
     	        try
     	        {
     	            DataOutputStream out = new DataOutputStream(output);
@@ -1205,12 +1207,13 @@ public class ShackApi
     	        {
     	            output.close();
     	        }
-    	        
+
+    	        System.out.println("SHACKLOLDATA2: " + json.toString());
         		return processLols(json, activity);
         	}
         	
         	// cache it
-	        FileOutputStream output = activity.openFileOutput("shacklol.cache", Activity.MODE_PRIVATE);
+	        FileOutputStream output = activity.openFileOutput(LOL_CACHE_FILE, Activity.MODE_PRIVATE);
 	        try
 	        {
 	            DataOutputStream out = new DataOutputStream(output);
@@ -1234,6 +1237,7 @@ public class ShackApi
         	if (json.length() > 0) newJson = json;
         }
 
+        System.out.println("SHACKLOLDATA: " + newJson.toString());
         return processLols(newJson, activity);
     }
     
@@ -1248,7 +1252,8 @@ public class ShackApi
         int infCount = 0;
         int wtfCount = 0;
         int unfCount = 0;
-        int ughCount = 0;
+        int wowCount = 0;
+        int awwCount = 0;
         LolObj lolobj = new LolObj();
         if (threads != null)
         {
@@ -1266,7 +1271,8 @@ public class ShackApi
 	        	infCount = 0;
 	        	wtfCount = 0;
 	        	unfCount = 0;
-	        	ughCount = 0;
+	        	wowCount = 0;
+	        	awwCount = 0;
 	        	
 	        	for (int j = 0; j <  posts.length(); j++)
 	            {
@@ -1277,7 +1283,7 @@ public class ShackApi
 	        		if (thisPost.has("unf")) { lolobj.setUnf(tryParseInt(thisPost.getString("unf"))); unfCount = unfCount + tryParseInt(thisPost.getString("unf")); }
 	        		if (thisPost.has("tag")) { lolobj.setTag(tryParseInt(thisPost.getString("tag"))); tagCount = tagCount + tryParseInt(thisPost.getString("tag")); }
 	        		if (thisPost.has("wtf")) { lolobj.setWtf(tryParseInt(thisPost.getString("wtf"))); wtfCount = wtfCount + tryParseInt(thisPost.getString("wtf")); }
-	        		if (thisPost.has("ugh")) { lolobj.setUgh(tryParseInt(thisPost.getString("ugh"))); ughCount = ughCount + tryParseInt(thisPost.getString("ugh")); }
+	        		if (thisPost.has("wow")) { lolobj.setWow(tryParseInt(thisPost.getString("wow"))); wowCount = wowCount + tryParseInt(thisPost.getString("wow")); }
 	        		lolobj.genTagSpan(context);
 	        		map.get(threads.getString(i)).put(posts.getString(j), lolobj);
 	            }
@@ -1288,7 +1294,7 @@ public class ShackApi
 	        	lolobj.setInf(infCount);
 	        	lolobj.setWtf(wtfCount);
 	        	lolobj.setUnf(unfCount);
-	        	lolobj.setUgh(ughCount);
+	        	lolobj.setWow(wowCount);
 	        	lolobj.genTagSpan(context);
 	        	map.get(threads.getString(i)).put("totalLols", lolobj);
 	        	
@@ -1389,19 +1395,67 @@ public class ShackApi
     	
     }
     // shackLOL get taggers
-    public static ArrayList<String> getLOLTaggers(int postId, String type) throws JSONException, ClientProtocolException, IOException
+    public static ArrayList<String> getLOLTaggers(int postId, String type) throws JSONException, ClientProtocolException, IOException, Exception
     {
-    	String url = GET_LOL_URL + "?special=get_taggers&thread_id=" + postId + "&tag=" + type;
-    	ArrayList<String> results = new ArrayList<String>();
-    	
-    	JSONArray result = new JSONObject(get(url,true)).getJSONArray(type);
-        for (int i = 0; i < result.length(); i++)
-        {
-            results.add(result.getString(i));
-            
+
+        // damn thomw to hell for abandoning his api
+        BasicResponseHandler response_handler = new BasicResponseHandler();
+        DefaultHttpClient client = new DefaultHttpClient();
+        final HttpParams httpParameters = client.getParams();
+        HttpConnectionParams.setConnectionTimeout(httpParameters, connectionTimeOutSec * 1000);
+        HttpConnectionParams.setSoTimeout(httpParameters, socketTimeoutSec * 1000);
+        HttpPost post = new HttpPost(LOL_SN_URL);
+        post.setHeader("User-Agent", USER_AGENT);
+
+        List<NameValuePair> values = new ArrayList<NameValuePair>();
+        values.add(new BasicNameValuePair("action2", "ext_get_all_raters"));
+        values.add(new BasicNameValuePair("ids[]", Integer.toString(postId)));
+        values.add(new BasicNameValuePair("tag", type));
+
+        UrlEncodedFormEntity e = new UrlEncodedFormEntity(values,"UTF-8");
+        post.setEntity(e);
+
+        String content = client.execute(post, response_handler);
+        System.out.println("GET TAGGERS" + postId + " RESPONSE: " + content);
+
+        // see if it did work
+        if (!content.contains("status\":\"1\"")) {
+            /*
+            if (content.contains("already tagged"))
+            {
+                values.add(new BasicNameValuePair("action", "untag"));
+                e = new UrlEncodedFormEntity(values,"UTF-8");
+                post.setEntity(e);
+
+                content = client.execute(post, response_handler);
+                if (!content.contains("ok"))
+                {
+                    throw new Exception("Error untagging: " + content);
+                }
+                else
+                {
+                    return -1;
+                }
+            }
+            else{ */
+
+            throw new Exception(content);
+
+            // }
         }
-        
-        return results;
+        else {
+            ArrayList<String> results = new ArrayList<String>();
+
+            if (!content.contains("data\":null")) {
+                JSONArray result = new JSONObject(content).getJSONArray("data").getJSONObject(0).getJSONArray("usernames");
+
+                for (int i = 0; i < result.length(); i++) {
+                    results.add(result.getString(i));
+
+                }
+            }
+            return results;
+        }
     }
     // SHACKLOL SEARCH
     public static ArrayList<SearchResult> searchLOL(String tag, int days, String author, String tagger, int pageNumber) throws Exception
@@ -1456,8 +1510,8 @@ public class ShackApi
             	type = SearchResult.TYPE_UNF;
             if (comment.getString("tag").equalsIgnoreCase("wtf"))
             	type = SearchResult.TYPE_WTF;
-            if (comment.getString("tag").equalsIgnoreCase("ugh"))
-            	type = SearchResult.TYPE_UGH;
+            if (comment.getString("tag").equalsIgnoreCase("wow"))
+            	type = SearchResult.TYPE_WOW;
             	
             
             // convert time to local timezone

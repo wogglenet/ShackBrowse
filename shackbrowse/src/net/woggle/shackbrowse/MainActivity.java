@@ -123,7 +123,7 @@ import static net.woggle.shackbrowse.StatsFragment.statInc;
 
 public class MainActivity extends AppCompatActivity implements ColorChooserDialog.ColorCallback
 {
-	public static final boolean LOLENABLED = false;
+	public static final boolean LOLENABLED = true;
 
 	static final String PQPSERVICESUCCESS = "net.woggle.PQPServiceSuccess";
 	static final String CLICKLINK = "net.woggle.ClickLink";

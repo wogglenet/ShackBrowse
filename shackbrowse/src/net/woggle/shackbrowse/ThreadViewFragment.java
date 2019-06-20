@@ -608,7 +608,7 @@ public class ThreadViewFragment extends ListFragment
     			if (type.equals("wtf")) color = getResources().getColor(R.color.shacktag_wtf);
     			if (type.equals("inf")) color = getResources().getColor(R.color.shacktag_inf);
     			if (type.equals("tag")) color = getResources().getColor(R.color.shacktag_tag);
-    			if (type.equals("ugh")) color = getResources().getColor(R.color.shacktag_ugh);
+    			if (type.equals("wow")) color = getResources().getColor(R.color.shacktag_wow);
     			if (type.equals("unf")) color = getResources().getColor(R.color.shacktag_unf);
     			SpannableString header = new SpannableString(type + "\'d" + "\n");
     			header.setSpan(new ForegroundColorSpan(color), 0, header.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -635,7 +635,7 @@ public class ThreadViewFragment extends ListFragment
         	mMainActivity.runOnUiThread(new Runnable(){
         		@Override public void run()
         		{
-        			mProgressDialog = MaterialProgressDialog.show(mMainActivity, "Loading Taggers", "ThomW's server is a loose cannon", true, true, new OnCancelListener(){
+        			mProgressDialog = MaterialProgressDialog.show(mMainActivity, "Loading Taggers", "Consulting the bones...", true, true, new OnCancelListener(){
     				@Override
     				public void onCancel(DialogInterface arg0) {
     					cancel(true);
@@ -649,7 +649,7 @@ public class ThreadViewFragment extends ListFragment
         	ArrayList<String> resultstag = new ArrayList<String>();
         	ArrayList<String> resultsunf = new ArrayList<String>();
         	ArrayList<String> resultswtf = new ArrayList<String>();
-        	ArrayList<String> resultsugh = new ArrayList<String>();
+        	ArrayList<String> resultswow = new ArrayList<String>();
 
         	try {
 				resultslol = ShackApi.getLOLTaggers(parm, "lol");
@@ -657,7 +657,7 @@ public class ThreadViewFragment extends ListFragment
 				resultsunf = ShackApi.getLOLTaggers(parm, "unf");
 				resultstag = ShackApi.getLOLTaggers(parm, "tag");
 				resultswtf = ShackApi.getLOLTaggers(parm, "wtf");
-				resultsugh = ShackApi.getLOLTaggers(parm, "ugh");
+				resultswow = ShackApi.getLOLTaggers(parm, "wow");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -668,7 +668,7 @@ public class ThreadViewFragment extends ListFragment
         			arraylistFormatter("unf", resultsunf),
         			arraylistFormatter("tag", resultstag),
         			arraylistFormatter("wtf", resultswtf),
-        			arraylistFormatter("ugh", resultsugh)
+        			arraylistFormatter("wow", resultswow)
         			);
             return txt;
         }
@@ -956,7 +956,18 @@ public class ThreadViewFragment extends ListFragment
 
             try
             {
-                response = ShackApi.tagPost(postId, tag, userName);
+				ArrayList<String> userlist = ShackApi.getLOLTaggers(postId, tag);
+				if (userlist.contains(userName))
+				{
+					// user already tagged this. set response to -1 and untag
+					ShackApi.tagPost(postId, tag, userName, true);
+					response = -1;
+				}
+				else
+				{
+					response = 1;
+					ShackApi.tagPost(postId, tag, userName, false);
+				}
             }
             catch (Exception ex)
             {
@@ -980,7 +991,7 @@ public class ThreadViewFragment extends ListFragment
 				{
 					if (tag.equalsIgnoreCase("lol")) { updLol.incLol(); statInc(mMainActivity, "GaveALOLTag"); statInc(mMainActivity, "GaveALOLTaglol"); }
 					if (tag.equalsIgnoreCase("tag")) { updLol.incTag(); statInc(mMainActivity, "GaveALOLTag"); statInc(mMainActivity, "GaveALOLTagtag"); }
-					if (tag.equalsIgnoreCase("ugh")) { updLol.incUgh(); statInc(mMainActivity, "GaveALOLTag"); statInc(mMainActivity, "GaveALOLTagugh"); }
+					if (tag.equalsIgnoreCase("wow")) { updLol.incWow(); statInc(mMainActivity, "GaveALOLTag"); statInc(mMainActivity, "GaveALOLTagwow"); }
 					if (tag.equalsIgnoreCase("wtf")) { updLol.incWtf(); statInc(mMainActivity, "GaveALOLTag"); statInc(mMainActivity, "GaveALOLTagwtf"); }
 					if (tag.equalsIgnoreCase("inf")) { updLol.incInf(); statInc(mMainActivity, "GaveALOLTag"); statInc(mMainActivity, "GaveALOLTaginf"); }
 					if (tag.equalsIgnoreCase("unf")) { updLol.incUnf(); statInc(mMainActivity, "GaveALOLTag"); statInc(mMainActivity, "GaveALOLTagunf"); }
@@ -989,7 +1000,7 @@ public class ThreadViewFragment extends ListFragment
 				{
 					if (tag.equalsIgnoreCase("lol")) { updLol.decLol(); statInc(mMainActivity, "RemovedALOLTag"); statInc(mMainActivity, "RemovedALOLTaglol"); }
 					if (tag.equalsIgnoreCase("tag")) { updLol.decTag(); statInc(mMainActivity, "RemovedALOLTag"); statInc(mMainActivity, "RemovedALOLTagtag"); }
-					if (tag.equalsIgnoreCase("ugh")) { updLol.decUgh(); statInc(mMainActivity, "RemovedALOLTag"); statInc(mMainActivity, "RemovedALOLTagugh"); }
+					if (tag.equalsIgnoreCase("wow")) { updLol.decWow(); statInc(mMainActivity, "RemovedALOLTag"); statInc(mMainActivity, "RemovedALOLTagwow"); }
 					if (tag.equalsIgnoreCase("wtf")) { updLol.decWtf(); statInc(mMainActivity, "RemovedALOLTag"); statInc(mMainActivity, "RemovedALOLTagwtf"); }
 					if (tag.equalsIgnoreCase("inf")) { updLol.decInf(); statInc(mMainActivity, "RemovedALOLTag"); statInc(mMainActivity, "RemovedALOLTaginf"); }
 					if (tag.equalsIgnoreCase("unf")) { updLol.decUnf(); statInc(mMainActivity, "RemovedALOLTag"); statInc(mMainActivity, "RemovedALOLTagunf"); }
@@ -1629,7 +1640,7 @@ public class ThreadViewFragment extends ListFragment
                         lolpop.getMenu().add(Menu.NONE, 1, Menu.NONE, "inf");
                         lolpop.getMenu().add(Menu.NONE, 2, Menu.NONE, "unf");
                         SubMenu sub = lolpop.getMenu().addSubMenu(Menu.NONE, 3, Menu.NONE, "More...");
-                        sub.add(Menu.NONE, 4, Menu.NONE, "ugh");
+                        sub.add(Menu.NONE, 4, Menu.NONE, "wow");
                         sub.add(Menu.NONE, 5, Menu.NONE, "wtf");
                         sub.add(Menu.NONE, 7, Menu.NONE, "tag");
                         lolpop.setOnMenuItemClickListener(new OnMenuItemClickListener() {
@@ -1739,7 +1750,7 @@ public class ThreadViewFragment extends ListFragment
 						sub3.add(Menu.NONE, 8, Menu.NONE, "lol");
 						sub3.add(Menu.NONE, 9, Menu.NONE, "inf");
 						sub3.add(Menu.NONE, 10, Menu.NONE, "unf");
-						sub3.add(Menu.NONE, 11, Menu.NONE, "ugh");
+						sub3.add(Menu.NONE, 11, Menu.NONE, "wow");
 						sub3.add(Menu.NONE, 12, Menu.NONE, "wtf");
 						sub3.add(Menu.NONE, 13, Menu.NONE, "tag");
 						extpop.getMenu().add(Menu.NONE, 14, Menu.NONE, "Check LOL Taggers");

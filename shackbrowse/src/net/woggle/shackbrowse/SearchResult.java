@@ -16,7 +16,7 @@ public class SearchResult
     public static int TYPE_INF = 4;
     public static int TYPE_UNF = 5;
     public static int TYPE_WTF = 6;
-    public static int TYPE_UGH = 7;
+    public static int TYPE_WOW = 7;
     public static int TYPE_DRAFTS = 8;
     
     public SearchResult(int postId, String author, String content, Long posted, int type, int extra)

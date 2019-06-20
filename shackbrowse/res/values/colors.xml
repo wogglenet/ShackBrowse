@@ -59,7 +59,7 @@
 	<color name="modtag_tangent">#8f5536</color>
 	<color name="shacktag_wtf">#aa759f</color>
 	<color name="modtag_stupid">#90a959</color>
-	<color name="shacktag_ugh">#008000</color>
+	<color name="shacktag_wow">#008000</color>
 	<color name="modtag_inf">#6A9FB5</color>
 	<color name="shacktag_inf">#6A9FB5</color>
 	<color name="shacktag_tag">#90A959</color>
@@ -78,7 +78,7 @@
 	<color name="modtag_tangent">#808000</color>
 	<color name="shacktag_wtf">#800080</color>
 	<color name="modtag_stupid">#00FF00</color>
-	<color name="shacktag_ugh">#008000</color>
+	<color name="shacktag_wow">#008000</color>
 	<color name="modtag_inf">#0000FF</color>
 	<color name="shacktag_inf">#B0E0E6</color>
 	<color name="shacktag_tag">#00FF7F</color>

@@ -514,8 +514,8 @@ public class SearchResultFragment extends ListFragment
 	            	holder.lolcount.setBackgroundResource(R.color.shacktag_unf);
 				else if (t.getType() == SearchResult.TYPE_WTF)
 	            	holder.lolcount.setBackgroundResource(R.color.shacktag_wtf);
-				else if (t.getType() == SearchResult.TYPE_UGH)
-	            	holder.lolcount.setBackgroundResource(R.color.shacktag_ugh);
+				else if (t.getType() == SearchResult.TYPE_WOW)
+	            	holder.lolcount.setBackgroundResource(R.color.shacktag_wow);
 				else
 					holder.lolcount.setBackgroundResource(R.color.nonpreview_post_text_color);
             }
