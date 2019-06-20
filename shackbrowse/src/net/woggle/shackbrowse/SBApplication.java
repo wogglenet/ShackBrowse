@@ -12,7 +12,6 @@ import com.twitter.sdk.android.tweetui.TweetUi;
 
 import java.lang.*;
 
-import androidx.multidex.MultiDexApplication;
 import io.wax911.emojify.EmojiManager;
 
 
@@ -20,7 +19,7 @@ import io.wax911.emojify.EmojiManager;
  * Created by brad on 2/17/2018.
  */
 
-public class SBApplication extends MultiDexApplication
+public class SBApplication extends Application
 {
 	private static Context context;
 	private static final String TAG = SBApplication.class.getSimpleName();

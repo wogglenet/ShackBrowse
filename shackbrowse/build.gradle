@@ -23,7 +23,6 @@ repositories {
 }
 
 dependencies {
-    implementation 'androidx.multidex:multidex:2.0.1'
 
     implementation fileTree(include: '*.jar', dir: 'libs')
 
@@ -106,7 +105,7 @@ android {
         applicationId "net.woggle.shackbrowse"
         minSdkVersion 17
         targetSdkVersion 29
-        multiDexEnabled true
+        multiDexEnabled false
     }
     productFlavors {
     }
