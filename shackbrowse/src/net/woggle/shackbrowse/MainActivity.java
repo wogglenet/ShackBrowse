@@ -3305,9 +3305,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 	public void openBrowser(String... hrefs) { StatsFragment.statInc(this, "PopUpBrowserOpened"); openBrowser(false, hrefs); }
 	public void openBrowserZoomAdjust() { openBrowser(true, (String[])null); }
-	private void openBrowser(boolean showZoomSetup, String... hrefs) { openBrowser(false, showZoomSetup, hrefs); }
-	public void openBrowserPhotoView(String... hrefs) { openBrowser(true, false, hrefs); }
-	private void openBrowser(boolean showPhotoView, boolean showZoomSetup, String... hrefs) {
+	private void openBrowser(boolean showZoomSetup, String... hrefs) {
 		AppBarLayout appBarLayout = (AppBarLayout)findViewById(R.id.appbarlayout);
 		appBarLayout.setExpanded(true, true);
 
@@ -3315,13 +3313,13 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		FragmentTransaction ft = fm.beginTransaction();
 		Bundle args = new Bundle();
 		args.putStringArray("hrefs", hrefs);
-		if (showZoomSetup)
-			args.putBoolean("showZoomSetup", true);
-
-		if (showPhotoView)
-			args.putBoolean("showPhotoView", true);
 
 		mPBfragment = (PopupBrowserFragment) Fragment.instantiate(getApplicationContext(), PopupBrowserFragment.class.getName(), args);
+		if (showZoomSetup) {
+			args.putBoolean("showZoomSetup", true);
+			mPBfragment.showZoom = true;
+		}
+
 		ft.add(R.id.browser_frame, mPBfragment, "pbfrag");
 		ft.attach(mPBfragment);
 		ft.commitAllowingStateLoss();
@@ -3353,6 +3351,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			Bundle args = new Bundle();
 			args.putBoolean("showZoomSetup", true);
 			mPBfragment = (PopupBrowserFragment)Fragment.instantiate(getApplicationContext(), PopupBrowserFragment.class.getName(), args );
+			mPBfragment.showZoom = true;
 			ft = fm.beginTransaction();
 			ft.add(R.id.browser_frame, mPBfragment, "pbfrag");
 			ft.attach(mPBfragment);

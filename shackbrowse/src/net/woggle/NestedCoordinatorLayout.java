@@ -1,16 +1,19 @@
 package net.woggle;
 
 import android.content.Context;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.view.NestedScrollingChild2;
+import androidx.core.view.NestedScrollingChild3;
 import androidx.core.view.NestedScrollingChildHelper;
 import android.util.AttributeSet;
 import android.view.View;
 
 
 @SuppressWarnings("unused")
-public class NestedCoordinatorLayout extends CoordinatorLayout implements NestedScrollingChild2
+public class NestedCoordinatorLayout extends CoordinatorLayout implements NestedScrollingChild3
 {
 
 	private NestedScrollingChildHelper mChildHelper;
@@ -181,5 +184,10 @@ public class NestedCoordinatorLayout extends CoordinatorLayout implements Nested
 	@Override
 	public boolean dispatchNestedPreFling(float velocityX, float velocityY) {
 		return mChildHelper.dispatchNestedPreFling(velocityX, velocityY);
+	}
+
+	@Override
+	public void dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, @Nullable int[] offsetInWindow, int type, @NonNull int[] consumed) {
+		mChildHelper.dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, offsetInWindow, type, consumed);
 	}
 }

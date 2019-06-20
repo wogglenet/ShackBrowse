@@ -96,6 +96,7 @@ $ 6.0.5
 _ Jun 20, 2019
 * Shack[LOL] support partially restored
 * Removed "My posts which were LOL'd", "Top LOLs Today", "Top LOLs this Month", "Posts I LOL'd", "Posts I TAG'd", and custom LOL search. ShackNews will not support these functions
+* Bug Fix: Many bugs with popup browser, collapsing toolbar, and auto-zoom
 
 $ 6.0.4
 % v 6.0.4

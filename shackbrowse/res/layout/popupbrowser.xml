@@ -1,44 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	android:orientation="vertical"
-	android:background="@drawable/bg_app_ics">
-		<WebView
-			android:id="@+id/popup_webView"
-			android:layout_width="match_parent"
-			android:layout_height="0dp"
-			android:layout_weight="1" />
-	<ImageView
-		android:id="@+id/popup_photoView"
+	<net.woggle.NestedScrollWebView xmlns:app="http://schemas.android.com/apk/res-auto"
+		xmlns:android="http://schemas.android.com/apk/res/android" android:background="@drawable/bg_app_ics"
+		 android:fillViewport="true"
+	android:focusable="true"
+	android:isScrollContainer="false"
+	android:visibility="visible"
+	app:layout_behavior="@string/appbar_scrolling_view_behavior"
+	app:layout_scrollFlags="scroll|exitUntilCollapsed"
 		android:layout_width="match_parent"
-		android:layout_height="0dp"
-		android:layout_weight="1"
-		android:orientation="vertical"
-		android:visibility="gone"
-		/>
-	<LinearLayout
-	    android:id="@+id/popup_zoomcont"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:paddingTop="5dp"
-	    android:visibility="gone"
-	    android:orientation="vertical"
-	    >
-	<TextView android:text="Coarse Zoom Adjustment" android:layout_width="match_parent" android:layout_height="wrap_content" />
-	<SeekBar
-	    android:id="@+id/popup_seekbar"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:visibility="gone"
-	    />
-	<TextView android:text="Fine Zoom Adjustment" android:layout_width="match_parent" android:layout_height="wrap_content" />
-	<SeekBar
-	    android:id="@+id/popup_seekbarfine"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:visibility="gone"
-	    />
-	</LinearLayout>
-</LinearLayout>
+		android:layout_height="wrap_content"
+		android:id="@+id/popup_webView" />
