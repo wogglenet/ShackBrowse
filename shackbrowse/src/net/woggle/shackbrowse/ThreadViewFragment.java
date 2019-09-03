@@ -3435,7 +3435,7 @@ public class ThreadViewFragment extends ListFragment
 					try
 					{
 						String escapedQuery = URLEncoder.encode(bodyView.getText().subSequence(start, end).toString(), "UTF-8");
-						Uri uri = Uri.parse("http://www.google.com/#q=" + escapedQuery);
+						Uri uri = Uri.parse("https://www.google.com/search?q=" + escapedQuery);
 						Intent intent = new Intent(Intent.ACTION_VIEW, uri);
 						startActivity(intent);
 					}

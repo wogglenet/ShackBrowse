@@ -1670,9 +1670,9 @@ public class ThreadListFragment extends ListFragment
             // special highlight for shacknews posts, hopefully the thread_selector color thing will
             // reset the background to transparent when scrolling
             if (t.getUserName().equalsIgnoreCase("Shacknews"))
-                convertView.setBackgroundResource(R.color.selector_snthreadrow);
+                convertView.setBackgroundResource(R.drawable.selector_snthreadrow);
             else
-                convertView.setBackgroundResource(R.color.selector_threadrow);
+                convertView.setBackgroundResource(R.drawable.selector_threadrow);
             
             
             // USERNAME

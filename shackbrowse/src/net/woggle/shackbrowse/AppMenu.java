@@ -380,11 +380,11 @@ public class AppMenu extends ListFragment
             	if (getItemViewType(position) == 2)
             		vi = LayoutInflater.from(getActivity()).inflate(R.layout.menu_searchitem, parent, false);
             }
-            
-            
+
         	// get the thread to display and populate all the data into the layout
             MenuItems m = getItem(position);
-            
+
+            // regular menu item
             if (getItemViewType(position) == 0)
             {
 	            ViewHolderMenuItem holder = (ViewHolderMenuItem)vi.getTag();
@@ -407,19 +407,22 @@ public class AppMenu extends ListFragment
                     holder.settings.setScaleX(_zoom);
                     holder.settings.setScaleY(_zoom);
 
-					if (m.getText().equalsIgnoreCase(""))
-					{
-						// no click empty item
-						holder.menuItemCont.setEnabled(false);
-						holder.menuItemCont.setClickable(false);
-						holder.menuItemCont.setFocusable(false);
-						holder.menuItemCont.setOnClickListener(null);
-					}
-	                
 	                vi.setTag(holder);
 	            }
-	            
+
+				// this makes no sense to me but it works
+				holder.menuItemCont.setEnabled(true);
+				holder.menuItemCont.setClickable(false);
+
+				if (m.getText().equalsIgnoreCase(""))
+				{
+					// no click empty item
+					holder.menuItemCont.setEnabled(false);
+					holder.menuItemCont.setClickable(true);
+				}
+
 	            holder.text.setText(m.getText());
+
 	            if (m.getImgRes() == 0)
 	            	holder.icon.setVisibility(View.GONE);
 	            else

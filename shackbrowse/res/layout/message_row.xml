@@ -7,7 +7,7 @@
   
   android:paddingLeft="0dip"
   android:paddingRight="0dip"
-  android:background="@color/selector_searchrow"
+  android:background="@drawable/selector_searchrow"
   android:orientation="vertical"
   >
 

@@ -69,7 +69,7 @@ public class ShackApi
 {
 	private static final int connectionTimeOutSec = 25;
 	private static final int socketTimeoutSec = 35;
-    static final String USER_AGENT = "shackbrowse/6.0.0";
+    static final String USER_AGENT = "shackbrowse/6.0.6";
     
     static final String IMAGE_LOGIN_URL = "http://chattypics.com/users.php?act=login_go";
     static final String IMAGE_UPLOAD_URL = "http://chattypics.com/upload.php";

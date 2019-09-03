@@ -22,7 +22,7 @@
         android:layout_gravity="center_vertical"
         android:paddingTop="2dp"
         android:stretchColumns="2"
-        android:background="@color/selector_replyrow"
+        android:background="@drawable/selector_replyrow"
 		>
 
         <TableRow android:id="@+id/previewRow">
