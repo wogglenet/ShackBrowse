@@ -1283,7 +1283,8 @@ public class ShackApi
 	        		if (thisPost.has("unf")) { lolobj.setUnf(tryParseInt(thisPost.getString("unf"))); unfCount = unfCount + tryParseInt(thisPost.getString("unf")); }
 	        		if (thisPost.has("tag")) { lolobj.setTag(tryParseInt(thisPost.getString("tag"))); tagCount = tagCount + tryParseInt(thisPost.getString("tag")); }
 	        		if (thisPost.has("wtf")) { lolobj.setWtf(tryParseInt(thisPost.getString("wtf"))); wtfCount = wtfCount + tryParseInt(thisPost.getString("wtf")); }
-	        		if (thisPost.has("wow")) { lolobj.setWow(tryParseInt(thisPost.getString("wow"))); wowCount = wowCount + tryParseInt(thisPost.getString("wow")); }
+                    if (thisPost.has("wow")) { lolobj.setWow(tryParseInt(thisPost.getString("wow"))); wowCount = wowCount + tryParseInt(thisPost.getString("wow")); }
+                    if (thisPost.has("aww")) { lolobj.setAww(tryParseInt(thisPost.getString("aww"))); awwCount = awwCount + tryParseInt(thisPost.getString("aww")); }
 	        		lolobj.genTagSpan(context);
 	        		map.get(threads.getString(i)).put(posts.getString(j), lolobj);
 	            }
@@ -1295,6 +1296,7 @@ public class ShackApi
 	        	lolobj.setWtf(wtfCount);
 	        	lolobj.setUnf(unfCount);
 	        	lolobj.setWow(wowCount);
+                lolobj.setAww(awwCount);
 	        	lolobj.genTagSpan(context);
 	        	map.get(threads.getString(i)).put("totalLols", lolobj);
 	        	
@@ -1512,6 +1514,8 @@ public class ShackApi
             	type = SearchResult.TYPE_WTF;
             if (comment.getString("tag").equalsIgnoreCase("wow"))
             	type = SearchResult.TYPE_WOW;
+            if (comment.getString("tag").equalsIgnoreCase("aww"))
+                type = SearchResult.TYPE_AWW;
             	
             
             // convert time to local timezone

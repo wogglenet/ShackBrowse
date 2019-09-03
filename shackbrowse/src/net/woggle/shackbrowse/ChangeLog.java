@@ -130,6 +130,7 @@ public class ChangeLog {
 
                 if(API_LEVEL >= Build.VERSION_CODES.HONEYCOMB)
                         Compatibility.setViewLayerTypeSoftware(wv);
+
                 wv.setBackgroundColor(0); // transparent
                 wv.loadDataWithBaseURL(null, this.getLog(full), "text/html", "UTF-8",
                                 null);

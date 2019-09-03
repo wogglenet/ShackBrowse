@@ -26,3 +26,4 @@
 #-dontobfuscate
 
 #-dontwarn com.squareup.okhttp.**
+-keepattributes InnerClasses

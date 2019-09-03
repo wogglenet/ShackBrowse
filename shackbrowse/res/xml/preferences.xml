@@ -131,7 +131,7 @@
 	  	     android:key="getLols"
 	  	     android:title="@string/preference_getlols_title"
 	  	     android:summary="@string/preference_getlols_summary"
-	  	     android:defaultValue="false"
+	  	     android:defaultValue="true"
 	  	     />
 
     <CheckBoxPreference

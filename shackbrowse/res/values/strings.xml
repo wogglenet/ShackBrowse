@@ -317,13 +317,15 @@
     <string name="statsItemGaveALOLTaglol">LOLTag: LOL\'d</string>
     <string name="statsItemGaveALOLTagtag">LOLTag: TAG\'d</string>
     <string name="statsItemGaveALOLTagwow">LOLTag: WOW\'d</string>
+    <string name="statsItemGaveALOLTagaww">LOLTag: AWW\'d</string>
     <string name="statsItemGaveALOLTagwtf">LOLTag: WTF\'d</string>
     <string name="statsItemGaveALOLTaginf">LOLTag: INF\'d</string>
     <string name="statsItemGaveALOLTagunf">LOLTag: UNF\'d</string>
     <string name="statsItemRemovedALOLTag">Removed a LOLTag</string>
     <string name="statsItemRemovedALOLTaglol">LOLTag removed: unLOL\'d</string>
     <string name="statsItemRemovedALOLTagtag">LOLTag removed: unTAG\'d</string>
-    <string name="statsItemRemovedALOLTagugh">LOLTag removed: unWOW\'d</string>
+    <string name="statsItemRemovedALOLTagwow">LOLTag removed: unWOW\'d</string>
+    <string name="statsItemRemovedALOLTagaww">LOLTag removed: unAWW\'d</string>
     <string name="statsItemRemovedALOLTagwtf">LOLTag removed: unWTF\'d</string>
     <string name="statsItemRemovedALOLTaginf">LOLTag removed: unINF\'d</string>
     <string name="statsItemRemovedALOLTagunf">LOLTag removed: unUNF\'d</string>

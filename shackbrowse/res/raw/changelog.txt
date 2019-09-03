@@ -94,10 +94,12 @@ How am I supposed to tell if you were looking at the thread or the list of threa
 $ 6.0.6
 % v 6.0.6
 _ Sep 3, 2019
-* Feat YT timestamps
+* Support for "AWW" loltag. Support for adding "TAG" loltag has been removed since it is not supported properly by Shacknews.com
+* Video start times in embedded video now supported
 * Bug Fix: Pink background fix on Android 10
 * Bug Fix: Fix for randomly not clickable menu items
 * Bug Fix: Google search context item
+* Bug Fix: New installs defaulted to loltags off
 
 $ 6.0.5
 % v 6.0.5

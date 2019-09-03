@@ -4057,13 +4057,14 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		});
 
 		final String youtubeId = PopupBrowserFragment.getYoutubeId(url);
+		final int youtubeTime = PopupBrowserFragment.getYoutubeTime(url);
 		mYoutubeView.initialize(new YouTubePlayerInitListener() {
 			@Override
 			public void onInitSuccess(final YouTubePlayer initializedYouTubePlayer) {
 				initializedYouTubePlayer.addListener(new AbstractYouTubePlayerListener() {
 					@Override
 					public void onReady() {
-						initializedYouTubePlayer.loadVideo(youtubeId, 0);
+						initializedYouTubePlayer.loadVideo(youtubeId, youtubeTime);
 						mYoutubePlayer = initializedYouTubePlayer;
 					}
 				});

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android" android:exitFadeDuration="@android:integer/config_shortAnimTime">
-	<item android:state_pressed="true" android:color="@color/SBTlightbriefcasepurple" />
-	<item android:state_checked="true" android:color="@color/SBTXbriefcasepurple" />
-	<item android:color="@android:color/transparent" />
+	<item android:state_pressed="true" android:drawable="@color/SBTlightbriefcasepurple" android:color="@color/SBTlightbriefcasepurple" />
+	<item android:state_checked="true" android:drawable="@color/SBTXbriefcasepurple" android:color="@color/SBTXbriefcasepurple" />
+	<item android:drawable="@android:color/transparent" android:color="@android:color/transparent" />
 </selector>

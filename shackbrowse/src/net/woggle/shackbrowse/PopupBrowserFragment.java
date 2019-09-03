@@ -455,6 +455,32 @@ public class PopupBrowserFragment extends Fragment {
 			return null;
 		}
 	}
+	public static int getYoutubeTime (String _href)
+	{
+		// PATTERN
+		String regex = "v=([^#&\n\r]+)|t=([^#&\n\r]+)";
+
+		// INIT RETURN DATA
+		String timeS = "";
+
+		// RUN REGEX
+		Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(_href);
+
+		// CHECK
+		while (matcher.find()) {
+			// SET TIME
+			if(matcher.group(2) != null)
+				timeS = matcher.group(2);
+		}
+		// RETURN
+		int time = 0;
+		try {
+			time = Integer.parseInt(timeS);
+		}
+		catch (Exception e) {}
+		return time;
+	}
 
 
 	private void showZoomSetup()

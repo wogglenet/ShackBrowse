@@ -109,8 +109,8 @@ public class LolObj {
 		}
 		if (getAww() > 0)
 		{
-			aww = new SpannableString(" wow "+Integer.toString(getWow())+" ");
-			aww.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.shacktag_wow)), 0, wow.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+			aww = new SpannableString(" aww "+Integer.toString(getAww())+" ");
+			aww.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.shacktag_aww)), 0, aww.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		}
 
 
