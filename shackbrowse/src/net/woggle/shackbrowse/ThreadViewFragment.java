@@ -1247,7 +1247,9 @@ public class ThreadViewFragment extends ListFragment
 		private int _embedImages = 2;
 	    private int _embedVideos = 1;
 		private boolean _linkButtons = true;
-        private boolean _derelictfilter = false;
+		private boolean mEchoPalatize = false;
+        private boolean mEchoEnabled = false;
+		private boolean mAutoEchoEnabled = false;
         private String _userName = "";
 	    private boolean _verified = false;
 		private String _OPuserName = "";
@@ -1370,6 +1372,7 @@ public class ThreadViewFragment extends ListFragment
                     usrpop.getMenu().add(Menu.NONE, 1, Menu.NONE, "Search for posts by " + unamefinal);
                     usrpop.getMenu().add(Menu.NONE, 2, Menu.NONE, "Highlight " + unamefinal + " in thread");
 					usrpop.getMenu().add(Menu.NONE, 3, Menu.NONE, "Copy " + unamefinal + " to clipboard");
+					usrpop.getMenu().add(Menu.NONE, 4, Menu.NONE, "Echo Chamber / block");
 
                     usrpop.setOnMenuItemClickListener(new OnMenuItemClickListener(){
                         @Override
@@ -1382,6 +1385,8 @@ public class ThreadViewFragment extends ListFragment
                                 mMainActivity.openHighlighter(unamefinal);
 							if (item.getItemId() == 3)
 								copyString(unamefinal);
+							if (item.getItemId() == 4)
+								mMainActivity.blockUser(unamefinal);
                             return true;
                         }});
                     usrpop.show();
@@ -1469,8 +1474,9 @@ public class ThreadViewFragment extends ListFragment
 
         void loadPrefs()
         {
-			_fusers = _prefs.getString("fusers", "");
-			_derelictfilter = _prefs.getBoolean("derelictFilter", false);
+			mEchoPalatize = _prefs.getBoolean("echoPalatize", false);
+			mEchoEnabled = _prefs.getBoolean("echoEnabled", false);
+			mAutoEchoEnabled = (_prefs.getBoolean("echoChamberAuto", true) && mEchoEnabled);
             _userName = _prefs.getString("userName", "").trim();
             _verified = _prefs.getBoolean("usernameVerified", false);
             _lolsInPost = _prefs.getBoolean("showPostLolsThreadView", true);
@@ -2917,8 +2923,8 @@ public class ThreadViewFragment extends ListFragment
 	            	}
 
 	            	// derelict filter
-					if ((_fusers.contains(p.getUserName())) && (_derelictfilter)) {
-						p.recreatePost(p.getPostId(), p.getUserName(), getVastlyImprovedDerelictPost(), p.getPosted(), p.getLevel(), p.getModeration(), p.getExpanded(), p.getSeen(), p.isPQP());
+					if (((MainActivity)getActivity()).isOnBlocklist(p.getUserName()) && (mEchoEnabled) && (mEchoPalatize)) {
+						p.recreatePost(p.getPostId(), p.getUserName(), getVastlyImprovedDerelictPost(getActivity()), p.getPosted(), p.getLevel(), p.getModeration(), p.getExpanded(), p.getSeen(), p.isPQP());
 					}
 	            }
 	            
@@ -3522,12 +3528,8 @@ public class ThreadViewFragment extends ListFragment
 	}
 
 
-	public String getVastlyImprovedDerelictPost() {
-		if (getView() != null) {
-			TextView tline = (TextView) ((View) getView()).findViewById(R.id.splash_tagline);
-			String[] array = getResources().getStringArray(R.array.derelictposts);
-			return array[randInt(0, (array.length - 1))];
-		}
-		return "Error creating palatable derelict515 post";
+	public static String getVastlyImprovedDerelictPost(Context ctx) {
+		String[] array = ctx.getResources().getStringArray(R.array.derelictposts);
+		return array[randInt(0, (array.length - 1))];
 	}
 }

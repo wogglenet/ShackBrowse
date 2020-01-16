@@ -101,11 +101,8 @@ public class ThreadListFragment extends ListFragment
     final static int POST_CACHE_HISTORY = 500;
     
     final static String COLLAPSED_CACHE_FILENAME = "collapsed3.cache";
-    
-    final static String COLLAPSE_FILTWORD_FILENAME = "colfiltwords.cache";
+
     final static String DELETE_FILTWORD_FILENAME = "delfiltwords.cache";
-    final static String COLLAPSE_USER_FILTWORD_FILENAME = "coluserfiltwords.cache";
-    final static String DELETE_USER_FILTWORD_FILENAME = "deluserfiltwords.cache";
     
     final static int COLLAPSED_SIZE = 500;
     public OfflineThread _offlineThread;
@@ -133,7 +130,12 @@ public class ThreadListFragment extends ListFragment
 	private boolean mGetAllThreadsMode;
 	private String mSortMode = "usual";
 
+
+
 	private SwipeRefreshLayout ptrLayout;
+	private boolean mEchoEnabled = false;
+	private boolean mAutoEchoEnabled = false;
+	private boolean mEchoPalatize = false;
 
 	// handle collapsed saving
 	public void onPause()
@@ -191,6 +193,9 @@ public class ThreadListFragment extends ListFragment
 		}, 1000);
 
 
+		mEchoEnabled = _prefs.getBoolean("echoEnabled", false);
+		mAutoEchoEnabled = _prefs.getBoolean("echoChamberAuto", true) && mEchoEnabled;
+		mEchoPalatize = _prefs.getBoolean("echoPalatize", false);
 		super.onResume();
 	}
 	
@@ -865,12 +870,8 @@ public class ThreadListFragment extends ListFragment
     }
     
     public void addFiltWord(final int type)
-    {
-		String thing = "Keyword";
-    	if (type == 1)
-    		thing = "Username";
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+	{
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
     	builder.setTitle("Add Keyword Filter");
     	// Set up the input
 		final EditText input = new EditText(getActivity());
@@ -878,13 +879,11 @@ public class ThreadListFragment extends ListFragment
 		input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
 		builder.setView(input);
 		
-    	builder.setPositiveButton("Remove Threads w/ " + thing, new DialogInterface.OnClickListener() {
+    	builder.setPositiveButton("Remove Threads w/ Keyword", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				Filtword fw = null;
-				if (type == 1)
-					fw = new Filtword(DELETE_USER_FILTWORD_FILENAME);
-				else
+
 					fw = new Filtword(DELETE_FILTWORD_FILENAME);
 				
 				fw.add(input.getText().toString());
@@ -908,12 +907,6 @@ public class ThreadListFragment extends ListFragment
     	String type = null;
     	if (filename.contains(DELETE_FILTWORD_FILENAME))
 	    	type = "removing threads w/ keyword";
-    	else if (filename.contains(COLLAPSE_FILTWORD_FILENAME))
-    		type = "doing nothing to keyword";
-    	else if (filename.contains(DELETE_USER_FILTWORD_FILENAME))
-	    	type = "removing threads w/ username";
-    	else if (filename.contains(COLLAPSE_USER_FILTWORD_FILENAME))
-    		type = "doing nothing to username";
     	
     	builder.setMessage("Stop "+type+" \""+keyword+"\"?");
 		
@@ -939,39 +932,17 @@ public class ThreadListFragment extends ListFragment
     {
 	    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Keyword Filters");
-        final Filtword cfwords = new Filtword(COLLAPSE_FILTWORD_FILENAME);
         final Filtword dfwords = new Filtword(DELETE_FILTWORD_FILENAME);
-        final Filtword cfuwords = new Filtword(COLLAPSE_USER_FILTWORD_FILENAME);
-        final Filtword dfuwords = new Filtword(DELETE_USER_FILTWORD_FILENAME);
         final ArrayList<CharSequence> list = new ArrayList<CharSequence>();
-        list.addAll(cfwords.getWithPrefix());
         list.addAll(dfwords.getWithPrefix());
-        list.addAll(cfuwords.getWithPrefix());
-        list.addAll(dfuwords.getWithPrefix());
         final ArrayList<CharSequence> cleanlist = new ArrayList<CharSequence>();
-        cleanlist.addAll(cfwords.get());
         cleanlist.addAll(dfwords.get());
-        cleanlist.addAll(cfuwords.get());
-        cleanlist.addAll(dfuwords.get());
         final CharSequence[] items = list.toArray(new CharSequence[list.size()]);
         builder.setItems(items, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
-            	if (item >= (cfwords.get().size() + dfwords.get().size() + cfuwords.get().size()))
-            		removeFiltWord(cleanlist.get(item).toString(), DELETE_USER_FILTWORD_FILENAME);
-            	else if (item >= (cfwords.get().size() + dfwords.get().size()))
-            		removeFiltWord(cleanlist.get(item).toString(), COLLAPSE_USER_FILTWORD_FILENAME);
-            	else if (item >= (cfwords.get().size()))
             		removeFiltWord(cleanlist.get(item).toString(), DELETE_FILTWORD_FILENAME);
-            	else
-            		removeFiltWord(cleanlist.get(item).toString(), COLLAPSE_FILTWORD_FILENAME);
                 }});
         builder.setNegativeButton("Close", null);
-        builder.setNeutralButton("Add Username", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				addFiltWord(1);
-			}
-		});
         builder.setPositiveButton("Add Keyword", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -1009,10 +980,7 @@ public class ThreadListFragment extends ListFragment
 	    ArrayList<Thread> update(ArrayList<Thread> threads)
 	    {
 	        // set the number of replies that are new
-	    	ArrayList<String> collapsefws = get(COLLAPSE_FILTWORD_FILENAME, false);
 	    	ArrayList<String> deletefws = get(DELETE_FILTWORD_FILENAME, false);
-	    	ArrayList<String> collapseufws = get(COLLAPSE_USER_FILTWORD_FILENAME, false);
-	    	ArrayList<String> deleteufws = get(DELETE_USER_FILTWORD_FILENAME, false);
 	    	
 	        // actually mark as read here
 	    	Iterator<Thread> iter = threads.iterator();
@@ -1031,17 +999,22 @@ public class ThreadListFragment extends ListFragment
 	    				break;
 	    			}
 	    		}
-	    		for (int j = 0; j < deleteufws.size(); j++)
-	    		{
-	    			if (t.getUserName().toLowerCase().contains(deleteufws.get(j).toLowerCase()))
-	    			{
-	    				// delete thread
-	    				System.out.println("DELETING U: " + deleteufws.get(j).toLowerCase());
-	    				iter.remove();
-                        statInc(getActivity(), "CollapsedDueToUsernameFilter");
-	    				break;
-	    			}
-	    		}
+
+				if (((MainActivity)getActivity()).isOnBlocklist(t.getUserName().toLowerCase()))
+				{
+					// delete thread
+					System.out.println("DELETING U (echochamber): " + t.getUserName().toLowerCase());
+					if (mEchoPalatize)
+					{
+						t.setContent(ThreadViewFragment.getVastlyImprovedDerelictPost(getActivity()));
+					}
+					else {
+						iter.remove();
+					}
+					statInc(getActivity(), "CollapsedDueToEchoChamber");
+					break;
+				}
+
 	    	}
 			return threads;
 	    }
@@ -1069,14 +1042,8 @@ public class ThreadListFragment extends ListFragment
 	                    		if (withPrefix)
 	                    		{
 	                    			String prefix = null;
-	                    			if (filename.equals(COLLAPSE_FILTWORD_FILENAME))
-	                    				prefix = "DEPRECATED (does nothing): ";
-	                    			else if (filename.equals(DELETE_FILTWORD_FILENAME))
+	                    			if (filename.equals(DELETE_FILTWORD_FILENAME))
 	                    				prefix = "collapse: ";
-	                    			else if (filename.equals(COLLAPSE_USER_FILTWORD_FILENAME))
-	                    				prefix = "DEPRECATED (does nothing): ";
-	                    			else if (filename.equals(DELETE_USER_FILTWORD_FILENAME))
-	                    				prefix = "collapse user: ";
 	                    			fwlist.add(prefix + line);
 	                    		}
 	                    		else

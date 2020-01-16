@@ -127,7 +127,8 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 	static final String PQPSERVICESUCCESS = "net.woggle.PQPServiceSuccess";
 	static final String CLICKLINK = "net.woggle.ClickLink";
-    FrameLayout mFrame;
+
+	FrameLayout mFrame;
     OfflineThread mOffline;
     
     public SearchResultFragment _searchResults;
@@ -194,6 +195,10 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	public SmoothProgressBar mProgressBar;
 	private long mTimeStartedToShowSplash = 0L;
 	private YouTubePlayer mYoutubePlayer;
+	private NetworkEchoChamberServer mEchoAccess;
+	public JSONArray mBlockList;
+	private JSONArray mAutoChamber;
+	private MaterialDialog mProgressDialog;
 
 
 	@Override
@@ -325,6 +330,45 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			{
 				_GCMAccess.updReplVan(_prefs.getBoolean("noteReplies", true),_prefs.getBoolean("noteVanity", false));
 			}
+		}
+
+		NetworkEchoChamberServer.OnEchoChamberResultListener echoListener = new NetworkEchoChamberServer.OnEchoChamberResultListener() {
+			@Override
+			public void networkResult(JSONArray result) {
+				if (mProgressDialog != null)
+				{
+					mProgressDialog.dismiss();
+					mProgressDialog = null;
+				}
+				mBlockList = result;
+				Editor ed = _prefs.edit();
+				ed.putString("echoChamberBlockList", result.toString());
+				ed.commit();
+			}
+		};
+		mEchoAccess = new NetworkEchoChamberServer(this, echoListener);
+		if (_prefs.contains("echoChamberBlockList"))
+		{
+			try {
+				mBlockList = new JSONArray(_prefs.getString("echoChamberBlockList", ""));
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+			if (_prefs.getBoolean("echoEnabled", false))
+			{
+				mEchoAccess.doBlocklistTask(NetworkEchoChamberServer.ACTION_GET);
+			}
+		}
+		try {
+			if (_prefs.getBoolean("echoChamberAuto", true)) {
+				mAutoChamber = new JSONArray(_prefs.getString("autoEchoChamberBlockList", ""));
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
 		}
 
 		// SM autocheck
@@ -555,6 +599,8 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
         // check versions
         new VersionTask().execute();
+
+        // get block list
         
         // external intent handling
         Intent intent = getIntent();
@@ -1309,6 +1355,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
     public static final int CONTENT_FRONTPAGE = 6;
     public static final int CONTENT_STATS = 7;
     public static final int CONTENT_NOTEPREFS = 8;
+	public static final int CONTENT_ECHOPREFS = 9;
 	
 	void setContentTo(int type)
 	{
@@ -1366,6 +1413,11 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
             mTitle = "Notification Preferences";
             fragment = (PreferenceFragmentNotifications)Fragment.instantiate(getApplicationContext(), PreferenceFragmentNotifications.class.getName(), new Bundle());
         }
+		if (type == CONTENT_ECHOPREFS)
+		{
+			mTitle = "Echo Chamber Preferences";
+			fragment = (PreferenceFragmentEchoChamber)Fragment.instantiate(getApplicationContext(), PreferenceFragmentEchoChamber.class.getName(), new Bundle());
+		}
         if (type == CONTENT_FRONTPAGE)
         {
             mTitle = "Frontpage";
@@ -2290,7 +2342,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
                 	_threadView.onActivityResult(requestCode, resultCode, data);
             }
         }
-
+		super.onActivityResult(requestCode,resultCode, data);
     }
     
     public void addToThreadIdBackStack (int threadId)
@@ -2539,11 +2591,11 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 						edit.putInt("flagsPC", vchk.getInt("pc"));
 					}
 
-					if (vchk.has("f"))
+					if (vchk.has("ac"))
 					{
-						JSONArray fusers = vchk.getJSONArray("f");
-						final String ftxt = fusers.join(" ").replaceAll("\"", "");
-						edit.putString("fusers", ftxt);
+						JSONArray autochamber = vchk.getJSONArray("ac");
+						mAutoChamber = autochamber;
+						edit.putString("autoEchoChamberBlockList", autochamber.toString());
 					}
 
 
@@ -2685,6 +2737,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	    setIntent(intent);
 	    onPostResumeIntent = intent;
 	    onPostResume = OnPostResume.HANDLE_INTENT;
+	    super.onNewIntent(intent);
 	}
 	
 	public static final int CANNOTHANDLEINTENT = 0;
@@ -3869,6 +3922,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
             fT.commit();
 
             _loadingSplash.randomizeTagline();
+            _loadingSplash.showEcho();
         }
 
     }
@@ -4125,5 +4179,79 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 				mYoutubeView.getPlayerUIController().setVideoTitle(result);
 		}
 	}
+	/*
+	Blocklist
+	 */
+	public boolean isOnBlocklist (String username)
+	{
+		boolean found = false;
+		if (mBlockList != null)
+		{
+			try {
+				for (int i = 0; i < mBlockList.length(); i++) {
+					if (mBlockList.getString(i).equalsIgnoreCase(username)) {
+						found = true;
+						break;
+					}
+				}
+				if ((mAutoChamber != null) && (_prefs.getBoolean("echoChamberAuto", true)))
+				{
+					for (int i = 0; i < mAutoChamber.length(); i++) {
+						if (mAutoChamber.getString(i).equalsIgnoreCase(username)) {
+							found = true;
+							break;
+						}
+					}
+				}
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+		return found;
+	}
+	public String getFancyBlockList (boolean autoChamberList) {
+		JSONArray json;
+		if (autoChamberList)
+		{
+			json = mAutoChamber;
+		}
+		else
+		{
+			json = mBlockList;
+		}
 
+		String list = "";
+		if ((json != null) && (json.length() > 0)) {
+			try {
+				for (int i = 0; i < json.length(); i++) {
+					list = list + (i > 0 ? ", " : "") + json.getString(i);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		else { list = "(no names on list)"; }
+		return list;
+	}
+	public void blockUser (String username)
+	{
+		boolean echoPalatize = _prefs.getBoolean("echoPalatize", false);
+		AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+		builder.setTitle((echoPalatize ? "Palatize" : "Block") + " ALL posts from " + username + "?");
+		String action = (echoPalatize ? "PALATIZE" : "REMOVE");
+		builder.setMessage("This will "+action+" all posts from this user in future threads. " + (echoPalatize ? "" : "This will ALSO REMOVE any subthreads from and replies to this user. ") +  "This can be reversed in the Echo Chamber options. Continue?");
+		builder.setCancelable(true);
+		builder.setPositiveButton((echoPalatize ? "Palatize" : "Block") + " User", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				mProgressDialog = MaterialProgressDialog.show(MainActivity.this, "Escorting user from Echo Chamber", "Communicating with Shack Browse server...", true, true);
+				mEchoAccess.doBlocklistTask(NetworkEchoChamberServer.ACTION_ADD, username);
+			}
+		});
+		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+			}
+		});
+		builder.create().show();
+	}
 }

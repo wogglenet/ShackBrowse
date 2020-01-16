@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:key="echoCat" android:title="@string/preference_echochamber_title" android:summary="@string/preference_echochamber_summary">
+        <CheckBoxPreference
+            android:key="echoEnabled"
+            android:title="@string/preference_echochamber_title"
+            android:summary="@string/preference_echochamber_desc_summary"
+            android:defaultValue="false"
+            />
+        <CheckBoxPreference
+            android:key="echoChamberAuto"
+            android:dependency="echoEnabled"
+            android:title="@string/preference_echochamberauto_title"
+            android:summary="@string/preference_echochamberauto_summary"
+            android:defaultValue="true"
+            />
+        <Preference
+            android:key="blockList"
+            android:title="@string/preference_blocklist_title"
+            android:summary="@string/preference_blocklist_summary"
+            android:dependency="echoEnabled"
+            />
+        <CheckBoxPreference
+            android:key="echoPalatize"
+            android:dependency="echoEnabled"
+            android:title="@string/preference_echochamberpalatize_title"
+            android:summary="@string/preference_echochamberpalatize_summary"
+            android:defaultValue="false"
+            />
+
+    </PreferenceCategory>
+</PreferenceScreen>

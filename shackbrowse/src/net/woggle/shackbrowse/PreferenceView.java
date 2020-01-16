@@ -33,19 +33,9 @@ import com.afollestad.materialdialogs.MaterialDialog;
 public class PreferenceView extends PreferenceFragment
 {
 	private SharedPreferences _prefs;
-	
+
 	protected MaterialDialog _progressDialog;
-	private NetworkNotificationServers _GCMAccess;
 
-	private CheckBoxPreference _vanityNotification;
-
-	private CheckBoxPreference _noteEnabled;
-
-	private CheckBoxPreference _repliesNotification;
-
-	private boolean _Venabled;
-
-	private Preference _keyNotification;
     private CheckBoxPreference mChattyPicsEnable;
 	private boolean mLoggedIn;
 
@@ -80,51 +70,6 @@ public class PreferenceView extends PreferenceFragment
 				return false;
 			}}
         );
-        /*
-        Preference testNote = (Preference) findPreference("pref_testnote");
-        testNote.setOnPreferenceClickListener(new OnPreferenceClickListener(){
-
-			@Override
-			public boolean onPreferenceClick(Preference preference) {
-				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-				
-				Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher_old);
-				NotificationCompat.Builder mBuilder =
-				        new NotificationCompat.Builder(getActivity())
-				        .setSmallIcon(R.drawable.note_logo)
-				        .setLargeIcon(largeIcon)
-				        .setContentTitle("Test")
-				.setContentText("Only a test")
-				.setTicker("Test Notification")
-				.setAutoCancel(true);
-				
-				NotificationManager mNotificationManager =
-					    (NotificationManager)getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-				
-				PendingIntent notifyPIntent = PendingIntent.getActivity(getActivity().getApplicationContext(), 0, new Intent(), 0);
-				mBuilder.setContentIntent(notifyPIntent);
-				
-				Notification notification = mBuilder.build();
-				notification.sound = Uri.parse(prefs.getString("notificationSound", "DEFAULT_SOUND"));
-				
-				if (prefs.getBoolean("notificationVibrate", true))
-					notification.defaults|= Notification.DEFAULT_VIBRATE;
-				
-				notification.flags |= Notification.FLAG_AUTO_CANCEL;
-				notification.flags |= Notification.FLAG_SHOW_LIGHTS;
-				
-				notification.ledARGB = prefs.getInt("notificationColor", Color.GREEN);
-				notification.ledOffMS = 1600;
-				notification.ledOnMS = 100;
-				// mId allows you to update the notification later on.
-				int mId = 58401;
-				mNotificationManager.notify(mId, notification);
-				
-				return false;
-			}}
-        );
-        */
-
 
 	    Preference imgurLogin = (Preference) findPreference("imgurLogin");
 	    imgurLogin.setOnPreferenceClickListener(new OnPreferenceClickListener(){
@@ -144,8 +89,6 @@ public class PreferenceView extends PreferenceFragment
 		    }}
 	    );
 
-
-
 	    Preference bAutoImageZoomPref = (Preference) findPreference("openBrowserImageZoom");
         bAutoImageZoomPref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
 			@Override
@@ -155,8 +98,6 @@ public class PreferenceView extends PreferenceFragment
 			}}
         );
 
-
-        
         Preference orientLock = (Preference)findPreference("orientLock");
         orientLock.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 
@@ -216,6 +157,17 @@ public class PreferenceView extends PreferenceFragment
 		    	return false;
 			}}
         );
+
+		Preference echoPref = (Preference) findPreference("echoChamber");
+		echoPref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
+
+			@Override
+			public boolean onPreferenceClick(Preference preference) {
+				((MainActivity)getActivity()).cleanUpViewer();
+				((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_ECHOPREFS);
+				return false;
+			}}
+		);
 
         mChattyPicsEnable = (CheckBoxPreference)findPreference("enableChattyPics");
         mChattyPicsEnable.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {

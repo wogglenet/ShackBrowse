@@ -3,7 +3,7 @@
           xmlns:tools="http://schemas.android.com/tools"
       package="net.woggle.shackbrowse"
       android:versionCode="461"
-      android:versionName="6.0.7">
+      android:versionName="6.0.7Beta">
 <uses-permission android:name="android.permission.INTERNET"></uses-permission>
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />

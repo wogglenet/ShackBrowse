@@ -1920,6 +1920,20 @@ public class ShackApi
 		return getJson(NOTESERV_URL + "getkeywords.php?user=" + URLEncoder.encode(userName, "UTF8"));
 	}
 
+	/*
+	Blocklist
+	 */
+
+    public static String blocklistAdd (String userName, String keyword) throws ClientProtocolException, UnsupportedEncodingException, IOException {
+        return get(NOTESERV_URL + "blocklist.php?type=blocklist&action=add&user=" + URLEncoder.encode(userName, "UTF8") + "&item=" + URLEncoder.encode(keyword, "UTF8"));
+    }
+    public static String blocklistRemove (String userName, String keyword) throws ClientProtocolException, UnsupportedEncodingException, IOException {
+        return get(NOTESERV_URL + "blocklist.php?type=blocklist&action=remove&user=" + URLEncoder.encode(userName, "UTF8") + "&item=" + URLEncoder.encode(keyword, "UTF8"));
+    }
+    public static String blocklistCheck (String userName) throws ClientProtocolException, UnsupportedEncodingException, IOException {
+        return get(NOTESERV_URL + "blocklist.php?type=blocklist&action=get&user=" + URLEncoder.encode(userName, "UTF8"));
+    }
+
     /*
         DONATOR LIST
      */

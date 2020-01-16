@@ -112,6 +112,23 @@
             android:layout_below="@id/splashText"
             android:layout_alignParentBottom="false" />
 
+        <TextView
+            android:id="@+id/echo_chamber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/splash_tagline"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:fontFamily="sans-serif-condensed"
+            android:paddingTop="80dp"
+            android:text="Echo Chamber: ..."
+            android:textColor="@color/modtag_tangent"
+            android:textIsSelectable="false"
+            android:focusable="false"
+            android:longClickable="false"
+            android:textSize="10dp"
+            android:textStyle=""/>
+
     </RelativeLayout>
 
 </LinearLayout>

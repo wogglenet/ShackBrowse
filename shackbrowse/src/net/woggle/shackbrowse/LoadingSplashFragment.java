@@ -66,8 +66,31 @@ public class LoadingSplashFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         randomizeTagline();
+
+        showEcho();
     }
-    
+
+    public void showEcho()
+    {
+        if (getView() != null) {
+            TextView echo = (TextView) ((View) getView()).findViewById(R.id.echo_chamber);
+            String echostatus = "";
+            String autostatus = "";
+            boolean echoEnabled = mPrefs.getBoolean("echoEnabled", false);
+            if (mPrefs.getBoolean("echoChamberAuto", true) && echoEnabled) {
+                autostatus = "AutoChamber blocking: " + ((MainActivity) getActivity()).getFancyBlockList(true);
+            } else {
+                autostatus = "(AutoChamber off)";
+            }
+            if (echoEnabled) {
+                echostatus = "blocking: " + ((MainActivity) getActivity()).getFancyBlockList(false);
+            } else {
+                echostatus = "off";
+            }
+
+            echo.setText("Echo Chamber: " + echostatus + "\r\n" + autostatus);
+        }
+    }
     public void randomizeTagline() {
         if (getView() != null) {
             TextView tline = (TextView) ((View) getView()).findViewById(R.id.splash_tagline);
