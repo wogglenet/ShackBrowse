@@ -93,8 +93,13 @@ How am I supposed to tell if you were looking at the thread or the list of threa
 
 $ 6.0.7Beta
 % v 6.0.7Beta
-_ Jan 17, 2019
-* Echo Chamber
+_ Jan 19, 2019
+* Echo Chamber allows you to completely remove threads and posts and all replies to certain users
+* Block users from your echo chamber by clicking on the username in a thread and selecting block
+* Block list is synced between devices via the cloud
+* "User based autocollapse" option under "Keyword Autocollapse" has been removed - this list will not be migrated
+* Palatize option replaces all text of blocked users with smiley faces and cheerful phrases
+* Auto Chamber is a planned future option for "crowd sourced" auto blocking of statistical outliers among the Shack Browse userbase
 * Bug Fix: Video no longer auto plays in root post
 
 $ 6.0.6

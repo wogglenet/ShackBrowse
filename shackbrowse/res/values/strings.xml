@@ -383,7 +383,7 @@
     <string name="preference_backbuttonguard_summary">Pops up a dialog asking if you meant to exit the app when you hit back in a root view instead of just exiting the app.</string>
     <string name="preference_echochamber_title">Echo Chamber</string>
     <string name="preference_echochamber_summary">Open user blocking settings</string>
-    <string name="preference_echochamber_desc_summary">Remove posts and replies to posts of users on block lists. Also removes root posts and blocks notifications. Option to just replace text instead.</string>
+    <string name="preference_echochamber_desc_summary">Remove posts and replies to posts of users on block lists. Also removes root posts and blocks notifications. Option to just replace text instead ("palatize" mode below).</string>
     <string name="preference_echochamberauto_title">Auto Chamber</string>
     <string name="preference_echochamberauto_summary">Auto block users that have been blocked by large numbers of other shack browse users (does not modify your block list but does display who is being blocked automatically) (experimental, may not be functional yet or ever)</string>
     <string name="preference_blocklist_title">Edit personal block list</string>
