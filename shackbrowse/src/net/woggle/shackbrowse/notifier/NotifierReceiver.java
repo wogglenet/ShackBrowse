@@ -47,7 +47,7 @@ public class NotifierReceiver extends FirebaseMessagingService
 	public static final String CHANNEL_SHACKMSG = "sbnotechannel_shackmsg";
 	public static final String CHANNEL_SYSTEM = "sbnotechannel_system";
 
-	private SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+	private SharedPreferences mPrefs;
 
 	@Override
 	public void onMessageReceived(RemoteMessage message){
@@ -55,6 +55,8 @@ public class NotifierReceiver extends FirebaseMessagingService
 		Log.i("SBNOTIFIER", "NotifierReceiver invoked, starting service");
 		System.out.println("SHACK BROWSE FCM MSG RECEIVE");
 		Context context = getApplicationContext();
+
+		mPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
 		Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher);
 
