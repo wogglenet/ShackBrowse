@@ -91,6 +91,12 @@ How am I supposed to tell if you were looking at the thread or the list of threa
 
 -->
 
+$ 6.0.7Beta
+% v 6.0.7Beta
+_ Jan 17, 2019
+* Echo Chamber
+* Bug Fix: Video no longer auto plays in root post
+
 $ 6.0.6
 % v 6.0.6
 _ Sep 4, 2019

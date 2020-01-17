@@ -1999,7 +1999,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			setOrientLock();
 		}
     
-        if (_splitView == 0 || _currentFragmentType == CONTENT_FRONTPAGE || _currentFragmentType == CONTENT_PREFS || _currentFragmentType == CONTENT_STATS || _currentFragmentType == CONTENT_NOTEPREFS)
+        if (_splitView == 0 || _currentFragmentType == CONTENT_FRONTPAGE || _currentFragmentType == CONTENT_PREFS || _currentFragmentType == CONTENT_STATS || _currentFragmentType == CONTENT_NOTEPREFS || _currentFragmentType == CONTENT_ECHOPREFS)
         {
         	setThreadViewFullScreen(false);
         	setDualPane(false);
@@ -4238,14 +4238,17 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	{
 		boolean echoPalatize = _prefs.getBoolean("echoPalatize", false);
 		AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-		builder.setTitle((echoPalatize ? "Palatize" : "Block") + " ALL posts from " + username + "?");
+		builder.setTitle((echoPalatize ? "Palatize" : "Remove") + " ALL posts from " + username + "?");
 		String action = (echoPalatize ? "PALATIZE" : "REMOVE");
-		builder.setMessage("This will "+action+" all posts from this user in future threads. " + (echoPalatize ? "" : "This will ALSO REMOVE any subthreads from and replies to this user. ") +  "This can be reversed in the Echo Chamber options. Continue?");
+		builder.setMessage("This will "+action+" all posts from this user in future threads. " + (echoPalatize ? "" : "This will ALSO REMOVE any subthreads from and replies to this user. ") +  "This can be changed in the Echo Chamber options. Continue?");
 		builder.setCancelable(true);
 		builder.setPositiveButton((echoPalatize ? "Palatize" : "Block") + " User", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				mProgressDialog = MaterialProgressDialog.show(MainActivity.this, "Escorting user from Echo Chamber", "Communicating with Shack Browse server...", true, true);
 				mEchoAccess.doBlocklistTask(NetworkEchoChamberServer.ACTION_ADD, username);
+				Editor ed = _prefs.edit();
+				ed.putBoolean("echoEnabled", true);
+				ed.commit();
 			}
 		});
 		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

@@ -35,6 +35,8 @@ import android.util.Log;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import org.json.JSONArray;
+
 public class NotifierReceiver extends FirebaseMessagingService
 {
 	public static final int icon_res = R.drawable.note_logo2018;
@@ -45,6 +47,8 @@ public class NotifierReceiver extends FirebaseMessagingService
 	public static final String CHANNEL_SHACKMSG = "sbnotechannel_shackmsg";
 	public static final String CHANNEL_SYSTEM = "sbnotechannel_system";
 
+	private SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
 	@Override
 	public void onMessageReceived(RemoteMessage message){
 
@@ -52,7 +56,6 @@ public class NotifierReceiver extends FirebaseMessagingService
 		System.out.println("SHACK BROWSE FCM MSG RECEIVE");
 		Context context = getApplicationContext();
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher);
 
 
@@ -63,6 +66,14 @@ public class NotifierReceiver extends FirebaseMessagingService
 
 		if ((data != null) && (data.get("type") != null))
 		{
+
+			if (isOnBlockList(data.get("username").toString()))
+			{
+				// do not trigger notification
+				StatsFragment.statInc(context, "EchoChamberBlockNotification");
+				return;
+			}
+
 			if (data.get("type").toString().equalsIgnoreCase("reply"))
 			{
 				NotificationCompat.Builder mBuilder =
@@ -83,7 +94,7 @@ public class NotifierReceiver extends FirebaseMessagingService
 				n.commit(context);
 				
 				// check count
-				int noteCount = prefs.getInt("GCMNoteCountReply", 0);
+				int noteCount = mPrefs.getInt("GCMNoteCountReply", 0);
 				int numNew = noteCount + 1;
 				mBuilder.setNumber(numNew);
 				
@@ -119,7 +130,7 @@ public class NotifierReceiver extends FirebaseMessagingService
 				Notification notification = mBuilder.build();
 
 				// notification snooze
-				if (checkIfMuted(Integer.parseInt(data.get("parentid").toString()), prefs))
+				if (checkIfMuted(Integer.parseInt(data.get("parentid").toString()), mPrefs))
 				{
 					return;
 				}
@@ -127,7 +138,7 @@ public class NotifierReceiver extends FirebaseMessagingService
 				int mId = 58401;
 				handleNotification(notification, mId, context);
 				
-				Editor editor = prefs.edit();
+				Editor editor = mPrefs.edit();
 				editor.putInt("GCMNoteCountReply", numNew);
 				editor.commit();
 
@@ -157,7 +168,7 @@ public class NotifierReceiver extends FirebaseMessagingService
 				n.commit(context);
 				
 				// check count
-				int noteCount = prefs.getInt("GCMNoteCountVanity", 0);
+				int noteCount = mPrefs.getInt("GCMNoteCountVanity", 0);
 				int numNew = noteCount + 1;
 				mBuilder.setNumber(numNew);
 				
@@ -196,7 +207,7 @@ public class NotifierReceiver extends FirebaseMessagingService
 				int mId = 58402;
 				handleNotification(notification, mId, context);
 				
-				Editor editor = prefs.edit();
+				Editor editor = mPrefs.edit();
 				editor.putInt("GCMNoteCountVanity", numNew);
 				editor.commit();
 
@@ -225,7 +236,7 @@ public class NotifierReceiver extends FirebaseMessagingService
 				n.commit(context);
 				
 				// check count
-				int noteCount = prefs.getInt("GCMNoteCount" + data.get("keyword").toString().hashCode(), 0);
+				int noteCount = mPrefs.getInt("GCMNoteCount" + data.get("keyword").toString().hashCode(), 0);
 				int numNew = noteCount + 1;
 				mBuilder.setNumber(numNew);
 				
@@ -264,7 +275,7 @@ public class NotifierReceiver extends FirebaseMessagingService
 				int mId = data.get("keyword").toString().hashCode();
 				handleNotification(notification, mId, context);
 				
-				Editor editor = prefs.edit();
+				Editor editor = mPrefs.edit();
 				editor.putInt("GCMNoteCount" + data.get("keyword").toString().hashCode(), numNew);
 				editor.commit();
 
@@ -327,7 +338,7 @@ public class NotifierReceiver extends FirebaseMessagingService
 				int mId = 58403;
 				handleNotification(notification, mId, context);
 				
-				Editor editor = prefs.edit();
+				Editor editor = mPrefs.edit();
 				editor.putString("GCMShackMsgLastNotifiedId", data.get("id").toString());
 				editor.commit();
 
@@ -489,5 +500,55 @@ public class NotifierReceiver extends FirebaseMessagingService
 		intent.putExtra("key", prefKeyToZero);
         PendingIntent pendintIntent = PendingIntent.getBroadcast(ctx, 0, intent, 0);
         return pendintIntent;
+	}
+
+	/*
+	ECHO CHAMBER
+	 */
+	public boolean isOnBlockList(String username)
+	{
+		if (mPrefs.contains("echoChamberBlockList") && mPrefs.getBoolean("echoEnabled", false))
+		{
+			JSONArray mBlockList = null; JSONArray mAutoChamber = null; boolean autochamberenabled = false;
+			try {
+				mBlockList = new JSONArray(mPrefs.getString("echoChamberBlockList", ""));
+
+				if (mPrefs.contains("echoChamberAuto") && mPrefs.getBoolean("echoChamberAuto", true) && mPrefs.contains("autoEchoChamberBlockList")) {
+					mAutoChamber = new JSONArray(mPrefs.getString("autoEchoChamberBlockList", ""));
+					autochamberenabled = true;
+				}
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+
+			boolean found = false;
+			if (mBlockList != null)
+			{
+				try {
+					for (int i = 0; i < mBlockList.length(); i++) {
+						if (mBlockList.getString(i).equalsIgnoreCase(username)) {
+							found = true;
+							break;
+						}
+					}
+					if ((mAutoChamber != null) && (autochamberenabled))
+					{
+						for (int i = 0; i < mAutoChamber.length(); i++) {
+							if (mAutoChamber.getString(i).equalsIgnoreCase(username)) {
+								found = true;
+								break;
+							}
+						}
+					}
+				} catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+			return found;
+		}
+		else return false;
 	}
 }

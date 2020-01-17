@@ -77,13 +77,14 @@ public class LoadingSplashFragment extends Fragment {
             String echostatus = "";
             String autostatus = "";
             boolean echoEnabled = mPrefs.getBoolean("echoEnabled", false);
+            boolean echoPalatize = mPrefs.getBoolean("echoPalatize", false);
             if (mPrefs.getBoolean("echoChamberAuto", true) && echoEnabled) {
-                autostatus = "AutoChamber blocking: " + ((MainActivity) getActivity()).getFancyBlockList(true);
+                autostatus = "AutoChamber " + (echoPalatize ? "palatizing" : "blocking") + ": " + ((MainActivity) getActivity()).getFancyBlockList(true);
             } else {
                 autostatus = "(AutoChamber off)";
             }
             if (echoEnabled) {
-                echostatus = "blocking: " + ((MainActivity) getActivity()).getFancyBlockList(false);
+                echostatus = (echoPalatize ? "palatizing" : "blocking") + ": " + ((MainActivity) getActivity()).getFancyBlockList(false);
             } else {
                 echostatus = "off";
             }

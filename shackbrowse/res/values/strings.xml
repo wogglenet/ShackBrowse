@@ -333,6 +333,11 @@
     <string name="statsItemMaxThreadSize">Largest number of posts seen in single thread</string>
     <string name="statsItemTimeInApp">Time spent in main app</string>
     <string name="statsItemTimeInComposer">Time spent in composer</string>
+
+    <string name="statsItemEchoChamberRemoved">Posts removed from Echo Chamber</string>
+    <string name="statsItemEchoChamberRemovedReply">Replies to posts removed from Echo Chamber</string>
+    <string name="statsItemEchoChamberBlockNotification">Notifications blocked from Echo Chamber</string>
+
     <string name="notTurnedOn">Disabled</string>
     <string name="statsopt">Opt Out</string>
     <string name="compose_showextended">Off</string>
@@ -378,9 +383,9 @@
     <string name="preference_backbuttonguard_summary">Pops up a dialog asking if you meant to exit the app when you hit back in a root view instead of just exiting the app.</string>
     <string name="preference_echochamber_title">Echo Chamber</string>
     <string name="preference_echochamber_summary">Open user blocking settings</string>
-    <string name="preference_echochamber_desc_summary">Remove posts and replies to posts of users on block lists. Also removes root posts.</string>
+    <string name="preference_echochamber_desc_summary">Remove posts and replies to posts of users on block lists. Also removes root posts and blocks notifications. Option to just replace text instead.</string>
     <string name="preference_echochamberauto_title">Auto Chamber</string>
-    <string name="preference_echochamberauto_summary">Auto block users that have been blocked by large numbers of other shack browse users (does not modify your block list but does display who is being blocked automatically) (experimental, may not be functional yet)</string>
+    <string name="preference_echochamberauto_summary">Auto block users that have been blocked by large numbers of other shack browse users (does not modify your block list but does display who is being blocked automatically) (experimental, may not be functional yet or ever)</string>
     <string name="preference_blocklist_title">Edit personal block list</string>
     <string name="preference_blocklist_summary">Modify the list of users you have removed from your echo chamber. Saves to cloud.</string>
     <string name="preference_echochamberpalatize_title">Palatize Mode</string>
@@ -440,6 +445,9 @@
         <item>statsItemMaxThreadSize</item>
         <item>statsItemTimeInApp</item>
         <item>statsItemTimeInComposer</item>
+        <item>statsItemEchoChamberRemoved</item>
+        <item>statsItemEchoChamberRemovedReply</item>
+        <item>statsItemEchoChamberBlockNotification</item>
     </string-array>
 
     <bool name="com.twitter.sdk.android.TRACE_ENABLED">true</bool>

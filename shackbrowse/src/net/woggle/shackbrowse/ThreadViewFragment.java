@@ -1372,7 +1372,7 @@ public class ThreadViewFragment extends ListFragment
                     usrpop.getMenu().add(Menu.NONE, 1, Menu.NONE, "Search for posts by " + unamefinal);
                     usrpop.getMenu().add(Menu.NONE, 2, Menu.NONE, "Highlight " + unamefinal + " in thread");
 					usrpop.getMenu().add(Menu.NONE, 3, Menu.NONE, "Copy " + unamefinal + " to clipboard");
-					usrpop.getMenu().add(Menu.NONE, 4, Menu.NONE, "Echo Chamber / block");
+					usrpop.getMenu().add(Menu.NONE, 4, Menu.NONE, "Block from Echo Chamber");
 
                     usrpop.setOnMenuItemClickListener(new OnMenuItemClickListener(){
                         @Override
@@ -2095,7 +2095,7 @@ public class ThreadViewFragment extends ListFragment
 							MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(PopupBrowserFragment.getGIFVtoMP4(postClip.url.getURL())));
 	// Prepare the player with the source.
 							player.prepare(videoSource);
-							player.setPlayWhenReady(true);
+							player.setPlayWhenReady((position == 0 ? false : true));
 							player.setRepeatMode(Player.REPEAT_MODE_ONE);
 							view.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH);
 							//view.setControllerAutoShow(false);
@@ -3186,10 +3186,41 @@ public class ThreadViewFragment extends ListFragment
         
         public ArrayList<Post> createThreadTree(ArrayList<Post> posts)
         {
+        	// echo chamber
+			if ((mEchoEnabled) && (!mEchoPalatize))
+			{
+				ListIterator<Post> iter = posts.listIterator();
+				int level = 9001; // a high level, like over 9000
+				while (iter.hasNext()) {
+					Post p = iter.next();
+					if (p.getLevel() > level) {
+						iter.remove();
+						statInc(getActivity(), "EchoChamberRemovedReply");
+						continue;
+					}
+					else
+					{
+						// reset
+						level = 9001;
+					}
+					// echo chamber
+					if  (((MainActivity)getActivity()).isOnBlocklist(p.getUserName())) {
+						level = p.getLevel();
+						iter.remove();
+						statInc(getActivity(), "EchoChamberRemoved");
+					}
+				}
+			}
+
+			// end echo chamber
+
             // create depthstrings
             for (int i = 0; i < posts.size(); i++)
             {
             	int j = i -1;
+
+            	// iterate backwards from current post
+            	// while (havent hit top of thread) AND (level of indentation is >= to current post)
             	while ((j > 0) && (posts.get(j).getLevel() >= posts.get(i).getLevel()))
             	{
             		StringBuilder jDString = new StringBuilder(posts.get(j).getDepthString());

@@ -1011,7 +1011,7 @@ public class ThreadListFragment extends ListFragment
 					else {
 						iter.remove();
 					}
-					statInc(getActivity(), "CollapsedDueToEchoChamber");
+					statInc(getActivity(), "EchoChamberRemoved");
 					break;
 				}
 

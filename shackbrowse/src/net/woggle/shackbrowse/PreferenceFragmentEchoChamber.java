@@ -139,7 +139,7 @@ public class PreferenceFragmentEchoChamber extends PreferenceFragment
         final LinearLayout lay = new LinearLayout(getActivity());
         lay.setOrientation(LinearLayout.VERTICAL);
         final TextView tv = new TextView(getActivity());
-        tv.setText("This user will be removed from your personal echo chamber so you do not need to be offended by their views. All posts and replies to this user's posts will be removed. You can also click on their username in a thread and select \"block user\". Case insensitive.");
+        tv.setText("This user will be removed from your personal echo chamber so you do not need to be offended by their views. All posts and replies to this user's posts will be removed (unless palatize option is selected). You can also click on their username in a thread and select \"block user\". Case insensitive.");
         final EditText input = new EditText(getActivity());
         // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
         input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
@@ -147,7 +147,7 @@ public class PreferenceFragmentEchoChamber extends PreferenceFragment
         lay.addView(input);
         builder.setView(lay);
 
-        builder.setPositiveButton("Add Keyword", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("Add Block", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 _progressDialog = MaterialProgressDialog.show(getActivity(), "Escorting user from Echo Chamber", "Communicating with Shack Browse server...", true, true);
@@ -171,7 +171,7 @@ public class PreferenceFragmentEchoChamber extends PreferenceFragment
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Remove Blocked User");
 
-        builder.setMessage("Stop removing posts from " + keyword + "?");
+        builder.setMessage("Stop blocking " + keyword + "?");
 
         builder.setPositiveButton("Stop Blocking", new DialogInterface.OnClickListener() {
             @Override
