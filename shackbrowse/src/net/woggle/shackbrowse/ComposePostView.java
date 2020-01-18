@@ -48,7 +48,6 @@ import androidx.core.app.TaskStackBuilder;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.appcompat.app.AppCompatActivity;
-import io.wax911.emojify.EmojiUtils;
 
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -82,6 +81,7 @@ import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.StackingBehavior;
 import com.gc.materialdesign.views.ButtonFloatSmall;
+import com.vdurmont.emoji.EmojiParser;
 
 import org.json.JSONObject;
 
@@ -1372,7 +1372,8 @@ public class ComposePostView extends AppCompatActivity {
 	{
 		// grab the content to post
 	    EditText et = (EditText)findViewById(R.id.textContent);
-        String content = EmojiUtils.htmlify(et.getText().toString());
+
+        String content = EmojiParser.parseToHtmlDecimal(et.getText().toString());
 
 	    if (content.length() < 6)
 	    {

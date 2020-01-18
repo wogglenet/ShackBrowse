@@ -21,6 +21,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -457,7 +458,7 @@ public class OfflineThread
 		}
 
 		try {
-			listJson.accumulate("comments", array);
+			listJson.put("comments", array);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -485,6 +486,7 @@ public class OfflineThread
 	}
 	class CloudToLocal extends AsyncTask <String, Void, JSONArray>
 	{
+		@SuppressLint("WrongThread")
 		@Override
 		protected JSONArray doInBackground(String... params) {
 			JSONObject cloudJson = new JSONObject();
@@ -508,7 +510,7 @@ public class OfflineThread
 				List<Integer> watchedList = new ArrayList<Integer>();
 				for (int i=0; i<watched.length(); i++) {
 					try {
-						watchedList.add(Integer.parseInt(watched.getString(i)));
+						watchedList.add(watched.getInt(i));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -556,7 +558,7 @@ public class OfflineThread
 				_threads = _newthreads;
 				// and save
 				flushThreadsToDiskTask();
-				if (_verbose) _verboseMsg = "Sync Success" + _threads.size() + " items";
+				if (_verbose) _verboseMsg = "Sync Success: " + _threads.size() + " items";
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -609,7 +611,7 @@ public class OfflineThread
 				cloudJson.put("watched",watched);
 				String result = ShackApi.putCloudPinned(cloudJson, getCloudUsername());
 				System.out.println("OFFLINETHREAD: LOCALTOCLOUD: watched#: " + watched.length());
-				if ((_verbose) && (result != null)) _verboseMsg = "Sync Success" + watched.length() + " items";
+				if ((_verbose) && (result != null)) _verboseMsg = "Sync Success: " + watched.length() + " items";
 
 			} catch (ClientProtocolException e) {
 				// TODO Auto-generated catch block
@@ -684,7 +686,7 @@ public class OfflineThread
 
 				cloudJson.put("watched",watched);
 				String result = ShackApi.putCloudPinned(cloudJson, getCloudUsername());
-				if ((_verbose) && (result != null)) _verboseMsg = "Sync Success" + watched.length() + " items";
+				if ((_verbose) && (result != null)) _verboseMsg = "Sync Success: " + watched.length() + " items";
 
 			} catch (ClientProtocolException e) {
 				// TODO Auto-generated catch block

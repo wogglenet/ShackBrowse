@@ -8,11 +8,9 @@ import android.util.Log;
 import com.twitter.sdk.android.core.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterConfig;
-import com.twitter.sdk.android.tweetui.TweetUi;
 
 import java.lang.*;
 
-import io.wax911.emojify.EmojiManager;
 
 
 /**
@@ -26,8 +24,6 @@ public class SBApplication extends Application
 
 	public void onCreate() {
 		super.onCreate();
-		// Stetho.initializeWithDefaults(this);
-		EmojiManager.initEmojiData(getApplicationContext());
 		TwitterConfig config = new TwitterConfig.Builder(this)
 				.twitterAuthConfig(new TwitterAuthConfig(APIConstants.TWITTER_CONSUMER_KEY, APIConstants.TWITTER_CONSUMER_SECRET))
 				.build();

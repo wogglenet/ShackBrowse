@@ -1417,7 +1417,9 @@ public class ShackApi
     
     public static ArrayList<Thread> processThreadsAndUpdReplyCounts (JSONObject json, Context activity) throws Exception
     {
+        System.out.println("OFFLINETHREAD:  process1");
     	ArrayList<Thread> new_threads = processThreads(json, true, activity);
+        System.out.println("OFFLINETHREAD:  process2");
     	ArrayList<Thread> upd_threads = new ArrayList<Thread>();
     	
     	ArrayList<Integer> new_thread_ids = new ArrayList<Integer>();

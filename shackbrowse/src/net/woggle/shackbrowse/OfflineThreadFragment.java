@@ -123,7 +123,7 @@ public class OfflineThreadFragment extends ThreadListFragment {
 				else
 				{
 					new_threads = ShackApi.processThreadsAndUpdReplyCounts(_offlineThread.getThreadsAsJson(), getActivity());
-					
+
 		             Iterator<Thread> iter = new_threads.iterator();
 		             while (iter.hasNext())
 		             {
