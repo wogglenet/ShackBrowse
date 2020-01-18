@@ -65,6 +65,8 @@ public class PreferenceFragmentEchoChamber extends PreferenceFragment
     };
 
     private NetworkEchoChamberServer mEchoServerInteract;
+    private String _userName = "";
+    private boolean _verified = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,6 +74,8 @@ public class PreferenceFragmentEchoChamber extends PreferenceFragment
 
         _prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
+        _userName = _prefs.getString("userName", "").trim();
+        _verified = _prefs.getBoolean("usernameVerified", false);
 
         addPreferencesFromResource(R.xml.preferences_echochamber);
 
@@ -87,6 +91,7 @@ public class PreferenceFragmentEchoChamber extends PreferenceFragment
             }
         });
 
+        findPreference("autoChamberList").setSummary(((MainActivity)getActivity()).getFancyBlockList(true));
         _echoNotification = (CheckBoxPreference) findPreference("echoEnabled");
         _autoNotification = (CheckBoxPreference) findPreference("echoChamberAuto");
         _blockNotification.setEnabled(_echoNotification.isChecked());
@@ -150,9 +155,19 @@ public class PreferenceFragmentEchoChamber extends PreferenceFragment
         builder.setPositiveButton("Add Block", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                _progressDialog = MaterialProgressDialog.show(getActivity(), "Escorting user from Echo Chamber", "Communicating with Shack Browse server...", true, true);
 
-                mEchoServerInteract.doBlocklistTask(NetworkEchoChamberServer.ACTION_ADD, input.getText().toString());
+                if (_userName.equalsIgnoreCase(input.getText().toString()))
+                {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setTitle("Are you OK?");
+                    builder.setMessage("You can\'t block yourself.");
+                    builder.setNegativeButton("Ok", null);
+                    builder.create().show();
+                }
+                else {
+                    _progressDialog = MaterialProgressDialog.show(getActivity(), "Escorting user from Echo Chamber", "Communicating with Shack Browse server...", true, true);
+                    mEchoServerInteract.doBlocklistTask(NetworkEchoChamberServer.ACTION_ADD, input.getText().toString());
+                }
 
             }
         });

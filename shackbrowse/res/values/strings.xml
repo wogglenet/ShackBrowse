@@ -385,11 +385,12 @@
     <string name="preference_echochamber_summary">Open user blocking settings</string>
     <string name="preference_echochamber_desc_summary">Remove posts and replies to posts of users on block lists. Also removes root posts and blocks notifications. Option to just replace text instead ("palatize" mode below).</string>
     <string name="preference_echochamberauto_title">Auto Chamber</string>
-    <string name="preference_echochamberauto_summary">Auto block users that have been blocked by large numbers of other shack browse users (does not modify your block list but does display who is being blocked automatically) (experimental, may not be functional yet or ever)</string>
+    <string name="preference_echochamberauto_summary">Auto block users that have been blocked by large numbers of other shack browse users (does not modify your block list) (experimental, may not be functional yet or ever)</string>
     <string name="preference_blocklist_title">Edit personal block list</string>
     <string name="preference_blocklist_summary">Modify the list of users you have removed from your echo chamber. Saves to cloud.</string>
     <string name="preference_echochamberpalatize_title">Palatize Mode</string>
     <string name="preference_echochamberpalatize_summary">Instead of removing posts and replies to blocked posts, this option replaces blocked users\' post text with more palatable text and smiley faces. This is not recommended because you will wonder what the real text is and turn everything off again. Echo Chamber loves you, and doesn\'t want you to turn it off. Therefore you should not use this option.</string>
+    <string name="preference_autochamberlist_title">Current Auto Chamber List</string>
     <!-- items in  the array will show up even when not yet registered -->
     <string-array name="statsItems">
         <item>statsItemAnnoyedByStartupZoomDialog</item>

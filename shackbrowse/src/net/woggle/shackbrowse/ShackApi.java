@@ -96,9 +96,11 @@ public class ShackApi
     static final String FASTPUSHSERV_URL = "http://shackbrowse.appspot.com/";
     
     static final String NOTESERV_URL = "http://woggle.net/shackbrowsenotification/";
-    
+    static final String NOTESERV_URL_SSL = "https://woggle.net/shackbrowsenotification/";
+
     static final String BASE_URL = "http://shackapi.hughes.cc/";
     static final String BASE_URL_ALT = "http://woggle.net/shackbrowseAPI/";
+    static final String BASE_URL_ALT_SSL = "https://woggle.net/shackbrowseAPI/";
     static final String BASE_URL_ALT2 = "http://shackbrowseapi.appspot.com/";
     static final String WINCHATTYV2_API = "http://winchatty.com/v2/";
     static final String WOGGLEV2_API = "http://api.woggle.net/v2/";
@@ -1009,6 +1011,46 @@ public class ShackApi
         }
     }
 
+    private static String getSSL(String location) throws ClientProtocolException, IOException
+    {
+        return getSSL (location, false);
+    }
+    private static String getSSL(String location, boolean laxTimeout) throws ClientProtocolException, IOException
+    {
+        Log.d("shackbrowse", "Requested: " + location);
+
+        URL url = new URL(location);
+
+        HttpsURLConnection connection = (HttpsURLConnection)url.openConnection();
+
+
+        if  (laxTimeout)
+        {
+            connection.setConnectTimeout(15000);
+            connection.setReadTimeout(20000);
+        }
+        else
+        {
+            connection.setConnectTimeout(socketTimeoutSec * 1000);
+            connection.setReadTimeout(connectionTimeOutSec * 1000);
+        }
+        try
+        {
+            connection.setRequestProperty("User-Agent", USER_AGENT);
+            InputStream in = new BufferedInputStream(connection.getInputStream());
+            return readStream(in);
+        }
+        catch (java.net.SocketTimeoutException e) {
+            System.out.println("conn timeout");
+            return "";
+        }
+        finally
+        {
+            connection.disconnect();
+        }
+    }
+
+
     private static JSONObject getJson(String url) throws ClientProtocolException, IOException, JSONException
     {
         String content = get(url);
@@ -1892,7 +1934,7 @@ public class ShackApi
     // version
     public static String getVersion() throws ClientProtocolException, IOException
     {
-    	return get(BASE_URL_ALT + "versioncheck.php");
+    	return getSSL(BASE_URL_ALT_SSL + "versioncheck2.php?apikey=" + APIConstants.BLOCKLIST_API_KEY);
     }
 
 	public static String noteAddUser(String userName, String getreplies, String getvanity) throws ClientProtocolException, UnsupportedEncodingException, IOException {
@@ -1925,13 +1967,13 @@ public class ShackApi
 	 */
 
     public static String blocklistAdd (String userName, String keyword) throws ClientProtocolException, UnsupportedEncodingException, IOException {
-        return get(NOTESERV_URL + "blocklist.php?type=blocklist&action=add&user=" + URLEncoder.encode(userName, "UTF8") + "&item=" + URLEncoder.encode(keyword, "UTF8"));
+        return getSSL(NOTESERV_URL_SSL + "blocklist.php?apikey=" + APIConstants.BLOCKLIST_API_KEY + "&type=blocklist&action=add&user=" + URLEncoder.encode(userName, "UTF8") + "&item=" + URLEncoder.encode(keyword, "UTF8"));
     }
     public static String blocklistRemove (String userName, String keyword) throws ClientProtocolException, UnsupportedEncodingException, IOException {
-        return get(NOTESERV_URL + "blocklist.php?type=blocklist&action=remove&user=" + URLEncoder.encode(userName, "UTF8") + "&item=" + URLEncoder.encode(keyword, "UTF8"));
+        return getSSL(NOTESERV_URL_SSL + "blocklist.php?apikey=" + APIConstants.BLOCKLIST_API_KEY + "&type=blocklist&action=remove&user=" + URLEncoder.encode(userName, "UTF8") + "&item=" + URLEncoder.encode(keyword, "UTF8"));
     }
     public static String blocklistCheck (String userName) throws ClientProtocolException, UnsupportedEncodingException, IOException {
-        return get(NOTESERV_URL + "blocklist.php?type=blocklist&action=get&user=" + URLEncoder.encode(userName, "UTF8"));
+        return getSSL(NOTESERV_URL_SSL + "blocklist.php?apikey=" + APIConstants.BLOCKLIST_API_KEY + "&type=blocklist&action=get&user=" + URLEncoder.encode(userName, "UTF8"));
     }
 
     /*

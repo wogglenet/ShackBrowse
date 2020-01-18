@@ -1367,12 +1367,13 @@ public class ThreadViewFragment extends ListFragment
             return new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    PopupMenu usrpop = new PopupMenu(getContext(), v);
-                    usrpop.getMenu().add(Menu.NONE, 0, Menu.NONE, "Shack Message " + unamefinal);
-                    usrpop.getMenu().add(Menu.NONE, 1, Menu.NONE, "Search for posts by " + unamefinal);
-                    usrpop.getMenu().add(Menu.NONE, 2, Menu.NONE, "Highlight " + unamefinal + " in thread");
+					PopupMenu usrpop = new PopupMenu(getContext(), v);
+					usrpop.getMenu().add(Menu.NONE, 0, Menu.NONE, "Shack Message " + unamefinal);
+					usrpop.getMenu().add(Menu.NONE, 1, Menu.NONE, "Search for posts by " + unamefinal);
+					usrpop.getMenu().add(Menu.NONE, 2, Menu.NONE, "Highlight " + unamefinal + " in thread");
 					usrpop.getMenu().add(Menu.NONE, 3, Menu.NONE, "Copy " + unamefinal + " to clipboard");
-					usrpop.getMenu().add(Menu.NONE, 4, Menu.NONE, "Block from Echo Chamber");
+					if (!_userName.equals("") && _verified && !unamefinal.equalsIgnoreCase(_userName))
+						{ usrpop.getMenu().add(Menu.NONE, 4, Menu.NONE, "Block from Echo Chamber"); }
 
                     usrpop.setOnMenuItemClickListener(new OnMenuItemClickListener(){
                         @Override
