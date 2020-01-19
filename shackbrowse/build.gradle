@@ -31,7 +31,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-base:17.1.0'
 
     implementation 'com.firebase:firebase-jobdispatcher:0.8.5'
-    implementation "com.google.firebase:firebase-messaging:20.0.0"
+    implementation "com.google.firebase:firebase-messaging:20.1.0"
 
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
     implementation 'com.afollestad.material-dialogs:commons:0.9.6.0'
@@ -41,13 +41,13 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
 
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.appcompat:appcompat:1.1+'
+    implementation 'androidx.appcompat:appcompat:1.1'
 
     implementation 'com.nhaarman.listviewanimations:library:2.6.0'
 
     implementation 'org.ccil.cowan.tagsoup:tagsoup:1.2.1'
 
-    implementation 'com.google.firebase:firebase-core:17.2.0'
+    implementation 'com.google.firebase:firebase-core:17.2.2'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
     //  implementation 'com.google.firebase:firebase-crash:11.8.0'
 
@@ -130,6 +130,13 @@ android {
     }
     dexOptions{
         javaMaxHeapSize "4g"
+    }
+    configurations {
+        all {
+            exclude module: 'httpclient'
+            exclude module: 'json'
+            exclude group: 'org.apache.httpcomponents'
+        }
     }
 }
 

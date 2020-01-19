@@ -56,17 +56,13 @@
 				<category android:name="android.intent.category.NOTIFICATION_PREFERENCES" />
 			</intent-filter>
         	<meta-data android:name="android.app.searchable" android:resource="@xml/searchable" />
-			<layout android:defaultHeight="500dp"
-					android:defaultWidth="600dp"
-					android:gravity="top|end"
-				/>
         </activity>
 		<activity android:name=".imgur.LoginActivity"></activity>
         <meta-data android:name="android.app.default_searchable" android:value=".MainActivity" />
         <activity android:name=".ComposePostView" android:windowSoftInputMode="stateVisible|adjustResize" android:configChanges="orientation|screenSize|keyboard|keyboardHidden">
             <meta-data
             android:name="android.support.PARENT_ACTIVITY"
-            android:value="net.woggle.MainActivity" />
+            android:value="net.woggle.shackbrowse.MainActivity" />
         </activity>
         <activity android:name=".DonateActivity" android:configChanges="orientation|screenSize|keyboard|keyboardHidden"></activity>
 		<activity android:name=".PicUploader" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:label="@string/picuploader_name" android:configChanges="orientation|screenSize|keyboard|keyboardHidden">

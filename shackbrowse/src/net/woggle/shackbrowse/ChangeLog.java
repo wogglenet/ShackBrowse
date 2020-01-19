@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 
+@SuppressWarnings("JavadocReference")
 public class ChangeLog {
 
         private final Context context;

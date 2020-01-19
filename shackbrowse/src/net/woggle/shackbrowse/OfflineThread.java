@@ -639,6 +639,7 @@ public class OfflineThread
 	}
 	class CloudMerge extends AsyncTask <String, Void, JSONArray>
 	{
+		@SuppressLint("WrongThread")
 		@Override
 		protected JSONArray doInBackground(String... params) {
 			JSONObject cloudJson;
