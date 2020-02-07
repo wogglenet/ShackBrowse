@@ -93,12 +93,13 @@ How am I supposed to tell if you were looking at the thread or the list of threa
 
 $ 6.0.7
 % v 6.0.7
-_ Jan 19, 2019
+_ Feb 10, 2019
 * Stupid options: View stupid options at the bottom of the settings area
 * Echo Chamber: allows you to completely remove threads and posts and all replies to certain users, or alternatively, change their posts to smiley faces.
 * - Block users from your echo chamber by clicking on the username in a thread and selecting block
 * - Block list is cloudsynced
 * "User based autocollapse" option under "Keyword Autocollapse" has been removed - this list will not be migrated
+* Fastly Zoop: You can now scroll to the end of a thread by clicking the 3 dot button and selecting fastly zoop. Stupid options has an option to turn this into a permanent button
 * Bug Fix: Futzed with the swipe to collapse to make it less likely to collapse while scrolling
 * Bug Fix: Video no longer auto plays in root post
 * Bug Fix: Tried to fix some starred thread cloud sync issues

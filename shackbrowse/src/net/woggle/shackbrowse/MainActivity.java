@@ -1349,7 +1349,12 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			menu.findItem(R.id.menu_refreshReplies).setIcon(R.drawable.ic_action_navigation_refresh);
 		}
 
-        menu.findItem(R.id.menu_fastZoop).setVisible(showReplyViewItems && mStupidFastzoopOption);
+        menu.findItem(R.id.menu_fastZoop).setVisible(showReplyViewItems);
+        if (mStupidFastzoopOption)
+			menu.findItem(R.id.menu_fastZoop).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		else
+			menu.findItem(R.id.menu_fastZoop).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+
         
         // these two are so complicated they are managed in the actual fragment
         menu.findItem(R.id.menu_favThread).setVisible((_threadView._showFavSaved) && showReplyViewItems);
