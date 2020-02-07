@@ -91,8 +91,8 @@ How am I supposed to tell if you were looking at the thread or the list of threa
 
 -->
 
-$ 6.0.7
-% v 6.0.7
+$ 6.1.0
+% v 6.1.0
 _ Feb 10, 2019
 * Stupid options: View stupid options at the bottom of the settings area
 * Echo Chamber: allows you to completely remove threads and posts and all replies to certain users, or alternatively, change their posts to smiley faces.
