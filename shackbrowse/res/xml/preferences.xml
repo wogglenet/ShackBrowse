@@ -302,7 +302,7 @@
 			android:summary="@string/preference_imgur_login_summary"
 			android:singleLine="true"/>
 	</PreferenceCategory>
-    <PreferenceCategory android:title="@string/preftools"></PreferenceCategory>
+    <PreferenceCategory android:title="@string/preftools">
     <Preference
         android:key="pref_ping"
         android:title="@string/preference_ping" />
@@ -316,4 +316,27 @@
 		android:summary="@string/preference_analytics_summary"
 		android:defaultValue="true"
 		/>
+	</PreferenceCategory>
+	<PreferenceCategory android:title="@string/stupidoptions">
+		<CheckBoxPreference
+			android:key="electrolyoption"
+			android:title="@string/preference_electroly_title"
+			android:summary="@string/preference_electroly_summary"
+			android:defaultValue="false"
+			/>
+		<CheckBoxPreference
+			android:key="fastzoopoption"
+			android:title="@string/preference_fastzoop_title"
+			android:summary="@string/preference_fastzoop_summary"
+			android:defaultValue="false"
+			/>
+		<CheckBoxPreference
+			android:key="donkeyanonoption"
+			android:title="@string/preference_donkey_title"
+			android:summary="@string/preference_donkey_summary"
+			android:defaultValue="false"
+			/>
+	</PreferenceCategory>
+	<Preference
+		 />
 </PreferenceScreen>

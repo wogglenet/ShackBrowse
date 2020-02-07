@@ -126,7 +126,7 @@
             android:textIsSelectable="false"
             android:focusable="false"
             android:longClickable="false"
-            android:textSize="10dp"
+            android:textSize="12dp"
             android:textStyle=""/>
 
     </RelativeLayout>

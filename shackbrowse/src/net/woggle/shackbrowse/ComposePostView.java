@@ -131,6 +131,7 @@ public class ComposePostView extends AppCompatActivity {
     private boolean mEditBarEnabled;
 	private String mCurrentPhotoPath;
 	private Toolbar mToolbar;
+	private boolean mAnonMode = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -549,6 +550,7 @@ public class ComposePostView extends AppCompatActivity {
 
 	public void setupButtonBindings(Bundle extras)
 	{
+		mAnonMode = _prefs.getBoolean("donkeyanonoption", false);
 		if (extras == null)
 			extras = new Bundle();
         
@@ -568,7 +570,7 @@ public class ComposePostView extends AppCompatActivity {
         	final String postContent = extras.getString("parentContent").replace("jt_spoiler", "jt_prevspoiler");
         	_parentPostForDraft = postContent;
         	_parentDateForDraft = extras.getLong("parentDate");
-        	setTitle("Reply to " + author);
+        	setTitle("Reply to " + (mAnonMode ? "shacker" : author));
         	
         	if (_messageMode)
         	{

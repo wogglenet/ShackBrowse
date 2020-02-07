@@ -1202,8 +1202,9 @@ public class ThreadListFragment extends ListFragment
 		
 		private Filter mFilter;
 		private ArrayList<Thread> _filteredItemList = new ArrayList<Thread>();
-		
-	    @Override
+		private boolean mAnonMode = false;
+
+		@Override
 	    public int getCount() {
 	    	synchronized (mLock)
         	{
@@ -1251,6 +1252,7 @@ public class ThreadListFragment extends ListFragment
             // prefs
             _zoom = Float.parseFloat(_prefs.getString("fontZoom", "1.0"));
             _lolsContained = _prefs.getBoolean("showThreadLolsThreadList", true);
+			mAnonMode = _prefs.getBoolean("donkeyanonoption", false);
             _getLols = (_prefs.getBoolean("getLols", true) && MainActivity.LOLENABLED);
             _showOntopic = _prefs.getBoolean("showOntopic", true);
             _showHoursSince = _prefs.getBoolean("showHoursSince", true);
@@ -1388,6 +1390,11 @@ public class ThreadListFragment extends ListFragment
 	            mSortMode = _prefs.getString("getSortMode", "usual");
 		        changed = true;
 	        }
+			if (mAnonMode != _prefs.getBoolean("donkeyanonoption", false))
+			{
+				mAnonMode = _prefs.getBoolean("donkeyanonoption", false);
+				changed = true;
+			}
 
             return changed;
         }
@@ -1643,7 +1650,7 @@ public class ThreadListFragment extends ListFragment
             
             
             // USERNAME
-            holder.userName.setText(t.getUserName());
+            holder.userName.setText((mAnonMode ? "shacker" : t.getUserName()));
 
             // special highlight for employee and mod names
             if (t.getUserName().equalsIgnoreCase(_userName))

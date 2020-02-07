@@ -42,6 +42,7 @@ dependencies {
 
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.appcompat:appcompat:1.1'
+    implementation 'androidx.preference:preference:1.1.0'
 
     implementation 'com.nhaarman.listviewanimations:library:2.6.0'
 

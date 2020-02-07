@@ -297,7 +297,7 @@ public class SwipeDismissListViewTouchListener implements View.OnTouchListener {
                 mVelocityTracker.addMovement(motionEvent);
                 float deltaX = 0;
                 float deltaY = Math.abs(motionEvent.getRawY() - mDownY);
-                if (deltaY > (mViewWidth / 4))
+                if (deltaY > (mViewWidth / 6))
                 {
                 	// copypasta from cancel above
                 	if (mVelocityTracker == null) {

@@ -62,6 +62,24 @@ public class PreferenceFragmentEchoChamber extends PreferenceFragment
             
             showBlocklist();
         }
+
+        @Override
+        public void addError() {
+            if (_progressDialog != null)
+            {
+                _progressDialog.dismiss();
+                _progressDialog = null;
+            }
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle("Error Adding User");
+            builder.setMessage("Server Error. Usually this means you mistyped the username you are trying to block or shacknews did not recognize the username as valid. Check your spelling, or click the username in an expanded post in Thread view and click the block option instead.");
+            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+            builder.create().show();
+        }
     };
 
     private NetworkEchoChamberServer mEchoServerInteract;
@@ -139,12 +157,12 @@ public class PreferenceFragmentEchoChamber extends PreferenceFragment
     public void addBlock()
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Remove from Echo Chamber");
+        builder.setTitle("Add Block");
         // Set up the input
         final LinearLayout lay = new LinearLayout(getActivity());
         lay.setOrientation(LinearLayout.VERTICAL);
         final TextView tv = new TextView(getActivity());
-        tv.setText("This user will be removed from your personal echo chamber so you do not need to be offended by their views. All posts and replies to this user's posts will be removed (unless palatize option is selected). You can also click on their username in a thread and select \"block user\". Case insensitive.");
+        tv.setText("Note: it is a better idea to add users to this list by clicking a user name in an expanded post in a thread. \r\n \r\nThis user will be removed from your personal echo chamber so you do not need to be offended by their views. All posts and replies to this user's posts will be removed (unless palatize option is selected). You can also click on their username in a thread and select \"block user\". Case insensitive.");
         final EditText input = new EditText(getActivity());
         // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
         input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);

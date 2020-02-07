@@ -597,6 +597,14 @@ public class ThreadViewFragment extends ListFragment
             statInc(mMainActivity, "CheckedLOLTaggers");
         }
     }
+
+    public void fastZoop() {
+		getListView().post(new Runnable(){
+			public void run() {
+				getListView().setSelection(getListView().getCount() - 1);
+			}});
+    }
+
     class GetTaggersTask extends AsyncTask<Integer, Void, CharSequence> {
     	protected MaterialDialog mProgressDialog;
 		private CharSequence arraylistFormatter (String type, ArrayList<String>  arr)
@@ -1241,7 +1249,8 @@ public class ThreadViewFragment extends ListFragment
         private String _donatorQuadList = "";
         boolean _replyNotificationsEnabled;
         boolean _showModTools = false;
-        private boolean mViewIsOpen = false;
+        private boolean mAnonMode = false;
+		private boolean mViewIsOpen = true;
 		private boolean _showHoursSince = true;
 		private boolean _hideLinks = true;
 		private int _embedImages = 2;
@@ -1478,6 +1487,7 @@ public class ThreadViewFragment extends ListFragment
 			mEchoPalatize = _prefs.getBoolean("echoPalatize", false);
 			mEchoEnabled = _prefs.getBoolean("echoEnabled", false);
 			mAutoEchoEnabled = (_prefs.getBoolean("echoChamberAuto", true) && mEchoEnabled);
+			mAnonMode  = _prefs.getBoolean("donkeyanonoption", false);
             _userName = _prefs.getString("userName", "").trim();
             _verified = _prefs.getBoolean("usernameVerified", false);
             _lolsInPost = _prefs.getBoolean("showPostLolsThreadView", true);
@@ -1606,7 +1616,6 @@ public class ThreadViewFragment extends ListFragment
 				Spannable postTextContent = (Spannable) p.getFormattedContent();
 
                 final int pos = position;
-                final String unamefinal = p.getUserName();
 
                 holder.buttonReply.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -2357,7 +2366,7 @@ public class ThreadViewFragment extends ListFragment
             	holder.preview.setText(applyHighlight(p.getPreview()));
             	holder.preview.setLinkTextColor(getResources().getColor(R.color.linkColor));
 
-                holder.previewUsername.setText(applyHighlight(p.getUserName()));
+                holder.previewUsername.setText(applyHighlight(mAnonMode ? "shacker" : p.getUserName()));
 
                 if (p.getUserName().equalsIgnoreCase(_userName))
                 {

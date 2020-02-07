@@ -46,11 +46,13 @@ public class NetworkEchoChamberServer {
     interface OnEchoChamberResultListener
     {
         public void networkResult(JSONArray result);
+        public void addError();
     }
 
     public class BlocklistTask extends AsyncTask<String, Void, JSONArray>
     {
         Exception _exception;
+        boolean addmode = false;
 
         @Override
         protected JSONArray doInBackground(String... params)
@@ -71,7 +73,11 @@ public class NetworkEchoChamberServer {
                     sleep(200);
                     if (preAction.equals(ACTION_ADD))
                     {
-                        retval = ShackApi.blocklistAdd(userName, params[1]);
+                        addmode = true;
+                        if (ShackApi.usernameExists(params[1],context)) {
+                            retval = ShackApi.blocklistAdd(userName, params[1]);
+                        }
+                        else return null;
                     }
                     if (preAction.equals(ACTION_REMOVE))
                     {
@@ -95,6 +101,13 @@ public class NetworkEchoChamberServer {
         @Override
         protected void onPostExecute(JSONArray result)
         {
+            if (result == null)
+            {
+                if (addmode)
+                {
+                    _listener.addError();
+                }
+            }
             try {
                 _listener.networkResult(result);
             }

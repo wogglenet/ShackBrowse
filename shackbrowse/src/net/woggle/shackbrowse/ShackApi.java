@@ -1598,9 +1598,13 @@ public class ShackApi
 	        String content = client.execute(post, response_handler);
 	        if (content.contains("\"result\":\"true\""))
 	        {
+	            System.out.println("USER EXISTS: " + username);
 	            return true;
 	        }
-	        else return false;
+	        else {
+                System.out.println("USER !NOT! EXISTS: " + username);
+	            return false;
+            }
 	}
 	
 	public static boolean markRead(String messageId, Context context) throws Exception {

@@ -391,6 +391,14 @@
     <string name="preference_echochamberpalatize_title">Palatize Mode</string>
     <string name="preference_echochamberpalatize_summary">Instead of removing posts and replies to blocked posts, this option replaces blocked users\' post text with more palatable text and smiley faces. This is not recommended because you will wonder what the real text is and turn everything off again. Echo Chamber loves you, and doesn\'t want you to turn it off. Therefore you should not use this option.</string>
     <string name="preference_autochamberlist_title">Current Auto Chamber List</string>
+    <string name="preference_electroly_title">electroly\'s stupid refresh option</string>
+    <string name="preference_electroly_summary">Causes the refresh button for the list of replies to show up as an icon in dual pane mode when it normally would not. Shows up as a weird stupid square refresh icon that no effort was put into.</string>
+    <string name="stupidoptions">Stupid Options</string>
+    <string name="fastzoop">Fastly Zoop To Bottom</string>
+    <string name="preference_fastzoop_title">tightropetandy\'s fastly zoop</string>
+    <string name="preference_fastzoop_summary">Button that \"fastly zoops\" to the bottom of the thread. Has some poorly sized icon due to laziness. Minimum effort, it\'s probably a 1 line config change</string>
+    <string name="preference_donkey_title">DonkeyPopsicle\'s 4chan mode</string>
+    <string name="preference_donkey_summary">Stupidly changes all usernames to say \"shacker\", so you really can\'t tell what\'s going on, who\'s talking to who or follow conversations even.</string>
     <!-- items in  the array will show up even when not yet registered -->
     <string-array name="statsItems">
         <item>statsItemAnnoyedByStartupZoomDialog</item>

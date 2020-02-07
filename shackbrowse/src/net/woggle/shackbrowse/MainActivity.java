@@ -192,6 +192,8 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	private boolean mYoutubeFullscreen = false;
 	private Toolbar mToolbar;
 	private boolean mEnableAutoHide = true;
+	private boolean mStupidElectrolyOption = false;
+	private boolean mStupidFastzoopOption = false;
 	public SmoothProgressBar mProgressBar;
 	private long mTimeStartedToShowSplash = 0L;
 	private YouTubePlayer mYoutubePlayer;
@@ -199,6 +201,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	public JSONArray mBlockList;
 	private JSONArray mAutoChamber;
 	private MaterialDialog mProgressDialog;
+	public boolean mStupidDonkeyAnonOption = false;
 
 
 	@Override
@@ -344,6 +347,15 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 				Editor ed = _prefs.edit();
 				ed.putString("echoChamberBlockList", result.toString());
 				ed.commit();
+			}
+
+			@Override
+			public void addError() {
+				if (mProgressDialog != null)
+				{
+					mProgressDialog.dismiss();
+					mProgressDialog = null;
+				}
 			}
 		};
 		mEchoAccess = new NetworkEchoChamberServer(this, echoListener);
@@ -955,6 +967,11 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	        case R.id.menu_favThread:
 	        	_threadView.saveThread();
 	        	break;
+			case R.id.menu_fastZoop:
+				_threadView.fastZoop();
+				AppBarLayout appBarLayout = (AppBarLayout)findViewById(R.id.appbarlayout);
+				appBarLayout.setExpanded(false, true);
+				break;
 	        case R.id.menu_searchGo:
 	        	svf.searchGo();
 	        	break;
@@ -1315,11 +1332,24 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         menu.findItem(R.id.menu_findInThread).setVisible(showReplyViewItems);
         if ((!showReplyViewItems) && (mHighlighter.isActionViewExpanded()))
         	mHighlighter.collapseActionView();
+
+        // refresh replies
         menu.findItem(R.id.menu_refreshReplies).setVisible(showReplyViewItems && !showMessageItems);
-        if (dualPane)
+        if (dualPane && !mStupidElectrolyOption)
         	menu.findItem(R.id.menu_refreshReplies).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
         else
         	menu.findItem(R.id.menu_refreshReplies).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+        if (dualPane && mStupidElectrolyOption)
+		{
+			menu.findItem(R.id.menu_refreshReplies).setIcon(R.drawable.exo_icon_repeat_all);
+		}
+        else
+		{
+			menu.findItem(R.id.menu_refreshReplies).setIcon(R.drawable.ic_action_navigation_refresh);
+		}
+
+        menu.findItem(R.id.menu_fastZoop).setVisible(showReplyViewItems && mStupidFastzoopOption);
         
         // these two are so complicated they are managed in the actual fragment
         menu.findItem(R.id.menu_favThread).setVisible((_threadView._showFavSaved) && showReplyViewItems);
@@ -2283,6 +2313,10 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
             _zoom = Float.parseFloat(_prefs.getString("fontZoom", "1.0"));
             _showPinnedInTL = _prefs.getBoolean("showPinnedInTL", true);
             _swappedSplit = _prefs.getBoolean("swappedSplit", false);
+
+			mStupidElectrolyOption = _prefs.getBoolean("electrolyoption", false);
+			mStupidFastzoopOption = _prefs.getBoolean("fastzoopoption", false);
+			mStupidDonkeyAnonOption = _prefs.getBoolean("donkeyanonoption", false);
 
             if (_threadView != null) {
                 if (_threadView._adapter != null) {
