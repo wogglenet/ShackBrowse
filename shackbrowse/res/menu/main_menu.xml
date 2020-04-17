@@ -63,7 +63,7 @@
 		android:visible="false"
 		android:icon="@drawable/exo_icon_fastforward"
 		android:title="@string/fastzoop"
-		android:orderInCategory="108" />
+		android:orderInCategory="80" />
 	<item android:id="@+id/menu_findInThread"
         app:showAsAction="never|collapseActionView"
 		  android:icon="@drawable/marker"

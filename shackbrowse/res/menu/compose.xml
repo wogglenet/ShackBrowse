@@ -32,6 +32,12 @@
 		  android:title="@string/compose_selectall"
 		  android:visible="true"
 		  android:orderInCategory="1" />
+	<item android:id="@+id/menu_compose_template"
+		app:showAsAction="never"
+		android:icon="@drawable/ic_action_content_save"
+		android:title="@string/compose_template"
+		android:visible="true"
+		android:orderInCategory="1" />
 	<item android:id="@+id/menu_compose_emoji"
 		  app:showAsAction="never"
 		  android:icon="@drawable/ic_action_select_all"

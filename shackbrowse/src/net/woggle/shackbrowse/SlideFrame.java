@@ -69,7 +69,7 @@ public class SlideFrame extends FrameLayout {
     public static final int STICK_TO_MIDDLE = -3;
 
     private static final int MAX_SCROLLING_DURATION = 300; // in ms
-    private static final int MIN_DISTANCE_FOR_FLING = 25; // in dip
+    private static final int MIN_DISTANCE_FOR_FLING = 35; // in dip
 
     private static final Interpolator sMenuInterpolator = new Interpolator() {
         @Override

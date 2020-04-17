@@ -91,9 +91,18 @@ How am I supposed to tell if you were looking at the thread or the list of threa
 
 -->
 
+$ 6.1.1
+% v 6.1.1
+_ Apr 18, 2020
+* Post templates. This is hidden in the three dot menu in the post composer. This basically allows you to save a generic template or draft of your post under a name
+* RAnDoM AltErNaTInG CaPs mAcRO
+* Standalone Chattypics Uploader (can use Share menu from another app to access) now supports imgur
+* Possibly improved resistance to accidentally closing the reply view pane
+* "tag" tag re-added
+
 $ 6.1.0
 % v 6.1.0
-_ Feb 10, 2019
+_ Feb 10, 2020
 * Stupid options: View stupid options at the bottom of the settings area
 * Echo Chamber: allows you to completely remove threads and posts and all replies to certain users, or alternatively, change their posts to smiley faces.
 * - Block users from your echo chamber by clicking on the username in a thread and selecting block

@@ -49,6 +49,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.text.InputType;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.CharacterStyle;
@@ -133,6 +134,8 @@ public class ComposePostView extends AppCompatActivity {
 	private Toolbar mToolbar;
 	private boolean mAnonMode = false;
 
+	private DraftTemplates mTpl;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -158,6 +161,8 @@ public class ComposePostView extends AppCompatActivity {
         
         // drafts
         _drafts = new Drafts(this);
+
+        mTpl = new DraftTemplates(this);
         
         // orientation
         doOrientation();
@@ -355,6 +360,9 @@ public class ComposePostView extends AppCompatActivity {
         	case R.id.menu_compose_preview:
         		showPreview();
         		break;
+			case R.id.menu_compose_template:
+				showTemplates();
+				break;
 	        case R.id.menu_compose_emoji:
 	        	showEmoji();
 				break;
@@ -996,6 +1004,9 @@ public class ComposePostView extends AppCompatActivity {
 				edit.setSelection(edit.getText().length());
 			}
 		}
+
+		mTpl.loadTplsFromDisk();
+
 	    if (_messageMode)
 		    edit.post(new Runnable() {
 			    @Override
@@ -1124,6 +1135,8 @@ public class ComposePostView extends AppCompatActivity {
 			itemList.add(PostFormatter.formatContent("", getPreviewFromHTML("Macro: r{R}rn[A]ny{I}yl[N]lg{B}gb{O}bp[W]p"), null, true, true));
 			// ZA???L?????G???O??????!???
 			itemList.add(PostFormatter.formatContent("", getPreviewFromHTML("Macro: " + zalgo_text("Zalgo / Cthulhu")), null, true, true));
+			// random caps
+			itemList.add(PostFormatter.formatContent("", getPreviewFromHTML("Macro: rANdOm cApITalS"), null, true, true));
 
 		}
 
@@ -1309,6 +1322,22 @@ public class ComposePostView extends AppCompatActivity {
 				        //  ZA???L?????G???O??????!???
 				        textToInsert = zalgo_text(str);
 				        break;
+					case 7:
+						// RaNdOm CaPS
+						for (int i = 0; i < str.length(); )
+						{
+
+
+							Random r = new Random(); int k = r.nextInt(2); String chr = new StringBuilder().appendCodePoint(str.codePointAt(i)).toString();
+
+							if (k == 0) { chr = chr.toLowerCase(); }
+							if (k == 1) { chr = chr.toUpperCase(); }
+
+							textToInsert = textToInsert + chr;
+
+							i += Character.charCount(str.codePointAt(i));
+						}
+						break;
 		        }
 	        }
 	        else
@@ -1891,6 +1920,127 @@ public class ComposePostView extends AppCompatActivity {
 	}
 
 
+	// TEMPLATES
+	/*
+	 * KEYWORDS
+	 */
+	public void addTemplate()
+	{
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Add Template");
+		// Set up the input
+		final LinearLayout lay = new LinearLayout(this);
+		lay.setOrientation(LinearLayout.VERTICAL);
+		final TextView tv = new TextView(this);
+		tv.setText("Your post composer text will be saved as a template. Enter the name for this template.");
+		final EditText input = new EditText(this);
+		// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+		input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
+		lay.addView(tv);
+		lay.addView(input);
+		builder.setView(lay);
+
+		builder.setPositiveButton("Save Template", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				EditText edit = (EditText)findViewById(R.id.textContent);
+
+				mTpl.saveThisTpl(input.getText().toString(), edit.getText().toString().replaceAll("\n", "<br/>"));
+
+				showTemplates();
+			}
+		});
+		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				showTemplates();
+			}
+		});
+		AlertDialog alert = builder.create();
+		alert.setCanceledOnTouchOutside(false);
+		alert.show();
+	}
+	public void actionTemplate(final String keyword)
+	{
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Take Action on Template");
+
+		builder.setMessage("Load or delete `" + keyword + "`?");
+
+		builder.setPositiveButton("Load", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(ComposePostView.this);
+				builder.setTitle("Really Load?"); builder.setMessage("Loading `" + keyword + "` will replace your current post text.");
+				builder.setPositiveButton("Load", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						EditText edit = (EditText)findViewById(R.id.textContent);
+						edit.setText(mTpl.mTpls.get(keyword).replaceAll("<br/>", "\n"));
+						edit.setSelection(edit.getText().length());
+					}
+				});
+				builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						showTemplates();
+					}
+				});
+				AlertDialog alert = builder.create(); alert.setCanceledOnTouchOutside(false); alert.show();
+			}
+		});
+		builder.setNeutralButton("Delete", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(ComposePostView.this);
+				builder.setTitle("Really Delete?"); builder.setMessage("Deleting `" + keyword + "` will make you sad, possibly.");
+				builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						mTpl.deleteTplById(keyword);
+						showTemplates();
+					}
+				});
+				builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						showTemplates();
+					}
+				});
+				AlertDialog alert = builder.create(); alert.setCanceledOnTouchOutside(false); alert.show();
+			}
+		});
+		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				showTemplates();
+			}
+		});
+		AlertDialog alert = builder.create();
+		alert.setCanceledOnTouchOutside(false);
+		alert.show();
+	}
+	public void showTemplates()
+	{
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Stored Post Templates");
+
+		final CharSequence[] items = mTpl.mTpls.keySet().toArray(new CharSequence[mTpl.mTpls.keySet().size()]);
+		builder.setItems(items, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int item) {
+				actionTemplate(items[item].toString());
+			}});
+		builder.setNegativeButton("Close", null);
+		builder.setPositiveButton("Save Current as Template", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				addTemplate();
+			}
+		});
+		AlertDialog alert = builder.create();
+		alert.setCanceledOnTouchOutside(false);
+		alert.show();
+	}
 	
 	// DRAFTS
 	

@@ -1663,6 +1663,7 @@ public class ThreadViewFragment extends ListFragment
                         SubMenu sub = lolpop.getMenu().addSubMenu(Menu.NONE, 3, Menu.NONE, "More...");
                         sub.add(Menu.NONE, 4, Menu.NONE, "wow");
                         sub.add(Menu.NONE, 5, Menu.NONE, "wtf");
+						sub.add(Menu.NONE, 8, Menu.NONE, "tag");
                         sub.add(Menu.NONE, 7, Menu.NONE, "aww");
                         lolpop.setOnMenuItemClickListener(new OnMenuItemClickListener() {
                             @Override
