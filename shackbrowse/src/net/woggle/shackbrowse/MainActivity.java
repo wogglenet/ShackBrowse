@@ -134,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
     public SearchResultFragment _searchResults;
     public ThreadViewFragment _threadView;
     public FrontpageBrowserFragment _fpBrowser;
+	public FrontpageBrowserFragment _lolBrowser;
     int _splitView = 1;
     boolean _dualPane = false;
 	private int _orientLock = 0;
@@ -681,6 +682,15 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			_fpBrowser = new FrontpageBrowserFragment();
 		}
 
+		if (fm.findFragmentByTag(Integer.toString(CONTENT_LOLPAGE)) != null)
+		{
+			_lolBrowser = (FrontpageBrowserFragment)fm.findFragmentByTag(Integer.toString(CONTENT_LOLPAGE));
+		}
+		else
+		{
+			_lolBrowser = new FrontpageBrowserFragment();
+		}
+
 		_messageList = new MessageFragment();
 
 		if (fm.findFragmentById(R.id.menu_frame) != null)
@@ -715,6 +725,10 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 			ft = fm.beginTransaction();
 			ft.attach(_fpBrowser);
+			ft.commit();
+
+			ft = fm.beginTransaction();
+			ft.attach(_lolBrowser);
 			ft.commit();
 
 			ft = fm.beginTransaction();
@@ -1068,22 +1082,40 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	        	nf.refreshNotes();
 	        	break;
             case R.id.menu_fpbrowserCopyURL:
-                if ((_fpBrowser != null) && (!isArticleOpen()))
-                    _fpBrowser.copyURL();
-                if ((_articleViewer != null) && (isArticleOpen()))
-                    _articleViewer.copyURL();
+            	if (_currentFragmentType == CONTENT_FRONTPAGE) {
+					if ((_fpBrowser != null) && (!isArticleOpen()))
+						_fpBrowser.copyURL();
+					if ((_articleViewer != null) && (isArticleOpen()))
+						_articleViewer.copyURL();
+				}
+				if (_currentFragmentType == CONTENT_LOLPAGE) {
+					if (_lolBrowser != null)
+						_lolBrowser.copyURL();
+				}
                 break;
             case R.id.menu_fpbrowserShare:
-                if ((_fpBrowser != null) && (!isArticleOpen()))
-                    _fpBrowser.shareURL();
-                if ((_articleViewer != null) && (isArticleOpen()))
-                    _articleViewer.shareURL();
+				if (_currentFragmentType == CONTENT_FRONTPAGE) {
+					if ((_fpBrowser != null) && (!isArticleOpen()))
+						_fpBrowser.shareURL();
+					if ((_articleViewer != null) && (isArticleOpen()))
+						_articleViewer.shareURL();
+				}
+				if (_currentFragmentType == CONTENT_LOLPAGE) {
+					if (_lolBrowser != null)
+						_lolBrowser.shareURL();
+				}
                 break;
             case R.id.menu_fprefresh:
-                if ((_fpBrowser != null) && (!isArticleOpen()))
-                    _fpBrowser.refresh();
-                if ((_articleViewer != null) && (isArticleOpen()))
-                    _articleViewer.refresh();
+				if (_currentFragmentType == CONTENT_FRONTPAGE) {
+					if ((_fpBrowser != null) && (!isArticleOpen()))
+						_fpBrowser.refresh();
+					if ((_articleViewer != null) && (isArticleOpen()))
+						_articleViewer.refresh();
+				}
+				if (_currentFragmentType == CONTENT_LOLPAGE) {
+					if (_lolBrowser != null)
+						_lolBrowser.refresh();
+				}
                 break;
             case R.id.menu_statsTrash:
                 if (stf != null)
@@ -1268,7 +1300,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         boolean showMessageItems = (_currentFragmentType == CONTENT_MESSAGES) && (!mPopupBrowserOpen) && (!isMenuOpen) && (!isResultsOpen);
         boolean showNoteItems = (_currentFragmentType == CONTENT_NOTIFICATIONS) && (!mPopupBrowserOpen) && (!isMenuOpen) && (!isResultsOpen);
 
-        boolean showFPBrowserItems = ((_currentFragmentType == CONTENT_FRONTPAGE) && (dualPane || !areSlidersOpen)) && (!mPopupBrowserOpen) && (!isMenuOpen) && (!isResultsOpen);
+        boolean showFPBrowserItems = (((_currentFragmentType == CONTENT_FRONTPAGE) || (_currentFragmentType == CONTENT_LOLPAGE)) && (dualPane || !areSlidersOpen)) && (!mPopupBrowserOpen) && (!isMenuOpen) && (!isResultsOpen);
         
         boolean browserZoomMode = false;
         if ((mPBfragment != null) && (mPBfragment.mState == mPBfragment.SHOW_ZOOM_CONTROLS))
@@ -1391,6 +1423,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
     public static final int CONTENT_STATS = 7;
     public static final int CONTENT_NOTEPREFS = 8;
 	public static final int CONTENT_ECHOPREFS = 9;
+	public static final int CONTENT_LOLPAGE = 10;
 	
 	void setContentTo(int type)
 	{
@@ -1459,6 +1492,11 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
             fragment = _fpBrowser;
             _articleViewer = (FrontpageBrowserFragment) Fragment.instantiate(getApplicationContext(), FrontpageBrowserFragment.class.getName(), new Bundle());
         }
+		if (type == CONTENT_LOLPAGE)
+		{
+			mTitle = "LOLpage";
+			fragment = _lolBrowser;
+		}
 		
 
 		
@@ -1496,8 +1534,12 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
                     .hide(_articleViewer)
                     .commit();
 
-            _fpBrowser.setFirstOpen("https://www.shacknews.com/topic/news");
+            _fpBrowser.setFirstOpen("https://www.shacknews.com/");
         }
+		if (type == CONTENT_LOLPAGE)
+		{
+			_lolBrowser.setFirstOpen("https://www.shacknews.com/tags-home");
+		}
 
         fragmentManager.beginTransaction()
                 .add(R.id.content_frame, _loadingSplash, "splash")
@@ -1510,6 +1552,11 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
             // kill weird ad crap running in background
             _fpBrowser.mWebview.loadData("", "text/html", null);
         }
+		if (_currentFragmentType == CONTENT_LOLPAGE)
+		{
+			// kill weird ad crap running in background
+			_lolBrowser.mWebview.loadData("", "text/html", null);
+		}
         if (_currentFragmentType == CONTENT_PREFS)
         {
             reloadPrefs();
@@ -2444,6 +2491,10 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         {
              _fpBrowser.mWebview.goBack();
         }
+		else if ((_currentFragmentType == CONTENT_LOLPAGE) && (_lolBrowser != null) && (_lolBrowser.mWebview.canGoBack()))
+		{
+			_lolBrowser.mWebview.goBack();
+		}
 		else if (_currentFragmentType != CONTENT_THREADLIST)
 		{
 			setContentTo(CONTENT_THREADLIST);

@@ -1,25 +1,30 @@
 package net.woggle.shackbrowse;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.text.ClipboardManager;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.webkit.CookieManager;
 import android.webkit.MimeTypeMap;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceResponse;
@@ -29,6 +34,8 @@ import android.webkit.WebViewClient;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import org.apache.http.cookie.Cookie;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -36,6 +43,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by brad on 2/1/2015.
@@ -52,6 +60,7 @@ public class FrontpageBrowserFragment extends Fragment {
     public boolean mSplashSuppress = false;
 
     public boolean mLoading = true;
+    private boolean mLoginAtInit = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -233,6 +242,11 @@ public class FrontpageBrowserFragment extends Fragment {
                         */
                             return true;
                         }
+                        else if ((uri.getHost().equalsIgnoreCase("www.shacknews.com") || uri.getHost().equalsIgnoreCase("shacknews.com")))
+                        {
+                            return false;
+                        }
+
                         else
                         {
                             System.out.println("open external" + _href);
@@ -251,7 +265,14 @@ public class FrontpageBrowserFragment extends Fragment {
         mWebview.getSettings().setSupportMultipleWindows(false);
         mWebview.setBackgroundColor(Color.BLACK);
 
-        mWebview.loadUrl(mFirstHref);
+        // login the user if they are logged into the app
+        boolean verified = mPrefs.getBoolean("usernameVerified", false);
+        if (verified)
+        {
+            new CookieTask().execute();
+        }
+        else
+            mWebview.loadUrl(mFirstHref);
     }
 
     // reset the progress bars when we are detached from the activity
@@ -331,5 +352,45 @@ public class FrontpageBrowserFragment extends Fragment {
     public void refresh() {
         if (mWebview != null)
             mWebview.reload();
+    }
+
+    public void setDoLogin(boolean b) {
+        mLoginAtInit = true;
+    }
+
+    class CookieTask extends AsyncTask<String, Void, List<Cookie>>
+    {
+        Exception _exception;
+
+        @Override
+        protected List<Cookie> doInBackground(String... params)
+        {
+            try
+            {
+                return ShackApi.getLoginCookie(getActivity());
+            }
+            catch (Exception e)
+            {
+                Log.e("shackbrowse", "Error gettin cookies", e);
+                _exception = e;
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(List <Cookie> cookies) {
+            CookieManager cookieManager = CookieManager.getInstance();
+            cookieManager.setAcceptCookie(true);
+            cookieManager.removeAllCookie();
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    String cookieString = cookie.getName() + "=" + cookie.getValue() + "; Domain=" + cookie.getDomain();
+                    cookieManager.setCookie(cookie.getDomain(), cookieString);
+                    Log.d("CookieUrl",cookieString + " ");
+                }
+            }
+            mWebview.loadUrl(mFirstHref);
+        }
+
     }
 }

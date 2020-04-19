@@ -136,6 +136,7 @@ public class AppMenu extends ListFragment
                     }
     	        	_adapter.add(new MenuItems(1, "Navigation" , 0, 0));
                     _adapter.add(new MenuItems(0, "Frontpage" , 11, R.drawable.ic_action_action_home));
+					_adapter.add(new MenuItems(0, "LOL Page" , 14, R.drawable.ic_action_action_account_child));
     	        	_adapter.add(new MenuItems(0, "Latest Chatty" , 4, R.drawable.ic_action_communication_forum));
     	        	if (_prefs.getBoolean("noteEnabled", false))
     	        		_adapter.add(new MenuItems(0, "Notifications" , 9, R.drawable.note_logo2018, null, new View.OnClickListener(){
@@ -175,6 +176,10 @@ public class AppMenu extends ListFragment
         {
             mCheckedPosition = _adapter.getPositionFromMID(11);
         }
+		else if (((MainActivity)getActivity())._currentFragmentType == MainActivity.CONTENT_LOLPAGE)
+		{
+			mCheckedPosition = _adapter.getPositionFromMID(14);
+		}
         else if (((MainActivity)getActivity())._currentFragmentType == MainActivity.CONTENT_THREADLIST)
         {
             mCheckedPosition = _adapter.getPositionFromMID(4);
@@ -311,6 +316,11 @@ public class AppMenu extends ListFragment
             trackM("openFrontpage");
             //mCheckedPosition = position;
         }
+		if (mid == 14)
+		{
+			((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_LOLPAGE);
+			trackM("openLolpage");
+		}
         if (mid == 12)
         {
             ((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_STATS);

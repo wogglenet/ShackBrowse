@@ -1606,8 +1606,46 @@ public class ShackApi
 	            return false;
             }
 	}
-	
-	public static boolean markRead(String messageId, Context context) throws Exception {
+
+    public static List<Cookie> getLoginCookie(Context context) throws Exception {
+
+	    // expect this should only be used with verified credentials
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String userName = prefs.getString("userName", null);
+        String password = prefs.getString("password", null);
+
+        BasicResponseHandler response_handler = new BasicResponseHandler();
+        DefaultHttpClient client = new DefaultHttpClient();
+        final HttpParams httpParameters = client.getParams();
+        HttpConnectionParams.setConnectionTimeout(httpParameters, connectionTimeOutSec * 1000);
+        HttpConnectionParams.setSoTimeout        (httpParameters, socketTimeoutSec * 1000);
+        HttpPost post = new HttpPost(LOGIN_URL);
+        post.setHeader("User-Agent", USER_AGENT);
+        post.setHeader("X-Requested-With", "XMLHttpRequest");
+
+        List<NameValuePair> values = new ArrayList<NameValuePair>();
+        values.add(new BasicNameValuePair("get_fields[]", "result"));
+        values.add(new BasicNameValuePair("user-identifier", userName));
+        values.add(new BasicNameValuePair("supplied-pass", password));
+        values.add(new BasicNameValuePair("remember-login", "1"));
+
+        UrlEncodedFormEntity e = new UrlEncodedFormEntity(values,"UTF-8");
+        post.setEntity(e);
+
+        String content = client.execute(post, response_handler);
+
+        if (content.contains("{\"result\":{\"valid\":\"true\""))
+        {
+
+            return client.getCookieStore().getCookies();
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public static boolean markRead(String messageId, Context context) throws Exception {
     	
     	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String userName = prefs.getString("userName", null);
