@@ -21,8 +21,8 @@
             android:id="@+id/menuItemIcon"
             android:layout_gravity="top"
             android:layout_marginLeft="3dp"
-            android:paddingTop="9dip"
-            android:paddingBottom="9dip"
+            android:paddingTop="0dip"
+            android:paddingBottom="0dip"
             />
 	     <TextView
 	         android:id="@+id/menuItemText"

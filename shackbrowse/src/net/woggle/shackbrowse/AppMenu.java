@@ -10,8 +10,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.res.TypedArray;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.app.ListFragment;
@@ -136,10 +134,10 @@ public class AppMenu extends ListFragment
                     }
     	        	_adapter.add(new MenuItems(1, "Navigation" , 0, 0));
                     _adapter.add(new MenuItems(0, "Frontpage" , 11, R.drawable.ic_action_action_home));
-					_adapter.add(new MenuItems(0, "LOL Page" , 14, R.drawable.ic_action_action_account_child));
+					_adapter.add(new MenuItems(0, "LOL Page" , 14, R.drawable.ic_action_lol));
     	        	_adapter.add(new MenuItems(0, "Latest Chatty" , 4, R.drawable.ic_action_communication_forum));
     	        	if (_prefs.getBoolean("noteEnabled", false))
-    	        		_adapter.add(new MenuItems(0, "Notifications" , 9, R.drawable.note_logo2018, null, new View.OnClickListener(){
+    	        		_adapter.add(new MenuItems(0, "Notifications" , 9, R.drawable.ic_action_note_logo2018, null, new View.OnClickListener(){
                             @Override
                             public void onClick(View v) {
                                 ((MainActivity)getActivity()).cleanUpViewer();
