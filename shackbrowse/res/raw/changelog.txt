@@ -93,7 +93,7 @@ How am I supposed to tell if you were looking at the thread or the list of threa
 
 $ 6.2.0
 % v 6.2.0
-_ Apr 23, 2020
+_ May 1, 2020
 * LOLpage support
 * Frontpage viewer and LOLpage viewer log you in automatically if you are logged into the app
 * Post templates: This is hidden in the three dot menu in the post composer. This basically allows you to save a generic template or draft of your post under a name
