@@ -123,18 +123,22 @@ public class DraftTemplates {
                 int i = 0;
 
                 Enumeration keys = mTpls.keys();
+                System.out.println("TPL: size" + mTpls.size());
                 while(keys.hasMoreElements()) {
-                    int key = (Integer)keys.nextElement();
+                    String key = (String)keys.nextElement();
                     String value = mTpls.get(key);
                     i++;
                     // write line
-                    writer.write(Integer.toString(key) + FIRST_TOKEN + value);
+                    System.out.println("TPL: " + key + FIRST_TOKEN + value);
+                    writer.write(key + FIRST_TOKEN + value);
                     writer.newLine();
                 }
+                System.out.println("TPL: done" +i);
                 writer.flush();
             }
             catch (Exception e)
             {
+                e.printStackTrace();
                 result = false;
             }
             _output.close();

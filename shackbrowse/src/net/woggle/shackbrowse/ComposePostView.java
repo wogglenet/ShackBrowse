@@ -14,6 +14,7 @@ import net.woggle.EditTextSelectionSavedAllowImage;
 import net.woggle.shackbrowse.imgur.ImgurAuthorization;
 import net.woggle.shackbrowse.imgur.ImgurTools;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -725,7 +726,7 @@ public class ComposePostView extends AppCompatActivity {
             }
 	        PackageManager pm = ComposePostView.this.getPackageManager();
 
-	        if (!pm.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+	        if (!pm.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
 		        menu.findItem(R.id.menu_compose_camera).setVisible(false);
 	        }
 
@@ -821,7 +822,8 @@ public class ComposePostView extends AppCompatActivity {
         alert.show();
     }
     
-    public void doOrientation () 
+    @SuppressLint("SourceLockedOrientationActivity")
+	public void doOrientation ()
     {
         if (_orientLock != Integer.parseInt(_prefs.getString("orientLock", "0")))
         {
@@ -1939,7 +1941,7 @@ public class ComposePostView extends AppCompatActivity {
 		lay.addView(tv);
 		lay.addView(input);
 		builder.setView(lay);
-
+		input.requestFocus();
 		builder.setPositiveButton("Save Template", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
