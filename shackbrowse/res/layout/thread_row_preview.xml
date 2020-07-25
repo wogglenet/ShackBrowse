@@ -37,6 +37,7 @@
                 android:singleLine="true"
                 android:textSize="@dimen/previewTextSize"
                 android:paddingLeft="2dip"
+				android:textColor="?attr/colorText"
             />
             <TextView
                  android:id="@+id/textPostLolCounts"
@@ -47,7 +48,7 @@
                  android:paddingLeft="1dip"
                android:paddingTop="0dip"
                android:paddingBottom="0dip"
-               android:textColor="@color/replyCount"
+               android:textColor="?attr/colorPostCount"
                android:textSize="@dimen/lolTagSize"
              />
             <LinearLayout
@@ -65,7 +66,7 @@
                  android:layout_gravity="center_vertical"
                  android:layout_width="wrap_content"
                  android:layout_height="wrap_content"
-                 android:textColor="@color/userName"
+                 android:textColor="?attr/colorUsername"
                  android:fontFamily="sans-serif-light"
                  android:textSize="@dimen/previewUserNameSize"
                  android:paddingLeft="4dip"

@@ -7,6 +7,19 @@
     <attr name="menuSelectorDrawable" format="reference" />
     <attr name="colorHighlight" format="reference" />
 
+    <attr name="colorSelPostBG" format="reference" />
+    <attr name="colorSelHighPostBG" format="reference" />
+    <attr name="colorSelPostBGfade" format="reference" />
+    <attr name="colorText" format="reference" />
+    <attr name="colorUsername" format="reference" />
+    <attr name="colortagBG" format="reference" />
+    <attr name="colorPostCount" format="reference" />
+    <attr name="colorAppBG" format="reference" />
+    <attr name="colorLink" format="reference" />
+    <attr name="drawableTintColor" format="reference" />
+    <attr name="colorPostTopLine" format="reference" />
+    <attr name="colorClickHighlight" format="reference" />
+
     <declare-styleable name="CircularProgressBar"><attr format="integer" name="cpb_style"/></declare-styleable>
 
 

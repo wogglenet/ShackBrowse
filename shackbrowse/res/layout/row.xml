@@ -7,7 +7,6 @@
   android:paddingBottom="1dp"
   android:paddingTop="1dp"
   android:descendantFocusability="blocksDescendants"
-
   android:orientation="vertical"
   >
 
@@ -45,7 +44,7 @@
 		         android:id="@+id/textUserName"
 		         android:layout_width="wrap_content"
 		         android:layout_height="wrap_content"
-		         android:textColor="@color/userName"
+		         android:textColor="?attr/colorUsername"
 		         android:textSize="@dimen/userNameSize"
 		         android:fontFamily="sans-serif-light"
 		         android:paddingLeft="4dip"
@@ -58,7 +57,7 @@
 		       android:fontFamily="sans-serif-light"
 		       android:layout_marginTop="0dip"
 	 	 	   android:layout_marginLeft="4dip"
-		       android:textColor="@color/replyCount"
+		       android:textColor="?attr/colorPostCount"
 		       android:textSize="@dimen/replyCountSize"
 		       android:paddingRight="2dip"
 		       android:maxLines="1"
@@ -89,7 +88,7 @@
 	         android:layout_height="wrap_content"
 	         android:layout_below="@id/firstRow"
 	         android:fontFamily="sans-serif"
-	         android:textColor="@color/nonpreview_post_text_color"
+	         android:textColor="?attr/colorText"
 	         android:textSize="@dimen/previewTextSize"
 	         android:paddingLeft="4dip"
 	         android:paddingRight="8dip"
@@ -124,7 +123,7 @@
 	       android:paddingLeft="2dip"
 	       android:paddingBottom="0dip"
 	       android:fontFamily="sans-serif"
-	       android:textColor="@color/replyCount"
+	       android:textColor="?attr/colorPostCount"
 	       android:textSize="@dimen/lolTagSize"
 	       android:visibility="gone"
 	       android:translationY="1dp"

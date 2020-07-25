@@ -10,7 +10,7 @@
         <shape android:shape="rectangle" >
             <gradient
         android:angle="270"
-        android:startColor="@color/post_topline"
+        android:startColor="?attr/colorPostTopLine"
         android:centerColor="@android:color/transparent"
         android:endColor="@android:color/transparent"
         android:type="linear"
@@ -23,7 +23,7 @@
         android:right="@dimen/cardRightMargin"
         android:top="@dimen/cardTopMarginBigger">
         <shape android:shape="rectangle" >
-			<solid android:color="@color/clickHighlight" />
+			<solid android:color="?attr/colorClickHighlight" />
             
         </shape>
     </item>

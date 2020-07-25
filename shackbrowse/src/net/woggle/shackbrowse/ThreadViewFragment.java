@@ -630,7 +630,7 @@ public class ThreadViewFragment extends ListFragment
 	    			txt = txt + iter.next() + "\n";
 
 	    		SpannableString list = new SpannableString(txt);
-    			list.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.userName)), 0, txt.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
+    			list.setSpan(new ForegroundColorSpan(MainActivity.getThemeColor(getActivity(), R.attr.colorUsername)), 0, txt.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
 
 				return TextUtils.concat(header, list, "\n");
     		}
@@ -1604,7 +1604,8 @@ public class ThreadViewFragment extends ListFragment
                 final Post p = getItem(position);
 
                 // load expanded data
-                holder.expandedView.setBackgroundColor(getResources().getColor(R.color.selected_highlight_postbg));
+
+                holder.expandedView.setBackgroundColor(MainActivity.getThemeColor(getActivity(), R.attr.colorSelHighPostBG));
 
                 // set lol tags
                 if (p.getLolObj() != null) {
@@ -1918,7 +1919,8 @@ public class ThreadViewFragment extends ListFragment
 						if (_linkButtons && !((postClip.type == PostClip.TYPE_IMAGE) && (postClip.url != null) && (doEmbedItemsImages)))
 							postClipText = (Spannable) applyExtLink(postClipText, postText);
 
-						postText.setTextColor(getResources().getColor(R.color.nonpreview_post_text_color));
+						postText.setTextColor(MainActivity.getThemeColor(getActivity(),R.attr.colorText));
+						// postText.setTextColor(getResources().getColor(R.color.nonpreview_post_text_color));
 						// debug
 						//Random color = new Random();
 						//postText.setBackgroundColor(Color.argb(255, color.nextInt(255), color.nextInt(255), color.nextInt(255)));
@@ -1927,7 +1929,7 @@ public class ThreadViewFragment extends ListFragment
 						postText.setTextSize(TypedValue.COMPLEX_UNIT_PX, postText.getTextSize() * _zoom);
 
 						// links stuff
-						postText.setLinkTextColor(getResources().getColor(R.color.linkColor));
+						postText.setLinkTextColor(MainActivity.getThemeColor(getActivity(), R.attr.colorLink));
 						postText.setTextIsSelectable(true);
 						postText.setFocusable(true);
 						postText.setFocusableInTouchMode(true);
@@ -2365,7 +2367,7 @@ public class ThreadViewFragment extends ListFragment
 
             	// support highlight
             	holder.preview.setText(applyHighlight(p.getPreview()));
-            	holder.preview.setLinkTextColor(getResources().getColor(R.color.linkColor));
+            	holder.preview.setLinkTextColor(MainActivity.getThemeColor(getActivity(), R.attr.colorLink));
 
                 holder.previewUsername.setText(applyHighlight(mAnonMode ? "shacker" : p.getUserName()));
 
@@ -2388,7 +2390,7 @@ public class ThreadViewFragment extends ListFragment
                 }
                 else
                 {
-                    holder.previewUsername.setTextColor(getResources().getColor(R.color.userName));
+                    holder.previewUsername.setTextColor(MainActivity.getThemeColor(getActivity(), R.attr.colorUsername));
                 }
 
                 // donator icon
@@ -2442,8 +2444,15 @@ public class ThreadViewFragment extends ListFragment
 
 
                 // highlight newer posts
-                int color = 255 - (12 * Math.min(p.getOrder(), 10));
-                holder.preview.setTextColor(Color.argb(255, color, color, color));
+				if (MainActivity.getThemeId(getActivity()) == R.style.AppThemeWhite)
+				{
+					int color = 0 + (12 * Math.min(p.getOrder(), 10));
+					holder.preview.setTextColor(Color.argb(255, color, color, color));
+				}
+				else {
+					int color = 255 - (12 * Math.min(p.getOrder(), 10));
+					holder.preview.setTextColor(Color.argb(255, color, color, color));
+				}
 
                 // has the title view been swapped?
                 if (isExpanded(position))
@@ -2875,20 +2884,26 @@ public class ThreadViewFragment extends ListFragment
         	        m[10] * c, m[11] * c, m[12] * c, m[13] * c, m[14] * c + bright, 
         	        m[15]    , m[16]    , m[17]    , m[18]    , m[19] }); 
         	        */
-        	bm.setColorFilter(new LightingColorFilter(Color.argb(1, 175, 175, 175), 0));
+
+        	int dimmer = 175;
+        	if (MainActivity.getThemeId(getActivity()) == R.style.AppThemeWhite)
+			{
+				dimmer = 230;
+			}
+        	bm.setColorFilter(new LightingColorFilter(Color.argb(1, dimmer, dimmer, dimmer), 0));
             // bm.setColorFilter(new ColorMatrixColorFilter(cm));
         	_donatorIcon = bm;
 
             bm = new BitmapDrawable(getContext().getResources(), Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.limegold2018), size, size, false));
-            bm.setColorFilter(new LightingColorFilter(Color.argb(1, 175, 175, 175), 0));
+            bm.setColorFilter(new LightingColorFilter(Color.argb(1, dimmer, dimmer, dimmer), 0));
             _donatorGoldIcon = bm;
 
             bm = new BitmapDrawable(getContext().getResources(), Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.iconpowerup_quad), size, size, false));
-            bm.setColorFilter(new LightingColorFilter(Color.argb(1, 175, 175, 175), 0));
+            bm.setColorFilter(new LightingColorFilter(Color.argb(1, dimmer, dimmer, dimmer), 0));
             _donatorQuadIcon = bm;
 
             bm = new BitmapDrawable(getContext().getResources(), Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.briefcaseicon), size, size, false));
-            bm.setColorFilter(new LightingColorFilter(Color.argb(1, 175, 175, 175), 0));
+            bm.setColorFilter(new LightingColorFilter(Color.argb(1, dimmer, dimmer, dimmer), 0));
             _briefcaseIcon = bm;
         }
 

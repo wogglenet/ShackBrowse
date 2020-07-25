@@ -211,7 +211,7 @@ public class ThreadListFragment extends ListFragment
     {        
         _viewAvailable = true;
         View layout = inflater.inflate(R.layout.threadlist, null);
-        layout.findViewById(R.id.tlist_root).setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_app_ics));
+        // layout.findViewById(R.id.tlist_root).setBackgroundColor(MainActivity.getThemeColor(getActivity(), R.attr.colorAppBG));
         return layout;
     }
 
@@ -1570,10 +1570,10 @@ public class ThreadListFragment extends ListFragment
         	{
         		holder.content.setText(t.getPreview(_showShackTags, _stripNewLines));
         	}
-            holder.content.setTextColor(getResources().getColor(R.color.nonpreview_post_text_color));
+            holder.content.setTextColor(MainActivity.getThemeColor(getActivity(), R.attr.colorText));
             
 
-            holder.content.setLinkTextColor(getResources().getColor(R.color.linkColor));
+            holder.content.setLinkTextColor(MainActivity.getThemeColor(getActivity(), R.attr.colorLink));
             holder.content.setMaxLines(_previewLines);
             //holder.content.setEllipsize(TextUtils.TruncateAt.END);
             
@@ -1668,7 +1668,7 @@ public class ThreadListFragment extends ListFragment
     		}
     		else
     		{
-    			holder.userName.setTextColor(getResources().getColor(R.color.userName));
+    			holder.userName.setTextColor(MainActivity.getThemeColor(getActivity(), R.attr.colorUsername));
     		}
             
             return convertView;

@@ -541,7 +541,7 @@ public class MessageFragment extends ListFragment
             
             holder.userName.setText(m.getUserName());
             holder.content.setMaxLines(_previewLines);
-            holder.content.setLinkTextColor(getResources().getColor(R.color.linkColor));
+            holder.content.setLinkTextColor(MainActivity.getThemeColor(getActivity(), R.attr.colorLink));
             // holder.content.setText(m.getPreview(_showShackTags, _stripNewLines));
             holder.content.setText(m.getSubject());
             
@@ -573,7 +573,7 @@ public class MessageFragment extends ListFragment
     		}
     		else
     		{
-    			holder.userName.setTextColor(getResources().getColor(R.color.userName));
+    			holder.userName.setTextColor(MainActivity.getThemeColor(getActivity(), R.attr.colorUsername));
     		}
             
             if (m.getRead())

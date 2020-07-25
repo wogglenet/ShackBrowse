@@ -22,7 +22,6 @@
 TODO
 * TODO NO NETWORK ICON
 * QUOTES FROM TEXT SELECTION
-* WHITE MODE
 * WIDGET FOR TOP POSTS
 * Easy notification reply
 * drag n drop DeX file support
@@ -90,6 +89,11 @@ b{Why does the thread open when I go from landscape to portrait?}b
 How am I supposed to tell if you were looking at the thread or the list of threads? You can disable split view/tablet view to fix this, or lock the orientation to portrait.
 
 -->
+
+$ 6.3.0
+% v 6.3.0
+_ Jul 25, 2020
+* Daylight theme
 
 $ 6.2.0
 % v 6.2.0

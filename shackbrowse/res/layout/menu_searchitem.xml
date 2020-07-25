@@ -20,7 +20,7 @@
 	         android:id="@+id/text"
 	         android:layout_width="fill_parent"
 	         android:layout_height="wrap_content"
-	         android:textColor="@color/nonpreview_post_text_color"
+	         android:textColor="?attr/colorText"
 	         android:ellipsize="end"
 	         android:maxLines="6"
 	         android:textSize="@dimen/searchViewTextSize"

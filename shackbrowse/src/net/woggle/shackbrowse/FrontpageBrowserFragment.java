@@ -263,7 +263,7 @@ public class FrontpageBrowserFragment extends Fragment {
         mWebview.getSettings().setUseWideViewPort(false);
         mWebview.getSettings().setLoadWithOverviewMode(false);
         mWebview.getSettings().setSupportMultipleWindows(false);
-        mWebview.setBackgroundColor(Color.BLACK);
+        mWebview.setBackgroundColor(MainActivity.getThemeColor(getActivity(), R.attr.colorAppBG));
 
         // login the user if they are logged into the app
         boolean verified = mPrefs.getBoolean("usernameVerified", false);

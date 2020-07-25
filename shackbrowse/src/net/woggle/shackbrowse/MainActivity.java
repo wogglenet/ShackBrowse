@@ -269,7 +269,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 		mShortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime) * 1;
 
-		getWindow().setBackgroundDrawable(new ColorDrawable(Color.BLACK));
+		getWindow().setBackgroundDrawable(new ColorDrawable(getThemeColor(this, R.attr.colorAppBG)));
 
 		// set up preferences
         reloadPrefs();
@@ -750,30 +750,47 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		a.recycle();
 		return attributeResourceId;
 	}
-	public static int themeApplicator(Activity context) {
+    public static int getThemeColor(Context mainactivity, int Rid)
+    {
+        TypedArray a = mainactivity.getTheme().obtainStyledAttributes(((MainActivity)mainactivity).mThemeResId, new int[] {Rid});
+        int color = a.getColor(0, 0);
+        a.recycle();
+        return color;
+    }
+    public static int getThemeId(Activity context)
+    {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String appTheme =  prefs.getString("appTheme", "1");
         int themeId;
-        int lightBarColor;
-		int darkBarColor;
 
-		if (appTheme.equals("2")) {
-			themeId = R.style.AppThemePurple;
-			// lightBarColor = R.color.briefcasepurple;
-			// darkBarColor = R.color.selected_postbg;
-		}
+        if (appTheme.equals("2")) {
+            themeId = R.style.AppThemePurple;
+            // lightBarColor = R.color.briefcasepurple;
+            // darkBarColor = R.color.selected_postbg;
+        }
         else if (appTheme.equals("0")) {
             themeId = R.style.AppThemeGreen;
-			// lightBarColor = R.color.SBdark;
-			// darkBarColor = R.color.SBvdark;
+            // lightBarColor = R.color.SBdark;
+            // darkBarColor = R.color.SBvdark;
+        }
+        else if (appTheme.equals("3")) {
+            themeId = R.style.AppThemeWhite;
+            // lightBarColor = R.color.SBdark;
+            // darkBarColor = R.color.SBvdark;
         }
         else {
             themeId = R.style.AppTheme;
-			// lightBarColor = R.color.gnushackdark;
-			// darkBarColor = R.color.selected_postbg;
+            // lightBarColor = R.color.gnushackdark;
+            // darkBarColor = R.color.selected_postbg;
         }
-
+        return themeId;
+    }
+	public static int themeApplicator(Activity context) {
+	    int themeId = getThemeId(context);
         context.setTheme(themeId);
+
+        int lightBarColor;
+        int darkBarColor;
 
 		TypedValue typedValue = new TypedValue();
 		Resources.Theme theme = context.getTheme();
@@ -788,7 +805,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
             context.getWindow().setNavigationBarColor(darkBarColor);
 	        context.getWindow().setStatusBarColor(lightBarColor);
         }
-
         return themeId;
     }
     public static void setupSwipeRefreshColors(Context context, SwipeRefreshLayout layout)

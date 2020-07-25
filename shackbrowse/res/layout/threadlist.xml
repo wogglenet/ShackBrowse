@@ -6,7 +6,7 @@
     android:id="@+id/tlist_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_app_ics"
+    android:background="?attr/colorAppBG"
     android:orientation="vertical"
 	>
     <RelativeLayout 

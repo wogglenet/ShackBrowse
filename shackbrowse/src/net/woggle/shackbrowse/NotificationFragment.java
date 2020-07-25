@@ -426,7 +426,7 @@ public class NotificationFragment extends ListFragment
             	friendly = " mentioned your name";
             holder.userName.setText(n.getAuthor() + friendly);
             holder.content.setMaxLines(_previewLines);
-            holder.content.setLinkTextColor(getResources().getColor(R.color.linkColor));
+            holder.content.setLinkTextColor(MainActivity.getThemeColor(getActivity(), R.attr.colorLink));
             // holder.content.setText(m.getPreview(_showShackTags, _stripNewLines));
             holder.content.setText(PostFormatter.formatContent(n.getAuthor(), n.getBody(), null, false, true));
 
@@ -460,7 +460,7 @@ public class NotificationFragment extends ListFragment
     		}
     		else
     		{
-    			holder.userName.setTextColor(getResources().getColor(R.color.userName));
+    			holder.userName.setTextColor(MainActivity.getThemeColor(getActivity(), R.attr.colorUsername));
     		}
             
             //if (m.getRead())

@@ -9,7 +9,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/bg_app_ics"
+    android:background="?attr/colorAppBG"
 	>
 	<LinearLayout
 		android:id="@+id/tview_thread_expired"

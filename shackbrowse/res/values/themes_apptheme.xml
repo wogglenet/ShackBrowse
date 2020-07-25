@@ -3,6 +3,55 @@
 <!-- Generated with http://android-holo-colors.com -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <style name="AppThemeWhite" parent="Theme.AppCompat.Light.NoActionBar">
+        <!--- boiler plate -->
+
+        <!-- Set AppCompat’s color theming attrs -->
+        <item name="drawerArrowStyle">@style/DrawerArrowStyleLight</item>
+
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+
+        <!-- <item name="android:theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item> -->
+        <item name="android:textAppearanceMedium">@style/MyTextAppearance</item>
+        <item name="md_dark_theme">false</item>
+
+        <item name="cpbStyle">@style/CircularThemeProgressBar</item>
+
+        <!--- themes -->
+        <item name="colorPrimary">@color/modtag_stupid</item>
+        <item name="colorPrimaryDark">@color/selected_postbg_whitefade</item>
+        <item name="colorAccent">@color/SBvdark</item>
+        <item name="menuBGdrawable">@drawable/bg_menu_white</item>
+        <item name="menuSelectorDrawable">@color/selector_appmenu</item>
+        <item name="colorHighlight">@color/SBdark</item>
+        <item name="statusBarColor">@color/selected_postbg_whitefade</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="navigationBarColor">@color/selected_postbg_whitefade</item>
+        <item name="android:windowLightNavigationBar">true</item>
+
+        <item name="android:textColorPrimary">@color/nonpreview_post_text_color_white</item>
+        <item name="android:textColorSecondary">@color/text_secondarycolor_white</item>
+
+        <!-- recolor icons -->
+        <item name="android:drawableTint">@color/nonpreview_post_text_color_white</item>
+        <item name="colorControlNormal">@color/nonpreview_post_text_color_white</item>
+        <item name="drawableTintColor">@color/nonpreview_post_text_color_white</item>
+
+        <!-- theme colors -->
+        <item name="colorAppBG">@color/app_bg_color_white</item>
+        <item name="colorSelPostBG">@color/selected_postbg_white</item>
+        <item name="colorSelPostBGfade">@color/selected_postbg_whitefade</item>
+        <item name="colorSelHighPostBG">@color/selected_highlight_postbg_white</item>
+        <item name="colorText">@color/nonpreview_post_text_color_white</item>
+        <item name="colorUsername">@color/userName_white</item>
+        <item name="colortagBG">@color/selected_postbg_whitefade</item>
+        <item name="colorPostCount">@color/replyCount</item>
+        <item name="colorLink">@color/linkColor_white</item>
+        <item name="colorPostTopLine">@color/post_topline_white</item>
+        <item name="colorClickHighlight">@color/clickhighlight_white</item>
+
+    </style>
     <style name="AppThemeGreen" parent="AppTheme">
         <item name="colorPrimary">@color/SBdark</item>
         <item name="colorPrimaryDark">@color/SBdark</item>
@@ -36,12 +85,23 @@
       <item name="android:textAppearanceMedium">@style/MyTextAppearance</item>
       <item name="md_dark_theme">true</item>
 
+      <item name="colorAppBG">@color/app_bg_color</item>
       <item name="colorPrimary">@color/gnushackdark</item>
       <item name="colorPrimaryDark">@color/gnushackdark</item>
       <item name="colorAccent">@color/SBlight</item>
       <item name="menuBGdrawable">@drawable/bg_menu_dark</item>
       <item name="menuSelectorDrawable">@color/selector_appmenu</item>
       <item name="colorHighlight">@color/gnushack</item>
+
+      <item name="colorSelPostBG">@color/selected_postbg</item>
+      <item name="colorSelHighPostBG">@color/selected_highlight_postbg</item>
+      <item name="colorText">@color/nonpreview_post_text_color</item>
+      <item name="colorUsername">@color/userName</item>
+      <item name="colortagBG">@color/selected_postbgfade</item>
+      <item name="colorPostCount">@color/replyCount</item>
+      <item name="colorLink">@color/linkColor</item>
+      <item name="colorPostTopLine">@color/post_topline</item>
+      <item name="colorClickHighlight">@color/clickHighlight</item>
 
       <item name="statusBarColor">@color/gnushackdark</item>
       <item name="navigationBarColor">@color/selected_postbg</item>
@@ -67,6 +127,10 @@
     <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
         <item name="spinBars">true</item>
         <item name="color">@android:color/white</item>
+    </style>
+    <style name="DrawerArrowStyleLight" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">true</item>
+        <item name="color">@android:color/black</item>
     </style>
     <style name="MyTextAppearance" parent="@android:style/TextAppearance.Medium">
         <item name="android:textColor">#eeeeee</item>

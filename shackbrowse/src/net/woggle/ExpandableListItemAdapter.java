@@ -3,6 +3,7 @@ package net.woggle;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
+import android.animation.ArgbEvaluator;
 import android.animation.LayoutTransition;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
@@ -33,6 +34,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import net.woggle.shackbrowse.MainActivity;
 import net.woggle.shackbrowse.Post;
 import net.woggle.shackbrowse.R;
 
@@ -62,6 +64,8 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
     private ValueAnimator mLastExpansionAnimation;
     private ValueAnimator mLastCollapseAnimation;
     private boolean mEnablePostCollapseOnClick = false;
+    private int mColorAppBG;
+    private int mColorPostSelHighBG;
 
     /**
      * Creates a new ExpandableListItemAdapter with an empty list.
@@ -92,6 +96,8 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
         mAnimSpeed = Float.parseFloat(prefs.getString("replyAnimationSpeed", "1.3"));
         mZoom = Float.parseFloat(prefs.getString("fontZoom", "1.0"));
         mEnablePostCollapseOnClick = prefs.getBoolean("allowPostCollapseOnClick", false);
+        mColorAppBG = MainActivity.getThemeColor(mContext, R.attr.colorAppBG);
+        mColorPostSelHighBG = MainActivity.getThemeColor(mContext, R.attr.colorSelHighPostBG);
     }
 
     /**
@@ -113,6 +119,7 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
         super(items);
         mContext = context;
         mResIds = resids;
+        setupPref();
 
         mExpandedIds = new ArrayList<Long>();
     }
@@ -472,7 +479,7 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
 
                 View firstEV = getContentParent(firstPosition);
                 if (firstEV != null) {
-                    mLastCollapseAnimation = ExpandCollapseHelper.animateCollapsing(firstEV, mContext.getResources().getColor(R.color.selected_highlight_postbg), mContext.getResources().getColor(R.color.ics_background_start), mDuration);
+                    mLastCollapseAnimation = ExpandCollapseHelper.animateCollapsing(firstEV, mColorAppBG, mColorPostSelHighBG, mDuration);
                 }
 
                 View firstTV = getTitleParent(firstPosition);
@@ -509,7 +516,7 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
 
             View firstEV = getContentParent(firstPosition);
             if (firstEV != null) {
-                mLastCollapseAnimation = ExpandCollapseHelper.animateCollapsing(firstEV, mContext.getResources().getColor(R.color.selected_highlight_postbg), mContext.getResources().getColor(R.color.ics_background_start), mDuration);
+                mLastCollapseAnimation = ExpandCollapseHelper.animateCollapsing(firstEV, mColorAppBG, mColorPostSelHighBG, mDuration);
             }
 
             View firstTV = getTitleParent(firstPosition);
@@ -528,7 +535,7 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
         int position = findPositionForId(id);
         if (isVisible) {
             if (mEnablePostCollapseOnClick) {
-                mLastCollapseAnimation = ExpandCollapseHelper.animateCollapsing(contentParent, mContext.getResources().getColor(R.color.selected_highlight_postbg), mContext.getResources().getColor(R.color.ics_background_start), mDuration);
+                mLastCollapseAnimation = ExpandCollapseHelper.animateCollapsing(contentParent, mColorAppBG, mColorPostSelHighBG, mDuration);
                 View firstTV = getTitleView(position);
                 if (firstTV != null) {
                     ExpandCollapseHelper.animateSwapTitle(firstTV, mResIds, true, (Post) getItem(position), mOriginalUsernameHeight, mDuration, mZoom);
@@ -541,7 +548,7 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
             }
         } else {
             loadExpandedViewDataIntoView(position, getContentView(position));
-            mLastExpansionAnimation = ExpandCollapseHelper.animateExpanding(contentParent, mAbsListView, mContext.getResources().getColor(R.color.selected_highlight_postbg), mContext.getResources().getColor(R.color.ics_background_start), mDuration);
+            mLastExpansionAnimation = ExpandCollapseHelper.animateExpanding(contentParent, mAbsListView, mColorPostSelHighBG, mColorAppBG, mDuration);
             View firstTV = getTitleView(position);
             if (firstTV != null) {
                 ExpandCollapseHelper.animateSwapTitle(firstTV, mResIds, false, (Post) getItem(position), mOriginalUsernameHeight, mDuration, mZoom);
@@ -754,23 +761,29 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
         	final View secondRow = ((RelativeLayout)((LinearLayout)(((FrameLayout)view).getChildAt(0))).getChildAt(0));
             
             int origHeight = view.getHeight();
-
-            /*ObjectAnimator colorFade = ObjectAnimator.ofObject(secondRow, "backgroundColor", new ArgbEvaluator(), to, from);
-            colorFade.setDuration(duration);
-            colorFade.start();
-            */
-            secondRow.setBackgroundColor(from);
+            secondRow.setBackgroundColor(to);
             ValueAnimator animator = createHeightAnimator(view, origHeight, 0, duration);
+            /*
+            animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    int color = (Integer) new ArgbEvaluator().evaluate(animation.getAnimatedFraction(), from, to);
+                    secondRow.setBackgroundColor(color);
+                }
+            });
+            */
             animator.addListener(new AnimatorListenerAdapter() {
 
                 @Override
                 public void onAnimationEnd(final Animator animator) {
                     view.setVisibility(View.GONE);
+                    // secondRow.setBackgroundColor(to);
                     super.onAnimationEnd(animator);
                 }
                 @Override
                 public void onAnimationCancel(Animator animation) {
                     view.setVisibility(View.VISIBLE);
+                    // secondRow.setBackgroundColor(from);
                     super.onAnimationCancel(animation);
                 }
             });
@@ -782,18 +795,23 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
             view.setVisibility(View.VISIBLE);
 
             final View secondRow = ((RelativeLayout)((LinearLayout)(((FrameLayout)view).getChildAt(0))).getChildAt(0));
-            secondRow.setBackgroundColor(to);
-            /*
-            ObjectAnimator colorFade = ObjectAnimator.ofObject(secondRow, "backgroundColor", new ArgbEvaluator(), from, to);
-            colorFade.setDuration(duration);
-            colorFade.start();
-            */
+
             View parent = (View) view.getParent();
             final int widthSpec = View.MeasureSpec.makeMeasureSpec(parent.getMeasuredWidth() - parent.getPaddingLeft() - parent.getPaddingRight(), View.MeasureSpec.AT_MOST);
             final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
             view.measure(widthSpec, heightSpec);
 
             ValueAnimator animator = createHeightAnimator(view, 0, view.getMeasuredHeight(), duration);
+            /*
+            animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    int color = (Integer) new ArgbEvaluator().evaluate(animation.getAnimatedFraction(), from, to);
+                    secondRow.setBackgroundColor(color);
+                    System.out.println ("SETCOLOR ANIM" + color + " " + from + " " + to);
+                }
+            });
+*/
             animator.addUpdateListener(
                     new ValueAnimator.AnimatorUpdateListener() {
                         final int listViewHeight = listView.getHeight();
@@ -828,7 +846,7 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
             animator.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-
+                    // secondRow.setBackgroundColor(to);
                     listView.post(new Runnable() {
                         @Override
                         public void run() {
@@ -837,6 +855,11 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
                     });
 
                     super.onAnimationEnd(animation);
+                }
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                    // secondRow.setBackgroundColor(from);
+                    super.onAnimationCancel(animation);
                 }
             });
             animator.start();
@@ -869,6 +892,7 @@ public abstract class ExpandableListItemAdapter<T> extends ArrayAdapter<T> imple
                     ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
                     layoutParams.height = value;
                     view.setLayoutParams(layoutParams);
+
                 }
             });
 
