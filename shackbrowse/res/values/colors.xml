@@ -12,16 +12,18 @@
     <color name="gnushack">#52c334</color>
     <color name="gnushackdark">#333</color>
 
-    <color name="selected_highlight_postbg_white">#eeeeee</color>
-    <color name="selected_postbg_white">#fefefe</color>
-    <color name="selected_postbg_whitefade">#efefef</color>
+    <color name="selected_highlight_postbg_white">#f5f5f5</color>
+    <color name="colorPrimaryDark_white">#6D7F43</color>
+    <color name="colorHighlight_white"></color>
+    <color name="selected_postbg_white">#f5f5f5</color>
+    <color name="selected_postbg_whitefade">#fff</color>
     <color name="nonpreview_post_text_color_white">#000</color>
     <color name="text_secondarycolor_white">#505050</color>
     <color name="app_bg_color_white">#fff</color>
     <color name="linkColor_white">#0645AD</color>
-    <color name="post_topline_white">#bebebe</color>
+    <color name="post_topline_white">#aeaeae</color>
     <color name="clickhighlight_white">#deefde</color>
-    <color name="userName_white">#C4A62D</color>
+    <color name="userName_white">#A58C26</color>
 
     <color name="selected_highlight_postbg">#202020</color>
     <color name="selected_postbg">#101010</color>
@@ -112,7 +114,7 @@
     <color name="SBdark">#22571f</color>
     <color name="SBvdark">#122f11</color>
     <color name="SBTlight">#AAbbef6d</color>
-    <color name="SBTTlight">#AAbbefcd</color>
+    <color name="SBTTlight">#edBEDD75</color>
     <color name="SBTmed">#3052c334</color>
     <color name="SBTdark">#3022571f</color>
     <color name="SBTXdark">#CC22571f</color>
@@ -122,6 +124,8 @@
 	<color name="SBTbriefcasepurple">#304e4560</color>
 	<color name="SBTXbriefcasepurple">#CC4e4560</color>
 	<color name="SBTlightbriefcasepurple">#AA908a9d</color>
+
+    <color name="SBwhiteaccent">#BEDD75</color>
 
 	<color name="iconOutlineColor">#4f9d40</color>
 

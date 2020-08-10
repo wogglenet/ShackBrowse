@@ -116,7 +116,7 @@ public class PopupBrowserFragment extends Fragment {
 		((MainActivity) getActivity()).mProgressBar.setVisibility(View.VISIBLE);
 		((MainActivity) getActivity()).mProgressBar.progressiveStart();
 
-		mWebview.setBackgroundColor(0x00000000);
+		mWebview.setBackgroundColor(MainActivity.getThemeColor(getActivity(), R.attr.colorAppBG));
         
         mWebview.setWebChromeClient(new WebChromeClient() {
 			public void onProgressChanged(WebView view, int progress) {

@@ -104,6 +104,7 @@ public class ShackApi
     static final String BASE_URL_ALT2 = "http://shackbrowseapi.appspot.com/";
     static final String WINCHATTYV2_API = "http://winchatty.com/v2/";
     static final String WOGGLEV2_API = "http://api.woggle.net/v2/";
+    static final String WOGGLEV2_API2 = "http://api2.woggle.net/v2/";
     static final String CLOUDPIN_URL = "http://woggle.net/shackcloudpin/";
     static final String DONATOR_URL = "http://woggle.net/shackbrowsedonators/";
     static final String FAKE_STORY_ID = "17";
@@ -186,9 +187,9 @@ public class ShackApi
     	{
     		return new ApiUrl(WOGGLEV2_API, true);
     	}
-    	else if (type == 2)
+    	else if (type == 6)
     	{
-    		return new ApiUrl(prefs.getString("apiCustom", BASE_URL), false);
+    		return new ApiUrl(WOGGLEV2_API2, true);
     	}
 		return new ApiUrl(BASE_URL_ALT2,false);
     }

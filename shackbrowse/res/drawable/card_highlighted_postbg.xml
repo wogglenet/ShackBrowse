@@ -14,8 +14,8 @@
             <gradient
         android:angle="270"
         android:startColor="?attr/colorPostTopLine"
-        android:centerColor="@android:color/transparent"
-        android:endColor="@android:color/transparent"
+        android:centerColor="?attr/colorTransparent"
+        android:endColor="?attr/colorTransparent"
         android:type="linear"
         />
         </shape>

@@ -28,7 +28,7 @@
 	         android:layout_marginLeft="5dp"
 	       android:paddingTop="5dip"
 	       android:paddingBottom="5dip"
-	       android:textColor="@color/replyCount"
+	       android:textColor="?attr/colorPostCount"
 	       android:textSize="@dimen/searchResultLolTagSize"
 	     />
   		<LinearLayout
@@ -47,7 +47,7 @@
 	         android:fontFamily="sans-serif-light"
 	         android:layout_width="wrap_content"
 	         android:layout_height="wrap_content"
-	         android:textColor="@color/userName"
+	         android:textColor="?attr/colorUsername"
 	         android:textSize="@dimen/userNameSize"
 		     />
 		     <TextView

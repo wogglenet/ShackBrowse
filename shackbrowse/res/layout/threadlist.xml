@@ -20,7 +20,7 @@
 	      	   android:layout_width="wrap_content"
 	      	   android:layout_height="wrap_content"
 	      	   android:layout_centerInParent="true"
-	      	   android:textColor="@color/nonpreview_post_text_color"
+	      	   android:textColor="?colorText"
 	      	   android:text="@string/tlist_emptyText"
       		   />
     </RelativeLayout>

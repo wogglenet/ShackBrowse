@@ -23,7 +23,7 @@
             android:paddingLeft="70dp"
             android:paddingBottom="50dp"
             android:text="6"
-            android:textColor="@color/gnushackdark"
+            android:textColor="?attr/colorPrimaryDark"
             android:textIsSelectable="false"
             android:focusable="false"
             android:longClickable="false"
@@ -80,7 +80,7 @@
                     android:textIsSelectable="false"
                     android:focusable="false"
                     android:longClickable="false"
-                    android:textColor="@color/nonpreview_post_text_color"
+                    android:textColor="?attr/colorText"
                     android:textSize="26dp"/>
             </LinearLayout>
 
@@ -101,7 +101,7 @@
             android:padding="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/gnushack"
+            android:background="?attr/colorHighlight"
             android:text="tagline"
             android:fontFamily="sans-serif-condensed"
             android:textStyle="italic"

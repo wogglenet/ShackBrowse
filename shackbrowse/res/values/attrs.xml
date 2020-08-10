@@ -6,6 +6,7 @@
     <attr name="menuBGdrawable" format="reference" />
     <attr name="menuSelectorDrawable" format="reference" />
     <attr name="colorHighlight" format="reference" />
+    <attr name="colorTransparent" format="reference" />
 
     <attr name="colorSelPostBG" format="reference" />
     <attr name="colorSelHighPostBG" format="reference" />

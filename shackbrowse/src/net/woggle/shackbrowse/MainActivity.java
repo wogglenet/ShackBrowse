@@ -799,7 +799,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		theme.resolveAttribute(R.attr.navigationBarColor, typedValue, true);
 		darkBarColor = typedValue.data;
 
-
         //We need to manually change statusbar color, otherwise, it remains green.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             context.getWindow().setNavigationBarColor(darkBarColor);

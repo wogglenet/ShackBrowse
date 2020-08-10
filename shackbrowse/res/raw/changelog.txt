@@ -93,7 +93,8 @@ How am I supposed to tell if you were looking at the thread or the list of threa
 $ 6.3.0
 % v 6.3.0
 _ Jul 25, 2020
-* Daylight theme
+* whiteshack theme in "app colors"
+* Option to disable display of limes in reply view options
 
 $ 6.2.0
 % v 6.2.0

@@ -80,7 +80,7 @@
 						android:layout_width="match_parent"
 						android:layout_height="@dimen/buttonBarLineWidth"
 						android:layout_span="3"
-						android:background="@color/gnushack"
+						android:background="?attr/colorHighlight"
 						android:paddingBottom="2dip"
 						/>
 

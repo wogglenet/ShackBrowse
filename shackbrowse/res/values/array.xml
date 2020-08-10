@@ -244,7 +244,7 @@
 		<item>(old) shackbrowseapi.appspot.com</item>
 		<item>WinChatty V2 (faster)</item>
 		<item>Woggle V2 (faster)</item>
-		<item>Custom API</item>
+		<item>Woggle V2 API2 BETA</item>
 	</string-array>
 	<string-array name="preference_apiUrl_vals">
 		<item>0</item>
@@ -252,7 +252,7 @@
 		<item>3</item>
 		<item>4</item>
 		<item>5</item>
-		<item>2</item>
+		<item>6</item>
 	</string-array>
     <string-array name="preference_embed">
         <item>Never</item>

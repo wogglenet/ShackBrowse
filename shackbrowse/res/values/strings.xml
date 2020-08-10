@@ -400,6 +400,8 @@
     <string name="preference_donkey_title">DonkeyPopsicle\'s 4chan mode</string>
     <string name="preference_donkey_summary">Stupidly changes all usernames to say \"shacker\", so you really can\'t tell what\'s going on, who\'s talking to who or follow conversations even.</string>
     <string name="compose_template">Template Save/Load</string>
+    <string name="preference_displaylimes">Display Limes</string>
+    <string name="preference_displaylimes_summary">Enable or disable the lime icons which indicate past donor status (it is no longer possible to donate)</string>
     <!-- items in  the array will show up even when not yet registered -->
     <string-array name="statsItems">
         <item>statsItemAnnoyedByStartupZoomDialog</item>
