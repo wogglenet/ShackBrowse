@@ -57,6 +57,7 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Transformation;
+import android.webkit.CookieManager;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -109,6 +110,7 @@ import net.woggle.CustomLinkMovementMethod;
 import net.woggle.ExpandableListItemAdapter;
 import net.woggle.FixedTextView;
 
+import org.apache.http.cookie.Cookie;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -120,6 +122,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ListIterator;
 
 
@@ -826,7 +829,8 @@ public class ThreadViewFragment extends ListFragment
         else if (_messageId == 0)
         {
 	    	boolean isNewsItem = _adapter.getItem(0).getUserName().equalsIgnoreCase("shacknews");
-		    mMainActivity.openComposerForReply(POST_REPLY, parentPost, isNewsItem);
+			boolean isCortex = (_adapter.getItem(0).getContent().contains("<br />Read more: <a href=\"https://www.shacknews.com/cortex/") || _adapter.getItem(0).getContent().contains("<br />Read more: <a href=\"/cortex/"));
+		    mMainActivity.openComposerForReply(POST_REPLY, parentPost, Integer.parseInt(isNewsItem ? ShackApi.FAKE_NEWS_ID : (isCortex ? ShackApi.FAKE_CORTEX_ID : ShackApi.FAKE_STORY_ID)));
         }
         else if (_rootPostId == 0)
         {
@@ -2753,6 +2757,7 @@ public class ThreadViewFragment extends ListFragment
                 return preview;
             }
         }
+
         private CharSequence applyHighlight(Spannable preview) {
         	if ((_highlight != null) && (_highlight.length() > 0))
         	{
@@ -2922,6 +2927,7 @@ public class ThreadViewFragment extends ListFragment
         	{
 	            ArrayList<Post> posts = ShackApi.processPosts(ShackApi.getPosts(_rootPostId, this.getContext(), ShackApi.getBaseUrl(mMainActivity)), _rootPostId, _maxBullets, mMainActivity);
 	            _shackloldata = ShackApi.getLols(mMainActivity);
+
 	            if (_shackloldata.size() != 0)
 	            {
 	            	// check if this thread has shacklol data
@@ -3597,4 +3603,5 @@ public class ThreadViewFragment extends ListFragment
 		String[] array = ctx.getResources().getStringArray(R.array.derelictposts);
 		return array[randInt(0, (array.length - 1))];
 	}
+
 }

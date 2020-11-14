@@ -241,18 +241,12 @@
 	<string-array name="preference_apiUrl">
 		<item>(old) shackapi.hughes.cc</item>
 		<item>(old) woggle.net/shackbrowseAPI</item>
-		<item>(old) shackbrowseapi.appspot.com</item>
-		<item>WinChatty V2 (faster)</item>
-		<item>Woggle V2 (faster)</item>
-		<item>Woggle V2 API2 BETA</item>
+		<item>WinChatty V3 (faster)</item>
 	</string-array>
 	<string-array name="preference_apiUrl_vals">
-		<item>0</item>
-		<item>1</item>
-		<item>3</item>
+		<item>9</item>
+		<item>8</item>
 		<item>4</item>
-		<item>5</item>
-		<item>6</item>
 	</string-array>
     <string-array name="preference_embed">
         <item>Never</item>

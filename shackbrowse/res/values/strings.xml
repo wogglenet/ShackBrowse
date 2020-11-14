@@ -246,7 +246,7 @@
     <string name="preference_analytics_title">Analytics Data</string>
     
     <string name="preference_apiUrl_title">API Provider</string>
-    <string name="preference_apiUrl_summary">Select from five servers</string>
+    <string name="preference_apiUrl_summary">Select from three servers</string>
     
     <string name="preference_ping">Ping APIs</string>
     

@@ -46,7 +46,7 @@ public class PostQueueDB {
 		values.put(DatabaseHelper.COLUMN_PREPLYTO, p.getReplyToId());
 		values.put(DatabaseHelper.COLUMN_PFINALID, p.getFinalId());
 		values.put(DatabaseHelper.COLUMN_PISMESSAGE, p.getIsMessage());
-		values.put(DatabaseHelper.COLUMN_PISNEWS, p.getIsNews());
+		values.put(DatabaseHelper.COLUMN_PISNEWS, p.getIntContentTypeId());
 		values.put(DatabaseHelper.COLUMN_PSUBJECT, p.getSubject());
 		values.put(DatabaseHelper.COLUMN_PRECIPIENT, p.getRecipient());
 		database.beginTransaction();

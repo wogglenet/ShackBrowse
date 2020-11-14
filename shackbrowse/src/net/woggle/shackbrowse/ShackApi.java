@@ -67,9 +67,9 @@ import com.google.android.gms.common.util.IOUtils;
 
 public class ShackApi
 {
-	private static final int connectionTimeOutSec = 25;
+	private static final int connectionTimeOutSec = 40;
 	private static final int socketTimeoutSec = 35;
-    static final String USER_AGENT = "shackbrowse/6.0.6";
+    static final String USER_AGENT = "shackbrowse/6.3.1";
     
     static final String IMAGE_LOGIN_URL = "http://chattypics.com/users.php?act=login_go";
     static final String IMAGE_UPLOAD_URL = "http://chattypics.com/upload.php";
@@ -101,12 +101,10 @@ public class ShackApi
     static final String BASE_URL = "http://shackapi.hughes.cc/";
     static final String BASE_URL_ALT = "http://woggle.net/shackbrowseAPI/";
     static final String BASE_URL_ALT_SSL = "https://woggle.net/shackbrowseAPI/";
-    static final String BASE_URL_ALT2 = "http://shackbrowseapi.appspot.com/";
     static final String WINCHATTYV2_API = "http://winchatty.com/v2/";
-    static final String WOGGLEV2_API = "http://api.woggle.net/v2/";
-    static final String WOGGLEV2_API2 = "http://api2.woggle.net/v2/";
     static final String CLOUDPIN_URL = "http://woggle.net/shackcloudpin/";
     static final String DONATOR_URL = "http://woggle.net/shackbrowsedonators/";
+    static final String FAKE_CORTEX_ID = "18";
     static final String FAKE_STORY_ID = "17";
     static final String FAKE_NEWS_ID = "2";
     
@@ -170,28 +168,16 @@ public class ShackApi
     public static ApiUrl getBaseUrl(Context context)
     {
     	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-    	int type = tryParseInt(prefs.getString("apiUrl2", "5"));
-    	if (type == 1)
+    	int type = tryParseInt(prefs.getString("apiUrl2", "4"));
+    	if (type == 8)
     	{
     		return new ApiUrl(BASE_URL_ALT, false);
     	}
-    	else if (type == 3)
+    	else if (type == 9)
     	{
-    		return new ApiUrl(BASE_URL_ALT2, false);
+            return new ApiUrl(BASE_URL, false);
     	}
-    	else if (type == 4)
-    	{
-    		return new ApiUrl(WINCHATTYV2_API, true);
-    	}
-    	else if (type == 5)
-    	{
-    		return new ApiUrl(WOGGLEV2_API, true);
-    	}
-    	else if (type == 6)
-    	{
-    		return new ApiUrl(WOGGLEV2_API2, true);
-    	}
-		return new ApiUrl(BASE_URL_ALT2,false);
+        return new ApiUrl(WINCHATTYV2_API, true);
     }
     
     static int getModTypeId(String moderation) throws Exception
@@ -387,15 +373,15 @@ public class ShackApi
         return results;
     }
     
-    public static JSONObject postReply(Context context, int replyToThreadId, String content, boolean isNewsItem) throws Exception
+    public static JSONObject postReply(Context context, int replyToThreadId, String content, String contentTypeID) throws Exception
     {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String userName = prefs.getString("userName", null).trim();
         String password = prefs.getString("password", null);
         
         List<NameValuePair> values = new ArrayList<NameValuePair>();
-        values.add(new BasicNameValuePair("content_type_id", isNewsItem ? FAKE_NEWS_ID : FAKE_STORY_ID));
-        values.add(new BasicNameValuePair("content_id", isNewsItem ? FAKE_NEWS_ID : FAKE_STORY_ID));
+        values.add(new BasicNameValuePair("content_type_id", contentTypeID));
+        values.add(new BasicNameValuePair("content_id", contentTypeID));
         values.add(new BasicNameValuePair("body", content));
         if (replyToThreadId > 0)
             values.add(new BasicNameValuePair("parent_id", Integer.toString(replyToThreadId)));
@@ -427,7 +413,7 @@ public class ShackApi
         
         URL post_url = new URL(url);
         HttpsURLConnection con = (HttpsURLConnection) post_url.openConnection();
-        con.setReadTimeout(30000);
+        con.setReadTimeout(40000);
         con.setRequestProperty("connection", "close");
         con.setConnectTimeout(20000);
         con.setChunkedStreamingMode(0);
@@ -470,7 +456,7 @@ public class ShackApi
 
 		URL post_url = new URL(API_MESSAGES_URL);
 		HttpsURLConnection con = (HttpsURLConnection) post_url.openConnection();
-		con.setReadTimeout(30000);
+		con.setReadTimeout(40000);
 		con.setRequestProperty("connection", "close");
 		con.setConnectTimeout(10000);
 		con.setChunkedStreamingMode(0);
@@ -560,6 +546,8 @@ public class ShackApi
                 visible_categories.add("ontopic");
             if (prefs.getBoolean("showNWS", false))
                 visible_categories.add("nws");
+            if (prefs.getBoolean("showCortex", true))
+                visible_categories.add("cortex");
         }
         else
         {
@@ -568,6 +556,7 @@ public class ShackApi
             visible_categories.add("stupid");
             visible_categories.add("political");
             visible_categories.add("ontopic");
+            visible_categories.add("cortex");
         }
 
         // winchatty uses "rootPosts" instead of "comments"
@@ -625,6 +614,7 @@ public class ShackApi
      * 
      * POST RELATED
      */
+
     public static JSONObject getRootPost(int threadId, Context context) throws ClientProtocolException, IOException, JSONException
     {
         if (threadId == 0)
@@ -989,7 +979,7 @@ public class ShackApi
         if  (laxTimeout)
     	{
     		connection.setConnectTimeout(15000);
-        	connection.setReadTimeout(20000);
+        	connection.setReadTimeout(40000);
     	}
     	else
         {

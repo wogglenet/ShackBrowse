@@ -6,6 +6,7 @@ import net.woggle.ApiUrl;
 import net.woggle.shackbrowse.imgur.ImgurAuthorization;
 import net.woggle.shackbrowse.imgur.LoginActivity;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -224,7 +225,8 @@ public class PreferenceView extends PreferenceFragment
 	
 	final static int OPEN_BROWSER_ZOOM_SETUP = 37;
 	final static int RESTART_APP = 38;
-    public void doOrientation (int _orientLock) 
+    @SuppressLint("SourceLockedOrientationActivity")
+	public void doOrientation (int _orientLock)
     {
     	if (_orientLock == -1)
     	{
@@ -281,10 +283,7 @@ public class PreferenceView extends PreferenceFragment
             	ShackApi.getPosts(3000000, getActivity(), new ApiUrl(ShackApi.BASE_URL_ALT, false));
             	if (isCancelled()) 
             	    return null;
-            	ShackApi.getPosts(3000000, getActivity(), new ApiUrl(ShackApi.BASE_URL_ALT2, false));
-            	if (isCancelled())
-            	    return null;
-            	
+
             	Long current = TimeDisplay.now();
             	ShackApi.getPosts(3000000, getActivity(), new ApiUrl(ShackApi.BASE_URL, false));
             	float hughes = (TimeDisplay.now() - current);
@@ -298,24 +297,12 @@ public class PreferenceView extends PreferenceFragment
             	    return null;
             	
             	current = TimeDisplay.now();
-            	ShackApi.getPosts(3000000, getActivity(), new ApiUrl(ShackApi.BASE_URL_ALT2, false));
-            	float appspot = (TimeDisplay.now() - current);
-            	if (isCancelled()) 
-            	    return null;
-            	
-            	current = TimeDisplay.now();
             	ShackApi.getPosts(3000000, getActivity(), new ApiUrl(ShackApi.WINCHATTYV2_API, true));
             	float winchatty = (TimeDisplay.now() - current);
             	if (isCancelled()) 
             	    return null;
             	
-            	current = TimeDisplay.now();
-            	ShackApi.getPosts(3000000, getActivity(), new ApiUrl(ShackApi.WOGGLEV2_API, true));
-            	float woggle2 = (TimeDisplay.now() - current);
-            	if (isCancelled()) 
-            	    return null;
-            	
-                return hughes + " " + woggle + " " + appspot + " " + winchatty + " " + woggle2;
+                return hughes + " " + woggle + " " + winchatty;
                 
             }
             catch (Exception e)

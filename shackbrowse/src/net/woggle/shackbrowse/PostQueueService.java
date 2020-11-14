@@ -122,6 +122,7 @@ public class PostQueueService extends JobIntentService
 	{
 		// ret = 1 == sent item ok, ret = 0 == send failed, ret = 2 == network error, ret = 3 == PRL, ret = 4 == banned, delete queue, ret = 5 == login error, ret = 6 == post to nuked thread
 		// ret = 7 = msg sent ok
+		// ret == 9 = content type id error
 		int ret = 0;
 		if (prefs == null) { prefs = PreferenceManager.getDefaultSharedPreferences(ctx); }
 		if (pdb == null) { pdb = new PostQueueDB(ctx); }
@@ -141,7 +142,18 @@ public class PostQueueService extends JobIntentService
 					if (post.getFinalId() == 0)
 					{
 						try {
-							data = ShackApi.postReply(ctx, post.getReplyToId(), post.getBody(), post.isNews());
+							data = ShackApi.postReply(ctx, post.getReplyToId(), post.getBody(), post.getContentTypeId());
+						} catch (java.io.FileNotFoundException e) {
+							e.printStackTrace();
+							networkErrorNotify();
+							// quit now, no need to keep trying and failing with network error
+							System.out.println("POSTQU: FILENOTFOUND");
+							post.commitDelete(ctx);
+							if (!prefs.getBoolean("isAppForeground", false))
+							{
+								notify("Post Failure", "FILE NOT FOUND Error?? Deleted from queue, sorry.", 58412, 0);
+							}
+							return 9;
 						} catch (Exception e) {
 							e.printStackTrace();
 							networkErrorNotify();
@@ -233,7 +245,7 @@ public class PostQueueService extends JobIntentService
 										notify("Post PRL'd", "Will Retry. " + remaining + " posts in queue.", 58411, 0);
 									}
 								}
-								if (data.toString().toLowerCase().contains("banned".toLowerCase()))
+								else if (data.toString().toLowerCase().contains("banned".toLowerCase()))
 								{
 									ret = 4;
 									// banned, delete post
@@ -258,7 +270,7 @@ public class PostQueueService extends JobIntentService
 										    }
 										}
 										*/
-								if (data.toString().toLowerCase().contains("You must be logged in to post".toLowerCase()))
+								else if (data.toString().toLowerCase().contains("You must be logged in to post".toLowerCase()))
 								{
 									ret = 5;
 									// login error, delete post
@@ -270,7 +282,7 @@ public class PostQueueService extends JobIntentService
 										notify("Post Error", "Bad Login. Check shacknews credentials.", 58414, 0);
 									}
 								}
-								if (data.toString().toLowerCase().contains("Trying to post to a nuked thread".toLowerCase()))
+								else if (data.toString().toLowerCase().contains("Trying to post to a nuked thread".toLowerCase()))
 								{
 									ret = 6;
 									// login error, delete post
@@ -284,12 +296,26 @@ public class PostQueueService extends JobIntentService
 
 									statInc(ctx, "PostedToNukedThread");
 								}
+								else if (data.toString().toLowerCase().contains("content type or parent do not match"))
+								{
+									System.out.println("POSTQU: CONTENT TYPE ERROR");
+									System.out.println("POSTQU: E: " + data.toString());
+									post.commitDelete(ctx);
+									notify("Post Failure", "Content ID Type Error (" + post.getContentTypeId() + "). Your post was deleted. Sorry.", 58412, 0);
 
+									return 9;
+								}
+								else {
+									notify("Post Error", "Error X51. Please report this. E: " + data.toString(), 58416, 0);
+									System.out.println("POSTQU: E: " + data.toString());
+									throw new RuntimeException(new Exception());
+								}
 							}
 							else
 							{
 
-								notify("Post Error", "Error X48. Please report this.", 58416, 0);
+								notify("Post Error", "Error X48. Please report this. E: " + data.toString(), 58416, 0);
+								System.out.println("POSTQU: E: " + data.toString());
 								throw new RuntimeException(new Exception());
 								// unknown error, use exponential backoff
 								// statInc(ctx, "PQPUnknownError");

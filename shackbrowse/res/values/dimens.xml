@@ -47,7 +47,7 @@
     <dimen name="cardReplyBottomMarginLoading">45dp</dimen>
     
     <dimen name="cardRightMarginTagRoomTangent">36dp</dimen>
-    <dimen name="cardRightMarginTagRoomNws">23dp</dimen>
+    <dimen name="cardRightMarginTagRoomNws">30dp</dimen>
     <dimen name="cardRightMarginTagRoomInf">49dp</dimen>
     <dimen name="cardRightMarginTagRoomPolitical">37dp</dimen>
     <dimen name="cardRightMarginTagRoomStupid">30dp</dimen>

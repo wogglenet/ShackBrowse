@@ -1740,16 +1740,16 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         startActivityForResult(i, returnResultType);
 	}
 	final static String THREAD_ID = "threadid";
-	final static String IS_NEWS_ITEM = "isnewsitem";
+	final static String CONTENT_TYPE_ID = "ctid";
 
-	public void openComposerForReply (int returnResultType, Post parentPost, boolean isNewsItem)
+	public void openComposerForReply (int returnResultType, Post parentPost, int contentTypeId)
 	{
 		Intent i = new Intent(this, ComposePostView.class);
         i.putExtra(THREAD_ID, parentPost.getPostId());
         i.putExtra("parentAuthor", parentPost.getUserName());
         i.putExtra("parentContent", parentPost.getContent());
         i.putExtra("parentDate", parentPost.getPosted());
-        i.putExtra(IS_NEWS_ITEM, isNewsItem);
+        i.putExtra(CONTENT_TYPE_ID, contentTypeId);
         startActivityForResult(i, returnResultType);
 	}
 	

@@ -105,7 +105,7 @@ public class ComposePostView extends AppCompatActivity {
     final String[] _tags = {      "r{...}r",  "g{...}g",   "b{...}b",  "y{...}y",  "e[...]e",  "l[...]l",  "n[...]n",	  "p[...]p",      "/[...]/",         "b[...]b",   "q[...]q",     "s[...]s",   "_[...]_",     "-[...]-",	   "o[...]o"};
 	final String mEmoji = "\u2600\u2601\u2602\u2603\u2604\u2605\u2606\u2607\u2608\u2609\u260e\u2614\u2615\u2616\u2617\u2618\u261c\u261d\u261e\u261f\u2620\u2621\u2622\u2623\u2639\u263a\u263b\u2665\u2666\u2698\u26a0\u26a1\u26bd\u26be\u26c7\u26c8\u26c4\u26c5\u26cf\u26d4\u26e4\u26e5\u26e6\u26e7\u26f0\u26f1\u26f2\u26f3\u26f4\u26f5\u26f7\u26f8\u26f9\u26fa\u2701\u2702\u2703\u2704\u2705\u2706\u2707\u2708\u2709\u270a\u270b\u270c\u270d\u270e\u270f\u2710\u2711\u2712\u2713\u2714\u2715\u2716\u2717\u2718\u2728\u2744\u274c\u274e\u2764\u2b50\u231a\u231b\u23f0\u23f1\u23f3";
 
-	private boolean _isNewsItem = false;
+	private int _contentTypeId = 0;
     private int _replyToPostId = 0;
 	private MaterialDialog _progressDialog;
 	
@@ -156,8 +156,7 @@ public class ComposePostView extends AppCompatActivity {
         {
             _replyToPostId = getIntent().getExtras().getInt(MainActivity.THREAD_ID);
 
-            if (extras.containsKey(MainActivity.IS_NEWS_ITEM))
-                _isNewsItem = extras.getBoolean(MainActivity.IS_NEWS_ITEM);
+            _contentTypeId = getIntent().getExtras().getInt(MainActivity.CONTENT_TYPE_ID);
         }
         
         // drafts
@@ -1630,7 +1629,8 @@ public class ComposePostView extends AppCompatActivity {
                 if (!_messageMode)
                 {
 
-                	PostQueueObj pqo = new PostQueueObj(_replyToPostId, content, _isNewsItem);
+                	int contentTypeId = _contentTypeId;
+                	PostQueueObj pqo = new PostQueueObj(_replyToPostId, content, contentTypeId);
                 	pqo.create(ComposePostView.this);
 	                // JSONObject data = ShackApi.postReply(ComposePostView.this, _replyToPostId, content, _isNewsItem);
 	                // int reply_id = data.getInt("post_insert_id");

@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,6 +31,7 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.core.view.OnApplyWindowInsetsListener;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -119,6 +122,17 @@ public class PopupBrowserFragment extends Fragment {
 		mWebview.setBackgroundColor(MainActivity.getThemeColor(getActivity(), R.attr.colorAppBG));
         
         mWebview.setWebChromeClient(new WebChromeClient() {
+			@Nullable
+			@Override
+			public Bitmap getDefaultVideoPoster() {
+				if (super.getDefaultVideoPoster() == null) {
+					return BitmapFactory.decodeResource(getActivity().getResources(),
+							R.drawable.ic_launcher);
+				} else {
+					return super.getDefaultVideoPoster();
+				}
+			}
+
 			public void onProgressChanged(WebView view, int progress) {
 
 

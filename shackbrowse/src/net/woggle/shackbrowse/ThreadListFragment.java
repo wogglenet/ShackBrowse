@@ -587,12 +587,13 @@ public class ThreadListFragment extends ListFragment
         boolean _showNWS = _prefs.getBoolean("showNWS", false);
         boolean _showPolitical = _prefs.getBoolean("showPolitical", false);
         boolean _showOntopic = _prefs.getBoolean("showOntopic", true);
+		boolean _showCortex = _prefs.getBoolean("showCortex", true);
 
         MaterialDialog.Builder build = new MaterialDialog.Builder(getActivity());
         build.title("Choose which to show");
-        final String[] items = { "tangent","informative","nws","stupid","political","ontopic"};
+        final String[] items = { "tangent","informative","nws","stupid","political","ontopic","cortex"};
         ArrayList<Integer> index = new ArrayList<Integer>();
-        if (_showTangent) index.add(new Integer(0)); if (_showInformative) index.add(new Integer(1)); if (_showNWS) index.add(new Integer(2)); if (_showStupid) index.add(new Integer(3)); if (_showPolitical) index.add(new Integer(4)); if (_showOntopic) index.add(new Integer(5));
+        if (_showTangent) index.add(new Integer(0)); if (_showInformative) index.add(new Integer(1)); if (_showNWS) index.add(new Integer(2)); if (_showStupid) index.add(new Integer(3)); if (_showPolitical) index.add(new Integer(4)); if (_showOntopic) index.add(new Integer(5)); if (_showCortex) index.add(new Integer(6));
         final Integer[] checkedItems = index.toArray(new Integer[]{});
         // final Integer[] checkedItems = { _showTangent ? 0 : null ,_showInformative ? 1 : null,_showNWS  ? 2 : null,_showStupid ? 3 : null,_showPolitical ? 4 : null, _showOntopic ? 5 : null};
         build.items(items).itemsCallbackMultiChoice(checkedItems, new MaterialDialog.ListCallbackMultiChoice() {
@@ -638,6 +639,11 @@ public class ThreadListFragment extends ListFragment
                     edit.putBoolean("showOntopic", true);
                 else
                     edit.putBoolean("showOntopic", false);
+
+				if (checkedIndices.contains(6) == true)
+					edit.putBoolean("showCortex", true);
+				else
+					edit.putBoolean("showCortex", false);
 
                 edit.commit();
                 refreshThreads();
@@ -1534,6 +1540,12 @@ public class ThreadListFragment extends ListFragment
 	                holder.moderation.setTextColor(getResources().getColor(R.color.modtag_political));
 	                holder.moderation.setText("political");
 	            }
+				else if (t.getModeration().equalsIgnoreCase("cortex"))
+				{
+					holder.container.setNWS(true);
+					holder.moderation.setTextColor(getResources().getColor(R.color.modtag_inf));
+					holder.moderation.setText("cortex");
+				}
 	            else
 	            {
 	            	holder.container.refreshDrawableState(); // needed because setmodtagsfalse does not do this

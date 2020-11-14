@@ -92,9 +92,12 @@ How am I supposed to tell if you were looking at the thread or the list of threa
 
 $ 6.3.0
 % v 6.3.0
-_ Jul 25, 2020
+_ Nov 14, 2020
 * whiteshack theme in "app colors"
+* Preliminary cortex support
 * Option to disable display of limes in reply view options
+* Appspot API and Woggle V2 API removed because they no longer exist
+* Bug Fix: Some popup browser crashes
 
 $ 6.2.0
 % v 6.2.0
