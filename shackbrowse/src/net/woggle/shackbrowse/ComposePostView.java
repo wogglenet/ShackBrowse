@@ -150,6 +150,7 @@ public class ComposePostView extends AppCompatActivity {
 
         _extendedEditor  = Integer.parseInt(_prefs.getString("extendedEditor", "1"));
 
+		_contentTypeId = Integer.parseInt(ShackApi.FAKE_STORY_ID);
         // grab the post being replied to, if this is a reply
         Bundle extras = getIntent().getExtras();
         if (extras != null && extras.containsKey(MainActivity.THREAD_ID))

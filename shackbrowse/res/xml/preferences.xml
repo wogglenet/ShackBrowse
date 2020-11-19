@@ -73,7 +73,7 @@
 			android:entries="@array/preference_apiUrl"
 			android:entryValues="@array/preference_apiUrl_vals"
 			android:summary="@string/preference_apiUrl_summary"
-			android:defaultValue="5"
+			android:defaultValue="4"
 			/>
 
 

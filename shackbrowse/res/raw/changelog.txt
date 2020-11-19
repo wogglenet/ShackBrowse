@@ -90,6 +90,11 @@ How am I supposed to tell if you were looking at the thread or the list of threa
 
 -->
 
+$ 6.3.1
+% v 6.3.1
+_ Nov 17, 2020
+* Bug Fix: Root posts will no longer be eaten
+
 $ 6.3.0
 % v 6.3.0
 _ Nov 14, 2020
