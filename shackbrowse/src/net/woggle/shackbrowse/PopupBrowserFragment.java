@@ -186,7 +186,15 @@ public class PopupBrowserFragment extends Fragment {
         	@Override
 			public boolean shouldOverrideUrlLoading(WebView view,String _href) {
 				Uri uri = Uri.parse(_href);
-				String id = uri.getQueryParameter("id");
+				String id = null;
+				try
+				{
+					id = uri.getQueryParameter("id");
+				}
+				catch (Exception e)
+				{
+					id = null;
+				}
 				if ((uri.getHost().equalsIgnoreCase("www.shacknews.com") || uri.getHost().equalsIgnoreCase("shacknews.com")) && id != null) {
 					System.out.println("open LINK chatty " + _href);
 					((MainActivity) getActivity()).closeBrowser();
