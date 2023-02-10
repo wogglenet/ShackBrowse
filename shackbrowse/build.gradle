@@ -5,12 +5,12 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.6.3'
+        classpath 'com.android.tools.build:gradle:7.4.1'
     }
 }
 
 apply plugin: 'com.android.application'
-apply plugin: 'io.fabric'
+apply plugin: 'com.google.firebase.crashlytics'
 
 
 repositories {
@@ -27,6 +27,7 @@ dependencies {
     implementation fileTree(include: '*.jar', dir: 'libs')
 
     implementation 'com.google.android.material:material:1.1+'
+    implementation 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
 
     implementation 'com.google.android.gms:play-services-base:17.1.0'
 
@@ -38,6 +39,8 @@ dependencies {
     implementation 'com.github.vajro:MaterialDesignLibrary:1.6'
 
     implementation 'com.github.bumptech.glide:glide:4.9.0'
+    implementation 'com.google.firebase:firebase-crashlytics:17.2.1'
+    implementation 'com.google.firebase:firebase-analytics:17.5.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
 
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
@@ -49,7 +52,6 @@ dependencies {
     implementation 'org.ccil.cowan.tagsoup:tagsoup:1.2.1'
 
     implementation 'com.google.firebase:firebase-core:17.2.2'
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
     //  implementation 'com.google.firebase:firebase-crash:11.8.0'
 
     implementation 'com.github.castorflex.smoothprogressbar:library:1.1.0'
@@ -77,8 +79,7 @@ android {
     signingConfigs {
         release
     }
-    compileSdkVersion 29
-    buildToolsVersion '29.0.0'
+    compileSdkVersion 31
     compileOptions.encoding = 'windows-1251'
     sourceSets {
         main {
@@ -106,7 +107,7 @@ android {
     defaultConfig {
         applicationId "net.woggle.shackbrowse"
         minSdkVersion 23
-        targetSdkVersion 29
+        targetSdkVersion 31
         multiDexEnabled false
     }
     productFlavors {

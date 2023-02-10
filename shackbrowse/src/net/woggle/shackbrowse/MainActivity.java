@@ -386,7 +386,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 		// SM autocheck
 		long updateInterval = Long.parseLong(_prefs.getString("PeriodicNetworkServicePeriod", "10800")); // DEFAULT 3 HR 10800L,  5 minutes 50-100mb, 10 minutes 25-50mb, 30mins 10-20mb, 1 hr 5-10mb, 3 hr 1-3mb, 6hr .5-1.5mb, 12hr .25-1mb
-		PeriodicNetworkService.scheduleJob(this, updateInterval); // scheduleJob also checks preferences
+//		PeriodicNetworkService.scheduleJob(this, updateInterval); // scheduleJob also checks preferences
 
 		// notification database pruning
 		NotificationsDB ndb = new NotificationsDB(this);
@@ -481,7 +481,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         }
         
         // set up donator icons
-        new LimeTask().execute();
+//        new LimeTask().execute();
 
         // sync stats
         StatsFragment sfrag = new StatsFragment();
@@ -611,7 +611,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 
         // check versions
-        new VersionTask().execute();
+//        new VersionTask().execute();
 
         // get block list
         
