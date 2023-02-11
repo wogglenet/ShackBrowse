@@ -90,6 +90,11 @@ How am I supposed to tell if you were looking at the thread or the list of threa
 
 -->
 
+$ 7.0.0
+% v 7.0.0
+_ Feb 11, 2023
+* Attempting to revive this targeting SDK 31. Woggle.net is gone so limes and many other API features are not working.
+
 $ 6.3.2
 % v 6.3.2
 _ Jan 13, 2021
