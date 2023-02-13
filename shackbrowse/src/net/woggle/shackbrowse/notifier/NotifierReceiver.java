@@ -111,7 +111,7 @@ public class NotifierReceiver extends FirebaseMessagingService
 					mBuilder.setContentTitle("New Replies");
 					mBuilder.setContentText("Click to show a list");
 					mBuilder.setTicker(numNew + " new replies to your posts");
-			        mBuilder.setStyle(getInboxStyleFor("New replies to your posts", "reply", numNew, context));
+					mBuilder.setStyle(getInboxStyleFor("New replies to your posts", "reply", numNew, context));
 					resultIntent.putExtra("notificationOpenRList", true);
 				}
 				else
