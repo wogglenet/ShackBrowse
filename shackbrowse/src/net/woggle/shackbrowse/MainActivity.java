@@ -231,6 +231,8 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		mVersion = thisversion;
 		isBeta = thisversion.toLowerCase().contains("beta");
 
+		NetworkNotificationServers.getRegToken();
+
 		// enforce overflow menu
 		try {
 	        ViewConfiguration config = ViewConfiguration.get(this);
@@ -272,7 +274,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		getWindow().setBackgroundDrawable(new ColorDrawable(getThemeColor(this, R.attr.colorAppBG)));
 
 		// set up preferences
-        reloadPrefs();
+		reloadPrefs();
 
 
         // set up android oreo notification channels

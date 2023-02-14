@@ -1,23 +1,18 @@
 package net.woggle.shackbrowse;
 
-import java.io.IOException;
-import java.sql.Timestamp;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import org.json.JSONObject;
-
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
-
+import androidx.annotation.NonNull;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 //GCM access
 
@@ -29,7 +24,27 @@ public class NetworkNotificationServers
      AtomicInteger msgId = new AtomicInteger();
      Context context;
 
-     String regid = FirebaseInstanceId.getInstance().getToken();
+     protected static String regid = null;
+
+	 public static void setRegId(String newRegId) {
+		 regid = newRegId;
+	 }
+
+	 static public void getRegToken() {
+		 FirebaseMessaging.getInstance().getToken()
+				 .addOnCompleteListener(new OnCompleteListener<String>() {
+					 @Override
+					 public void onComplete(@NonNull Task<String> task) {
+						 if (!task.isSuccessful()) {
+							 Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+							 return;
+						 }
+
+						 // Get new FCM registration token
+						 regid = task.getResult();
+					 }
+				 });
+	 }
 
 	private SharedPreferences _prefs;
 	private OnGCMInteractListener _listener;
@@ -63,8 +78,6 @@ public class NetworkNotificationServers
      	System.out.println("GCM: INSTANTIATED");
          context = activity;
          _prefs = PreferenceManager.getDefaultSharedPreferences(context);
-         regid = getRegistrationId();
-         
          _listener = listener;
          
 
@@ -81,7 +94,7 @@ public class NetworkNotificationServers
       *         complete.
       */
      public String getRegistrationId() {
-         return FirebaseInstanceId.getInstance().getToken();
+         return regid;
      }
 
      public void sendRegistrationIdToBackend() {

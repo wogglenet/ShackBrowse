@@ -81,7 +81,7 @@ public class ShackMessageNotifierReceiver extends BroadcastReceiver
 				// stupid hack for android bug
 				resultIntent.setAction(Long.toString(System.currentTimeMillis()));
 
-				PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+				PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_IMMUTABLE);
 
 				mBuilder.setContentIntent(resultPendingIntent);
 				Notification notification = mBuilder.build();

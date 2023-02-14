@@ -1,17 +1,9 @@
 package net.woggle.shackbrowse.notifier;
-
 import android.util.Log;
-
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessagingService;
-
 import net.woggle.shackbrowse.NetworkNotificationServers;
 
-
 public class FCMIDReceiver extends FirebaseMessagingService {
-
-	private static final String TAG = "MyFirebaseIIDService";
-
 	/**
 	 * Called if InstanceID token is updated. This may occur if the security of
 	 * the previous token had been compromised. Note that this is called when the InstanceID token
@@ -22,6 +14,7 @@ public class FCMIDReceiver extends FirebaseMessagingService {
 	public void onNewToken(String s) {
 		super.onNewToken(s);
 		sendRegistrationToServer(s);
+		NetworkNotificationServers.setRegId(s);
 		Log.d("NEW_TOKEN",s);
 	}
 	/// [END refresh_token]
@@ -35,7 +28,6 @@ public class FCMIDReceiver extends FirebaseMessagingService {
 	 * @param token The new token.
 	 */
 	private void sendRegistrationToServer(String token) {
-		// TODO: Implement this method to send token to your app server.
 		NetworkNotificationServers nns = new NetworkNotificationServers(getApplicationContext(), null);
 		nns.sendRegistrationIdToBackend();
 	}

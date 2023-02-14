@@ -401,7 +401,7 @@ public class PostQueueService extends JobIntentService
 			resultIntent.putExtra("notificationOpenPostQueue", true);
 		}
 
-		PendingIntent resultPendingIntent = PendingIntent.getActivity(ctx, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		PendingIntent resultPendingIntent = PendingIntent.getActivity(ctx, 0, resultIntent, PendingIntent.FLAG_IMMUTABLE);
 		mBuilder.setContentIntent(resultPendingIntent);
 
 		Notification notification = mBuilder.build();

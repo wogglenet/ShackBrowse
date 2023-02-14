@@ -90,6 +90,17 @@ How am I supposed to tell if you were looking at the thread or the list of threa
 
 -->
 
+$ 7.0.2
+% v 7.0.2
+_ ???
+* Update Firebase to a recent version
+
+
+$ 7.0.1
+% v 7.0.1
+_ Feb 12, 2023
+* Fix post tagging (e.g. LOLs) not working.
+
 $ 7.0.0
 % v 7.0.0
 _ Feb 11, 2023
