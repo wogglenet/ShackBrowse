@@ -32,7 +32,7 @@
 					android:background="@color/collapsed_postbg"
 					android:orientation="horizontal">
 
-					<net.woggle.CheckableLinearLayout
+					<net.swigglesoft.CheckableLinearLayout
 						xmlns:android="http://schemas.android.com/apk/res/android"
 						android:id="@+id/searchTypePosts"
 						android:layout_width="0dp"
@@ -48,9 +48,9 @@
 							android:textColor="@color/nonpreview_post_text_color"
 							android:textSize="@dimen/searchHeaderSize"
 							/>
-					</net.woggle.CheckableLinearLayout>
+					</net.swigglesoft.CheckableLinearLayout>
 
-					<net.woggle.CheckableLinearLayout
+					<net.swigglesoft.CheckableLinearLayout
 						xmlns:android="http://schemas.android.com/apk/res/android"
 						android:id="@+id/searchTypeLol"
 						android:layout_width="0dp"
@@ -69,7 +69,7 @@
 							android:textColor="@color/nonpreview_post_text_color"
 							android:textSize="@dimen/searchHeaderSize"
 							/>
-					</net.woggle.CheckableLinearLayout>
+					</net.swigglesoft.CheckableLinearLayout>
 
 				</TableRow>
 

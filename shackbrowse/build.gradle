@@ -104,7 +104,7 @@ android {
         release.setRoot('build-types/release')
     }
     defaultConfig {
-        applicationId "net.woggle.shackbrowse"
+        applicationId "net.swigglesoft.shackbrowse"
         minSdkVersion 23
         targetSdkVersion 31
         multiDexEnabled false

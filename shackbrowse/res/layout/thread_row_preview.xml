@@ -12,7 +12,7 @@
 		android:layout_height="wrap_content"
 		>
 		</ImageView>
-    <net.woggle.CheckableTableLayout
+    <net.swigglesoft.CheckableTableLayout
         android:id="@+id/previewView"
         android:layout_width="0dp"
         android:layout_weight="1"
@@ -80,7 +80,7 @@
 			android:layout_gravity="center_vertical"
             ></ImageView>
 
-				<net.woggle.CircularProgress
+				<net.swigglesoft.CircularProgress
 					android:id="@+id/postingThrobber"
 					android:layout_width="13dp"
 					android:layout_height="13dp"
@@ -120,6 +120,6 @@
                 />
 
         </TableRow>
-    </net.woggle.CheckableTableLayout>
+    </net.swigglesoft.CheckableTableLayout>
 </LinearLayout>
 

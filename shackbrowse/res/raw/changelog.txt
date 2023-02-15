@@ -76,7 +76,7 @@ r{Can I Donate?}r
 No.
 
 g{Where do I get it?}g
-s[_[b[On g{Android}g?]b]_ l[Shack Browse]l is available on Google Play: https://play.google.com/store/apps/details?id=net.woggle.shackbrowse
+s[_[b[On g{Android}g?]b]_ l[Shack Browse]l is available on Google Play: https://play.google.com/store/apps/details?id=swigglesoft.shackbrowse
 
 
 y{My Notifications are jacked up.}y

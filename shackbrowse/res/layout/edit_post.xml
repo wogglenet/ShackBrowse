@@ -30,7 +30,7 @@
                   android:layout_marginLeft="9dp"
 				  android:layout_marginRight="9dp">
 
-    <net.woggle.EditTextSelectionSavedAllowImage
+    <net.swigglesoft.EditTextSelectionSavedAllowImage
         android:id="@+id/textContent"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

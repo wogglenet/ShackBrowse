@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<net.woggle.CheckableLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<net.swigglesoft.CheckableLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
    android:id="@+id/searchRowLayout"
    android:layout_width="fill_parent" 
    android:layout_height="wrap_content"
@@ -77,4 +77,4 @@
          android:textSize="@dimen/textSize"
      	/>
 	</RelativeLayout>
-</net.woggle.CheckableLinearLayout>
+</net.swigglesoft.CheckableLinearLayout>

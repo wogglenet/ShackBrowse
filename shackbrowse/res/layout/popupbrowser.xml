@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-	<net.woggle.NestedScrollWebView xmlns:app="http://schemas.android.com/apk/res-auto"
+	<net.swigglesoft.NestedScrollWebView xmlns:app="http://schemas.android.com/apk/res-auto"
 		xmlns:android="http://schemas.android.com/apk/res/android" android:background="@drawable/bg_app_ics"
 		 android:fillViewport="true"
 	android:focusable="true"

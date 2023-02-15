@@ -164,7 +164,7 @@
  	     android:layout_height="wrap_content"
  	     android:layout_width="match_parent"
  	     >
-		 <net.woggle.CircularProgress
+		 <net.swigglesoft.CircularProgress
 			 android:id="@+id/tview_loadSpinner"
 			 android:layout_width="37dp"
 			 android:layout_height="37dp"

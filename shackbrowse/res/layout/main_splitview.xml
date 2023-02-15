@@ -57,7 +57,7 @@
 						   android:layout_height="match_parent"
 						   android:layout_alignParentTop="true"
 						   app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-					   <net.woggle.shackbrowse.SlideFrame
+					   <net.swigglesoft.shackbrowse.SlideFrame
 						   xmlns:slidingLayer="http://schemas.android.com/apk/res-auto"
 						   android:id="@+id/searchResults"
 						   android:layout_width="match_parent"
@@ -66,8 +66,8 @@
 						   slidingLayer:closeOnTapEnabled="false"
 						   android:layout_alignParentTop="true"
 						   app:layout_behavior="@string/appbar_scrolling_view_behavior">
-						</net.woggle.shackbrowse.SlideFrame>
-						<net.woggle.shackbrowse.SlideFrame
+						</net.swigglesoft.shackbrowse.SlideFrame>
+						<net.swigglesoft.shackbrowse.SlideFrame
 						   xmlns:slidingLayer="http://schemas.android.com/apk/res-auto"
 						   android:id="@+id/singleThread"
 						   android:layout_width="match_parent"
@@ -77,7 +77,7 @@
 						   slidingLayer:stickTo="right"
 						   slidingLayer:closeOnTapEnabled="false"
 						   app:layout_behavior="@string/appbar_scrolling_view_behavior">
-						</net.woggle.shackbrowse.SlideFrame>
+						</net.swigglesoft.shackbrowse.SlideFrame>
 						<FrameLayout
 						   android:id="@+id/browser_frame"
 						   android:layout_width="match_parent"

@@ -54,7 +54,7 @@
                     >
 
 
-                <net.woggle.CircularProgress
+                <net.swigglesoft.CircularProgress
                     android:layout_width="35dp"
                     android:layout_height="35dp"
                     app:cpb_style="1"
@@ -95,7 +95,7 @@
                 android:layout_marginBottom="0dp"/> -->
 
         </RelativeLayout>
-        <net.woggle.FontFitTextView
+        <net.swigglesoft.FontFitTextView
             android:id="@+id/splash_tagline"
             android:layout_marginTop="0dp"
             android:padding="5dp"

@@ -54,7 +54,8 @@
 			/>
 	</LinearLayout>
 
-		<net.woggle.NestedScrollingListView android:id="@android:id/list"
+		<net.swigglesoft.NestedScrollingListView
+            android:id="@android:id/list"
 			android:layout_below="@id/tview_thread_expired"
 			android:layout_width="fill_parent"
 			android:layout_height="0dp"
@@ -69,7 +70,7 @@
 		android:layout_height="0dp"
 		android:layout_weight="1"
         >
-		<net.woggle.CircularProgress
+		<net.swigglesoft.CircularProgress
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_centerInParent="true"

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
-      package="net.woggle.shackbrowse"
+      package="net.swigglesoft.shackbrowse"
       android:versionCode="479"
       android:versionName="7.0.1">
 <uses-permission android:name="android.permission.INTERNET"></uses-permission>
@@ -16,17 +16,17 @@
 <uses-permission android:name="android.permission.WAKE_LOCK" />
 
 
-    <application android:theme="@style/AppTheme" android:usesCleartextTraffic="true" android:hardwareAccelerated="true" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:label="@string/app_name" android:largeHeap="true" android:name=".SBApplication">
+    <application android:theme="@style/AppTheme" android:usesCleartextTraffic="true" android:hardwareAccelerated="true" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:label="@string/app_name" android:largeHeap="true" android:name="net.swigglesoft.shackbrowse.SBApplication">
 		<provider
 			android:name="androidx.core.content.FileProvider"
-			android:authorities="net.woggle.shackbrowse.provider"
+			android:authorities="net.swigglesoft.shackbrowse.provider"
 			android:exported="false"
 			android:grantUriPermissions="true">
 			<meta-data
 				android:name="android.support.FILE_PROVIDER_PATHS"
 				android:resource="@xml/provider_paths"/>
 		</provider>
-		<activity android:label="@string/app_name" android:exported="true" android:hardwareAccelerated="true" android:name=".MainActivity" android:resizeableActivity="true" android:configChanges="orientation|screenSize" android:launchMode="singleTop" android:alwaysRetainTaskState="true">
+		<activity android:label="@string/app_name" android:exported="true" android:hardwareAccelerated="true" android:name="net.swigglesoft.shackbrowse.MainActivity" android:resizeableActivity="true" android:configChanges="orientation|screenSize" android:launchMode="singleTop" android:alwaysRetainTaskState="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -57,15 +57,15 @@
 			</intent-filter>
         	<meta-data android:name="android.app.searchable" android:resource="@xml/searchable" />
         </activity>
-		<activity android:name=".imgur.LoginActivity"></activity>
+		<activity android:name="net.swigglesoft.shackbrowse.imgur.LoginActivity"></activity>
         <meta-data android:name="android.app.default_searchable" android:value=".MainActivity" />
-        <activity android:name=".ComposePostView" android:windowSoftInputMode="stateVisible|adjustResize" android:configChanges="orientation|screenSize|keyboard|keyboardHidden">
+        <activity android:name="net.swigglesoft.shackbrowse.ComposePostView" android:windowSoftInputMode="stateVisible|adjustResize" android:configChanges="orientation|screenSize|keyboard|keyboardHidden">
             <meta-data
             android:name="android.support.PARENT_ACTIVITY"
-            android:value="net.woggle.shackbrowse.MainActivity" />
+            android:value="net.swigglesoft.shackbrowse.MainActivity" />
         </activity>
-        <activity android:name=".DonateActivity" android:configChanges="orientation|screenSize|keyboard|keyboardHidden"></activity>
-		<activity android:name=".PicUploader" android:exported="true" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:label="@string/picuploader_name" android:configChanges="orientation|screenSize|keyboard|keyboardHidden">
+        <activity android:name="net.swigglesoft.shackbrowse.DonateActivity" android:configChanges="orientation|screenSize|keyboard|keyboardHidden"></activity>
+		<activity android:name="net.swigglesoft.shackbrowse.PicUploader" android:exported="true" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:label="@string/picuploader_name" android:configChanges="orientation|screenSize|keyboard|keyboardHidden">
 		    <intent-filter>
 		        <action android:name="android.intent.action.SEND" />
 		        <category android:name="android.intent.category.DEFAULT" />
@@ -74,37 +74,37 @@
         </activity>
         <!-- <meta-data android:name="com.google.android.backup.api_key" android:value="AEdPqrEAAAAINYb8pl9xts7OT2boxSmcxRPcaTdG_J6wNhE71Q" /> -->
 
-    	<receiver android:name="net.woggle.shackbrowse.notifier.BootReceiver" android:exported="true">
+    	<receiver android:name="net.swigglesoft.shackbrowse.notifier.BootReceiver" android:exported="true">
 			<intent-filter>
 				<action android:name="android.intent.action.BOOT_COMPLETED" />
 			</intent-filter>
 		</receiver>
 
 		<service
-			android:name="net.woggle.shackbrowse.notifier.NotifierReceiver" android:exported="true">
+			android:name="net.swigglesoft.shackbrowse.notifier.NotifierReceiver" android:exported="true">
 			<intent-filter>
 				<action android:name="com.google.firebase.MESSAGING_EVENT" />
 			</intent-filter>
 		</service>
 		<service
-			android:name="net.woggle.shackbrowse.notifier.FCMIDReceiver" android:exported="true">
+			android:name="net.swigglesoft.shackbrowse.notifier.FCMIDReceiver" android:exported="true">
 			<intent-filter>
 				<action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
 			</intent-filter>
 		</service>
 
-        <receiver android:name="net.woggle.shackbrowse.notifier.NotificationDeleteReceiver" android:exported="true">
+        <receiver android:name="net.swigglesoft.shackbrowse.notifier.NotificationDeleteReceiver" android:exported="true">
             <intent-filter>
-                <action android:name="net.woggle.shackbrowse.NOTIFICATION_DELETED" />
+                <action android:name="net.swigglesoft.shackbrowse.NOTIFICATION_DELETED" />
             </intent-filter>
 		</receiver>
 
-    	<service android:permission="android.permission.BIND_JOB_SERVICE" android:exported="true" android:enabled="true" android:name="net.woggle.shackbrowse.PostQueueService" />
+    	<service android:permission="android.permission.BIND_JOB_SERVICE" android:exported="true" android:enabled="true" android:name="net.swigglesoft.shackbrowse.PostQueueService" />
 
         <!-- used for widget and for shackmessage updates -->
 		<service
 			android:exported="false"
-			android:name=".PeriodicNetworkService">
+			android:name="net.swigglesoft.shackbrowse.PeriodicNetworkService">
 			<intent-filter>
 				<action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>
 			</intent-filter>
@@ -112,7 +112,7 @@
 
     	<!-- For starting postqueueservice when network becomes available -->
     	<receiver
-            android:name="net.woggle.shackbrowse.NetworkChangeReceiver"
+            android:name="net.swigglesoft.shackbrowse.NetworkChangeReceiver"
             android:label="NetworkChangeReceiver"
 			android:exported="true">
             <intent-filter>

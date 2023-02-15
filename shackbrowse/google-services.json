@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:360856603454:android:8007a3691457fb98b43a6f",
+        "mobilesdk_app_id": "1:360856603454:android:87f850508bb9488cb43a6f",
         "android_client_info": {
-          "package_name": "net.woggle.shackbrowse"
+          "package_name": "net.swigglesoft.shackbrowse"
         }
       },
       "oauth_client": [
