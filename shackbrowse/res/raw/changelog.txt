@@ -92,8 +92,9 @@ How am I supposed to tell if you were looking at the thread or the list of threa
 
 $ 7.0.2
 % v 7.0.2
-_ ???
+_ Feb 15, 2023
 * Update Firebase to a recent version
+* Change the app name to net.swigglesoft.shackbrowse as we cannot upload with the same app ID as the previous ShackBrowse writer.
 
 
 $ 7.0.1

@@ -154,7 +154,7 @@ public class AppMenu extends ListFragment
     	        	
     	        	_adapter.add(new MenuItems(1, "Application v" + thisversion , 0, 0));
 					_adapter.add(new MenuItems(0, "Posting Guidelines" , 1, R.drawable.ic_action_action_report_problem));
-    	        	_adapter.add(new MenuItems(0, "Info / Limes" , 3, R.drawable.ic_action_action_info_outline));
+    	        	_adapter.add(new MenuItems(0, "Info" , 3, R.drawable.ic_action_action_info_outline));
 
     		        if (verified) {
     		        	_adapter.add(new MenuItems(0, "Queued Posts", 10, R.drawable.ic_action_image_add_to_photos));
@@ -207,11 +207,7 @@ public class AppMenu extends ListFragment
             mCheckedPosition = _adapter.getPositionFromMID(2);
         }
     }
-    public void trackM(String label)
-    {
-    	((MainActivity)getActivity()).track("ui_menu", label, "click");
-    }
-  
+
     @Override
     public void onListItemClick(final ListView l, final View v, final int position, final long id)
     {
@@ -220,12 +216,6 @@ public class AppMenu extends ListFragment
     	if (mid == 7)
     	{
             ((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_PREFS);
-            trackM("openPref");
-            // mCheckedPosition = position;
-            /*
-    		Intent i = new Intent(getActivity(), PreferenceView.class);
-            getActivity().startActivityForResult(i, ThreadListFragment.OPEN_PREFS);
-            trackM("openSettings"); */
     	}
     	if (mid == 2)
     	{
@@ -240,13 +230,11 @@ public class AppMenu extends ListFragment
 				public void onFailure() {
 				}
 			});
-    		trackM("openLoginForm");
     	}
     	if (mid == 3)
     	{
     		Intent i = new Intent(getActivity(), DonateActivity.class);
             getActivity().startActivityForResult(i, ThreadListFragment.OPEN_PREFS);
-            trackM("openDonateActivity");
     	}
     	if (mid == 1)
     	{
@@ -255,14 +243,10 @@ public class AppMenu extends ListFragment
     	if (mid == 4)
     	{
     		((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_THREADLIST);
-            trackM("openLC");
-            //mCheckedPosition = position;
     	}
     	if (mid == 9)
     	{
     		((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_NOTIFICATIONS);
-            trackM("openNotes");
-            //mCheckedPosition = position;
     	}
     	if (mid == 5)
     	{
@@ -284,25 +268,18 @@ public class AppMenu extends ListFragment
 	        }
     	    
     		((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_MESSAGES);
-            trackM("openMessages");
-            //mCheckedPosition = position;
     	}
     	if (mid == 6)
     	{
     		((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_SEARCHVIEW);
-            trackM("openAdvSearch");
-           // mCheckedPosition = position;
     	}
     	if (mid == 8)
     	{
     		((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_FAVORITES);
-            trackM("openFavorites");
-            //mCheckedPosition = position;
     	}
     	if (mid == 999)
     	{
     		searchClick(position);
-            trackM("openSearch");
     	}
     	if (mid == 10)
     	{
@@ -311,28 +288,20 @@ public class AppMenu extends ListFragment
         if (mid == 11)
         {
             ((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_FRONTPAGE);
-            trackM("openFrontpage");
-            //mCheckedPosition = position;
         }
 		if (mid == 14)
 		{
 			((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_LOLPAGE);
-			trackM("openLolpage");
 		}
         if (mid == 12)
         {
             ((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_STATS);
-            trackM("openStat");
-            //mCheckedPosition = position;
         }
         if (mid == 13)
         {
             ((MainActivity)getActivity()).openThreadByIDDialog();
-            trackM("openByID");
-            //mCheckedPosition = position;
         }
         updateMenuUi();
-    	//l.setItemChecked(mCheckedPosition, true);
         ((MainActivity)getActivity()).closeMenu();
     }
    

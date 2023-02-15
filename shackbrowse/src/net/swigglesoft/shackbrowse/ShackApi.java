@@ -69,7 +69,7 @@ public class ShackApi
 {
 	private static final int connectionTimeOutSec = 40;
 	private static final int socketTimeoutSec = 35;
-    static final String USER_AGENT = "shackbrowse/6.3.1";
+    static final String USER_AGENT = "shackbrowse/7.0";
     
     static final String IMAGE_LOGIN_URL = "http://chattypics.com/users.php?act=login_go";
     static final String IMAGE_UPLOAD_URL = "http://chattypics.com/upload.php";
@@ -457,7 +457,7 @@ public class ShackApi
 		URL post_url = new URL(API_MESSAGES_URL);
 		HttpsURLConnection con = (HttpsURLConnection) post_url.openConnection();
 		con.setReadTimeout(40000);
-		con.setRequestProperty("connection", "close");
+//		con.setRequestProperty("connection", "close");
 		con.setConnectTimeout(10000);
 		con.setChunkedStreamingMode(0);
 		con.setRequestProperty("User-Agent", USER_AGENT);
@@ -478,15 +478,17 @@ public class ShackApi
 		}
 
 		// read the response
-		java.io.InputStream input = con.getInputStream();
-		try
-		{
-			result = readStream(input);
-		}
-		finally
-		{
-			input.close();
-		}
+        try {
+            java.io.InputStream input = con.getInputStream();
+            try {
+                result = readStream(input);
+            } finally {
+                input.close();
+            }
+        }
+        catch(Exception ex) {
+            Log.w("getShackMessageAPIText", "An error happened during shackmessages retrieval: ", ex);
+        }
 
 		return result;
 	}
@@ -1905,33 +1907,34 @@ public class ShackApi
     
     public static String putCloudPinned(JSONObject json, String username) throws ClientProtocolException, IOException, JSONException
     {
-        if (username != null && !username.equals(""))
-    	{
-	    	//instantiates httpclient to make request
-    		DefaultHttpClient client = new DefaultHttpClient();
-	        final HttpParams httpParameters = client.getParams();
-	        HttpConnectionParams.setConnectionTimeout(httpParameters, connectionTimeOutSec * 1000);
-	        HttpConnectionParams.setSoTimeout        (httpParameters, socketTimeoutSec * 1000);
-	
-	        //url with the post data
-	        HttpPost httpost = new HttpPost(CLOUDPIN_URL + URLEncoder.encode(username, "UTF8") + "/settings");
-	
-	        //passes the results to a string builder/entity
-	        StringEntity se = new StringEntity(json.toString());
-	
-	        //sets the post request as the resulting string
-	        httpost.setEntity(se);
-	        
-	        //sets a request header so the page receving the request
-	        //will know what to do with it
-	        httpost.setHeader("Accept", "application/json");
-	        
-	        httpost.setHeader("Content-type", "application/json");
-	
-	        //Handles what is returned from the page 
-	        BasicResponseHandler responseHandler = new BasicResponseHandler();
-	        return client.execute(httpost, responseHandler);
-    	}
+        // Commented out 2023-02-14 as woggle.net is gone, bring back later?
+//        if (username != null && !username.equals(""))
+//    	{
+//	    	//instantiates httpclient to make request
+//    		DefaultHttpClient client = new DefaultHttpClient();
+//	        final HttpParams httpParameters = client.getParams();
+//	        HttpConnectionParams.setConnectionTimeout(httpParameters, connectionTimeOutSec * 1000);
+//	        HttpConnectionParams.setSoTimeout        (httpParameters, socketTimeoutSec * 1000);
+//
+//	        //url with the post data
+//	        HttpPost httpost = new HttpPost(CLOUDPIN_URL + URLEncoder.encode(username, "UTF8") + "/settings");
+//
+//	        //passes the results to a string builder/entity
+//	        StringEntity se = new StringEntity(json.toString());
+//
+//	        //sets the post request as the resulting string
+//	        httpost.setEntity(se);
+//
+//	        //sets a request header so the page receving the request
+//	        //will know what to do with it
+//	        httpost.setHeader("Accept", "application/json");
+//
+//	        httpost.setHeader("Content-type", "application/json");
+//
+//	        //Handles what is returned from the page
+//	        BasicResponseHandler responseHandler = new BasicResponseHandler();
+//	        return client.execute(httpost, responseHandler);
+//    	}
 		return null;
     }
     

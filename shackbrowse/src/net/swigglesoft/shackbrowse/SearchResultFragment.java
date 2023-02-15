@@ -276,11 +276,6 @@ public class SearchResultFragment extends ListFragment
     	super.onDestroyView();
     }
 
-	public void track(String type, String label)
-	{
-		((MainActivity)getActivity()).track("ui_search", type, label);
-	}
-
     public void openSearchLOL(Bundle args, Context context)
     {
     	_mode = SearchResult.TYPE_LOL;
@@ -313,9 +308,6 @@ public class SearchResultFragment extends ListFragment
     	showNoResults(false);
 	    _adapter.clear();
 	    _adapter.notifyDataSetInvalidated();
-
-	    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-	    track("LOL", _tag + _days + (prefs.getString("userName", "") == _author ? "self" : _author));
 
 	    if (args.containsKey("title"))
     	{
@@ -363,9 +355,6 @@ public class SearchResultFragment extends ListFragment
     	_adapter.clear();
 	    _adapter.notifyDataSetInvalidated();
 
-	    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-	    track("posts", (prefs.getString("userName", "") == _author ? "myposts" : _author) + " : " + (prefs.getString("userName", "") == _term ? "vanity" : _term));
-	    
 	    if (args.containsKey("title"))
     	{
     		_title = args.getString("title");

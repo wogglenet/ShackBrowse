@@ -157,7 +157,7 @@
     <string name="preference_smcheckcell_summary">If UNCHECKED, Shackmessages will only be checked on application start when connected to WiFi. Usually takes about 10k of data</string>
     
     <string name="preferences_threadlist">Thread List Options</string>
-    <string name="preferences_threadlist_summary">Choose which data to show and how to show it, as well as cloud sync options and supercollapsed thread reset</string>
+    <string name="preferences_threadlist_summary">Choose which data to show and how to show it, as well as supercollapsed thread reset</string>
     <string name="preferences_threadview">Reply View Options</string>
     <string name="preferences_threadview_summary">Swipe to dismiss, Show usernames, New post indicators, Shack[LOL]</string>
     <string name="preferences_compose">Post Composer Options</string>
@@ -241,12 +241,6 @@
     <string name="preferences_version">Application Version</string>
     <string name="preference_version_title">Unknown</string>
     <string name="preference_version_summary">Click to view the change log</string>
-    
-    <string name="preference_analytics_summary">Allow some usage data to be sent to the developer</string>
-    <string name="preference_analytics_title">Analytics Data</string>
-    
-    <string name="preference_apiUrl_title">API Provider</string>
-    <string name="preference_apiUrl_summary">Select from three servers</string>
     
     <string name="preference_ping">Ping APIs</string>
     

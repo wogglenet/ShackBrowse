@@ -29,11 +29,11 @@
 		  android:icon="@drawable/ic_action_content_flag"
 		  android:title="@string/modfilter"
 		  android:orderInCategory="5" />
-	<item android:id="@+id/menu_cloudOptions"
-		  app:showAsAction="never"
-		  android:icon="@drawable/ic_action_file_cloud"
-		  android:title="@string/cloudopt"
-		  android:orderInCategory="6" />
+<!--	<item android:id="@+id/menu_cloudOptions"-->
+<!--		  app:showAsAction="never"-->
+<!--		  android:icon="@drawable/ic_action_file_cloud"-->
+<!--		  android:title="@string/cloudopt"-->
+<!--		  android:orderInCategory="6" />-->
 	<item android:id="@+id/menu_restoreCollapsed"
 		  app:showAsAction="never"
 		  android:icon="@drawable/ic_action_content_undo"

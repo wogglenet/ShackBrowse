@@ -22,7 +22,7 @@
             android:fontFamily="sans-serif-condensed"
             android:paddingLeft="70dp"
             android:paddingBottom="50dp"
-            android:text="6"
+            android:text="7"
             android:textColor="?attr/colorPrimaryDark"
             android:textIsSelectable="false"
             android:focusable="false"

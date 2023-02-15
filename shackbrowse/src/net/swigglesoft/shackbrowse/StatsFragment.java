@@ -329,7 +329,8 @@ public class StatsFragment extends ListFragment {
         protected ArrayList<StatsItem> doInBackground(String... params) {
             JSONObject cloudJson = new JSONObject();
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-            int localOnly = prefs.getInt("optOutFromStats", 0);
+            // 2023-02-14 Default to local only stats due to woggle.net being gone
+            int localOnly = prefs.getInt("optOutFromStats", 1);
             ArrayList<StatsItem> remoteStatList = new ArrayList<StatsItem>();
             JSONArray stats = new JSONArray();
             mCloudUserName = ((MainActivity)mContext).getCloudUsername();

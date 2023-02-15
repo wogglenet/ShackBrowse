@@ -1504,7 +1504,7 @@ public class ThreadViewFragment extends ListFragment
             _donatorList = _prefs.getString("limeUsers", "");
             _donatorGoldList = _prefs.getString("goldLimeUsers", "");
             _donatorQuadList = _prefs.getString("quadLimeUsers", "");
-            _displayLimes  = _prefs.getBoolean("displayLimes", true);
+            _displayLimes  = _prefs.getBoolean("displayLimes", false);
             _replyNotificationsEnabled = (_prefs.getBoolean("noteReplies", false) && _prefs.getBoolean("noteEnabled", false));
 
             setupPref();

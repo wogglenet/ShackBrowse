@@ -148,16 +148,17 @@ public class PreferenceView extends PreferenceFragment
 
         });
 
-        Preference notePref = (Preference) findPreference("notifications");
-        notePref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
-
-			@Override
-			public boolean onPreferenceClick(Preference preference) {
-                ((MainActivity)getActivity()).cleanUpViewer();
-                ((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_NOTEPREFS);
-		    	return false;
-			}}
-        );
+		// 2023-02-14 Comment out the notifications for now until these are fixed up
+//        Preference notePref = (Preference) findPreference("notifications");
+//        notePref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
+//
+//			@Override
+//			public boolean onPreferenceClick(Preference preference) {
+//                ((MainActivity)getActivity()).cleanUpViewer();
+//				((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_NOTEPREFS);
+//				return false;
+//			}}
+//        );
 
 		// 2023-02-14 Comment out the blocklist for now until the API can be fixed up.
 //		Preference echoPref = (Preference) findPreference("echoChamber");
@@ -193,16 +194,16 @@ public class PreferenceView extends PreferenceFragment
             mChattyPicsEnable.setChecked(false);
         }
 
-        Preference pingPref = (Preference) findPreference("pref_ping");
-        pingPref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
-
-			@Override
-			public boolean onPreferenceClick(Preference preference) {
-				System.out.println("pinging");
-		    	new PingTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-		    	return false;
-			}}
-        );
+//        Preference pingPref = (Preference) findPreference("pref_ping");
+//        pingPref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
+//
+//			@Override
+//			public boolean onPreferenceClick(Preference preference) {
+//				System.out.println("pinging");
+//		    	new PingTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//		    	return false;
+//			}}
+//        );
     }
 
     @Override
@@ -278,32 +279,13 @@ public class PreferenceView extends PreferenceFragment
             	});
             	
             	// warm up the servers
-            	ShackApi.getPosts(3000000, getActivity(), new ApiUrl(ShackApi.BASE_URL, false));
-            	if (isCancelled()) 
-            	    return null;
-            	ShackApi.getPosts(3000000, getActivity(), new ApiUrl(ShackApi.BASE_URL_ALT, false));
-            	if (isCancelled()) 
-            	    return null;
-
             	Long current = TimeDisplay.now();
-            	ShackApi.getPosts(3000000, getActivity(), new ApiUrl(ShackApi.BASE_URL, false));
-            	float hughes = (TimeDisplay.now() - current);
-            	if (isCancelled()) 
-            	    return null;
-            	
-            	current = TimeDisplay.now();
-            	ShackApi.getPosts(3000000, getActivity(), new ApiUrl(ShackApi.BASE_URL_ALT, false));
-            	float woggle = (TimeDisplay.now() - current);
-            	if (isCancelled()) 
-            	    return null;
-            	
-            	current = TimeDisplay.now();
             	ShackApi.getPosts(3000000, getActivity(), new ApiUrl(ShackApi.WINCHATTYV2_API, true));
             	float winchatty = (TimeDisplay.now() - current);
             	if (isCancelled()) 
             	    return null;
             	
-                return hughes + " " + woggle + " " + winchatty;
+                return String.valueOf(winchatty);
                 
             }
             catch (Exception e)

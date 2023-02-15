@@ -773,7 +773,8 @@ public class OfflineThread
 		return ((MainActivity)_activity).getCloudUsername();
 	}
 	public boolean cloudEnabled() {
-		return (((MainActivity)_activity)._prefs.getBoolean("usernameVerified", false) && ((MainActivity)_activity)._prefs.getBoolean("enableCloudSync", true));
+		// 2023-02-14 Change this enableCloudSync default to false as woggle.net is gone
+		return (((MainActivity)_activity)._prefs.getBoolean("usernameVerified", false) && ((MainActivity)_activity)._prefs.getBoolean("enableCloudSync", false));
 	}
 
 	Runnable cloudUpdater = new Runnable()

@@ -72,8 +72,8 @@ public class DonateActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
-
-        new DonatorTask().execute();
+        // 2023-02-14 Commenting this out due to woggle.net being gone.
+//        new DonatorTask().execute();
 
         _donatorStatus = _prefs.getBoolean("enableLimeAccess", false);
         mIsUnlocked = _prefs.getBoolean("enableLimeAccess", false);
@@ -81,67 +81,10 @@ public class DonateActivity extends AppCompatActivity {
         // Some sanity checks to see if the developer (that's you!) really followed the
         // instructions to run this sample (don't put these checks on your app!)
 
-        
-        this.findViewById(R.id.donateUnlockButton).setOnClickListener(new OnClickListener (){
-			@Override
-			public void onClick(View v) {
-				if (mIsUnlocked)
-					setScreen(2);
-			}
-        });
-        
-        this.findViewById(R.id.donateDisableLimeDisplay).setOnClickListener(new OnClickListener (){
-			@Override
-			public void onClick(View v) {
-				boolean displayLimes = true;
-				if (((CheckBox)v).isChecked())
-				{
-					displayLimes = false;
-				}
-				SharedPreferences.Editor editor = _prefs.edit();
-            	editor.putBoolean("displayLimes", displayLimes);
-            	editor.commit();
-			}
-        });
-        
-        
-        this.findViewById(R.id.donateToggleLime).setOnClickListener(new OnClickListener (){
-			@Override
-			public void onClick(View v) {
-				boolean verified = _prefs.getBoolean("usernameVerified", false);
-		        if (!verified)
-		        {
-		        	LoginForm login = new LoginForm(DonateActivity.this);
-		        	login.setOnVerifiedListener(new LoginForm.OnVerifiedListener() {
-						@Override
-						public void onSuccess() {
-			                if (_limeRegistered)
-			                	new LimeTask().execute("remove");
-			                else
-			                	new LimeTask().execute("add");
-						}
-
-						@Override
-						public void onFailure() {
-						}
-					});
-		        	return;
-		        }
-		        else
-		        {
-	                if (_limeRegistered)
-	                	new LimeTask().execute("remove");
-	                else
-	                	new LimeTask().execute("add");
-		        }
-			}
-        });
-        
         String versionName = "Unknown";
         try {
 			versionName = this.getApplication().getPackageManager().getPackageInfo(getApplication().getPackageName(), 0 ).versionName;
 		} catch (NameNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         ((TextView)findViewById(R.id.donateVersion)).setText("Version " + versionName);
@@ -176,49 +119,49 @@ public class DonateActivity extends AppCompatActivity {
     // updates UI to reflect model
     public void updateUi() {
         // update the car color to reflect premium status or lack thereof
-    	if (mHasChecked)
-    	{
-	        ((Button)findViewById(R.id.donateUnlockButton)).setEnabled(true);
-	        if (mIsUnlocked)
-	        {
-	        	((Button)findViewById(R.id.donateUnlockButton)).setText("Access Lime Settings");
-	        	Editor edit = _prefs.edit();
-	        	edit.putBoolean("enableLimeAccess", true);
-	        	edit.commit();
-	        }
-	        else
-	        {
-	        	((Button)findViewById(R.id.donateUnlockButton)).setText("No Lime Found in List");
-                ((Button)findViewById(R.id.donateUnlockButton)).setEnabled(false);
-	        }
-    	}
-
-        _goldLime = _prefs.getString("goldLimeUsers", "").contains(_prefs.getString("userName", "")) && !_prefs.getString("userName", "").equals("");
-        _quadLime = _prefs.getString("quadLimeUsers", "").contains(_prefs.getString("userName", "")) && !_prefs.getString("userName", "").equals("");
-        _limeRegistered = _prefs.getString("limeUsers", "").contains(_prefs.getString("userName", "")) && !_prefs.getString("userName", "").equals("") || _goldLime || _quadLime;
-
-        
-        SpannableString reg = new SpannableString("Serverside Lime Status: Registered plain lime for display next to username \"" + _prefs.getString("userName", "") + "\"");
-        reg.setSpan(new ForegroundColorSpan(Color.rgb(100,255,100)), 23, reg.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
-        SpannableString goldreg = new SpannableString("Serverside Lime Status: Registered gold lime for display next to username \"" + _prefs.getString("userName", "") + "\"");
-        goldreg.setSpan(new ForegroundColorSpan(Color.rgb(255,195,0)), 23, goldreg.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
-        SpannableString quadreg = new SpannableString("Serverside Lime Status: Registered quad damage lime for display next to username \"" + _prefs.getString("userName", "") + "\"");
-        quadreg.setSpan(new ForegroundColorSpan(Color.rgb(50,50,255)), 23, goldreg.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
-        SpannableString notreg = new SpannableString("Serverside Lime Status: Not registered for display");
-        notreg.setSpan(new ForegroundColorSpan(Color.rgb(255,100,100)), 23, notreg.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
-        ((TextView)findViewById(R.id.donateLimeStatus)).setText(((_limeRegistered) ? ((_goldLime || _quadLime) ? (_goldLime ? goldreg : quadreg) : reg) : notreg));
-
-        _donatorStatus = _prefs.getBoolean("enableLimeAccess", false);
-        SpannableString locked = new SpannableString("Lime Status: unavailable");
-        locked.setSpan(new ForegroundColorSpan(Color.rgb(255,100,100)), 12, locked.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
-        SpannableString unlocked = new SpannableString("Lime Status: unlocked, click above button to change lime related settings");
-        unlocked.setSpan(new ForegroundColorSpan(Color.rgb(100,255,100)), 12, unlocked.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
-        ((TextView)findViewById(R.id.donatorStatus)).setText(((_donatorStatus) ? unlocked : locked));
-        
-        ((CheckBox)findViewById(R.id.donateDisableLimeDisplay)).setChecked(!_prefs.getBoolean("displayLimes", true));
-
-        ((TextView)findViewById(R.id.donatorText)).setText(Html.fromHtml("Although it used to be possible to unlock donator features here, all donator features have now been made public and unlocked! If you had donated in the past, you may access the ability to turn off your donator indicator icon above if your name is found in the <a href='http://woggle.net/shackbrowsedonators/list'>online donator list</a>. <br />This app utilizes APIs run on the swigglesoft.net server. For more info on other swigglesoft projects including the API, visit <a href='http://www.woggle.net'>swigglesoft.net</a>."));
-        ((TextView)findViewById(R.id.donatorText)).setMovementMethod(LinkMovementMethod.getInstance());
+//    	if (mHasChecked)
+//    	{
+//	        ((Button)findViewById(R.id.donateUnlockButton)).setEnabled(true);
+//	        if (mIsUnlocked)
+//	        {
+//	        	((Button)findViewById(R.id.donateUnlockButton)).setText("Access Lime Settings");
+//	        	Editor edit = _prefs.edit();
+//	        	edit.putBoolean("enableLimeAccess", true);
+//	        	edit.commit();
+//	        }
+//	        else
+//	        {
+//	        	((Button)findViewById(R.id.donateUnlockButton)).setText("No Lime Found in List");
+//                ((Button)findViewById(R.id.donateUnlockButton)).setEnabled(false);
+//	        }
+//    	}
+//
+//        _goldLime = _prefs.getString("goldLimeUsers", "").contains(_prefs.getString("userName", "")) && !_prefs.getString("userName", "").equals("");
+//        _quadLime = _prefs.getString("quadLimeUsers", "").contains(_prefs.getString("userName", "")) && !_prefs.getString("userName", "").equals("");
+//        _limeRegistered = _prefs.getString("limeUsers", "").contains(_prefs.getString("userName", "")) && !_prefs.getString("userName", "").equals("") || _goldLime || _quadLime;
+//
+//
+//        SpannableString reg = new SpannableString("Serverside Lime Status: Registered plain lime for display next to username \"" + _prefs.getString("userName", "") + "\"");
+//        reg.setSpan(new ForegroundColorSpan(Color.rgb(100,255,100)), 23, reg.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
+//        SpannableString goldreg = new SpannableString("Serverside Lime Status: Registered gold lime for display next to username \"" + _prefs.getString("userName", "") + "\"");
+//        goldreg.setSpan(new ForegroundColorSpan(Color.rgb(255,195,0)), 23, goldreg.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
+//        SpannableString quadreg = new SpannableString("Serverside Lime Status: Registered quad damage lime for display next to username \"" + _prefs.getString("userName", "") + "\"");
+//        quadreg.setSpan(new ForegroundColorSpan(Color.rgb(50,50,255)), 23, goldreg.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
+//        SpannableString notreg = new SpannableString("Serverside Lime Status: Not registered for display");
+//        notreg.setSpan(new ForegroundColorSpan(Color.rgb(255,100,100)), 23, notreg.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
+//        ((TextView)findViewById(R.id.donateLimeStatus)).setText(((_limeRegistered) ? ((_goldLime || _quadLime) ? (_goldLime ? goldreg : quadreg) : reg) : notreg));
+//
+//        _donatorStatus = _prefs.getBoolean("enableLimeAccess", false);
+//        SpannableString locked = new SpannableString("Lime Status: unavailable");
+//        locked.setSpan(new ForegroundColorSpan(Color.rgb(255,100,100)), 12, locked.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
+//        SpannableString unlocked = new SpannableString("Lime Status: unlocked, click above button to change lime related settings");
+//        unlocked.setSpan(new ForegroundColorSpan(Color.rgb(100,255,100)), 12, unlocked.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
+//        ((TextView)findViewById(R.id.donatorStatus)).setText(((_donatorStatus) ? unlocked : locked));
+//
+//        ((CheckBox)findViewById(R.id.donateDisableLimeDisplay)).setChecked(!_prefs.getBoolean("displayLimes", true));
+//
+//        ((TextView)findViewById(R.id.donatorText)).setText(Html.fromHtml("Although it used to be possible to unlock donator features here, all donator features have now been made public and unlocked! If you had donated in the past, you may access the ability to turn off your donator indicator icon above if your name is found in the <a href='http://woggle.net/shackbrowsedonators/list'>online donator list</a>. <br />This app utilizes APIs run on the swigglesoft.net server. For more info on other swigglesoft projects including the API, visit <a href='http://www.woggle.net'>swigglesoft.net</a>."));
+//        ((TextView)findViewById(R.id.donatorText)).setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     class DonatorTask extends AsyncTask<String, Void, JSONArray>
@@ -425,7 +368,6 @@ public class DonateActivity extends AppCompatActivity {
     void setScreen(int screen) {
         findViewById(R.id.screen_main).setVisibility(screen == 0 ? View.VISIBLE : View.GONE);
         findViewById(R.id.screen_wait).setVisibility(screen == 1 ? View.VISIBLE : View.GONE);
-        findViewById(R.id.screen_features).setVisibility(screen == 2 ? View.VISIBLE : View.GONE);
     }
 
     void complain(String message) {

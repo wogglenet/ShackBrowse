@@ -47,29 +47,17 @@
         android:paddingRight="10dip"
         android:text="Change Log"
         />
-    
-    <TextView 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Shack Browse is developed by Wogglesoft. It was created from Droid Chatty source code, although little of the Droid Chatty source now remains. The source is available by request, or on the GitHub website."
-        android:textSize="14sp" 
-        android:paddingLeft="10dip"
-        android:paddingRight="10dip"
-        android:paddingBottom="10dp"
-        />
-    
-    <Button
-        android:id="@+id/donateUnlockButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="10dip"
-        android:layout_marginTop="15dip"
-        android:paddingRight="10dip"
-        android:text="Checking lime status..."
-        android:enabled="false"
-        />
-   
-    <TextView
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dip"
+            android:paddingRight="10dip"
+            android:paddingBottom="10dp"
+            android:text="Shack Browse is originally developed by Wogglesoft and is now being maintained by volunteers. It was created from Droid Chatty source code, although little of the Droid Chatty source now remains. The source is available at the current GitHub fork website at https://github.com/StimpyDad/ShackBrowse"
+            android:textSize="14sp" />
+
+        <TextView
         android:id="@+id/donatorText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -78,15 +66,6 @@
         android:text=""
         android:textSize="14sp"
          />
-    
-    <TextView 
-        android:id="@+id/donatorStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="10dip"
-        android:paddingRight="10dip"
-        android:text="Lime status: checking..."
-        android:textSize="12sp" />
 
     </LinearLayout>
 	
@@ -97,58 +76,14 @@
     android:id="@+id/screen_wait"
     android:visibility="gone"
         >
-    <TextView 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Please Wait..."
-        android:paddingLeft="10dip"
-        android:paddingRight="10dip"
-        android:paddingTop="10dip"
-        android:textSize="12sp" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" 
-    android:id="@+id/screen_features"
-    android:visibility="gone"
-        >
-    <Button
-        android:id="@+id/donateToggleLime"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="10dip"
-        android:layout_marginTop="30dip"
-        android:paddingRight="10dip"
-        android:text="Toggle lime icon"
-        />
-    <TextView 
-        android:id="@+id/donateLimeStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="10dip"
-        android:paddingRight="10dip"
-        android:text="Lime status: "
-        android:textSize="12sp" />
-
-    <TextView 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="10dip"
-        android:paddingRight="10dip"
-        android:text="The lime icon will appear next to your username inside shack browse. All shack browse users will be forced to gaze upon it."
-        android:textSize="12sp" />
-    
-   
-    <CheckBox
-        android:id="@+id/donateDisableLimeDisplay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="5dp"
-        android:text="Disable display of all lime icons" />
-    
- 
-    
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Please Wait..."
+            android:paddingLeft="10dip"
+            android:paddingRight="10dip"
+            android:paddingTop="10dip"
+            android:textSize="12sp" />
     </LinearLayout>
 </LinearLayout>
 </ScrollView>

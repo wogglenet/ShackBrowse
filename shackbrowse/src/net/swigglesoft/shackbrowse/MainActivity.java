@@ -977,9 +977,9 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	        case R.id.menu_newPost:
 	        	newPost();
 	        	break;
-	        case R.id.menu_cloudOptions:
-	        	cloudChoose();
-	        	break;
+//	        case R.id.menu_cloudOptions:
+//	        	cloudChoose();
+//	        	break;
 	        case R.id.menu_keywordFilter:
 	        	showKeywords();
 	        	break;
@@ -1327,7 +1327,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         menu.findItem(R.id.menu_discardFav).setVisible(showFavItems && (!isMenuOpen));
         
         menu.findItem(R.id.menu_refreshThreads).setVisible(showTListItems);
-        menu.findItem(R.id.menu_cloudOptions).setVisible(showTListItems || showFavItems);
+//        menu.findItem(R.id.menu_cloudOptions).setVisible(showTListItems || showFavItems);
         menu.findItem(R.id.menu_findOnPage).setVisible(showTListItems);
 
         // hack to do autocomplete sview2
@@ -1514,11 +1514,8 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			mTitle = "LOLpage";
 			fragment = _lolBrowser;
 		}
-		
 
-		
 		// turn off any refresher bars so the new fragment can work
-		
 		FragmentManager fragmentManager = getFragmentManager();
 
 
@@ -2812,28 +2809,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         }
 	}
 
-
-	/*
-	 * Analytics
-	 */
-
-
-	public void track (String category, String action, String label)
-	{
-		_analytics  = _prefs.getBoolean("analytics", true);
-		if (_analytics)
-		{
-			System.out.println("ANALYTICS: track " + category + action + label);
-
-
-			Bundle bundle = new Bundle();
-			//FIREBASE 	bundle.putString(FirebaseAnalytics.Param.ITEM_ID, label);
-			//FIREBASE 	bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, category);
-			//FIREBASE bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, action);
-			//FIREBASE mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
-
-		}
-	}
 	/*
 	 * INTENTS (non-Javadoc)
 	 * @see android.support.v4.app.FragmentActivity#onNewIntent(android.content.Intent)
