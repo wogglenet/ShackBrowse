@@ -1,4 +1,4 @@
-package net.woggle.shackbrowse;
+package net.swigglesoft.shackbrowse;
 
 
 public class APIConstants {
