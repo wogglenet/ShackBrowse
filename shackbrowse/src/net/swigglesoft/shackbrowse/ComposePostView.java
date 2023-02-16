@@ -1548,26 +1548,8 @@ public class ComposePostView extends AppCompatActivity {
 				.customView(parent, true)
 				.btnStackedGravity(GravityEnum.END)
 				.stackingBehavior(StackingBehavior.ALWAYS)
-				.positiveText("Upload to ChattyPics")
+				.positiveText("Upload to Imgur (" + (ImgurAuthorization.getInstance().isLoggedIn() ? "as " + ImgurAuthorization.getInstance().getUsername() + ")" : "anonymously)"))
 				.onPositive(new MaterialDialog.SingleButtonCallback()
-				{
-					@Override
-					public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which)
-					{
-						_progressDialog = MaterialProgressDialog.show(ComposePostView.this, "Upload", "Uploading image to chattypics");
-						if (imageUri != null)
-						{
-							new UploadUriAndInsertTask().execute(imageUri.toString(),"chattypics");
-							statInc(ComposePostView.this, "ImagesToChattyPics");
-						}
-						else
-						{
-							_progressDialog.dismiss();
-						}
-					}
-				})
-				.negativeText("Upload to Imgur (" + (ImgurAuthorization.getInstance().isLoggedIn() ? "as " + ImgurAuthorization.getInstance().getUsername() + ")" : "anonymously)"))
-				.onNegative(new MaterialDialog.SingleButtonCallback()
 				{
 					@Override
 					public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which)
