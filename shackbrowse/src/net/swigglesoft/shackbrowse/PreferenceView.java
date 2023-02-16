@@ -3,8 +3,8 @@ package net.swigglesoft.shackbrowse;
 import java.util.regex.Pattern;
 
 import net.swigglesoft.ApiUrl;
+import net.swigglesoft.shackbrowse.imgur.ImgurAuthURLHandling;
 import net.swigglesoft.shackbrowse.imgur.ImgurAuthorization;
-import net.swigglesoft.shackbrowse.imgur.LoginActivity;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -12,11 +12,11 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,6 +28,8 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.browser.customtabs.CustomTabsIntent;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
@@ -84,7 +86,8 @@ public class PreferenceView extends PreferenceFragment
 			    }
 			    else
 			    {
-				    startActivity(new Intent(getActivity(), LoginActivity.class));
+					CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
+					customTabsIntent.launchUrl(cont, Uri.parse(ImgurAuthURLHandling.generateAuthUrl()));
 			    }
 			    return true;
 		    }}

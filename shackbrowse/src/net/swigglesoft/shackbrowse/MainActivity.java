@@ -19,6 +19,7 @@ import net.swigglesoft.AutocompleteProvider;
 import net.swigglesoft.shackbrowse.ChangeLog.onChangeLogCloseListener;
 import net.swigglesoft.shackbrowse.NetworkNotificationServers.OnGCMInteractListener;
 
+import net.swigglesoft.shackbrowse.imgur.ImgurAuthURLHandling;
 import net.swigglesoft.shackbrowse.notifier.NotifierReceiver;
 
 import org.json.JSONArray;
@@ -109,7 +110,6 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.color.ColorChooserDialog;
-//FIREBASE import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.android.material.appbar.AppBarLayout;
 import com.pierfrancescosoffritti.androidyoutubeplayer.player.listeners.AbstractYouTubePlayerListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.player.YouTubePlayer;
@@ -2825,11 +2825,20 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	public static final int CANNOTHANDLEINTENT = 0;
 	public static final int CANHANDLEINTENT = 1;
 	public static final int CANHANDLEINTENTANDMUSTSETNBQBAOVI = 2;
+
 	private int canHandleIntent(Intent intent) {
 		// intent stuff
         String action = intent.getAction();
         String type = intent.getType();
         Uri uri = intent.getData();
+		String dataString = intent.getDataString();
+
+		if (ImgurAuthURLHandling.isImgurAuthUrl(dataString)) {
+			String response = ImgurAuthURLHandling.parseAuthUrl(dataString);
+			runOnUiThread(() -> Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show());
+			mCurrentFragment.onResume();
+			return CANHANDLEINTENT;
+		}
         
         if (Intent.ACTION_SEND.equals(action) && type != null)
         {
@@ -2915,6 +2924,11 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	        String action = intent.getAction();
 	        String type = intent.getType();
 	        Uri uri = intent.getData();
+			String dataString = intent.getDataString();
+
+			if (ImgurAuthURLHandling.isImgurAuthUrl(dataString)) {
+				return true;
+			}
 	
 	        if (Intent.ACTION_SEND.equals(action) && type != null)
 	        {
