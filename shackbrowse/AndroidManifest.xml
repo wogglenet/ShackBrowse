@@ -62,7 +62,7 @@
 				<category
 					android:name="android.intent.category.BROWSABLE"/>
 				<data
-					android:host="auth"
+					android:host="imgur_auth"
 					android:scheme="shackbrowse"/>
 			</intent-filter>
         	<meta-data android:name="android.app.searchable" android:resource="@xml/searchable" />
