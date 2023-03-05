@@ -1382,8 +1382,8 @@ public class ThreadViewFragment extends ListFragment
 					usrpop.getMenu().add(Menu.NONE, 1, Menu.NONE, "Search for posts by " + unamefinal);
 					usrpop.getMenu().add(Menu.NONE, 2, Menu.NONE, "Highlight " + unamefinal + " in thread");
 					usrpop.getMenu().add(Menu.NONE, 3, Menu.NONE, "Copy " + unamefinal + " to clipboard");
-					if (!_userName.equals("") && _verified && !unamefinal.equalsIgnoreCase(_userName))
-						{ usrpop.getMenu().add(Menu.NONE, 4, Menu.NONE, "Block from Echo Chamber"); }
+					if (!unamefinal.equalsIgnoreCase(_userName))
+						{ usrpop.getMenu().add(Menu.NONE, 4, Menu.NONE, "Block this user"); }
 
                     usrpop.setOnMenuItemClickListener(new OnMenuItemClickListener(){
                         @Override

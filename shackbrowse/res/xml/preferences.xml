@@ -6,11 +6,11 @@
 <!--        android:title="@string/preferences_notifications"-->
 <!--        android:summary="@string/preferences_notifications_summary" />-->
 
-<!--		<Preference-->
-<!--		android:key="echoChamber"-->
-<!--		android:title="@string/preference_echochamber_title"-->
-<!--		android:summary="@string/preference_echochamber_summary"-->
-<!--		/>-->
+		<Preference
+		android:key="echoChamber"
+		android:title="@string/preference_echochamber_title"
+		android:summary="@string/preference_echochamber_summary"
+		/>
 
         <ListPreference
             android:key="embedImages"

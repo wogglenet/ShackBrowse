@@ -121,7 +121,7 @@
             android:layout_gravity="center_horizontal"
             android:fontFamily="sans-serif-condensed"
             android:paddingTop="80dp"
-            android:text="Echo Chamber: ..."
+            android:text="Block List: ..."
             android:textColor="@color/modtag_tangent"
             android:textIsSelectable="false"
             android:focusable="false"

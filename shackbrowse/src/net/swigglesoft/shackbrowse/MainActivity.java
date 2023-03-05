@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	public SmoothProgressBar mProgressBar;
 	private long mTimeStartedToShowSplash = 0L;
 	private YouTubePlayer mYoutubePlayer;
-	private NetworkEchoChamberServer mEchoAccess;
+//	private NetworkEchoChamberServer mEchoAccess;
 	public JSONArray mBlockList;
 	private JSONArray mAutoChamber;
 	private MaterialDialog mProgressDialog;
@@ -338,30 +338,30 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			}
 		}
 
-		NetworkEchoChamberServer.OnEchoChamberResultListener echoListener = new NetworkEchoChamberServer.OnEchoChamberResultListener() {
-			@Override
-			public void networkResult(JSONArray result) {
-				if (mProgressDialog != null)
-				{
-					mProgressDialog.dismiss();
-					mProgressDialog = null;
-				}
-				mBlockList = result;
-				Editor ed = _prefs.edit();
-				ed.putString("echoChamberBlockList", result.toString());
-				ed.commit();
-			}
-
-			@Override
-			public void addError() {
-				if (mProgressDialog != null)
-				{
-					mProgressDialog.dismiss();
-					mProgressDialog = null;
-				}
-			}
-		};
-		mEchoAccess = new NetworkEchoChamberServer(this, echoListener);
+//		NetworkEchoChamberServer.OnEchoChamberResultListener echoListener = new NetworkEchoChamberServer.OnEchoChamberResultListener() {
+//			@Override
+//			public void networkResult(JSONArray result) {
+//				if (mProgressDialog != null)
+//				{
+//					mProgressDialog.dismiss();
+//					mProgressDialog = null;
+//				}
+//				mBlockList = result;
+//				Editor ed = _prefs.edit();
+//				ed.putString("echoChamberBlockList", result.toString());
+//				ed.commit();
+//			}
+//
+//			@Override
+//			public void addError() {
+//				if (mProgressDialog != null)
+//				{
+//					mProgressDialog.dismiss();
+//					mProgressDialog = null;
+//				}
+//			}
+//		};
+//		mEchoAccess = new NetworkEchoChamberServer(this, echoListener);
 		if (_prefs.contains("echoChamberBlockList"))
 		{
 			try {
@@ -371,10 +371,13 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			{
 				e.printStackTrace();
 			}
-			if (_prefs.getBoolean("echoEnabled", false))
-			{
-				mEchoAccess.doBlocklistTask(NetworkEchoChamberServer.ACTION_GET);
-			}
+//			if (_prefs.getBoolean("echoEnabled", false))
+//			{
+//				mEchoAccess.doBlocklistTask(NetworkEchoChamberServer.ACTION_GET);
+//			}
+		}
+		else {
+			mBlockList = new JSONArray();
 		}
 		try {
 			if (_prefs.getBoolean("echoChamberAuto", true)) {
@@ -1502,7 +1505,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         }
 		if (type == CONTENT_ECHOPREFS)
 		{
-			mTitle = "Echo Chamber Preferences";
+			mTitle = "Block List Preferences";
 			fragment = (PreferenceFragmentEchoChamber)Fragment.instantiate(getApplicationContext(), PreferenceFragmentEchoChamber.class.getName(), new Bundle());
 		}
         if (type == CONTENT_FRONTPAGE)
@@ -4338,14 +4341,14 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
 		builder.setTitle((echoPalatize ? "Palatize" : "Remove") + " ALL posts from " + username + "?");
 		String action = (echoPalatize ? "PALATIZE" : "REMOVE");
-		builder.setMessage("This will "+action+" all posts from this user in future threads. " + (echoPalatize ? "" : "This will ALSO REMOVE any subthreads from and replies to this user. ") +  "This can be changed in the Echo Chamber options. Continue?");
+		builder.setMessage("This will "+action+" all posts from this user in future threads. You will need to refresh the list to see this change. " + (echoPalatize ? "" : "This will ALSO REMOVE any subthreads from and replies to this user. ") +  "This can be changed in the Settings -> Block List. Continue?");
 		builder.setCancelable(true);
 		builder.setPositiveButton((echoPalatize ? "Palatize" : "Block") + " User", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
-				mProgressDialog = MaterialProgressDialog.show(MainActivity.this, "Escorting user from Echo Chamber", "Communicating with Shack Browse server...", true, true);
-				mEchoAccess.doBlocklistTask(NetworkEchoChamberServer.ACTION_ADD, username);
+				mBlockList.put(username);
 				Editor ed = _prefs.edit();
 				ed.putBoolean("echoEnabled", true);
+				ed.putString("echoChamberBlockList", mBlockList.toString());
 				ed.commit();
 			}
 		});

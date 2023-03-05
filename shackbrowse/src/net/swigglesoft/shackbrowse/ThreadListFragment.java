@@ -1002,7 +1002,7 @@ public class ThreadListFragment extends ListFragment
 
 	    				iter.remove();
                         statInc(getActivity(), "CollapsedDueToKeywordFilter");
-	    				break;
+	    				continue;
 	    			}
 	    		}
 
@@ -1018,7 +1018,7 @@ public class ThreadListFragment extends ListFragment
 						iter.remove();
 					}
 					statInc(getActivity(), "EchoChamberRemoved");
-					break;
+					continue;
 				}
 
 	    	}

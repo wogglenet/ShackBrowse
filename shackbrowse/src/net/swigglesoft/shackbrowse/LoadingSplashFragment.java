@@ -73,22 +73,22 @@ public class LoadingSplashFragment extends Fragment {
     {
         if (getView() != null) {
             TextView echo = (TextView) ((View) getView()).findViewById(R.id.echo_chamber);
-            String echostatus = "";
-            String autostatus = "";
-            boolean echoEnabled = mPrefs.getBoolean("echoEnabled", false);
-            boolean echoPalatize = mPrefs.getBoolean("echoPalatize", false);
-            if (mPrefs.getBoolean("echoChamberAuto", true) && echoEnabled) {
-                autostatus = "AutoChamber " + (echoPalatize ? "palatizing" : "blocking") + ": " + ((MainActivity) getActivity()).getFancyBlockList(true);
-            } else {
-                autostatus = "(AutoChamber off)";
-            }
-            if (echoEnabled) {
-                echostatus = (echoPalatize ? "palatizing" : "blocking") + ": " + ((MainActivity) getActivity()).getFancyBlockList(false);
-            } else {
-                echostatus = "off";
-            }
-
-            echo.setText("Echo Chamber: " + echostatus + "\r\n" + autostatus);
+//            String echostatus = "";
+//            String autostatus = "";
+//            boolean echoEnabled = mPrefs.getBoolean("echoEnabled", false);
+//            boolean echoPalatize = mPrefs.getBoolean("echoPalatize", false);
+//            if (mPrefs.getBoolean("echoChamberAuto", true) && echoEnabled) {
+//                autostatus = "AutoChamber " + (echoPalatize ? "palatizing" : "blocking") + ": " + ((MainActivity) getActivity()).getFancyBlockList(true);
+//            } else {
+//                autostatus = "(AutoChamber off)";
+//            }
+//            if (echoEnabled) {
+//                echostatus = (echoPalatize ? "palatizing" : "blocking") + ": " + ((MainActivity) getActivity()).getFancyBlockList(false);
+//            } else {
+//                echostatus = "off";
+//            }
+            // Remove setting the text on the splash screen for now.
+            echo.setText("");
         }
     }
     public void randomizeTagline() {
