@@ -293,7 +293,7 @@ public class MessageFragment extends ListFragment
         {
             _progressDialog.dismiss();
             if (result != null)
-            	((MainActivity)getActivity()).openNewMessagePromptForSubject(result);
+            	((MainActivity)getActivity()).openNewMessagePromptForSubject(result, null, null);
             else
             {
                 MaterialDialog.Builder alert = new MaterialDialog.Builder(getActivity());

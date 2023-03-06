@@ -118,6 +118,7 @@ public class ComposePostView extends AppCompatActivity {
 	private int _forcePostPreview = 1;
     private int _extendedEditor = 1;
 	private boolean _messageMode = false;
+	private boolean _moderationReport = false;
 	protected boolean _preventDraftSave = false;
 	private String _parentAuthorForDraft = "";
 	private String _parentPostForDraft = "";
@@ -232,6 +233,11 @@ public class ComposePostView extends AppCompatActivity {
             	_messageMode  = true;
             }
         }
+
+		if (extras != null && extras.containsKey("moderationReport"))
+		{
+			_moderationReport = extras.getBoolean("moderationReport");
+		}
         
         // setup buttons
         setupButtonBindings(extras);
@@ -584,11 +590,16 @@ public class ComposePostView extends AppCompatActivity {
         	if (_messageMode)
         	{
         		_messageRecipient = extras.getString("parentAuthor");
+				Boolean _moderationReport = extras.getBoolean("moderationReport");
         		if (postContent.length() > 5)
         		{
 	        		EditText edit = (EditText)findViewById(R.id.textContent);
-	        		edit.setText("\r\n\r\nPrevious message from " + author + ": \r\n" + postContent);
-	        		edit.setSelection(0,0);
+					if (_moderationReport) {
+						edit.append(postContent);
+					} else {
+						edit.setText("\r\n\r\nPrevious message from " + author + ": \r\n" + postContent);
+						edit.setSelection(0,0);
+					}
         		}
         		setTitle("Msg to " + author);
         	}
@@ -1009,7 +1020,7 @@ public class ComposePostView extends AppCompatActivity {
 
 		mTpl.loadTplsFromDisk();
 
-	    if (_messageMode)
+	    if (_messageMode && !_moderationReport)
 		    edit.post(new Runnable() {
 			    @Override
 			    public void run() {

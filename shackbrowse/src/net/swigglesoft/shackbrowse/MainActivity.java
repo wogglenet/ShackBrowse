@@ -1756,17 +1756,44 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         i.putExtra(CONTENT_TYPE_ID, contentTypeId);
         startActivityForResult(i, returnResultType);
 	}
-	
-	public void openComposerForMessageReply (int returnResultType, Post parentPost, String messageSubject)
+
+	public void openComposerForMessageReply (int returnResultType, Post parentPost, String messageSubject, Boolean moderationReport)
 	{
 		Intent i = new Intent(this, ComposePostView.class);
-        i.putExtra("mode", "message");
-        i.putExtra("parentAuthor", parentPost.getUserName());
-        i.putExtra("parentContent", parentPost.getCopyText());
-        i.putExtra("messageSubject", messageSubject);
-        startActivityForResult(i, returnResultType);
+		i.putExtra("mode", "message");
+		i.putExtra("parentAuthor", parentPost.getUserName());
+		i.putExtra("parentContent", parentPost.getCopyText());
+		i.putExtra("messageSubject", messageSubject);
+		i.putExtra("moderationReport", moderationReport);
+		startActivityForResult(i, returnResultType);
 	}
-	public void openNewMessagePromptForSubject (final String username)
+	public void openComposerForMessageReply (int returnResultType, Post parentPost, String messageSubject)
+	{
+		openComposerForMessageReply(returnResultType, parentPost, messageSubject, false);
+	}
+
+	public void openNewMessageForReportingPost (final String username, final String subject, final String content) {
+		boolean verified = _prefs.getBoolean("usernameVerified", false);
+		if (!verified) {
+			LoginForm login = new LoginForm(this);
+			login.setOnVerifiedListener(new LoginForm.OnVerifiedListener() {
+				@Override
+				public void onSuccess() {
+					openNewMessageForReportingPost(username, subject, content);
+				}
+
+				@Override
+				public void onFailure() {
+				}
+			});
+			return;
+		}
+
+		Post post = new Post(0, username, content, null, 0, "", false);
+		openComposerForMessageReply(ThreadViewFragment.POST_MESSAGE, post, subject, true);
+	}
+
+	public void openNewMessagePromptForSubject (final String username, final String subject, final String content)
 	{
     	boolean verified = _prefs.getBoolean("usernameVerified", false);
         if (!verified)
@@ -1775,7 +1802,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         	login.setOnVerifiedListener(new LoginForm.OnVerifiedListener() {
 				@Override
 				public void onSuccess() {
-					openNewMessagePromptForSubject(username);
+					openNewMessagePromptForSubject(username, subject, content);
 				}
 
 				@Override
@@ -1784,6 +1811,11 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			});
         	return;
         }
+		if (subject != null) {
+			Post post = new Post(0, username, content, null, 0, "", false);
+			openComposerForMessageReply(ThreadViewFragment.POST_MESSAGE, post, subject);
+			return;
+		}
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
     	alert.setTitle("Shackmessage to " + username);
         LinearLayout layout = new LinearLayout(this);

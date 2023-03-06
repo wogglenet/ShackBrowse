@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -877,10 +878,25 @@ public class ThreadViewFragment extends ListFragment
 		}
 	}
 
-    public void shackmessageTo (String username)
+    public void shackmessageTo (String username, String subject, String content)
     {
-    	mMainActivity.openNewMessagePromptForSubject(username);
+    	mMainActivity.openNewMessagePromptForSubject(username, subject, content);
     }
+
+	public void shackmessageReportPost(int postId)
+	{
+		Resources res = getResources();
+		String content = String.format(
+				res.getString(R.string.moderation_report),
+				"https://www.shacknews.com/chatty?id=" + postId + System.lineSeparator()
+		);
+		mMainActivity.openNewMessageForReportingPost(
+				res.getString(R.string.moderation_report_to),
+				res.getString(R.string.moderation_report_subject),
+				content + " "
+		);
+	}
+
 
     private void lolPost(final String tag, final int pos)
     {
@@ -1373,6 +1389,7 @@ public class ThreadViewFragment extends ListFragment
 
 	    public View.OnClickListener getUserNameClickListenerForPosition(int pos, View v)
         {
+			final int postId = getItem(pos).getPostId();
             final String unamefinal = getItem(pos).getUserName();
             return new View.OnClickListener() {
                 @Override
@@ -1382,23 +1399,31 @@ public class ThreadViewFragment extends ListFragment
 					usrpop.getMenu().add(Menu.NONE, 1, Menu.NONE, "Search for posts by " + unamefinal);
 					usrpop.getMenu().add(Menu.NONE, 2, Menu.NONE, "Highlight " + unamefinal + " in thread");
 					usrpop.getMenu().add(Menu.NONE, 3, Menu.NONE, "Copy " + unamefinal + " to clipboard");
-					if (!unamefinal.equalsIgnoreCase(_userName))
-						{ usrpop.getMenu().add(Menu.NONE, 4, Menu.NONE, "Block this user"); }
 
                     usrpop.setOnMenuItemClickListener(new OnMenuItemClickListener(){
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
-                            if (item.getItemId() == 0)
-                                shackmessageTo(unamefinal);
-                            if (item.getItemId() == 1)
-                                searchForPosts(unamefinal);
-                            if (item.getItemId() == 2)
-                                mMainActivity.openHighlighter(unamefinal);
-							if (item.getItemId() == 3)
-								copyString(unamefinal);
-							if (item.getItemId() == 4)
-								mMainActivity.blockUser(unamefinal);
-                            return true;
+							switch(item.getItemId()) {
+								case 0:
+									shackmessageTo(unamefinal, null, null);
+									break;
+								case 1:
+									searchForPosts(unamefinal);
+									break;
+								case 2:
+									mMainActivity.openHighlighter(unamefinal);
+									break;
+								case 3:
+									copyString(unamefinal);
+									break;
+								case 4:
+									shackmessageReportPost(postId);
+									break;
+								case 5:
+									mMainActivity.blockUser(unamefinal);
+									break;
+							}
+							return true;
                         }});
                     usrpop.show();
                 }
@@ -1718,6 +1743,40 @@ public class ThreadViewFragment extends ListFragment
                 } else {
                     holder.buttonAllImages.setVisibility(View.GONE);
                 }
+
+				final ImageButton butBlocks = holder.buttonBlocks;
+				holder.buttonBlocks.setOnClickListener(new View.OnClickListener()
+				{
+					final int postId = getItem(pos).getPostId();
+					final String unamefinal = getItem(pos).getUserName();
+					@Override
+					public void onClick(View view)
+					{
+						PopupMenu blocksPopup = new PopupMenu(getContext(), butBlocks);
+						blocksPopup.getMenu().add(Menu.NONE, 0, Menu.NONE, "Report this post");
+						if (!unamefinal.equalsIgnoreCase(_userName)) {
+							blocksPopup.getMenu().add(Menu.NONE, 1, Menu.NONE, "Block this user");
+						}
+						blocksPopup.setOnMenuItemClickListener(new OnMenuItemClickListener()
+						{
+							@Override
+							public boolean onMenuItemClick(MenuItem item)
+							{
+								switch (item.getItemId()) {
+									case 0:
+										shackmessageReportPost(postId);
+										break;
+									case 1:
+										mMainActivity.blockUser(unamefinal);
+										break;
+								}
+								return true;
+							}
+						});
+						blocksPopup.show();
+					}
+				});
+
 
                 final ImageButton butshr = holder.buttonSharePost;
                 holder.buttonSharePost.setOnClickListener(new View.OnClickListener()
@@ -2269,6 +2328,7 @@ public class ThreadViewFragment extends ListFragment
 
                 holder.buttonOther = convertView.findViewById(R.id.buttonPostOpt);
 	            holder.buttonSharePost = convertView.findViewById(R.id.buttonSharePost);
+				holder.buttonBlocks = convertView.findViewById(R.id.buttonMoreOptions);
                 holder.buttonReply = convertView.findViewById(R.id.buttonReplyPost);
                 holder.buttonAllImages = convertView.findViewById(R.id.buttonOpenAllImages);
                 holder.buttonLol = convertView.findViewById(R.id.buttonPostLOL);
@@ -2294,6 +2354,11 @@ public class ThreadViewFragment extends ListFragment
 	                buttonLayout.height = (int)Math.floor(buttonLayout.height * _zoom);
 	                buttonLayout.width = (int)Math.floor(buttonLayout.width * _zoom);
 	                holder.buttonSharePost.setLayoutParams(buttonLayout);
+
+					buttonLayout = holder.buttonBlocks.getLayoutParams();
+					buttonLayout.height = (int)Math.floor(buttonLayout.height * _zoom);
+					buttonLayout.width = (int)Math.floor(buttonLayout.width * _zoom);
+					holder.buttonBlocks.setLayoutParams(buttonLayout);
 
 	                buttonLayout = holder.buttonOther.getLayoutParams();
 	                buttonLayout.height = (int)Math.floor(buttonLayout.height * _zoom);
@@ -3132,6 +3197,8 @@ public class ThreadViewFragment extends ListFragment
 	        public ImageButton buttonNoteEnabled;
 	        public ImageButton buttonNoteMuted;
 	        public ImageButton buttonSharePost;
+
+			public ImageButton buttonBlocks;
 	        public ImageButton buttonOther;
         }
         

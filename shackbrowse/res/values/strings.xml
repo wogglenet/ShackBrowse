@@ -100,7 +100,11 @@
     
     <string name="upload_picture">Upload picture</string>
     <string name="take_picture">Take picture</string>
-    
+
+    <string name="moderation_report_to">Duke Nuked</string>
+    <string name="moderation_report_subject">Reporting a post</string>
+    <string name="moderation_report">I am reporting this post for moderation: %1$sMy reasons for reporting it are as follows:</string>
+
     <string name="preferences_pagelogin">Login Information</string>
     <string name="preferences_pagelogin_summary">Set username and password for Shacknews and Chattypics.</string>
     <string name="preferences_login">Shacknews Account Information</string>
