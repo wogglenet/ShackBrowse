@@ -10,25 +10,20 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
 import androidx.appcompat.widget.Toolbar;
+import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.core.app.NavUtils;
 import androidx.core.app.TaskStackBuilder;
 import androidx.appcompat.app.AppCompatActivity;
-import android.text.Html;
-import android.text.SpannableString;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -95,6 +90,16 @@ public class DonateActivity extends AppCompatActivity {
 				ChangeLog cl = new ChangeLog(DonateActivity.this);
 		        cl.getFullLogDialog().show();
 			}
+        });
+
+        this.findViewById(R.id.termsAndConditions).setOnClickListener(v -> {
+            CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
+            customTabsIntent.launchUrl(DonateActivity.this, Uri.parse(getResources().getString(R.string.tcs_url)));
+        });
+
+        this.findViewById(R.id.privacyPolicy).setOnClickListener(v -> {
+            CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
+            customTabsIntent.launchUrl(DonateActivity.this, Uri.parse(getResources().getString(R.string.tcs_privacy_url)));
         });
         
         

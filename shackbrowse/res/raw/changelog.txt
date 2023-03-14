@@ -90,6 +90,13 @@ How am I supposed to tell if you were looking at the thread or the list of threa
 
 -->
 
+$ 7.0.4
+% v 7.0.4
+_ Mar 13, 2023
+* Implement a first time use unskippable dialog for Terms & Conditions and Privacy Policy to try to get the app back on the store.
+* Implement the Block User feature with local preferences only, this was broken when Woggle went away and is a requirement for the store.
+* Implement a Report this Post feature to message Duke Nuked & report a post. This is another store requirement.
+
 $ 7.0.3
 % v 7.0.3
 _ Feb 15, 2023

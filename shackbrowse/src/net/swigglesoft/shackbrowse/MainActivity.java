@@ -20,7 +20,6 @@ import net.swigglesoft.shackbrowse.ChangeLog.onChangeLogCloseListener;
 import net.swigglesoft.shackbrowse.NetworkNotificationServers.OnGCMInteractListener;
 
 import net.swigglesoft.shackbrowse.imgur.ImgurAuthURLHandling;
-import net.swigglesoft.shackbrowse.notifier.NotifierReceiver;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,8 +30,7 @@ import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
+import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -46,7 +44,6 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -78,6 +75,7 @@ import android.text.ClipboardManager;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -124,6 +122,7 @@ import static net.swigglesoft.shackbrowse.StatsFragment.statInc;
 public class MainActivity extends AppCompatActivity implements ColorChooserDialog.ColorCallback
 {
 	public static final boolean LOLENABLED = true;
+	public static boolean termsAndConditionsChecked = false;
 
 	static final String PQPSERVICESUCCESS = "net.swigglesoft.PQPServiceSuccess";
 	static final String CLICKLINK = "net.swigglesoft.ClickLink";
@@ -204,6 +203,8 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	private MaterialDialog mProgressDialog;
 	public boolean mStupidDonkeyAnonOption = false;
 
+	private Bundle savedInstanceState;
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -213,6 +214,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 		// sets theme
 		mThemeResId = MainActivity.themeApplicator(this);
+		this.savedInstanceState = savedInstanceState;
 
 		super.onCreate(savedInstanceState);
 
@@ -254,16 +256,16 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		mProgressBar = (SmoothProgressBar) findViewById(R.id.app_progress);
 		mProgressBar.bringToFront();
 		mProgressBar.setSmoothProgressDrawableCallbacks(new SmoothProgressDrawable.Callbacks() {
-		@Override
-		public void onStop() {
-			mProgressBar.setVisibility(View.INVISIBLE);
-		}
+			@Override
+			public void onStop() {
+				mProgressBar.setVisibility(View.INVISIBLE);
+			}
 
-		@Override
-		public void onStart() {
-			mProgressBar.setVisibility(View.VISIBLE);
-		}
-	});
+			@Override
+			public void onStart() {
+				mProgressBar.setVisibility(View.VISIBLE);
+			}
+		});
 
 		evaluateAutoHide();
 
@@ -276,36 +278,15 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		// set up preferences
 		reloadPrefs();
 
-
-        // set up android oreo notification channels
-		// Create the NotificationChannel, but only on API 26+ because
-		// the NotificationChannel class is new and not in the support library
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-			NotificationManager notificationManager = getSystemService(NotificationManager.class);
-
-			NotificationChannel channel = new NotificationChannel(NotifierReceiver.CHANNEL_VANITY, "Vanity Notifications", NotificationManager.IMPORTANCE_DEFAULT);
-			channel.setDescription("Notifications when someone mentions your shack name"); channel.enableLights(true); channel.setLightColor(Color.GREEN); channel.enableVibration(true);
-			notificationManager.createNotificationChannel(channel);
-			channel = new NotificationChannel(NotifierReceiver.CHANNEL_REPLY, "Reply Notifications", NotificationManager.IMPORTANCE_DEFAULT);
-			channel.setDescription("Notifications when someone replies to your posts"); channel.enableLights(true); channel.setLightColor(Color.GREEN); channel.enableVibration(true);
-			notificationManager.createNotificationChannel(channel);
-			channel = new NotificationChannel(NotifierReceiver.CHANNEL_KEYWORD, "Keyword Notifications", NotificationManager.IMPORTANCE_DEFAULT);
-			channel.setDescription("Notifications when someone mentions a keyword you set"); channel.enableLights(true); channel.setLightColor(Color.GREEN); channel.enableVibration(true);
-			notificationManager.createNotificationChannel(channel);
-			channel = new NotificationChannel(NotifierReceiver.CHANNEL_SHACKMSG, "Shack Message Notifications", NotificationManager.IMPORTANCE_HIGH);
-			channel.setDescription("Notifications when someone sends you a private message"); channel.enableLights(true); channel.setLightColor(Color.GREEN); channel.enableVibration(true);
-			notificationManager.createNotificationChannel(channel);
-			channel = new NotificationChannel(NotifierReceiver.CHANNEL_SYSTEM, "System Notifications", NotificationManager.IMPORTANCE_LOW);
-			channel.setDescription("Notifications from the app, such as post queue notifications"); channel.enableLights(true); channel.setLightColor(Color.GREEN); channel.enableVibration(false);
-			notificationManager.createNotificationChannel(channel);
-		}
-
+		// TODO: Bring back Notification Channel Setup (Moved to PushNotificationSetup) but probably
+		// when enabling push notifications instead.
 
 		// notifications registrator, works mostly automatically
 		OnGCMInteractListener GCMlistener = new OnGCMInteractListener(){
 			@Override	public void networkResult(String res)
 			{
-				// this allows the check mark to be placed when push notifications are automatically enabled if the setting has never been touched
+				// this allows the check mark to be placed when push notifications are automatically
+				// enabled if the setting has never been touched
 				Editor edit = _prefs.edit();
 				if (res.contains("ok"))
 				{
@@ -1654,6 +1635,18 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	{
 		
 		super.onResume();
+
+		// Show Terms and Conditions
+		if (!termsAndConditionsChecked) {
+			termsAndConditionsChecked = true;
+			SharedPreferences sharedPreferences = getSharedPreferences(TermsAndConditionsDialogFragment.SHACKBROWSE_TCS, Context.MODE_PRIVATE);
+			if(sharedPreferences.getInt(TermsAndConditionsDialogFragment.TERMS_AND_CONDITIONS, 0) < TermsAndConditionsDialogFragment.CURRENT_TERMS_VERSION) {
+				TermsAndConditionsDialogFragment termsAndConditions = new TermsAndConditionsDialogFragment(MainActivity.this);
+				Dialog dialog = termsAndConditions.onCreateDialog(savedInstanceState);
+				dialog.show();
+				((TextView) dialog.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
+			}
+		}
 
         StatsFragment.statInc(this, "AppOpened");
         mLastResumeTime = TimeDisplay.now();
@@ -4391,3 +4384,4 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		builder.create().show();
 	}
 }
+
