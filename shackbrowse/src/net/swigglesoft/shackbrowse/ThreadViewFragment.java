@@ -2085,19 +2085,19 @@ public class ThreadViewFragment extends ListFragment
 						if (postClip.tweetdata == null)
 						{
 
-							System.out.println("TWEETLOAD FROM SCRATCH");
-							TweetUtils.loadTweet(tweetId, new Callback<Tweet>() {
-								@Override
-								public void success(Result<Tweet> result) {
-									postClip.tweetdata = result.data;
-									tweetHolder.addView(new CompactTweetView(getContext(), result.data, R.style.tw__TweetDarkStyle));
-								}
-
-								@Override
-								public void failure(TwitterException exception) {
-									// Toast.makeText(...).show();
-								}
-							});
+//							System.out.println("TWEETLOAD FROM SCRATCH");
+//							TweetUtils.loadTweet(tweetId, new Callback<Tweet>() {
+//								@Override
+//								public void success(Result<Tweet> result) {
+//									postClip.tweetdata = result.data;
+//									tweetHolder.addView(new CompactTweetView(getContext(), result.data, R.style.tw__TweetDarkStyle));
+//								}
+//
+//								@Override
+//								public void failure(TwitterException exception) {
+//									// Toast.makeText(...).show();
+//								}
+//							});
 
 						}
 						else

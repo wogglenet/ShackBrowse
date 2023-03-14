@@ -278,8 +278,9 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		// set up preferences
 		reloadPrefs();
 
-		// TODO: Bring back Notification Channel Setup (Moved to PushNotificationSetup) but probably
-		// when enabling push notifications instead.
+		// Setup notification channels. Including the system one which is needed for post queue
+		// notifications
+		PushNotificationSetup.SetupNotificationChannels(this);
 
 		// notifications registrator, works mostly automatically
 		OnGCMInteractListener GCMlistener = new OnGCMInteractListener(){

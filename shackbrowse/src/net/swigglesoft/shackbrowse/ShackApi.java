@@ -1821,10 +1821,20 @@ public class ShackApi
             
             e = new UrlEncodedFormEntity(values,"UTF-8");
             post.setEntity(e);
-            	
-            content = client.execute(post, response_handler);
-            System.out.println("RESPOSE TO POST: " + msg + uid + recipient + subject);
-            
+
+            try {
+                client.execute(post, response_handler);
+            } catch (Exception ex) {
+                // This Apache client considers 302 an error in whatever default config it is.
+                // Why does this only happen in release builds? Something to look into eventually.
+                // 302 is normal though from the Shack message sending call from trying this in
+                // Chrome.
+                if (!ex.getMessage().equalsIgnoreCase("found")) {
+                    System.out.println("EXCEPTION DURING postMessage, MESSAGE: " + ex.getMessage());
+                    return false;
+                }
+            }
+            System.out.println("RESPONSE TO POST: " + msg + uid + recipient + subject);
             return true;
         }
         else
