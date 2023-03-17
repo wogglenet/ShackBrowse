@@ -90,6 +90,11 @@ How am I supposed to tell if you were looking at the thread or the list of threa
 
 -->
 
+$ 7.0.6
+% v 7.0.6
+_ Mar 16, 2023
+* Clarify "Report this post" to "Report this user/post" and add the username to the moderation report message. Reporting a post and user together is implied in moderation requests.
+
 $ 7.0.5
 % v 7.0.5
 _ Mar 16, 2023

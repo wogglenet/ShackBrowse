@@ -1769,7 +1769,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	public void openNewMessageForReportingPost (final String username, final String subject, final String content) {
 		boolean verified = _prefs.getBoolean("usernameVerified", false);
 		if (!verified) {
-			ErrorDialog.display(this, "Login", "You must be logged in to report a post.");
+			ErrorDialog.display(this, "Login", "You must be logged in to report a user/post.");
 			LoginForm login = new LoginForm(this);
 			login.setOnVerifiedListener(new LoginForm.OnVerifiedListener() {
 				@Override

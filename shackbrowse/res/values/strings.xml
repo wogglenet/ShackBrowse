@@ -103,7 +103,7 @@
 
     <string name="moderation_report_to">Duke Nuked</string>
     <string name="moderation_report_subject">Reporting a post</string>
-    <string name="moderation_report">I am reporting this post for moderation: %1$sMy reasons for reporting it are as follows:</string>
+    <string name="moderation_report">I am reporting the user \"%1$s\" for moderation, referencing the post: %2$sMy reasons for reporting it are as follows:</string>
 
     <string name="preferences_pagelogin">Login Information</string>
     <string name="preferences_pagelogin_summary">Set username and password for Shacknews and Chattypics.</string>

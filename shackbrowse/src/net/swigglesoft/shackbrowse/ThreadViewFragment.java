@@ -883,11 +883,12 @@ public class ThreadViewFragment extends ListFragment
     	mMainActivity.openNewMessagePromptForSubject(username, subject, content);
     }
 
-	public void shackmessageReportPost(int postId)
+	public void shackmessageReportPost(String username, int postId)
 	{
 		Resources res = getResources();
 		String content = String.format(
 				res.getString(R.string.moderation_report),
+				username,
 				"https://www.shacknews.com/chatty?id=" + postId + System.lineSeparator()
 		);
 		mMainActivity.openNewMessageForReportingPost(
@@ -1417,7 +1418,7 @@ public class ThreadViewFragment extends ListFragment
 									copyString(unamefinal);
 									break;
 								case 4:
-									shackmessageReportPost(postId);
+									shackmessageReportPost(unamefinal, postId);
 									break;
 								case 5:
 									mMainActivity.blockUser(unamefinal);
@@ -1753,7 +1754,7 @@ public class ThreadViewFragment extends ListFragment
 					public void onClick(View view)
 					{
 						PopupMenu blocksPopup = new PopupMenu(getContext(), butBlocks);
-						blocksPopup.getMenu().add(Menu.NONE, 0, Menu.NONE, "Report this post");
+						blocksPopup.getMenu().add(Menu.NONE, 0, Menu.NONE, "Report this user/post");
 						if (!unamefinal.equalsIgnoreCase(_userName)) {
 							blocksPopup.getMenu().add(Menu.NONE, 1, Menu.NONE, "Block this user");
 						}
@@ -1764,7 +1765,7 @@ public class ThreadViewFragment extends ListFragment
 							{
 								switch (item.getItemId()) {
 									case 0:
-										shackmessageReportPost(postId);
+										shackmessageReportPost(unamefinal, postId);
 										break;
 									case 1:
 										mMainActivity.blockUser(unamefinal);
