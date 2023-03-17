@@ -254,7 +254,7 @@
     <string name="changelog_show_full">more...</string>
 
     <string name="tcs_dialog"><![CDATA[By using this app, you agree to our <a href="https://stimpydad.github.io/ShackBrowse/pages/termsandconditions">Terms and Conditions</a> and <a href="https://stimpydad.github.io/ShackBrowse/pages/privacy">Privacy Policy</a>.
-        You also agree to follow the <a href="https://www.shacknews.com/guidelines">Shacknews Community Guidelines</a>]]></string>
+        <p>You also agree to follow the <a href="https://www.shacknews.com/guidelines">Shacknews Community Guidelines</a></p>]]></string>
     <string name="tcs_url">https://stimpydad.github.io/ShackBrowse/pages/termsandconditions</string>
     <string name="tcs_privacy_url">https://stimpydad.github.io/ShackBrowse/pages/privacy</string>
     <string name="tcs_agree">I agree</string>
