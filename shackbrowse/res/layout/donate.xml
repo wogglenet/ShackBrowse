@@ -69,7 +69,7 @@
             android:paddingLeft="10dip"
             android:paddingRight="10dip"
             android:paddingBottom="10dp"
-            android:text="Shack Browse is originally developed by Wogglesoft and is now being maintained by volunteers. It was created from Droid Chatty source code, although little of the Droid Chatty source now remains. The source is available at the current GitHub fork website at https://github.com/StimpyDad/ShackBrowse"
+            android:text="Shack Browse is originally developed by Wogglesoft and is now being maintained by volunteers. It is an unofficial client for the Shacknews latest chatty forum and is not endorsed, affiliated or sponsored by Shacknews. It was created from Droid Chatty source code, although little of the Droid Chatty source now remains. The source is available at the current GitHub fork website at https://github.com/StimpyDad/ShackBrowse"
             android:textSize="14sp" />
 
         <TextView

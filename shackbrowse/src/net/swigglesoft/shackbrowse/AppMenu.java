@@ -153,7 +153,7 @@ public class AppMenu extends ListFragment
     	        	setupBasicSearchList(_adapter);
     	        	
     	        	_adapter.add(new MenuItems(1, "Application v" + thisversion , 0, 0));
-					_adapter.add(new MenuItems(0, "Posting Guidelines" , 1, R.drawable.ic_action_action_report_problem));
+					_adapter.add(new MenuItems(0, "Community Guidelines" , 1, R.drawable.ic_action_action_report_problem));
     	        	_adapter.add(new MenuItems(0, "Info" , 3, R.drawable.ic_action_action_info_outline));
 
     		        if (verified) {
@@ -238,7 +238,7 @@ public class AppMenu extends ListFragment
     	}
     	if (mid == 1)
     	{
-			((MainActivity)getActivity()).openBrowser("https://www.shacknews.com/guidelines");
+			((MainActivity)getActivity()).openBrowser(getResources().getString(R.string.shacknews_guidelines_url));
     	}
     	if (mid == 4)
     	{
