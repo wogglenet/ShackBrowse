@@ -60,7 +60,7 @@ public class LoginForm {
         final EditText usern = (EditText) view.findViewById(R.id.loginUsername);
         final EditText passw = (EditText) view.findViewById(R.id.loginPassword);
         final TextView header = (TextView) view.findViewById(R.id.loginHeader);
-        header.setText("Shacknews.com");
+        header.setText("If you do not have an account, sign-up first at Shacknews.com");
         usern.setText(_userName);
         passw.setText(_password);
         builder.setView(view);
