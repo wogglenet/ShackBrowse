@@ -17,7 +17,7 @@ public class TermsAndConditionsDialogFragment extends DialogFragment {
     public static final String SHACKBROWSE_TCS = "SHACKBROWSE_TCS";
     public static final String TERMS_AND_CONDITIONS = "TERMS AND CONDITIONS";
 
-    public static final int CURRENT_TERMS_VERSION = 1;
+    public static final int CURRENT_TERMS_VERSION = 2;
 
     private Context context;
 
