@@ -90,6 +90,11 @@ How am I supposed to tell if you were looking at the thread or the list of threa
 
 -->
 
+$ 7.0.5
+% v 7.0.5
+_ Mar 16, 2023
+* Update the Terms & Conditions version to reflect the initial Terms & Conditions page going live. Prepare for Play Store resubmission.
+
 $ 7.0.4
 % v 7.0.4
 _ Mar 13, 2023
