@@ -27,4 +27,5 @@
 
 #-dontwarn com.squareup.okhttp.**
 -keepattributes InnerClasses,SourceFile,LineNumberTable        # Keep file names and line numbers.
+-dontobfuscate
 -keep public class * extends java.lang.Exception  # Optional: Keep custom exceptions.
