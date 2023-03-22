@@ -90,6 +90,12 @@ How am I supposed to tell if you were looking at the thread or the list of threa
 
 -->
 
+$ 7.0.7
+% v 7.0.7
+_ Mar 21, 2023
+* Try to bring back a fixed Twitter Compact View loader. Animated GIFs do not seem to load properly so have that load to a browser.
+Also it seems sometimes there are videos that do not have the appropriate video info, so try to handle those as a photo and not crash.
+
 $ 7.0.6
 % v 7.0.6
 _ Mar 16, 2023
