@@ -90,6 +90,11 @@ How am I supposed to tell if you were looking at the thread or the list of threa
 
 -->
 
+$ 7.0.8
+% v 7.0.8
+_ Mar 23, 2023
+* Fix a crash in the Webview popup when the hostname cannot be parsed from the URL to load.
+
 $ 7.0.7
 % v 7.0.7
 _ Mar 21, 2023

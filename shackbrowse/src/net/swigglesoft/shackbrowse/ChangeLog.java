@@ -68,7 +68,11 @@ public class ChangeLog {
                         Log.e(TAG, "could not get version name from manifest!");
                         e.printStackTrace();
                 }
-                this.lastVersion = sp.getString(VERSION_KEY, this.thisVersion);
+                this.lastVersion = sp.getString(VERSION_KEY, NO_VERSION);
+                if (this.lastVersion.equals(NO_VERSION)) {
+                        updateVersionInPreferences();
+                        this.lastVersion = this.thisVersion;
+                }
                 Log.d(TAG, "appVersion: " + this.thisVersion);
         }
 
