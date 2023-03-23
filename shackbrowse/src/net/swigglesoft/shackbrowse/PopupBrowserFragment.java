@@ -182,7 +182,9 @@ public class PopupBrowserFragment extends Fragment {
 				{
 					id = null;
 				}
-				if ((uri.getHost().equalsIgnoreCase("www.shacknews.com") || uri.getHost().equalsIgnoreCase("shacknews.com")) && id != null) {
+				String uriHost = uri.getHost();
+				if (uriHost != null && id != null &&
+						(uriHost.equalsIgnoreCase("www.shacknews.com") || uriHost.equalsIgnoreCase("shacknews.com"))) {
 					System.out.println("open LINK chatty " + _href);
 					((MainActivity) getActivity()).closeBrowser();
 					((MainActivity) getActivity()).openThreadViewAndSelect(Integer.parseInt(id));
