@@ -151,17 +151,16 @@ public class PreferenceView extends PreferenceFragment
 
         });
 
-		// 2023-02-14 Comment out the notifications for now until these are fixed up
-//        Preference notePref = (Preference) findPreference("notifications");
-//        notePref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
-//
-//			@Override
-//			public boolean onPreferenceClick(Preference preference) {
-//                ((MainActivity)getActivity()).cleanUpViewer();
-//				((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_NOTEPREFS);
-//				return false;
-//			}}
-//        );
+        Preference notePref = (Preference) findPreference("notifications");
+        notePref.setOnPreferenceClickListener(new OnPreferenceClickListener(){
+
+			@Override
+			public boolean onPreferenceClick(Preference preference) {
+                ((MainActivity)getActivity()).cleanUpViewer();
+				((MainActivity)getActivity()).setContentTo(MainActivity.CONTENT_NOTEPREFS);
+				return false;
+			}}
+        );
 
 		Preference echoPref = (Preference) findPreference("echoChamber");
 		echoPref.setOnPreferenceClickListener(new OnPreferenceClickListener(){

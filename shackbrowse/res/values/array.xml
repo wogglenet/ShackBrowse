@@ -147,11 +147,10 @@
         <item>1800000</item>
         <item>3600000</item>
     </string-array>
-    <!-- // DEFAULT 3 HR,  5 minutes 50-100mb, 10 minutes 25-50mb, 30mins 10-20mb, 1 hr 5-10mb, 3 hr 1-3mb, 6hr .5-1.5mb, 12hr .25-1mb -->
+    <!-- // DEFAULT 3 HR,  15 minutes 25-50mb, 30mins 10-20mb, 1 hr 5-10mb, 3 hr 1-3mb, 6hr .5-1.5mb, 12hr .25-1mb -->
     <string-array name="preference_periodicnetworkservice">
         <item>Off</item>
-        <item>5 min (50-100mb/month)</item>
-        <item>10 min (25-50mb/month)</item>
+        <item>15 min (25-50mb/month)</item>
         <item>30 min (10-20mb/month)</item>
         <item>60 min (5-10mb/month)</item>
         <item>3 hours (default) (1-3mb/month)</item>
@@ -160,8 +159,7 @@
     </string-array>
     <string-array name="preference_periodicnetworkservice_vals">
         <item>0</item>
-        <item>300</item>
-        <item>600</item>
+        <item>900</item>
         <item>1800</item>
         <item>3600</item>
         <item>10800</item>

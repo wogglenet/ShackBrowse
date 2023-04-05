@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
       package="net.swigglesoft.shackbrowse"
-      android:versionCode="486"
-      android:versionName="7.0.8">
+      android:versionCode="487"
+      android:versionName="7.0.9">
 <uses-permission android:name="android.permission.INTERNET"></uses-permission>
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -111,13 +111,10 @@
     	<service android:permission="android.permission.BIND_JOB_SERVICE" android:exported="true" android:enabled="true" android:name="net.swigglesoft.shackbrowse.PostQueueService" />
 
         <!-- used for widget and for shackmessage updates -->
-		<service
-			android:exported="false"
-			android:name="net.swigglesoft.shackbrowse.PeriodicNetworkService">
-			<intent-filter>
-				<action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>
-			</intent-filter>
-		</service>
+<!--		<service-->
+<!--			android:exported="false"-->
+<!--			android:name="net.swigglesoft.shackbrowse.PeriodicNetworkService">-->
+<!--		</service>-->
 
     	<!-- For starting postqueueservice when network becomes available -->
     	<receiver

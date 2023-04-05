@@ -373,9 +373,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 		// SM autocheck
 		long updateInterval = Long.parseLong(_prefs.getString("PeriodicNetworkServicePeriod", "10800")); // DEFAULT 3 HR 10800L,  5 minutes 50-100mb, 10 minutes 25-50mb, 30mins 10-20mb, 1 hr 5-10mb, 3 hr 1-3mb, 6hr .5-1.5mb, 12hr .25-1mb
-		// TODO: 2023-03-02 This service needs to be updated to a different job dispatcher
-		// as it crashes on API 31+.
-//		PeriodicNetworkService.scheduleJob(this, updateInterval); // scheduleJob also checks preferences
+		PeriodicNetworkService.scheduleJob(this, updateInterval); // scheduleJob also checks preferences
 
 		// notification database pruning
 		NotificationsDB ndb = new NotificationsDB(this);
@@ -594,7 +592,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         // check for shack messages
 		// if ((mWifi.isConnected() || _prefs.getBoolean("SMCheckOnCellNotification", true))) {
 
-		// above changed. Now just checking. only 10k with json API
+//		// above changed. Now just checking. only 10k with json API
         ShackMessageCheck SMC = new ShackMessageCheck(this);
         SMC.frugalSMCheck();
 

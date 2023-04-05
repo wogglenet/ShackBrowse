@@ -1,32 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:key="notificationCat" android:title="@string/preferences_notifications" android:summary="@string/preferences_notifications_summary">
-        <CheckBoxPreference
-            android:key="noteEnabled"
-            android:title="@string/preference_pushnot_title"
-            android:summary="@string/preference_pushnot_summary"
-            android:defaultValue="false"
-            />
-        <CheckBoxPreference
-            android:key="noteReplies"
-            android:title="@string/preference_pushrepl_title"
-            android:summary="@string/preference_pushrepl_summary"
-            android:dependency="noteEnabled"
-            android:defaultValue="false"
-            />
-        <CheckBoxPreference
-            android:key="noteVanity"
-            android:title="@string/preference_pushvan_title"
-            android:summary="@string/preference_pushvan_summary"
-            android:dependency="noteEnabled"
-            android:defaultValue="false"
-            />
-        <Preference
-            android:key="noteKeywords"
-            android:title="@string/preference_pushkey_title"
-            android:summary="@string/preference_pushkey_summary"
-            android:dependency="noteEnabled"
-            />
+<!--		TODO: Bring this back when notifications are working again. -->
+<!--        <CheckBoxPreference-->
+<!--            android:key="noteEnabled"-->
+<!--            android:title="@string/preference_pushnot_title"-->
+<!--            android:summary="@string/preference_pushnot_summary"-->
+<!--            android:defaultValue="false"-->
+<!--            />-->
+<!--        <CheckBoxPreference-->
+<!--            android:key="noteReplies"-->
+<!--            android:title="@string/preference_pushrepl_title"-->
+<!--            android:summary="@string/preference_pushrepl_summary"-->
+<!--            android:dependency="noteEnabled"-->
+<!--            android:defaultValue="false"-->
+<!--            />-->
+<!--        <CheckBoxPreference-->
+<!--            android:key="noteVanity"-->
+<!--            android:title="@string/preference_pushvan_title"-->
+<!--            android:summary="@string/preference_pushvan_summary"-->
+<!--            android:dependency="noteEnabled"-->
+<!--            android:defaultValue="false"-->
+<!--            />-->
+<!--        <Preference-->
+<!--            android:key="noteKeywords"-->
+<!--            android:title="@string/preference_pushkey_title"-->
+<!--            android:summary="@string/preference_pushkey_summary"-->
+<!--            android:dependency="noteEnabled"-->
+<!--            />-->
         <!--
         <CheckBoxPreference
             android:key="SMCheckOnCellNotification"
@@ -79,21 +80,20 @@
             android:summary="@string/preference_LEDBlinkInMS_summary"
             android:defaultValue="2000"
             />
-        <Preference
-            android:key="pref_testnote"
-            android:title="@string/preference_testnote"
-            />
-		<Preference
-			android:key="notificationDevices"
-			android:summary="@string/preference_devicesnote"
-			/>
-		<Preference
-			android:key="notificationEditOnline"
-			android:title="@string/preference_noteeditonline"
-			android:summary="@string/preference_noteeditonline_summary"
-			/>
+<!--		TODO: Bring this back when notifications are ready or remove permanently -->
+<!--        <Preference-->
+<!--            android:key="pref_testnote"-->
+<!--            android:title="@string/preference_testnote"-->
+<!--            />-->
+<!--		<Preference-->
+<!--			android:key="notificationDevices"-->
+<!--			android:summary="@string/preference_devicesnote"-->
+<!--			/>-->
+<!--		<Preference-->
+<!--			android:key="notificationEditOnline"-->
+<!--			android:title="@string/preference_noteeditonline"-->
+<!--			android:summary="@string/preference_noteeditonline_summary"-->
+<!--			/>-->
 
     </PreferenceCategory>
-	<Preference
-		/>
 </PreferenceScreen>

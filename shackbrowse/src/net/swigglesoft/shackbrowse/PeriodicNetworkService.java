@@ -5,23 +5,30 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.firebase.jobdispatcher.Constraint;
-import com.firebase.jobdispatcher.Driver;
-import com.firebase.jobdispatcher.FirebaseJobDispatcher;
-import com.firebase.jobdispatcher.GooglePlayDriver;
-import com.firebase.jobdispatcher.Job;
-import com.firebase.jobdispatcher.JobParameters;
-import com.firebase.jobdispatcher.JobService;
-import com.firebase.jobdispatcher.Lifetime;
-import com.firebase.jobdispatcher.Trigger;
+import androidx.annotation.NonNull;
+import androidx.work.Constraints;
+import androidx.work.Data;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.Worker;
+import androidx.work.WorkerParameters;
+
+import java.util.concurrent.TimeUnit;
 
 /**
- * Created by brad on 6/21/2016.
+ * Created by brad on 6/21/2016 with FirebaseJobDispatcher. Modified to WorkManager as of 2023-03-31
  */
-public class PeriodicNetworkService  extends JobService
+public class PeriodicNetworkService extends Worker
 {
-
+    private Context context;
     public static final String IDTAG = "sbsmcheck";
+
+    public PeriodicNetworkService(@NonNull Context appContext, @NonNull WorkerParameters params) {
+        super(appContext, params);
+        this.context = appContext;
+    }
 
     public static void scheduleJob(Context context, long updateIntervalSeconds)
     {
@@ -30,10 +37,6 @@ public class PeriodicNetworkService  extends JobService
         System.out.println("SHACKBROWSE PERIODIC NETWORK MESSAGE CHECK STARTUP");
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         System.out.println("SMCHK: init tasks");
-        long flex = Math.round((double)updateIntervalSeconds * (1f/3f));
-
-        Driver driver = new GooglePlayDriver(context);
-        FirebaseJobDispatcher firebaseJobDispatcher = new FirebaseJobDispatcher(driver);
 
         String userName = prefs.getString("userName", "");
         boolean verified = prefs.getBoolean("usernameVerified", false);
@@ -42,115 +45,50 @@ public class PeriodicNetworkService  extends JobService
         // go no further if it wont work
         if ((!prefs.getBoolean("SMAutoCheckEnabled", true)) || (!verified) || (userName.contentEquals("")) || (updateIntervalSeconds == 0L))
         {
-            firebaseJobDispatcher.cancel(IDTAG);
+            WorkManager.getInstance(context).cancelUniqueWork(IDTAG);
         }
         else
         {
-            Job smCheckJob = firebaseJobDispatcher.newJobBuilder()
-                    .setService(PeriodicNetworkService.class)
-                    .setTag(IDTAG)
-                    .setRecurring(true)
-                    .setConstraints(Constraint.ON_ANY_NETWORK)
-                    .setLifetime(Lifetime.FOREVER)
-                    .setRecurring(true)
-                    .setTrigger(Trigger.executionWindow(
-                            (int) updateIntervalSeconds,
-                            (int) (updateIntervalSeconds + flex)
-                    ))
-                    .setReplaceCurrent(true)
+            Data input = new Data.Builder().build();
+            Constraints constraints = new Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
                     .build();
+            PeriodicWorkRequest request =
+                    new PeriodicWorkRequest.Builder(PeriodicNetworkService.class, updateIntervalSeconds, TimeUnit.SECONDS)
+                            .setInputData(input)
+                            .setConstraints(constraints)
+                            .build();
 
-            firebaseJobDispatcher.schedule(smCheckJob);
+            WorkManager.getInstance(context)
+                    .enqueueUniquePeriodicWork(IDTAG, ExistingPeriodicWorkPolicy.REPLACE, request);
         }
     }
 
     @Override
-    public boolean onStartJob(JobParameters job)
-    {
-        Log.d(IDTAG, "onRunTask: " + job.getTag());
+    public Result doWork() {
+        Log.d(IDTAG, "onRunTask: " + IDTAG);
         System.out.println("SMCHK: RUNNING GCM TASK");
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        Context appContext = this.context;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
         long updateInterval = Long.parseLong(prefs.getString("PeriodicNetworkServicePeriod", "10800")); // DEFAULT 3 HR 10800L,  5 minutes 50-100mb, 10 minutes 25-50mb, 30mins 10-20mb, 1 hr 5-10mb, 3 hr 1-3mb, 6hr .5-1.5mb, 12hr .25-1mb
         String userName = prefs.getString("userName", "");
         boolean verified = prefs.getBoolean("usernameVerified", false);
 
-        Driver driver = new GooglePlayDriver(this);
-        FirebaseJobDispatcher firebaseJobDispatcher = new FirebaseJobDispatcher(driver);
-
-
         // go no further if it wont work
         if ((!prefs.getBoolean("SMAutoCheckEnabled", true)) || (!verified) || (userName.contentEquals("")) || (updateInterval == 0L))
         {
-            firebaseJobDispatcher.cancel(IDTAG);
-            return false;
+            WorkManager.getInstance(appContext).cancelUniqueWork(IDTAG);
+            return Result.success();
         }
 
+        ShackMessageCheck SMC = new ShackMessageCheck(appContext);
+        SMC.syncCheckAPIForSMS();
 
-        // Default result is success.
-
-
-
-        /*
-         * THE FOLLOWING IS FOR USE ON A POSSIBLE FUTURE WIDGET
-         *//*
-        JSONObject json = new JSONObject();
-        try
-        {
-            json = ShackApi.getThreads(1, userName, this, prefs.getBoolean("useTurboAPI", true));
-
-            // process these threads and remove collapsed
-            ArrayList<Thread> new_threads = ShackApi.processThreads(json, false, new ArrayList<Integer>(), this);
-
-            HashMap<String, HashMap<String, LolObj>> shackloldata = new HashMap<String, HashMap<String, LolObj>>();;
-            boolean getLols = prefs.getBoolean("getLols", true);
-            boolean lolsContained = prefs.getBoolean("showThreadLolsThreadList", true);
-            boolean showShackTags = prefs.getBoolean("showShackTagsInThreadList", true);
-            boolean stripNewLines = prefs.getBoolean("previewStripNewLines", false);
-            if (getLols)
-                shackloldata = ShackApi.getLols(this);
-
-            WidgetDB wDB = new WidgetDB(this);
-	        wDB.open();
-	        wDB.deleteAll();
-
-            for (Thread t: new_threads)
-            {
-                // load lols
-                HashMap<String, LolObj> threadlols = shackloldata.get(Integer.toString(t.getThreadId()));
-                if ((threadlols != null) && (lolsContained) && (getLols))
-                {
-                    LolObj lolobj = shackloldata
-                            .get(Integer.toString(t.getThreadId()))
-                            .get("totalLols");
-                    if (lolobj != null) { t.setLolObj(lolobj); }
-                }
-
-                wDB.createWidgetDBFromThread(t);
-            }
-	        wDB.close();
-			result = GcmNetworkManager.RESULT_SUCCESS;
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-	        result = GcmNetworkManager.RESULT_FAILURE;
-        } catch (JSONException e)
-        {
-            e.printStackTrace();
-	        result = GcmNetworkManager.RESULT_FAILURE;
-        }
-*/
-
-        System.out.println("SMCHK: start frugal check");
-        ShackMessageCheck SMC = new ShackMessageCheck(this);
-        SMC.frugalSMCheck();
-
-        return false;
+        return Result.success();
     }
 
     @Override
-    public boolean onStopJob(JobParameters job)
-    {
-        return false;
+    public void  onStopped() {
+        // Nothing to do on stopped
     }
 }

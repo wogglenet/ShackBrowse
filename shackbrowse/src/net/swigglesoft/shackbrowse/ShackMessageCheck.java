@@ -45,6 +45,15 @@ public class ShackMessageCheck
 		new CheckForSMTask().execute();
 	}
 
+	public void syncCheckAPIForSMS()
+	{
+		System.out.println("SMCHK: trigger check synchronous");
+		int checkResult = new CheckForSMTaskFrugal().checkFrugalSMs();
+		if (checkResult == 1) {
+			new CheckForSMTask().backgroundSyncCheckAPIForSMS();
+		}
+	}
+
 	/*
 	 * FRUGAL CHECK FOR SHACKMESSAGES
 	 */
@@ -59,6 +68,10 @@ public class ShackMessageCheck
 		@Override
 		protected Integer doInBackground(String... params)
 		{
+			return checkFrugalSMs();
+		}
+
+		public int checkFrugalSMs() {
 			try
 			{
 				boolean verified = _prefs.getBoolean("usernameVerified", false);
@@ -78,7 +91,7 @@ public class ShackMessageCheck
 						ed.putString("PreviousMsgAPIReturnTextHash", md5cur);
 						ed.commit();
 						System.out.println("SMCHK: no previous found");
-						return 1; // 1 == do full check. we cant confirm
+						return 1;
 					}
 					else
 					{
@@ -93,7 +106,7 @@ public class ShackMessageCheck
 							return 1;
 						}
 						else
-							return 0; // no change from previous. no full check
+							return 0;
 					}
 				}
 				return 0;
@@ -142,6 +155,10 @@ public class ShackMessageCheck
 		@Override
 		protected Integer doInBackground(String... params)
 		{
+			return checkAPIForSMs();
+		}
+
+		private Integer checkAPIForSMs() {
 			System.out.println("SMCHK: full check starting");
 			try
 			{
@@ -175,18 +192,24 @@ public class ShackMessageCheck
 			}
 		}
 
-		@Override
-		protected void onPostExecute(Integer result)
-		{
+		public void backgroundSyncCheckAPIForSMS() {
+			checkReturnResult(checkAPIForSMs(), true);
+		}
+
+		private void checkReturnResult(Integer result, boolean inBackgroundJob) {
 			if (_exception != null)
 			{
 				System.out.println("SMCHK: err");
-				ErrorDialog.display(_context, "Error", "Error getting SMs:\n" + _exception.getMessage());
+				if (!inBackgroundJob) {
+					ErrorDialog.display(_context, "Error", "Error getting SMs:\n" + _exception.getMessage());
+				}
 			}
 			else if (result == null)
 			{
 				System.out.println("SMCHK: err");
-				ErrorDialog.display(_context, "Error", "Unknown SM-related error.");
+				if(!inBackgroundJob) {
+					ErrorDialog.display(_context, "Error", "Unknown SM-related error.");
+				}
 			}
 			else
 			{
@@ -200,6 +223,12 @@ public class ShackMessageCheck
 						sendSMBroadcast("multiple", "", nlsid, true, result);
 				}
 			}
+		}
+
+		@Override
+		protected void onPostExecute(Integer result)
+		{
+			checkReturnResult(result, false);
 		}
 	}
 

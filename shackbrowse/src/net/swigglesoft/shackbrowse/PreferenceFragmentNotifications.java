@@ -91,50 +91,49 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
 
         });
 
-
-        Preference testNote = (Preference) findPreference("pref_testnote");
-        testNote.setOnPreferenceClickListener(new OnPreferenceClickListener(){
-
-                                                  @Override
-                                                  public boolean onPreferenceClick(Preference preference) {
-                                                      SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-
-                                                      Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
-                                                      NotificationCompat.Builder mBuilder =
-                                                              new NotificationCompat.Builder(getActivity(), NotifierReceiver.CHANNEL_REPLY)
-                                                                      .setSmallIcon(R.drawable.note_logo2018)
-                                                                      .setLargeIcon(largeIcon)
-                                                                      .setContentTitle("Test")
-                                                                      .setContentText("Only a test")
-                                                                      .setColor(Color.GREEN)
-                                                                      .setTicker("Test Notification")
-                                                                      .setAutoCancel(true);
-
-                                                      NotificationManager mNotificationManager =
-                                                              (NotificationManager)getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-
-                                                      PendingIntent notifyPIntent = PendingIntent.getActivity(getActivity().getApplicationContext(), 0, new Intent(), 0);
-                                                      mBuilder.setContentIntent(notifyPIntent);
-
-                                                      Notification notification = mBuilder.build();
-                                                      notification.sound = Uri.parse(prefs.getString("notificationSound", "DEFAULT_SOUND"));
-
-                                                      if (prefs.getBoolean("notificationVibrate", true))
-                                                          notification.defaults|= Notification.DEFAULT_VIBRATE;
-
-                                                      notification.flags |= Notification.FLAG_AUTO_CANCEL;
-                                                      notification.flags |= Notification.FLAG_SHOW_LIGHTS;
-
-                                                      notification.ledARGB = prefs.getInt("notificationColor", Color.GREEN);
-                                                      notification.ledOffMS = Integer.parseInt(prefs.getString("LEDBlinkInMS", "2000"));
-                                                      notification.ledOnMS = (int)(Integer.parseInt(prefs.getString("LEDBlinkInMS", "2000")) / 10);
-                                                      // mId allows you to update the notification later on.
-                                                      int mId = 58401;
-                                                      mNotificationManager.notify(mId, notification);
-
-                                                      return false;
-                                                  }}
-        );
+//        Preference testNote = (Preference) findPreference("pref_testnote");
+//        testNote.setOnPreferenceClickListener(new OnPreferenceClickListener(){
+//
+//                                                  @Override
+//                                                  public boolean onPreferenceClick(Preference preference) {
+//                                                      SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+//
+//                                                      Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+//                                                      NotificationCompat.Builder mBuilder =
+//                                                              new NotificationCompat.Builder(getActivity(), NotifierReceiver.CHANNEL_REPLY)
+//                                                                      .setSmallIcon(R.drawable.note_logo2018)
+//                                                                      .setLargeIcon(largeIcon)
+//                                                                      .setContentTitle("Test")
+//                                                                      .setContentText("Only a test")
+//                                                                      .setColor(Color.GREEN)
+//                                                                      .setTicker("Test Notification")
+//                                                                      .setAutoCancel(true);
+//
+//                                                      NotificationManager mNotificationManager =
+//                                                              (NotificationManager)getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+//
+//                                                      PendingIntent notifyPIntent = PendingIntent.getActivity(getActivity().getApplicationContext(), 0, new Intent(), 0);
+//                                                      mBuilder.setContentIntent(notifyPIntent);
+//
+//                                                      Notification notification = mBuilder.build();
+//                                                      notification.sound = Uri.parse(prefs.getString("notificationSound", "DEFAULT_SOUND"));
+//
+//                                                      if (prefs.getBoolean("notificationVibrate", true))
+//                                                          notification.defaults|= Notification.DEFAULT_VIBRATE;
+//
+//                                                      notification.flags |= Notification.FLAG_AUTO_CANCEL;
+//                                                      notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+//
+//                                                      notification.ledARGB = prefs.getInt("notificationColor", Color.GREEN);
+//                                                      notification.ledOffMS = Integer.parseInt(prefs.getString("LEDBlinkInMS", "2000"));
+//                                                      notification.ledOnMS = (int)(Integer.parseInt(prefs.getString("LEDBlinkInMS", "2000")) / 10);
+//                                                      // mId allows you to update the notification later on.
+//                                                      int mId = 58401;
+//                                                      mNotificationManager.notify(mId, notification);
+//
+//                                                      return false;
+//                                                  }}
+//        );
 
         Preference colorNote = (Preference) findPreference("notificationColor2");
         colorNote.setOnPreferenceClickListener(new OnPreferenceClickListener(){
@@ -282,62 +281,62 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
                 }
             }};
 
-        ((Preference)findPreference("notificationEditOnline")).setOnPreferenceClickListener(new OnPreferenceClickListener()
-        {
-            @Override
-            public boolean onPreferenceClick(Preference preference)
-            {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.woggle.net/notifications"));
-                startActivity(browserIntent);
-                return false;
-            }
-        });
-        _devicesNotification = (Preference) findPreference("notificationDevices");
-        _devicesNotification.setOnPreferenceClickListener(new OnPreferenceClickListener()
-        {
-            @Override
-            public boolean onPreferenceClick(Preference preference)
-            {
-                new MaterialDialog.Builder(getActivity()).title("Delete all other devices?").content("Are you sure? This will prevent all of your other devices from receiving notifications, and only this device will receive them until you re-enable notifications on other devices.").positiveText("Remove other devices").negativeText("Cancel")
-                        .onPositive(new MaterialDialog.SingleButtonCallback()
-                        {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which)
-                            {
-                                new MaterialDialog.Builder(getActivity()).title("Seriously?").content("Your other devices will be unregistered and will need to be registered on each device. Only use this if your notifications are broken.").positiveText("Remove all other devices").negativeText("Cancel")
-                                .onPositive(new MaterialDialog.SingleButtonCallback()
-                                {
-                                    @Override
-                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which)
-                                    {
-                                        _progressDialog = MaterialProgressDialog.show(getActivity(), "Adding Keyword", "Communicating with Shack Browse server...", true, true);
-                                        _GCMAccess.doUserInfoTask("remallexcept", null);
-                                    }
-                                }).show();
-                            }
-                        }).show();
-                return false;
-            }
-        });
-        _devicesNotification.setTitle("Devices: #unknown");
+//        ((Preference)findPreference("notificationEditOnline")).setOnPreferenceClickListener(new OnPreferenceClickListener()
+//        {
+//            @Override
+//            public boolean onPreferenceClick(Preference preference)
+//            {
+//                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.woggle.net/notifications"));
+//                startActivity(browserIntent);
+//                return false;
+//            }
+//        });
+//        _devicesNotification = (Preference) findPreference("notificationDevices");
+//        _devicesNotification.setOnPreferenceClickListener(new OnPreferenceClickListener()
+//        {
+//            @Override
+//            public boolean onPreferenceClick(Preference preference)
+//            {
+//                new MaterialDialog.Builder(getActivity()).title("Delete all other devices?").content("Are you sure? This will prevent all of your other devices from receiving notifications, and only this device will receive them until you re-enable notifications on other devices.").positiveText("Remove other devices").negativeText("Cancel")
+//                        .onPositive(new MaterialDialog.SingleButtonCallback()
+//                        {
+//                            @Override
+//                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which)
+//                            {
+//                                new MaterialDialog.Builder(getActivity()).title("Seriously?").content("Your other devices will be unregistered and will need to be registered on each device. Only use this if your notifications are broken.").positiveText("Remove all other devices").negativeText("Cancel")
+//                                .onPositive(new MaterialDialog.SingleButtonCallback()
+//                                {
+//                                    @Override
+//                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which)
+//                                    {
+//                                        _progressDialog = MaterialProgressDialog.show(getActivity(), "Adding Keyword", "Communicating with Shack Browse server...", true, true);
+//                                        _GCMAccess.doUserInfoTask("remallexcept", null);
+//                                    }
+//                                }).show();
+//                            }
+//                        }).show();
+//                return false;
+//            }
+//        });
+//        _devicesNotification.setTitle("Devices: #unknown");
 
-        _keyNotification = (Preference) findPreference("noteKeywords");
-        _keyNotification.setOnPreferenceClickListener(new OnPreferenceClickListener(){
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                showKeywords();
-                return true;
-
-            }
-        });
+//        _keyNotification = (Preference) findPreference("noteKeywords");
+//        _keyNotification.setOnPreferenceClickListener(new OnPreferenceClickListener(){
+//            @Override
+//            public boolean onPreferenceClick(Preference preference) {
+//                showKeywords();
+//                return true;
+//
+//            }
+//        });
 
         _repliesNotification = (CheckBoxPreference)findPreference("noteReplies");
         _vanityNotification = (CheckBoxPreference)findPreference("noteVanity");
         _noteEnabled = (CheckBoxPreference)findPreference("noteEnabled");
         // "enableDonatorFeatures"
         _Venabled = true;
-        _vanityNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
-        _keyNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
+//        _vanityNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
+//        _keyNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
 
 
         OnPreferenceChangeListener notificationOnPrefListener = new Preference.OnPreferenceChangeListener() {
@@ -388,7 +387,7 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
 
         };
 
-        _noteEnabled.setOnPreferenceChangeListener(notificationOnPrefListener);
+//        _noteEnabled.setOnPreferenceChangeListener(notificationOnPrefListener);
 
         OnPreferenceChangeListener replOnPrefListener = new Preference.OnPreferenceChangeListener() {
             @Override
@@ -420,8 +419,8 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
                 return false;
             }
         };
-        _repliesNotification.setOnPreferenceChangeListener(replOnPrefListener);
-        _vanityNotification.setOnPreferenceChangeListener(vanOnPrefListener);
+//        _repliesNotification.setOnPreferenceChangeListener(replOnPrefListener);
+//        _vanityNotification.setOnPreferenceChangeListener(vanOnPrefListener);
 
         Preference channelNote = (Preference) findPreference("notificationChannels");
         Preference vibeNote = (Preference) findPreference("notificationVibrate");
@@ -593,8 +592,9 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
         }
         else
         {
-            _progressDialog = MaterialProgressDialog.show(getActivity(), "Checking Notification Status", "Communicating with Shack Browse server...", true, true);
-            _GCMAccess.doUserInfoTask();
+            // TODO: Add getting notification API details if required for new PN server.
+//            _progressDialog = MaterialProgressDialog.show(getActivity(), "Checking Notification Status", "Communicating with Shack Browse server...", true, true);
+//            _GCMAccess.doUserInfoTask();
         }
         super.onResume();
     }
