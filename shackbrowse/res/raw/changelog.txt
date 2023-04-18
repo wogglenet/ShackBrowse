@@ -90,6 +90,11 @@ How am I supposed to tell if you were looking at the thread or the list of threa
 
 -->
 
+$ 7.0.10
+% v 7.0.10
+_ Apr 17, 2023
+* Removed the Political warning popup. Use your own best judgement on the filters you use and threads you read.
+
 $ 7.0.9
 % v 7.0.9
 _ Apr 3, 2023

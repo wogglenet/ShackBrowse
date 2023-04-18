@@ -2720,11 +2720,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		            final JSONArray b = vchk.getJSONArray("b");
 					Editor edit = _prefs.edit();
 
-		            if (vchk.has("pc"))
-					{
-						edit.putInt("flagsPC", vchk.getInt("pc"));
-					}
-
 					if (vchk.has("ac"))
 					{
 						JSONArray autochamber = vchk.getJSONArray("ac");

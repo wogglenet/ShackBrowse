@@ -687,79 +687,7 @@ public class ThreadListFragment extends ListFragment
         }
 
         final LolObj flol = lol;
-        boolean irritate = false;
-		int pco = _prefs.getInt("flagsPC", 3);
-
-		// determine if should irritate user
-	    if (thread.getModeration().equalsIgnoreCase("political")) {
-			Date todayDate = Calendar.getInstance().getTime();
-			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-			String todayString = formatter.format(todayDate);
-
-			System.out.println("TLIST: poldate " + _prefs.getString("lastPoliticalClickDate","") + " " + todayString + " " + _prefs.getInt("politicalClicksToday", 0));
-
-			if (_prefs.getString("lastPoliticalClickDate", "").equalsIgnoreCase(todayString)) {
-				int clicksToday = _prefs.getInt("politicalClicksToday", 0);
-				clicksToday++;
-				Editor e = _prefs.edit();
-				e.putInt("politicalClicksToday", clicksToday);
-				e.apply();
-				if (clicksToday > pco) {
-					Random r2 = new Random();
-					if (r2.nextInt(4) < 1) {
-						irritate = true;
-					}
-				}
-			} else {
-				Editor e = _prefs.edit();
-				e.putString("lastPoliticalClickDate", todayString);
-				e.putInt("politicalClicksToday", 0);
-				e.apply();
-			}
-		}
-
-	    if (irritate)
-	    {
-		    String[] strArr = {"My obsession knows no bounds","You don't control me","Whatever","I have to check though","It's really important","I can't not","One more won't hurt","But I must click","This is my life now", "I promise to stop tomorrow","I see, I click" };
-		    Random r = new Random();
-		    String okbutton = strArr[r.nextInt(strArr.length)];
-
-		    MaterialDialog.Builder build = new MaterialDialog.Builder(getActivity());
-		    build.title("Warning");
-		    build.iconRes(R.drawable.ic_action_action_report_problem);
-		    build.positiveColor(Color.RED);
-		    final SpannableString s = new SpannableString("Studies show excessive/obsessive political activity on social media leads to anxiety and depression." + "\n" +
-				    "\n" + "https://www.ncbi.nlm.nih.gov/pubmed/29631796");
-		    Linkify.addLinks(s, Linkify.WEB_URLS);
-		    build.content(s);
-		    build.positiveText(okbutton);
-		    build.neutralText("Filter out political again");
-		    build.neutralColor(Color.GREEN);
-		    build.negativeColor(Color.YELLOW);
-		    build.negativeText("Ok");
-		    build.onPositive(new MaterialDialog.SingleButtonCallback()
-		    {
-			    @Override
-			    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which)
-			    {
-				    ((MainActivity)getActivity()).openThreadView(thread.getThreadId(), thread, flol);
-			    }
-		    });
-		    build.onNeutral(new MaterialDialog.SingleButtonCallback()
-		    {
-			    @Override
-			    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which)
-			    {
-				    Editor e = _prefs.edit(); e.putBoolean("showPolitical", false); e.commit();
-				    refreshThreads();
-			    }
-		    });
-		    build.show();
-	    }
-	    else
-	    {
-		    ((MainActivity)getActivity()).openThreadView(thread.getThreadId(), thread, flol);
-	    }
+	    ((MainActivity)getActivity()).openThreadView(thread.getThreadId(), thread, flol);
     }
     
     public void markFavoriteAsRead (int threadId, int replyCount)
@@ -1035,6 +963,10 @@ public class ThreadListFragment extends ListFragment
 	    protected ArrayList<String> get(String filename, boolean withPrefix)
 	    {
 	    	ArrayList<String> fwlist = new ArrayList<String>();
+			Activity act = getActivity();
+			if (act == null) {
+				return fwlist;
+			}
 	
 	        if (getActivity().getFileStreamPath(filename).exists())
 	        {
