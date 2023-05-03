@@ -175,6 +175,10 @@ public class PreferenceFragmentEchoChamber extends PreferenceFragment
 //                    _progressDialog = MaterialProgressDialog.show(getActivity(), "Escorting user from Echo Chamber", "Communicating with Shack Browse server...", true, true);
 //                    mEchoServerInteract.doBlocklistTask(NetworkEchoChamberServer.ACTION_ADD, input.getText().toString());
                     ((MainActivity)getActivity()).mBlockList.put(input.getText().toString());
+                    Editor ed = _prefs.edit();
+                    ed.putBoolean("echoEnabled", true);
+                    ed.putString("echoChamberBlockList", ((MainActivity)getActivity()).mBlockList.toString());
+                    ed.commit();
                 }
 
             }

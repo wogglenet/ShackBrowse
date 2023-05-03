@@ -19,7 +19,7 @@ public class PushNotificationSetup {
 			NotificationChannel channel = new NotificationChannel(NotifierReceiver.CHANNEL_VANITY, "Vanity Notifications", NotificationManager.IMPORTANCE_DEFAULT);
 			channel.setDescription("Notifications when someone mentions your shack name"); channel.enableLights(true); channel.setLightColor(Color.GREEN); channel.enableVibration(true);
 			notificationManager.createNotificationChannel(channel);
-			channel = new NotificationChannel(NotifierReceiver.CHANNEL_REPLY, "Reply Notifications", NotificationManager.IMPORTANCE_DEFAULT);
+			channel = new NotificationChannel(NotifierReceiver.CHANNEL_GENERAL, "Reply Notifications", NotificationManager.IMPORTANCE_DEFAULT);
 			channel.setDescription("Notifications when someone replies to your posts"); channel.enableLights(true); channel.setLightColor(Color.GREEN); channel.enableVibration(true);
 			notificationManager.createNotificationChannel(channel);
 			channel = new NotificationChannel(NotifierReceiver.CHANNEL_KEYWORD, "Keyword Notifications", NotificationManager.IMPORTANCE_DEFAULT);

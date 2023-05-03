@@ -417,14 +417,14 @@ public class NotificationFragment extends ListFragment
             
             
        
-            String friendly = null;
-            if (n.getType().equals("reply"))
-            	friendly = " replied to your post";
-            else if (n.getType().equals("keyword"))
-            	friendly = " mentioned " + n.getKeyword();
-            else if (n.getType().equals("vanity"))
-            	friendly = " mentioned your name";
-            holder.userName.setText(n.getAuthor() + friendly);
+//            String friendly = null;
+//            if (n.getType().equals("reply"))
+//            	friendly = " replied to your post";
+//            else if (n.getType().equals("keyword"))
+//            	friendly = " mentioned " + n.getKeyword();
+//            else if (n.getType().equals("vanity"))
+//            	friendly = " mentioned your name";
+            holder.userName.setText(n.getAuthor());
             holder.content.setMaxLines(_previewLines);
             holder.content.setLinkTextColor(MainActivity.getThemeColor(getActivity(), R.attr.colorLink));
             // holder.content.setText(m.getPreview(_showShackTags, _stripNewLines));

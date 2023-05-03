@@ -41,8 +41,10 @@ public class NotifierReceiver extends FirebaseMessagingService
 {
 	public static final int icon_res = R.drawable.note_logo2018;
 
+	private static final String TAG = "SBNOTIFIER";
+
 	public static final String CHANNEL_VANITY = "sbnotechannel_vanity";
-	public static final String CHANNEL_REPLY = "sbnotechannel_reply";
+	public static final String CHANNEL_GENERAL = "sbnotechannel_general";
 	public static final String CHANNEL_KEYWORD = "sbnotechannel_keyword";
 	public static final String CHANNEL_SHACKMSG = "sbnotechannel_shackmsg";
 	public static final String CHANNEL_SYSTEM = "sbnotechannel_system";
@@ -52,7 +54,7 @@ public class NotifierReceiver extends FirebaseMessagingService
 	@Override
 	public void onMessageReceived(RemoteMessage message){
 
-		Log.i("SBNOTIFIER", "NotifierReceiver invoked, starting service");
+		Log.i(TAG, "NotifierReceiver invoked, starting service");
 		System.out.println("SHACK BROWSE FCM MSG RECEIVE");
 		Context context = getApplicationContext();
 
@@ -64,7 +66,7 @@ public class NotifierReceiver extends FirebaseMessagingService
 
 		if (data != null && data.get("type") != null)
 		{
-
+			Log.i(TAG, "Received notification from post for username " + data.get("username").toString() + ", title " + data.get("title").toString());
 			if (isOnBlockList(data.get("username").toString()))
 			{
 				// do not trigger notification
@@ -73,18 +75,18 @@ public class NotifierReceiver extends FirebaseMessagingService
 			}
 
 			String notificationType = data.get("type").toString().toLowerCase();
-			if (notificationType.equals("reply"))
+			if (notificationType.equals("general"))
 			{
-				processReplyNotification(context, largeIcon, data);
+				processGeneralNotification(context, largeIcon, data);
 			}
-			else if (notificationType.equals("vanity"))
-			{
-				processVanityNotification(context, largeIcon, data);
-			}
-			else if (notificationType.equals("keyword"))
-			{
-				processKeywordNotification(context, largeIcon, data);
-			}
+//			else if (notificationType.equals("vanity"))
+//			{
+//				processVanityNotification(context, largeIcon, data);
+//			}
+//			else if (notificationType.equals("keyword"))
+//			{
+//				processKeywordNotification(context, largeIcon, data);
+//			}
 			else if (notificationType.equals("shackmsg"))
 			{
 				processShackmsgNotification(context, largeIcon, data);
@@ -156,14 +158,147 @@ public class NotifierReceiver extends FirebaseMessagingService
 		StatsFragment.statInc(context, "Notifications");
 	}
 
-	private void processKeywordNotification(Context context, Bitmap largeIcon, Map data) {
+//	private void processKeywordNotification(Context context, Bitmap largeIcon, Map data) {
+//		NotificationCompat.Builder mBuilder =
+//				new NotificationCompat.Builder(context, NotifierReceiver.CHANNEL_KEYWORD)
+//				.setSmallIcon(icon_res)
+//				.setLargeIcon(largeIcon)
+//				.setContentTitle(data.get("username").toString() + " mentioned " + data.get("keyword").toString())
+//				.setContentText(PostFormatter.formatContent(data.get("username").toString(), data.get("text").toString(), null, false, true))
+//				.setTicker(data.get("username").toString() + " mentioned " + data.get("keyword").toString())
+//				.setColor(Color.GREEN)
+//				.setAutoCancel(true);
+//
+//		// Creates an explicit intent for an Activity in your app
+//		Intent resultIntent = new Intent(context, MainActivity.class);
+//
+//		// save notification to db
+//		NotificationObj n = new NotificationObj(Integer.parseInt(data.get("nlsid").toString()), "keyword", data.get("text").toString(), data.get("username").toString(), TimeDisplay.now(), data.get("keyword").toString());
+//		n.commit(context);
+//
+//		// check count
+//		int noteCount = mPrefs.getInt("GCMNoteCount" + data.get("keyword").toString().hashCode(), 0);
+//		int numNew = noteCount + 1;
+//		mBuilder.setNumber(numNew);
+//
+//		// NLSID
+//		resultIntent.putExtra("notificationNLSID", Integer.parseInt(data.get("nlsid").toString()));
+//		resultIntent.putExtra("notificationKeyword", data.get("keyword").toString());
+//
+//		// second if checks if we are replacing a notification when the last one was never clicked
+//		// if so must create a multi reply
+//		if (numNew > 1)
+//		{
+//			// multiple replies
+//			mBuilder.setContentTitle("New Mentions of " + data.get("keyword").toString());
+//			mBuilder.setContentText("Click to show a list");
+//			mBuilder.setTicker(numNew + " new mentions of "+ data.get("keyword").toString());
+//			mBuilder.setStyle(getInboxStyleFor("New mentions of "+ data.get("keyword").toString(), "keyword", data.get("keyword").toString(), numNew, context));
+//			resultIntent.putExtra("notificationOpenKList", true);
+//		}
+//		else
+//		{
+//			mBuilder.setStyle(getBigTextFor(data.get("username").toString() + " mentioned " + data.get("keyword").toString(), data.get("text").toString()));
+//			resultIntent.putExtra("notificationOpenKeywordId", true);
+//		}
+//
+//		resultIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//
+//		// stupid hack for android bug
+//		resultIntent.setAction(Long.toString(System.currentTimeMillis()));
+//
+//		PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_IMMUTABLE);
+//
+//		mBuilder.setContentIntent(resultPendingIntent);
+//		mBuilder.setDeleteIntent(getDeleteIntent("GCMNoteCount" + data.get("keyword").toString().hashCode(), context));
+//		Notification notification = mBuilder.build();
+//
+//		int mId = data.get("keyword").toString().hashCode();
+//		handleNotification(notification, mId, context);
+//
+//		Editor editor = mPrefs.edit();
+//		editor.putInt("GCMNoteCount" + data.get("keyword").toString().hashCode(), numNew);
+//		editor.commit();
+//
+//		StatsFragment.statInc(context, "NotifiedKeyword");
+//		StatsFragment.statInc(context, "Notifications");
+//	}
+
+//	private void processVanityNotification(Context context, Bitmap largeIcon, Map data) {
+//		NotificationCompat.Builder mBuilder =
+//				new NotificationCompat.Builder(context, NotifierReceiver.CHANNEL_VANITY)
+//				.setSmallIcon(icon_res)
+//				.setLargeIcon(largeIcon)
+//				.setContentTitle(data.get("username").toString() + " mentioned you in a post")
+//				.setContentText(PostFormatter.formatContent(data.get("username").toString(), data.get("text").toString(), null, false, true))
+//				.setTicker(data.get("username").toString() + " mentioned you in a post")
+//				.setColor(Color.GREEN)
+//				.setAutoCancel(true);
+//
+//
+//		// Creates an explicit intent for an Activity in your app
+//		Intent resultIntent = new Intent(context, MainActivity.class);
+//
+//		// save notification to db
+//		NotificationObj n = new NotificationObj(Integer.parseInt(data.get("nlsid").toString()), "vanity", data.get("text").toString(), data.get("username").toString(), TimeDisplay.now(), "vanity");
+//		n.commit(context);
+//
+//		// check count
+//		int noteCount = mPrefs.getInt("GCMNoteCountVanity", 0);
+//		int numNew = noteCount + 1;
+//		mBuilder.setNumber(numNew);
+//
+//		// NLSID
+//		resultIntent.putExtra("notificationNLSID", Integer.parseInt(data.get("nlsid").toString()));
+//
+//		// second if checks if we are replacing a notification when the last one was never clicked
+//		// if so must create a multi reply
+//		if (numNew > 1)
+//		{
+//			// multiple replies
+//			mBuilder.setContentTitle("New Mentions of You");
+//			mBuilder.setContentText("Click to show a list");
+//
+//			mBuilder.setTicker(numNew + " new mentions of your shack name");
+//			mBuilder.setStyle(getInboxStyleFor("New mentions of your name", "vanity", numNew, context));
+//			resultIntent.putExtra("notificationOpenVList", true);
+//		}
+//		else
+//		{
+//			mBuilder.setStyle(getBigTextFor(data.get("username").toString() + " mentioned your shack name", data.get("text").toString()));
+//			resultIntent.putExtra("notificationOpenVanityId", true);
+//		}
+//
+//		resultIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//
+//		// stupid hack for android bug
+//		resultIntent.setAction(Long.toString(System.currentTimeMillis()));
+//
+//		PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_IMMUTABLE);
+//
+//		mBuilder.setContentIntent(resultPendingIntent);
+//		mBuilder.setDeleteIntent(getDeleteIntent("GCMNoteCountVanity", context));
+//		Notification notification = mBuilder.build();
+//
+//		int mId = 58402;
+//		handleNotification(notification, mId, context);
+//
+//		Editor editor = mPrefs.edit();
+//		editor.putInt("GCMNoteCountVanity", numNew);
+//		editor.commit();
+//
+//		StatsFragment.statInc(context, "NotifiedVanity");
+//		StatsFragment.statInc(context, "Notifications");
+//	}
+
+	private void processGeneralNotification(Context context, Bitmap largeIcon, Map data) {
 		NotificationCompat.Builder mBuilder =
-				new NotificationCompat.Builder(context, NotifierReceiver.CHANNEL_KEYWORD)
+				new NotificationCompat.Builder(context, NotifierReceiver.CHANNEL_GENERAL)
 				.setSmallIcon(icon_res)
 				.setLargeIcon(largeIcon)
-				.setContentTitle(data.get("username").toString() + " mentioned " + data.get("keyword").toString())
-				.setContentText(PostFormatter.formatContent(data.get("username").toString(), data.get("text").toString(), null, false, true))
-				.setTicker(data.get("username").toString() + " mentioned " + data.get("keyword").toString())
+				.setContentTitle(data.get("title").toString())
+				.setContentText(PostFormatter.formatContent(data.get("title").toString(), data.get("text").toString(), null, false, true))
+				.setTicker(data.get("title").toString())
 				.setColor(Color.GREEN)
 				.setAutoCancel(true);
 
@@ -171,144 +306,11 @@ public class NotifierReceiver extends FirebaseMessagingService
 		Intent resultIntent = new Intent(context, MainActivity.class);
 
 		// save notification to db
-		NotificationObj n = new NotificationObj(Integer.parseInt(data.get("nlsid").toString()), "keyword", data.get("text").toString(), data.get("username").toString(), TimeDisplay.now(), data.get("keyword").toString());
+		NotificationObj n = new NotificationObj(Integer.parseInt(data.get("nlsid").toString()), "general", data.get("text").toString(), data.get("title").toString(), TimeDisplay.now(), "general");
 		n.commit(context);
 
 		// check count
-		int noteCount = mPrefs.getInt("GCMNoteCount" + data.get("keyword").toString().hashCode(), 0);
-		int numNew = noteCount + 1;
-		mBuilder.setNumber(numNew);
-
-		// NLSID
-		resultIntent.putExtra("notificationNLSID", Integer.parseInt(data.get("nlsid").toString()));
-		resultIntent.putExtra("notificationKeyword", data.get("keyword").toString());
-
-		// second if checks if we are replacing a notification when the last one was never clicked
-		// if so must create a multi reply
-		if (numNew > 1)
-		{
-			// multiple replies
-			mBuilder.setContentTitle("New Mentions of " + data.get("keyword").toString());
-			mBuilder.setContentText("Click to show a list");
-			mBuilder.setTicker(numNew + " new mentions of "+ data.get("keyword").toString());
-			mBuilder.setStyle(getInboxStyleFor("New mentions of "+ data.get("keyword").toString(), "keyword", data.get("keyword").toString(), numNew, context));
-			resultIntent.putExtra("notificationOpenKList", true);
-		}
-		else
-		{
-			mBuilder.setStyle(getBigTextFor(data.get("username").toString() + " mentioned " + data.get("keyword").toString(), data.get("text").toString()));
-			resultIntent.putExtra("notificationOpenKeywordId", true);
-		}
-
-		resultIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
-		// stupid hack for android bug
-		resultIntent.setAction(Long.toString(System.currentTimeMillis()));
-
-		PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_IMMUTABLE);
-
-		mBuilder.setContentIntent(resultPendingIntent);
-		mBuilder.setDeleteIntent(getDeleteIntent("GCMNoteCount" + data.get("keyword").toString().hashCode(), context));
-		Notification notification = mBuilder.build();
-
-		int mId = data.get("keyword").toString().hashCode();
-		handleNotification(notification, mId, context);
-
-		Editor editor = mPrefs.edit();
-		editor.putInt("GCMNoteCount" + data.get("keyword").toString().hashCode(), numNew);
-		editor.commit();
-
-		StatsFragment.statInc(context, "NotifiedKeyword");
-		StatsFragment.statInc(context, "Notifications");
-	}
-
-	private void processVanityNotification(Context context, Bitmap largeIcon, Map data) {
-		NotificationCompat.Builder mBuilder =
-				new NotificationCompat.Builder(context, NotifierReceiver.CHANNEL_VANITY)
-				.setSmallIcon(icon_res)
-				.setLargeIcon(largeIcon)
-				.setContentTitle(data.get("username").toString() + " mentioned you in a post")
-				.setContentText(PostFormatter.formatContent(data.get("username").toString(), data.get("text").toString(), null, false, true))
-				.setTicker(data.get("username").toString() + " mentioned you in a post")
-				.setColor(Color.GREEN)
-				.setAutoCancel(true);
-
-
-		// Creates an explicit intent for an Activity in your app
-		Intent resultIntent = new Intent(context, MainActivity.class);
-
-		// save notification to db
-		NotificationObj n = new NotificationObj(Integer.parseInt(data.get("nlsid").toString()), "vanity", data.get("text").toString(), data.get("username").toString(), TimeDisplay.now(), "vanity");
-		n.commit(context);
-
-		// check count
-		int noteCount = mPrefs.getInt("GCMNoteCountVanity", 0);
-		int numNew = noteCount + 1;
-		mBuilder.setNumber(numNew);
-
-		// NLSID
-		resultIntent.putExtra("notificationNLSID", Integer.parseInt(data.get("nlsid").toString()));
-
-		// second if checks if we are replacing a notification when the last one was never clicked
-		// if so must create a multi reply
-		if (numNew > 1)
-		{
-			// multiple replies
-			mBuilder.setContentTitle("New Mentions of You");
-			mBuilder.setContentText("Click to show a list");
-
-			mBuilder.setTicker(numNew + " new mentions of your shack name");
-			mBuilder.setStyle(getInboxStyleFor("New mentions of your name", "vanity", numNew, context));
-			resultIntent.putExtra("notificationOpenVList", true);
-		}
-		else
-		{
-			mBuilder.setStyle(getBigTextFor(data.get("username").toString() + " mentioned your shack name", data.get("text").toString()));
-			resultIntent.putExtra("notificationOpenVanityId", true);
-		}
-
-		resultIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
-		// stupid hack for android bug
-		resultIntent.setAction(Long.toString(System.currentTimeMillis()));
-
-		PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_IMMUTABLE);
-
-		mBuilder.setContentIntent(resultPendingIntent);
-		mBuilder.setDeleteIntent(getDeleteIntent("GCMNoteCountVanity", context));
-		Notification notification = mBuilder.build();
-
-		int mId = 58402;
-		handleNotification(notification, mId, context);
-
-		Editor editor = mPrefs.edit();
-		editor.putInt("GCMNoteCountVanity", numNew);
-		editor.commit();
-
-		StatsFragment.statInc(context, "NotifiedVanity");
-		StatsFragment.statInc(context, "Notifications");
-	}
-
-	private void processReplyNotification(Context context, Bitmap largeIcon, Map data) {
-		NotificationCompat.Builder mBuilder =
-				new NotificationCompat.Builder(context, NotifierReceiver.CHANNEL_REPLY)
-				.setSmallIcon(icon_res)
-				.setLargeIcon(largeIcon)
-				.setContentTitle(data.get("username").toString() + " replied to your post")
-				.setContentText(PostFormatter.formatContent(data.get("username").toString(), data.get("text").toString(), null, false, true))
-				.setTicker(data.get("username").toString() + " replied to your post")
-				.setColor(Color.GREEN)
-				.setAutoCancel(true);
-
-		// Creates an explicit intent for an Activity in your app
-		Intent resultIntent = new Intent(context, MainActivity.class);
-
-		// save notification to db
-		NotificationObj n = new NotificationObj(Integer.parseInt(data.get("nlsid").toString()), "reply", data.get("text").toString(), data.get("username").toString(), TimeDisplay.now(), "reply");
-		n.commit(context);
-
-		// check count
-		int noteCount = mPrefs.getInt("GCMNoteCountReply", 0);
+		int noteCount = mPrefs.getInt("GCMNoteCountGeneral", 0);
 		int numNew = noteCount + 1;
 		mBuilder.setNumber(numNew);
 
@@ -319,16 +321,16 @@ public class NotifierReceiver extends FirebaseMessagingService
 		// if so must create a multi reply
 		if (numNew  > 1)
 		{
-			// multiple replies
-			mBuilder.setContentTitle("New Replies");
+			// multiple notifications
+			mBuilder.setContentTitle("New Notifications");
 			mBuilder.setContentText("Click to show a list");
-			mBuilder.setTicker(numNew + " new replies to your posts");
-			mBuilder.setStyle(getInboxStyleFor("New replies to your posts", "reply", numNew, context));
-			resultIntent.putExtra("notificationOpenRList", true);
+			mBuilder.setTicker(numNew + " new notifications");
+			mBuilder.setStyle(getInboxStyleFor("New notifications", "general", numNew, context));
+			resultIntent.putExtra("notificationOpenGList", true);
 		}
 		else
 		{
-			mBuilder.setStyle(getBigTextFor(data.get("username").toString() + " replied to your post", data.get("text").toString()));
+			mBuilder.setStyle(getBigTextFor(data.get("title").toString(), data.get("text").toString()));
 			resultIntent.putExtra("notificationOpenId", true);
 		}
 
@@ -340,7 +342,7 @@ public class NotifierReceiver extends FirebaseMessagingService
 		PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_IMMUTABLE);
 
 		mBuilder.setContentIntent(resultPendingIntent);
-		mBuilder.setDeleteIntent(getDeleteIntent("GCMNoteCountReply", context));
+		mBuilder.setDeleteIntent(getDeleteIntent("GCMNoteCountGeneral", context));
 		Notification notification = mBuilder.build();
 
 		// notification snooze
@@ -353,10 +355,10 @@ public class NotifierReceiver extends FirebaseMessagingService
 		handleNotification(notification, mId, context);
 
 		Editor editor = mPrefs.edit();
-		editor.putInt("GCMNoteCountReply", numNew);
+		editor.putInt("GCMNoteCountGeneral", numNew);
 		editor.commit();
 
-		StatsFragment.statInc(context, "NotifiedReply");
+		StatsFragment.statInc(context, "NotifiedGeneral");
 		StatsFragment.statInc(context, "Notifications");
 	}
 
@@ -489,48 +491,19 @@ public class NotifierReceiver extends FirebaseMessagingService
 	 */
 	public boolean isOnBlockList(String username)
 	{
-		if (mPrefs.contains("echoChamberBlockList") && mPrefs.getBoolean("echoEnabled", false))
-		{
-			JSONArray mBlockList = null; JSONArray mAutoChamber = null; boolean autochamberenabled = false;
-			try {
-				mBlockList = new JSONArray(mPrefs.getString("echoChamberBlockList", ""));
+		if (!(mPrefs.contains("echoChamberBlockList") && mPrefs.getBoolean("echoEnabled", false)))
+			return false;
 
-				if (mPrefs.contains("echoChamberAuto") && mPrefs.getBoolean("echoChamberAuto", true) && mPrefs.contains("autoEchoChamberBlockList")) {
-					mAutoChamber = new JSONArray(mPrefs.getString("autoEchoChamberBlockList", ""));
-					autochamberenabled = true;
-				}
+		try {
+			JSONArray mBlockList = new JSONArray(mPrefs.getString("echoChamberBlockList", ""));
+			for (int i = 0; i < mBlockList.length(); i++) {
+				if (mBlockList.getString(i).equalsIgnoreCase(username))
+					return true;
 			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
-
-			boolean found = false;
-			if (mBlockList != null)
-			{
-				try {
-					for (int i = 0; i < mBlockList.length(); i++) {
-						if (mBlockList.getString(i).equalsIgnoreCase(username)) {
-							found = true;
-							break;
-						}
-					}
-					if ((mAutoChamber != null) && (autochamberenabled))
-					{
-						for (int i = 0; i < mAutoChamber.length(); i++) {
-							if (mAutoChamber.getString(i).equalsIgnoreCase(username)) {
-								found = true;
-								break;
-							}
-						}
-					}
-				} catch (Exception e)
-				{
-					e.printStackTrace();
-				}
-			}
-			return found;
 		}
-		else return false;
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 }

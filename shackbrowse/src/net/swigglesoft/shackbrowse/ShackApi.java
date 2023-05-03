@@ -38,6 +38,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 import net.swigglesoft.ApiUrl;
 
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -95,7 +96,7 @@ public class ShackApi
     static final String PUSHSERV_URL = "http://shackbrowsepublic.appspot.com/";
     static final String FASTPUSHSERV_URL = "http://shackbrowse.appspot.com/";
     
-    static final String NOTESERV_URL = "http://woggle.net/shackbrowsenotification/";
+    static final String NOTESERV_URL = "http://192.168.150.201:4000";
     static final String NOTESERV_URL_SSL = "https://woggle.net/shackbrowsenotification/";
 
     static final String BASE_URL = "http://shackapi.hughes.cc/";
@@ -779,68 +780,6 @@ public class ShackApi
                 posts = ordered_posts;
             }
             
-            /*
-             * This function has been moved to threadviewfragment adapter
-             * 
-             * 
-            // create depthstrings
-            for (int i = 0; i < posts.size(); i++)
-            {
-            	int j = i -1;
-            	while ((j > 0) && (posts.get(j).getLevel() >= posts.get(i).getLevel()))
-            	{
-            		StringBuilder jDString = new StringBuilder(posts.get(j).getDepthString());
-            		
-            		if ((jDString.charAt(posts.get(i).getLevel()-1) == "L".charAt(0)) && (posts.get(i).getLevel() == posts.get(j).getLevel()))
-            		{
-            			jDString.setCharAt(posts.get(i).getLevel()-1, "T".charAt(0));
-            		}
-            		if ((jDString.charAt(posts.get(i).getLevel()-1) == "[".charAt(0)) && (posts.get(i).getLevel() == posts.get(j).getLevel()))
-            		{
-            			jDString.setCharAt(posts.get(i).getLevel()-1, "+".charAt(0));
-            		}
-            		if (jDString.charAt(posts.get(i).getLevel()-1) == "0".charAt(0))
-            		{
-            			// ! denotes blue line, | denotes gray
-            			if (posts.get(i).getSeen())
-            				jDString.setCharAt(posts.get(i).getLevel()-1, "|".charAt(0));
-            			else
-            				jDString.setCharAt(posts.get(i).getLevel()-1, "!".charAt(0));
-            		}
-            		
-            		posts.get(j).setDepthString(jDString.toString());
-            		j--;
-            	}
-            }
-            
-            // collapser for deep threads
-            for (int i = 0; i < posts.size(); i++)
-            {
-	            StringBuilder depthStr = new StringBuilder(posts.get(i).getDepthString());
-	        	
-	        	// collapser for deep threads
-	        	if (depthStr.length() >= _maxBullets)
-	        	{
-		        	int j = 0;
-		        	String depthStr2 = depthStr.toString();
-		        	while (depthStr2.length() > _maxBullets)
-		        	{
-		        		depthStr2 = depthStr2.substring(5);
-		        		j++;
-		        	}
-		        	if (j > 0)
-		        	{
-			        	String repeated = new String(new char[j]).replace("\0", "C");
-			        	String repeated2 = new String(new char[(depthStr2.length() - 1)]).replace("\0", "0");
-			        	depthStr = new StringBuilder(repeated + repeated2 + "L");
-		        	}
-		        	// end collapser
-	        	}
-
-        		posts.get(i).setDepthString(depthStr.toString());
-            }
-            */
-            
             // mark as seen
             if ((context != null) && (_showNewBranches))
             {
@@ -1004,6 +943,36 @@ public class ShackApi
         }
     }
 
+    private static boolean post(String location, List<NameValuePair> values) throws ClientProtocolException, IOException {
+        DefaultHttpClient client = new DefaultHttpClient();
+        final HttpParams httpParameters = client.getParams();
+        HttpConnectionParams.setConnectionTimeout(httpParameters, connectionTimeOutSec * 1000);
+        HttpConnectionParams.setSoTimeout        (httpParameters, socketTimeoutSec * 1000);
+        HttpPost post = new HttpPost(location);
+        post.setHeader("User-Agent", USER_AGENT);
+        Log.d("shackbrowse", "Posting to: " + location + ", values " + values.toString());
+
+//        values.add(new BasicNameValuePair("get_fields[]", "result"));
+//        values.add(new BasicNameValuePair("user-identifier", userName));
+//        values.add(new BasicNameValuePair("supplied-pass", password));
+//        values.add(new BasicNameValuePair("remember-login", "1"));
+
+        UrlEncodedFormEntity e = new UrlEncodedFormEntity(values,"UTF-8");
+        post.setEntity(e);
+
+        HttpResponse response = client.execute(post);
+        int statusCode = response.getStatusLine().getStatusCode();
+
+        if (statusCode == 200)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     private static String getSSL(String location) throws ClientProtocolException, IOException
     {
         return getSSL (location, false);
@@ -1060,6 +1029,7 @@ public class ShackApi
         while (-1 != (n = input.read(buffer))) {
             output.append(buffer, 0, n);
         }
+        input.close();
         return output.toString();
     }
     
@@ -1980,35 +1950,46 @@ public class ShackApi
     }
 
     // version
-    public static String getVersion() throws ClientProtocolException, IOException
-    {
-    	return getSSL(BASE_URL_ALT_SSL + "versioncheck2.php?apikey=" + APIConstants.BLOCKLIST_API_KEY);
-    }
+//    public static String getVersion() throws ClientProtocolException, IOException
+//    {
+//    	return getSSL(BASE_URL_ALT_SSL + "versioncheck2.php?apikey=" + APIConstants.BLOCKLIST_API_KEY);
+//    }
 
-	public static String noteAddUser(String userName, String getreplies, String getvanity) throws ClientProtocolException, UnsupportedEncodingException, IOException {
-		return get(NOTESERV_URL + "change.php?type=user&action=add&user=" + URLEncoder.encode(userName, "UTF8") + "&getreplies=" + getreplies + "&getvanity=" + getvanity );
+	public static boolean noteAddUser(String userName, String getreplies, String getvanity) throws ClientProtocolException, UnsupportedEncodingException, IOException {
+//		return get(NOTESERV_URL + "/v2/user?UserName=" + URLEncoder.encode(userName, "UTF8") + "&getreplies=" + getreplies + "&getvanity=" + getvanity );
+        List<NameValuePair> values = new ArrayList<>();
+        values.add(new BasicNameValuePair("UserName", userName));
+        return post(NOTESERV_URL + "/v2/user", values);
 	}
-	public static String noteReg(String userName, String deviceid) throws ClientProtocolException, UnsupportedEncodingException, IOException {
-		return get(NOTESERV_URL + "change.php?type=device&action=add&user=" + URLEncoder.encode(userName, "UTF8") + "&deviceid=" + URLEncoder.encode(deviceid, "UTF8"));
+	public static boolean noteReg(String userName, String deviceid) throws ClientProtocolException, UnsupportedEncodingException, IOException {
+//		return get(NOTESERV_URL + "/change.php?type=device&action=add&user=" + URLEncoder.encode(userName, "UTF8") + "&deviceid=" + URLEncoder.encode(deviceid, "UTF8"));
+        List<NameValuePair> values = new ArrayList<>();
+        values.add(new BasicNameValuePair("UserName", userName));
+        values.add(new BasicNameValuePair("DeviceId", "fcm://" + deviceid));
+        values.add(new BasicNameValuePair("ChannelUri", "fcm://" + deviceid));
+        return post(NOTESERV_URL + "/register", values);
 	}
-	public static String noteUnreg(String userName, String deviceid) throws ClientProtocolException, UnsupportedEncodingException, IOException {
-		return get(NOTESERV_URL + "change.php?type=device&action=remove&user=" + URLEncoder.encode(userName, "UTF8") + "&deviceid=" + URLEncoder.encode(deviceid, "UTF8"));
+	public static boolean noteUnreg(String userName, String deviceid) throws ClientProtocolException, UnsupportedEncodingException, IOException {
+//        return "remove device";
+        List<NameValuePair> values = new ArrayList<>();
+        values.add(new BasicNameValuePair("DeviceId", "fcm://" + deviceid));
+        return post(NOTESERV_URL + "/deregister", values);
 	}
-	public static String noteUnregEverythingBut(String userName, String deviceid) throws ClientProtocolException, UnsupportedEncodingException, IOException {
-		return get(NOTESERV_URL + "change.php?type=device&action=remallexcept&user=" + URLEncoder.encode(userName, "UTF8") + "&deviceid=" + URLEncoder.encode(deviceid, "UTF8"));
-	}
-	public static JSONObject noteGetUser(String userName) throws ClientProtocolException, UnsupportedEncodingException, IOException, JSONException {
-		return getJson(NOTESERV_URL + "getuser.php?user=" + URLEncoder.encode(userName, "UTF8"));
-	}
-	public static String noteAddKeyword(String userName, String keyword) throws ClientProtocolException, UnsupportedEncodingException, IOException {
-		return get(NOTESERV_URL + "change.php?type=keyword&action=add&user=" + URLEncoder.encode(userName, "UTF8") + "&keyword=" + URLEncoder.encode(keyword, "UTF8"));
-	}
-	public static String noteRemoveKeyword(String userName, String keyword) throws ClientProtocolException, UnsupportedEncodingException, IOException {
-		return get(NOTESERV_URL + "change.php?type=keyword&action=remove&user=" + URLEncoder.encode(userName, "UTF8") + "&keyword=" + URLEncoder.encode(keyword, "UTF8"));
-	}
-	public static JSONObject noteGetKeywords(String userName) throws ClientProtocolException, UnsupportedEncodingException, IOException, JSONException {
-		return getJson(NOTESERV_URL + "getkeywords.php?user=" + URLEncoder.encode(userName, "UTF8"));
-	}
+//	public static String noteUnregEverythingBut(String userName, String deviceid) throws ClientProtocolException, UnsupportedEncodingException, IOException {
+//		return get(NOTESERV_URL + "/change.php?type=device&action=remallexcept&user=" + URLEncoder.encode(userName, "UTF8") + "&deviceid=" + URLEncoder.encode(deviceid, "UTF8"));
+//	}
+//	public static JSONObject noteGetUser(String userName) throws ClientProtocolException, UnsupportedEncodingException, IOException, JSONException {
+//		return getJson(NOTESERV_URL + "/getuser.php?user=" + URLEncoder.encode(userName, "UTF8"));
+//	}
+//	public static String noteAddKeyword(String userName, String keyword) throws ClientProtocolException, UnsupportedEncodingException, IOException {
+//		return get(NOTESERV_URL + "/change.php?type=keyword&action=add&user=" + URLEncoder.encode(userName, "UTF8") + "&keyword=" + URLEncoder.encode(keyword, "UTF8"));
+//	}
+//	public static String noteRemoveKeyword(String userName, String keyword) throws ClientProtocolException, UnsupportedEncodingException, IOException {
+//		return get(NOTESERV_URL + "/change.php?type=keyword&action=remove&user=" + URLEncoder.encode(userName, "UTF8") + "&keyword=" + URLEncoder.encode(keyword, "UTF8"));
+//	}
+//	public static JSONObject noteGetKeywords(String userName) throws ClientProtocolException, UnsupportedEncodingException, IOException, JSONException {
+//		return getJson(NOTESERV_URL + "/getkeywords.php?user=" + URLEncoder.encode(userName, "UTF8"));
+//	}
 
 	/*
 	Blocklist

@@ -155,7 +155,7 @@
 				   />
 			   <ImageButton
 				   android:id="@+id/buttonNotificationMuted"
-				   android:layout_toLeftOf="@id/buttonPostLOL"
+				   android:layout_toLeftOf="@id/buttonMoreOptions"
 				   android:layout_width="@dimen/buttonReplyWidth"
 				   android:layout_below="@id/postContent"
 				   android:layout_height="@dimen/buttonReplyHeight"

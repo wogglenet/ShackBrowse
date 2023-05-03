@@ -281,7 +281,7 @@
     <string name="statsItemPopUpBrowserOpened">PopUp browser opened</string>
     <string name="statsItemArticleOpened">Articles opened</string>
     <string name="statsItemThreadOpened">Threads opened</string>
-    <string name="statsItemNotifiedReply">Notifications: Reply</string>
+    <string name="statsItemNotifiedGeneral">Notifications: Reply</string>
     <string name="statsItemNotifications">Notifications: All</string>
     <string name="statsItemNotifiedShackMessage">Notifications: Shack Message</string>
     <string name="statsItemNotifiedKeyword">Notifications: Keyword</string>
@@ -417,7 +417,7 @@
         <item>statsItemPopUpBrowserOpened</item>
         <item>statsItemArticleOpened</item>
         <item>statsItemThreadOpened</item>
-        <item>statsItemNotifiedReply</item>
+        <item>statsItemNotifiedGeneral</item>
         <item>statsItemNotifications</item>
         <item>statsItemNotifiedShackMessage</item>
         <item>statsItemNotifiedKeyword</item>

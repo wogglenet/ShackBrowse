@@ -305,20 +305,21 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			}
 		};
 		_GCMAccess = new NetworkNotificationServers(this, GCMlistener);
+
 		// this pref is OPT OUT
-		if (!_prefs.contains("noteEnabled"))
+		if (_prefs.getBoolean("noteEnabled", false))
     	{
-			_GCMAccess.doRegisterTask("reg");
+			_GCMAccess.registerDeviceOnStartup();
     	}
 		
-		if (_prefs.contains("noteEnabled"))
-		{
-			// notifications are enabled. sync server with local settings
-			if (_prefs.getBoolean("noteEnabled", false))
-			{
-				_GCMAccess.updReplVan(_prefs.getBoolean("noteReplies", true),_prefs.getBoolean("noteVanity", false));
-			}
-		}
+//		if (_prefs.contains("noteEnabled"))
+//		{
+//			// notifications are enabled. sync server with local settings
+//			if (_prefs.getBoolean("noteEnabled", false))
+//			{
+//				_GCMAccess.updReplVan(_prefs.getBoolean("noteReplies", true),_prefs.getBoolean("noteVanity", false));
+//			}
+//		}
 
 //		NetworkEchoChamberServer.OnEchoChamberResultListener echoListener = new NetworkEchoChamberServer.OnEchoChamberResultListener() {
 //			@Override
@@ -361,15 +362,15 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		else {
 			mBlockList = new JSONArray();
 		}
-		try {
-			if (_prefs.getBoolean("echoChamberAuto", true)) {
-				mAutoChamber = new JSONArray(_prefs.getString("autoEchoChamberBlockList", ""));
-			}
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
+//		try {
+//			if (_prefs.getBoolean("echoChamberAuto", true)) {
+//				mAutoChamber = new JSONArray(_prefs.getString("autoEchoChamberBlockList", ""));
+//			}
+//		}
+//		catch (Exception e)
+//		{
+//			e.printStackTrace();
+//		}
 
 		// SM autocheck
 		long updateInterval = Long.parseLong(_prefs.getString("PeriodicNetworkServicePeriod", "10800")); // DEFAULT 3 HR 10800L,  5 minutes 50-100mb, 10 minutes 25-50mb, 30mins 10-20mb, 1 hr 5-10mb, 3 hr 1-3mb, 6hr .5-1.5mb, 12hr .25-1mb
@@ -2671,168 +2672,168 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	/*
 	 * Version Check
 	 */
-	class VersionTask extends AsyncTask<String, Void, String>
-	{
-	    Exception _exception;
-	    
-        @Override
-        protected String doInBackground(String... params)
-        {
-            try
-            {
-            	return ShackApi.getVersion();
-            }
-            catch (Exception e)
-            {
-            	_exception = e;
-                return null;
-            }
-        }
-        
-        @Override
-        protected void onPostExecute(String result)
-        {
-            if ((_exception != null) || (result == null))
-            {
-                if (mActivityAvailable) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                    builder.setTitle("Woggle Offline");
-                    builder.setMessage("Woggle servers are down. ShackBrowse may not work properly. It is recommended you close the app and try again later.");
-                    builder.setCancelable(false);
-                    builder.setPositiveButton("Close App", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-	                        System.out.println("finish wog offline"); finish();
-                        }
-                    });
-                    builder.setNegativeButton("Use Anyway", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                        }
-                    });
-                    builder.create().show();
-                }
-            }
-            else
-            {
-            	try
-	            {
-		            final JSONObject vchk = new JSONObject(result);
-		            final String vmode = vchk.getString("mode");
-		            final JSONArray b = vchk.getJSONArray("b");
-					Editor edit = _prefs.edit();
-
-					if (vchk.has("ac"))
-					{
-						JSONArray autochamber = vchk.getJSONArray("ac");
-						mAutoChamber = autochamber;
-						edit.putString("autoEchoChamberBlockList", autochamber.toString());
-					}
-
-
-		            edit.putString("versioncheck", result);
-		            edit.commit();
-
-		            for (int i = 0; i < b.length(); i++)
-		            {
-			            if ((getCloudUsername() != null) && (getCloudUsername().equalsIgnoreCase(b.getString(i)))) finish();
-		            }
-
-		            if (vmode.equals("d"))
-	                {
-			            oprf(true);
-			            if (mActivityAvailable)
-			            {
-				            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-				            builder.setTitle("ShackBrowse Offline");
-				            builder.setCancelable(false);
-				            builder.setMessage("ShackBrowse is currently unavailable. Try again later." + ((vchk.getString("msg").length() > 1) ? " Message: " + vchk.getString("msg") : ""));
-				            builder.setPositiveButton("OK", new DialogInterface.OnClickListener()
-				            {
-					            public void onClick(DialogInterface dialog, int id)
-					            {
-						            finish();
-					            }
-				            });
-				            builder.create().show();
-			            }
-					}
-		            if ((vmode.equals("f") || vmode.equals("u")))
-		            {
-			            String thisversion = mVersion;
-
-			            JSONArray versions = vchk.getJSONArray("ver");
-			            final String vtxt = versions.join(" or ").replaceAll("\"", "");
-			            final String pkg = vchk.getString("pkg");
-
-			            if (!vtxt.toLowerCase().contains(thisversion.toLowerCase()))
-			            {
-				            // prevent use of app until update
-				            if (vmode.equals("f"))
-				            {
-					            oprf(true);
-				            }
-				            // opt out
-				            if (_prefs.getString("ignoreNewVersion", "").equalsIgnoreCase(vtxt.toLowerCase()) && (vmode.equals("u")))
-					            return;
-				            if (mActivityAvailable)
-				            {
-					            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-					            builder.setTitle("ShackBrowse Version");
-					            String versExp = "\nYour Version: " + thisversion + "\nNew: " + vtxt;
-					            builder.setMessage(vmode.equals("f") ? "ShackBrowse must update." + versExp : "A new version of ShackBrowse is available!" + versExp);
-					            builder.setCancelable(false);
-					            builder.setPositiveButton("Update Now", new DialogInterface.OnClickListener()
-					            {
-						            public void onClick(DialogInterface dialog, int id)
-						            {
-							            final String appPackageName = (pkg.length() > 1) ? pkg : getPackageName(); // getPackageName() from Context or Activity object
-							            try
-							            {
-								            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-							            } catch (android.content.ActivityNotFoundException anfe)
-							            {
-								            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=" + appPackageName)));
-							            }
-							            if (vmode.equals("f"))
-								            finish();
-						            }
-					            });
-					            if (vmode.equals("f"))
-					            {
-						            builder.setNegativeButton("Close App", new DialogInterface.OnClickListener()
-						            {
-							            public void onClick(DialogInterface dialog, int id)
-							            {
-								            finish();
-							            }
-						            });
-					            } else
-					            {
-						            builder.setNegativeButton("Not Now", new DialogInterface.OnClickListener()
-						            {
-							            public void onClick(DialogInterface dialog, int id)
-							            {
-
-							            }
-						            });
-						            builder.setNeutralButton("Never", new DialogInterface.OnClickListener()
-						            {
-							            public void onClick(DialogInterface dialog, int id)
-							            {
-								            Editor edit = _prefs.edit();
-								            edit.putString("ignoreNewVersion", vtxt);
-								            edit.apply();
-							            }
-						            });
-					            }
-					            builder.create().show();
-				            }
-			            }
-		            }
-
-	            } catch (JSONException e) { e.printStackTrace(); }
-            }
-        }
-	}
+//	class VersionTask extends AsyncTask<String, Void, String>
+//	{
+//	    Exception _exception;
+//
+//        @Override
+//        protected String doInBackground(String... params)
+//        {
+//            try
+//            {
+//            	return ShackApi.getVersion();
+//            }
+//            catch (Exception e)
+//            {
+//            	_exception = e;
+//                return null;
+//            }
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result)
+//        {
+//            if ((_exception != null) || (result == null))
+//            {
+//                if (mActivityAvailable) {
+//                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+//                    builder.setTitle("Woggle Offline");
+//                    builder.setMessage("Woggle servers are down. ShackBrowse may not work properly. It is recommended you close the app and try again later.");
+//                    builder.setCancelable(false);
+//                    builder.setPositiveButton("Close App", new DialogInterface.OnClickListener() {
+//                        public void onClick(DialogInterface dialog, int id) {
+//	                        System.out.println("finish wog offline"); finish();
+//                        }
+//                    });
+//                    builder.setNegativeButton("Use Anyway", new DialogInterface.OnClickListener() {
+//                        public void onClick(DialogInterface dialog, int id) {
+//                        }
+//                    });
+//                    builder.create().show();
+//                }
+//            }
+//            else
+//            {
+//            	try
+//	            {
+//		            final JSONObject vchk = new JSONObject(result);
+//		            final String vmode = vchk.getString("mode");
+//		            final JSONArray b = vchk.getJSONArray("b");
+//					Editor edit = _prefs.edit();
+//
+//					if (vchk.has("ac"))
+//					{
+//						JSONArray autochamber = vchk.getJSONArray("ac");
+//						mAutoChamber = autochamber;
+//						edit.putString("autoEchoChamberBlockList", autochamber.toString());
+//					}
+//
+//
+//		            edit.putString("versioncheck", result);
+//		            edit.commit();
+//
+//		            for (int i = 0; i < b.length(); i++)
+//		            {
+//			            if ((getCloudUsername() != null) && (getCloudUsername().equalsIgnoreCase(b.getString(i)))) finish();
+//		            }
+//
+//		            if (vmode.equals("d"))
+//	                {
+//			            oprf(true);
+//			            if (mActivityAvailable)
+//			            {
+//				            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+//				            builder.setTitle("ShackBrowse Offline");
+//				            builder.setCancelable(false);
+//				            builder.setMessage("ShackBrowse is currently unavailable. Try again later." + ((vchk.getString("msg").length() > 1) ? " Message: " + vchk.getString("msg") : ""));
+//				            builder.setPositiveButton("OK", new DialogInterface.OnClickListener()
+//				            {
+//					            public void onClick(DialogInterface dialog, int id)
+//					            {
+//						            finish();
+//					            }
+//				            });
+//				            builder.create().show();
+//			            }
+//					}
+//		            if ((vmode.equals("f") || vmode.equals("u")))
+//		            {
+//			            String thisversion = mVersion;
+//
+//			            JSONArray versions = vchk.getJSONArray("ver");
+//			            final String vtxt = versions.join(" or ").replaceAll("\"", "");
+//			            final String pkg = vchk.getString("pkg");
+//
+//			            if (!vtxt.toLowerCase().contains(thisversion.toLowerCase()))
+//			            {
+//				            // prevent use of app until update
+//				            if (vmode.equals("f"))
+//				            {
+//					            oprf(true);
+//				            }
+//				            // opt out
+//				            if (_prefs.getString("ignoreNewVersion", "").equalsIgnoreCase(vtxt.toLowerCase()) && (vmode.equals("u")))
+//					            return;
+//				            if (mActivityAvailable)
+//				            {
+//					            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+//					            builder.setTitle("ShackBrowse Version");
+//					            String versExp = "\nYour Version: " + thisversion + "\nNew: " + vtxt;
+//					            builder.setMessage(vmode.equals("f") ? "ShackBrowse must update." + versExp : "A new version of ShackBrowse is available!" + versExp);
+//					            builder.setCancelable(false);
+//					            builder.setPositiveButton("Update Now", new DialogInterface.OnClickListener()
+//					            {
+//						            public void onClick(DialogInterface dialog, int id)
+//						            {
+//							            final String appPackageName = (pkg.length() > 1) ? pkg : getPackageName(); // getPackageName() from Context or Activity object
+//							            try
+//							            {
+//								            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+//							            } catch (android.content.ActivityNotFoundException anfe)
+//							            {
+//								            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=" + appPackageName)));
+//							            }
+//							            if (vmode.equals("f"))
+//								            finish();
+//						            }
+//					            });
+//					            if (vmode.equals("f"))
+//					            {
+//						            builder.setNegativeButton("Close App", new DialogInterface.OnClickListener()
+//						            {
+//							            public void onClick(DialogInterface dialog, int id)
+//							            {
+//								            finish();
+//							            }
+//						            });
+//					            } else
+//					            {
+//						            builder.setNegativeButton("Not Now", new DialogInterface.OnClickListener()
+//						            {
+//							            public void onClick(DialogInterface dialog, int id)
+//							            {
+//
+//							            }
+//						            });
+//						            builder.setNeutralButton("Never", new DialogInterface.OnClickListener()
+//						            {
+//							            public void onClick(DialogInterface dialog, int id)
+//							            {
+//								            Editor edit = _prefs.edit();
+//								            edit.putString("ignoreNewVersion", vtxt);
+//								            edit.apply();
+//							            }
+//						            });
+//					            }
+//					            builder.create().show();
+//				            }
+//			            }
+//		            }
+//
+//	            } catch (JSONException e) { e.printStackTrace(); }
+//            }
+//        }
+//	}
 
 	/*
 	 * INTENTS (non-Javadoc)
@@ -2903,9 +2904,9 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         if (extras != null)
         {
         	//  REPLY NOTIFICATIONS
-	        if ((extras.containsKey("notificationOpenRList")) || (extras.containsKey("notificationOpenId")))
+	        if ((extras.containsKey("notificationOpenGList")) || (extras.containsKey("notificationOpenId")))
 	        {
-				if (extras.containsKey("notificationOpenRList"))
+				if (extras.containsKey("notificationOpenGList"))
 		        	return CANHANDLEINTENT;
 				else if (extras.containsKey("notificationOpenId"))
 		        	return CANHANDLEINTENT;
@@ -3026,15 +3027,15 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	        	}
 
 	        	//  REPLY NOTIFICATIONS
-		        if ((extras.containsKey("notificationOpenRList")) || (extras.containsKey("notificationOpenId")))
+		        if ((extras.containsKey("notificationOpenGList")) || (extras.containsKey("notificationOpenId")))
 		        {
 		        	String noteNLSID = Integer.toString(extras.getInt("notificationNLSID"));
 		        	
 		        	Editor editor = _prefs.edit();
-		        	editor.putInt("GCMNoteCountReply", 0);
+		        	editor.putInt("GCMNoteCountGeneral", 0);
 		        	editor.apply();
 					
-					if (extras.containsKey("notificationOpenRList"))
+					if (extras.containsKey("notificationOpenGList"))
 					{
 						// open notes
 						runOnUiThread(new Runnable(){
@@ -4305,31 +4306,16 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	 */
 	public boolean isOnBlocklist (String username)
 	{
-		boolean found = false;
-		if (mBlockList != null)
-		{
-			try {
-				for (int i = 0; i < mBlockList.length(); i++) {
-					if (mBlockList.getString(i).equalsIgnoreCase(username)) {
-						found = true;
-						break;
-					}
-				}
-				if ((mAutoChamber != null) && (_prefs.getBoolean("echoChamberAuto", true)))
-				{
-					for (int i = 0; i < mAutoChamber.length(); i++) {
-						if (mAutoChamber.getString(i).equalsIgnoreCase(username)) {
-							found = true;
-							break;
-						}
-					}
-				}
-			} catch (Exception e)
-			{
-				e.printStackTrace();
+		if (mBlockList == null) return false;
+		try {
+			for (int i = 0; i < mBlockList.length(); i++) {
+				if (mBlockList.getString(i).equalsIgnoreCase(username)) return true;
 			}
 		}
-		return found;
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 	public String getFancyBlockList (boolean autoChamberList) {
 		JSONArray json;

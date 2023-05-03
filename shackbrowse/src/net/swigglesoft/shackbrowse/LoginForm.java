@@ -197,7 +197,7 @@ public class LoginForm {
                     };
                     _GCMAccess = new NetworkNotificationServers(_context, GCMlistener);
                     _GCMAccess.doRegisterTask("reg");
-                    _GCMAccess.doUserInfoTask();
+//                    _GCMAccess.doUserInfoTask();
                 }
             	
         	}
