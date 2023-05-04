@@ -39,7 +39,6 @@ import com.afollestad.materialdialogs.color.ColorChooserDialog;
 public class PreferenceFragmentNotifications extends PreferenceFragment
 {
     private static final String TAG = "PreferenceFragmentNotifications";
-    private final String notificationKeywords = "notificationKeywords";
     private SharedPreferences _prefs;
 
     protected MaterialDialog _progressDialog;
@@ -71,10 +70,11 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
         final PreferenceFragment thisFrag = this;
         Preference SMCheckInterval = (Preference)findPreference("PeriodicNetworkServicePeriod");
         try {
-            mNoteKeywords = new JSONArray(_prefs.getString(notificationKeywords, ""));
+            mNoteKeywords = new JSONArray(_prefs.getString(PreferenceKeys.notificationKeywords, ""));
         } catch(JSONException e) {
             Log.e(TAG, "Error reading mNoteKeywords", e);
         }
+
         SMCheckInterval.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 
             @Override
@@ -333,7 +333,8 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
         _Venabled = true;
         _vanityNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
         _keyNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
-
+        _repliesNotification.setChecked(_prefs.getBoolean(PreferenceKeys.notificationOnReplies, false));
+        _vanityNotification.setChecked(_prefs.getBoolean(PreferenceKeys.notificationOnVanity, false));
 
         OnPreferenceChangeListener notificationOnPrefListener = new Preference.OnPreferenceChangeListener() {
             @Override
@@ -390,12 +391,10 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
             public boolean onPreferenceChange(final Preference preference, Object newValue) {
                 if(newValue instanceof Boolean){
                     final Boolean checked = (Boolean)newValue;
-                    _progressDialog = MaterialProgressDialog.show(getActivity(), "Changing Notification Status", "Communicating with Shack Browse server...", true, true);
-                    _GCMAccess = new NetworkNotificationServers(getActivity(), mGCMlistener);
-                    if (checked)
-                        _GCMAccess.updReplVan(true,_prefs.getBoolean("noteVanity", false));
-                    else
-                        _GCMAccess.updReplVan(false,_prefs.getBoolean("noteVanity", false));
+                    Editor edit = _prefs.edit();
+                    edit.putBoolean(PreferenceKeys.notificationOnReplies, checked);
+                    edit.commit();
+                    _repliesNotification.setChecked(checked);
                 }
                 return false;
             }
@@ -405,12 +404,10 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
             public boolean onPreferenceChange(final Preference preference, Object newValue) {
                 if(newValue instanceof Boolean){
                     final Boolean checked = (Boolean)newValue;
-                    _progressDialog = MaterialProgressDialog.show(getActivity(), "Changing Notification Status", "Communicating with Shack Browse server...", true, true);
-                    _GCMAccess = new NetworkNotificationServers(getActivity(), mGCMlistener);
-                    if (checked)
-                        _GCMAccess.updReplVan(_prefs.getBoolean("noteReplies", true), true);
-                    else
-                        _GCMAccess.updReplVan(_prefs.getBoolean("noteReplies", true), false);
+                    Editor edit = _prefs.edit();
+                    edit.putBoolean(PreferenceKeys.notificationOnVanity, checked);
+                    edit.commit();
+                    _vanityNotification.setChecked(checked);
                 }
                 return false;
             }
@@ -503,7 +500,7 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
 
     private void updateKeywords() {
         Editor ed = _prefs.edit();
-        ed.putString(notificationKeywords, mNoteKeywords.toString());
+        ed.putString(PreferenceKeys.notificationKeywords, mNoteKeywords.toString());
         ed.commit();
         showKeywords();
         try {

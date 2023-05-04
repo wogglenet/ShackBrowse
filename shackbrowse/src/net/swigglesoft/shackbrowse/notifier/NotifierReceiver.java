@@ -8,6 +8,7 @@ import net.swigglesoft.shackbrowse.MainActivity;
 import net.swigglesoft.shackbrowse.NotificationObj;
 import net.swigglesoft.shackbrowse.NotificationsDB;
 import net.swigglesoft.shackbrowse.PostFormatter;
+import net.swigglesoft.shackbrowse.PreferenceKeys;
 import net.swigglesoft.shackbrowse.R;
 import net.swigglesoft.shackbrowse.StatsFragment;
 import net.swigglesoft.shackbrowse.TimeDisplay;
@@ -59,26 +60,47 @@ public class NotifierReceiver extends FirebaseMessagingService
 		Context context = getApplicationContext();
 
 		mPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		boolean notificationsEnabled = mPrefs.getBoolean("noteEnabled", false);
+		boolean repliesEnabled = mPrefs.getBoolean(PreferenceKeys.notificationOnReplies, false);
+		boolean vanityEnabled = mPrefs.getBoolean(PreferenceKeys.notificationOnVanity, false);
 
 		Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher);
 		String from = message.getFrom();
 		Map data = message.getData();
 
-		if (data != null && data.get("type") != null)
+		if (!notificationsEnabled) {
+			Log.w(TAG, "Skipping this notification due to notifications not being enabled.");
+			return;
+		}
+
+		if (data == null || data.get("type") == null) {
+			return;
+		}
+
+		Log.i(TAG, "Received notification from post for username " + data.get("username").toString() + ", title " + data.get("title").toString());
+		if (isOnBlockList(data.get("username").toString()))
 		{
-			Log.i(TAG, "Received notification from post for username " + data.get("username").toString() + ", title " + data.get("title").toString());
-			if (isOnBlockList(data.get("username").toString()))
-			{
-				// do not trigger notification
-				StatsFragment.statInc(context, "EchoChamberBlockNotification");
+			// do not trigger notification
+			StatsFragment.statInc(context, "EchoChamberBlockNotification");
+			return;
+		}
+
+		String notificationType = data.get("type").toString().toLowerCase();
+		if (notificationType.equals("general"))
+		{
+			String title = data.get("title").toString();
+			if(!repliesEnabled && title.startsWith("Reply")) {
+				Log.w(TAG, "Skipping this notification due to the title starting with Reply and reply notifications are not enabled in settings.");
 				return;
 			}
 
-			String notificationType = data.get("type").toString().toLowerCase();
-			if (notificationType.equals("general"))
-			{
-				processGeneralNotification(context, largeIcon, data);
+			if(!vanityEnabled && title.startsWith("Mentioned")) {
+				Log.w(TAG, "Skipping this notification due to the title starting with Mentioned and vanity notifications are not enabled in settings.");
+				return;
 			}
+
+			processGeneralNotification(context, largeIcon, data);
+		}
 //			else if (notificationType.equals("vanity"))
 //			{
 //				processVanityNotification(context, largeIcon, data);
@@ -87,13 +109,12 @@ public class NotifierReceiver extends FirebaseMessagingService
 //			{
 //				processKeywordNotification(context, largeIcon, data);
 //			}
-			else if (notificationType.equals("shackmsg"))
-			{
-				processShackmsgNotification(context, largeIcon, data);
-			}
-			else {
-				Log.w("onMessageReceived", "Unknown notification type " + notificationType);
-			}
+		else if (notificationType.equals("shackmsg"))
+		{
+			processShackmsgNotification(context, largeIcon, data);
+		}
+		else {
+			Log.w("onMessageReceived", "Unknown notification type " + notificationType);
 		}
    }
 

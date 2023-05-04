@@ -952,17 +952,11 @@ public class ShackApi
         post.setHeader("User-Agent", USER_AGENT);
         Log.d("shackbrowse", "Posting to: " + location + ", values " + values.toString());
 
-//        values.add(new BasicNameValuePair("get_fields[]", "result"));
-//        values.add(new BasicNameValuePair("user-identifier", userName));
-//        values.add(new BasicNameValuePair("supplied-pass", password));
-//        values.add(new BasicNameValuePair("remember-login", "1"));
-
         UrlEncodedFormEntity e = new UrlEncodedFormEntity(values,"UTF-8");
         post.setEntity(e);
 
         HttpResponse response = client.execute(post);
         int statusCode = response.getStatusLine().getStatusCode();
-
         if (statusCode == 200)
         {
             return true;
@@ -1955,10 +1949,13 @@ public class ShackApi
 //    	return getSSL(BASE_URL_ALT_SSL + "versioncheck2.php?apikey=" + APIConstants.BLOCKLIST_API_KEY);
 //    }
 
-	public static boolean noteAddUser(String userName, String getreplies, String getvanity) throws ClientProtocolException, UnsupportedEncodingException, IOException {
+	public static boolean noteAddUser(String userName, JSONArray keywords) throws ClientProtocolException, UnsupportedEncodingException, IOException, JSONException {
 //		return get(NOTESERV_URL + "/v2/user?UserName=" + URLEncoder.encode(userName, "UTF8") + "&getreplies=" + getreplies + "&getvanity=" + getvanity );
         List<NameValuePair> values = new ArrayList<>();
         values.add(new BasicNameValuePair("UserName", userName));
+        for(int i = 0; i < keywords.length(); i++) {
+            values.add(new BasicNameValuePair("NotificationKeywords[" + i + "]", keywords.getString(i)));
+        }
         return post(NOTESERV_URL + "/v2/user", values);
 	}
 	public static boolean noteReg(String userName, String deviceid) throws ClientProtocolException, UnsupportedEncodingException, IOException {

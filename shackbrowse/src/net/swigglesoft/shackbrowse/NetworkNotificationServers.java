@@ -1,12 +1,14 @@
 package net.swigglesoft.shackbrowse;
 
 import java.util.concurrent.atomic.AtomicInteger;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import android.text.TextUtils;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import com.google.android.gms.common.ConnectionResult;
@@ -132,6 +134,12 @@ public class NetworkNotificationServers
              {
                  String userName = _prefs.getString("userName", "");
                  boolean verified  = _prefs.getBoolean("usernameVerified", false);
+				 JSONArray keywords = null;
+				 try {
+					 keywords = new JSONArray(_prefs.getString(PreferenceKeys.notificationKeywords, ""));
+				 } catch(JSONException e) {
+					 Log.e(TAG, "Error reading mNoteKeywords", e);
+				 }
                  
                  // everything but unreg is protected by username check
                  if (verified)
@@ -161,7 +169,7 @@ public class NetworkNotificationServers
 //	                			// user doesnt exist
 //	                			ShackApi.noteAddUser(userName,replies,vanity);
 //	                		}
-							ShackApi.noteAddUser(userName,replies,vanity);
+							ShackApi.noteAddUser(userName, keywords);
 							boolean result = ShackApi.noteReg(userName, getRegistrationId());
 	                		return result ? "add device" : "";
 		                }
@@ -175,7 +183,7 @@ public class NetworkNotificationServers
 	                			String replies = params[1];
 	                			String vanity = params[2];
 	                		
-	                		ShackApi.noteAddUser(userName,replies,vanity);
+	                		ShackApi.noteAddUser(userName,keywords);
 							boolean result = ShackApi.noteReg(userName, getRegistrationId());
 							return result ? "add device" : "";
 		                }
@@ -190,13 +198,13 @@ public class NetworkNotificationServers
 	                }
                 	else return "";
                  }
-                 return null;
+                 return "";
              }
              catch (Exception e)
              {
                  Log.e("shackbrowse", "Error changing push status", e);
                  _exception = e;
-                 return null;
+                 return "";
              }
          }
          @Override
