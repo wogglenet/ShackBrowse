@@ -72,14 +72,6 @@ public class LoginForm {
             	new CredentialsVerifyTask().execute();
             }
         });
-        /*builder.setNeutralButton("New", new DialogInterface.OnClickListener() {
-			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				CustomURLSpan.openDialogBrowser(_context, "http://www.shacknews.com");
-				
-			}
-		});*/
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
             	if (_OnVerifiedListener != null)
@@ -151,53 +143,9 @@ public class LoginForm {
                             }
                             edit.commit();
                         }
-
-                        @Override
-                        public void userResult(JSONObject result) {
-                            SharedPreferences.Editor edit = _prefs.edit();
-                                try{
-                                    if (result == null)
-                                    {
-                                        edit.putBoolean("noteVanity", false);
-                                        edit.putBoolean("noteReplies", false);
-                                        edit.putBoolean("noteEnabled", false);
-                                    }
-                                    else
-                                    {
-                                        System.out.println("TRYING TO READ USERINFO" + result.getString("get_vanity") + result.getString("get_replies"));
-                                        if ("1".equals(result.getString("get_vanity")))
-                                        {
-                                            edit.putBoolean("noteVanity", true);
-                                        }
-                                        else
-                                        {
-                                            edit.putBoolean("noteVanity", false);
-                                        }
-                                        if ("1".equals(result.getString("get_replies")))
-                                        {
-                                            edit.putBoolean("noteReplies", true);
-                                        }
-                                        else
-                                        {
-                                            edit.putBoolean("noteReplies", false);
-                                        }
-                                        if (result.getJSONArray("devices").join("::").contains(_GCMAccess.getRegistrationId()))
-                                        {
-                                            edit.putBoolean("noteEnabled", true);
-                                        }
-                                        else
-                                        {
-                                            edit.putBoolean("noteEnabled", false);
-                                        }
-                                    }
-                                } catch (Exception e) {}
-                                edit.commit();
-                            }
-
                     };
                     _GCMAccess = new NetworkNotificationServers(_context, GCMlistener);
                     _GCMAccess.doRegisterTask("reg");
-//                    _GCMAccess.doUserInfoTask();
                 }
             	
         	}

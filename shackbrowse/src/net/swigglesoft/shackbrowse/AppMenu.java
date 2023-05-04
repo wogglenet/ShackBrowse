@@ -710,13 +710,6 @@ public class AppMenu extends ListFragment
 
 		_adapter.add(new MenuItems(new PremadeSearch("Posts I Drafted Replies To", 3, null, false)));
 
-		/*
-        args = new Bundle();
-        args.putString("terms", "*");
-		args.putString("category", "nws");
-        _adapter.add(new MenuItems(new PremadeSearch("NWS Posts", 0, args, false)));
-        */
-        
         // saved searches
         if (_prefs.getString("savedSearchesJson", null) != null)
         {

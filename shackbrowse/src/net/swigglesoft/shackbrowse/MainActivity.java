@@ -297,12 +297,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 				}
 				edit.apply();
 			}
-
-			@Override
-			public void userResult(JSONObject result) {
-				// TODO Auto-generated method stub
-
-			}
 		};
 		_GCMAccess = new NetworkNotificationServers(this, GCMlistener);
 
@@ -311,40 +305,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
     	{
 			_GCMAccess.registerDeviceOnStartup();
     	}
-		
-//		if (_prefs.contains("noteEnabled"))
-//		{
-//			// notifications are enabled. sync server with local settings
-//			if (_prefs.getBoolean("noteEnabled", false))
-//			{
-//				_GCMAccess.updReplVan(_prefs.getBoolean("noteReplies", true),_prefs.getBoolean("noteVanity", false));
-//			}
-//		}
-
-//		NetworkEchoChamberServer.OnEchoChamberResultListener echoListener = new NetworkEchoChamberServer.OnEchoChamberResultListener() {
-//			@Override
-//			public void networkResult(JSONArray result) {
-//				if (mProgressDialog != null)
-//				{
-//					mProgressDialog.dismiss();
-//					mProgressDialog = null;
-//				}
-//				mBlockList = result;
-//				Editor ed = _prefs.edit();
-//				ed.putString("echoChamberBlockList", result.toString());
-//				ed.commit();
-//			}
-//
-//			@Override
-//			public void addError() {
-//				if (mProgressDialog != null)
-//				{
-//					mProgressDialog.dismiss();
-//					mProgressDialog = null;
-//				}
-//			}
-//		};
-//		mEchoAccess = new NetworkEchoChamberServer(this, echoListener);
 		if (_prefs.contains("echoChamberBlockList"))
 		{
 			try {
@@ -354,23 +314,10 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 			{
 				e.printStackTrace();
 			}
-//			if (_prefs.getBoolean("echoEnabled", false))
-//			{
-//				mEchoAccess.doBlocklistTask(NetworkEchoChamberServer.ACTION_GET);
-//			}
 		}
 		else {
 			mBlockList = new JSONArray();
 		}
-//		try {
-//			if (_prefs.getBoolean("echoChamberAuto", true)) {
-//				mAutoChamber = new JSONArray(_prefs.getString("autoEchoChamberBlockList", ""));
-//			}
-//		}
-//		catch (Exception e)
-//		{
-//			e.printStackTrace();
-//		}
 
 		// SM autocheck
 		long updateInterval = Long.parseLong(_prefs.getString("PeriodicNetworkServicePeriod", "10800")); // DEFAULT 3 HR 10800L,  5 minutes 50-100mb, 10 minutes 25-50mb, 30mins 10-20mb, 1 hr 5-10mb, 3 hr 1-3mb, 6hr .5-1.5mb, 12hr .25-1mb
@@ -468,9 +415,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
             StatsFragment.statInc(this, "AppUpgradedToNewVersion");
         }
         
-        // set up donator icons
-//        new LimeTask().execute();
-
         // sync stats
         StatsFragment sfrag = new StatsFragment();
         sfrag.blindStatSync(this);
@@ -479,8 +423,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	    Intent msgIntent = new Intent(this, PostQueueService.class);
 	    msgIntent.putExtra("appinit", true);
 		PostQueueService.enqueueWork(this, msgIntent);
-	    //startService(msgIntent);
-        
+
         // initialize slide frame handle
         _tviewFrame = ((SlideFrame)findViewById(R.id.singleThread));
         _sresFrame = ((SlideFrame)findViewById(R.id.searchResults));
@@ -580,29 +523,11 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		// default content setting
 		setContentTo(Integer.parseInt(_prefs.getString("APP_DEFAULTPANE", Integer.toString(CONTENT_THREADLIST))));
 
-
-		// analytics
-		// Obtain the FirebaseAnalytics instance.
-		//FIREBASE mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-
 		Twitter.initialize(this);
-        
-        // check for wifi connection
-        //ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-        //NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        // check for shack messages
-		// if ((mWifi.isConnected() || _prefs.getBoolean("SMCheckOnCellNotification", true))) {
 
-//		// above changed. Now just checking. only 10k with json API
         ShackMessageCheck SMC = new ShackMessageCheck(this);
         SMC.frugalSMCheck();
 
-
-        // check versions
-//        new VersionTask().execute();
-
-        // get block list
-        
         // external intent handling
         Intent intent = getIntent();
         if ((intent == null) || (canHandleIntent(intent) == CANNOTHANDLEINTENT))
@@ -763,13 +688,9 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         }
         else if (appTheme.equals("3")) {
             themeId = R.style.AppThemeWhite;
-            // lightBarColor = R.color.SBdark;
-            // darkBarColor = R.color.SBvdark;
         }
         else {
             themeId = R.style.AppTheme;
-            // lightBarColor = R.color.gnushackdark;
-            // darkBarColor = R.color.selected_postbg;
         }
         return themeId;
     }
@@ -963,9 +884,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 	        case R.id.menu_newPost:
 	        	newPost();
 	        	break;
-//	        case R.id.menu_cloudOptions:
-//	        	cloudChoose();
-//	        	break;
 	        case R.id.menu_keywordFilter:
 	        	showKeywords();
 	        	break;
@@ -1045,10 +963,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 					@Override
 					public void end() {
                         setContentTo(CONTENT_PREFS);
-                        /*
-						Intent i = new Intent(MainActivity.this, PreferenceView.class);
-		                i.putExtra("pscreenkey", "popupbrowser");
-		                startActivityForResult(i, ThreadListFragment.OPEN_PREFS); */
 					}
 				};
                 closeBrowser(true,onEnd, false);
@@ -1137,7 +1051,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		mHighlighter.expandActionView();
 		SearchView sview = (SearchView)mHighlighter.getActionView();
 		sview.setQuery(query, true);
-		// hideKeyboard();
 	}
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -1313,7 +1226,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         menu.findItem(R.id.menu_discardFav).setVisible(showFavItems && (!isMenuOpen));
         
         menu.findItem(R.id.menu_refreshThreads).setVisible(showTListItems);
-//        menu.findItem(R.id.menu_cloudOptions).setVisible(showTListItems || showFavItems);
         menu.findItem(R.id.menu_findOnPage).setVisible(showTListItems);
 
         // hack to do autocomplete sview2
@@ -1352,9 +1264,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         menu.findItem(R.id.menu_restoreCollapsed).setVisible(showTListItems);
         
         menu.findItem(R.id.menu_searchGo).setVisible(showSearchItems);
-        // menu.findItem(R.id.menu_searchDel).setVisible(showSearchItems);
-        // menu.findItem(R.id.menu_searchSave).setVisible(showSearchItems);
-        
         menu.findItem(R.id.menu_replyMsg).setVisible(showMessageItems && (_threadView._messageId != 0) && (dualPane || areSlidersOpen));
         menu.findItem(R.id.menu_newMsg).setVisible(showMessageItems);
         menu.findItem(R.id.menu_refreshMsg).setVisible(showMessageItems && (dualPane || !areSlidersOpen));
@@ -1517,9 +1426,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
             toBeDeleted = (Fragment) getFragmentManager().findFragmentById(R.id.content_frame);
         }
 
-
-
-
 	    fragmentManager.beginTransaction()
 	                   .add(R.id.content_frame, fragment, Integer.toString(type))
 	                   .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
@@ -1589,7 +1495,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
 	@Override
 	protected void onDestroy () {
-		
 	    super.onDestroy();
 	}
 	
@@ -1878,18 +1783,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 
         if ((!view.isPostIdInAdapter(threadId) || expired) || (view._messageId != messageId) && view.isAdded())
         {
-	        // replace threadview with a new one? maybe fix bugs?
-	        /*
-	        _threadView = new ThreadViewFragment();
-
-	        FragmentTransaction ft = getFragmentManager().beginTransaction();
-	        ft.replace(R.id.singleThread, _threadView, "tview");
-	        ft.attach(_threadView);
-	        ft.commit();
-
-	        view = _threadView;
-	        */
-
         	view._rootPostId = threadId;
         	view._messageId = messageId;
         	view._selectPostIdAfterLoading = selectPostIdAfterLoading;
@@ -2168,8 +2061,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         // doesnt slide in dual pane
         if ((!getDualPane() && contentframe.getVisibility() == View.VISIBLE) || (!isTView && contentframe.getVisibility() == View.VISIBLE))
         {
-           // System.out.println("X:" +x + " s" + (-1f - x) * 40f);
-           contentframe.setTranslationX((1f - x) * (-.2f * contentframe.getWidth()));
+        	contentframe.setTranslationX((1f - x) * (-.2f * contentframe.getWidth()));
         }
         if (!getDualPane() && _sresFrame.isOpened() && isTView)
         {
@@ -2183,7 +2075,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		SlideFrame slide = (SlideFrame)findViewById(R.id.singleThread);
 		SlideFrame sres = (SlideFrame)findViewById(R.id.searchResults);
 		FrameLayout contentframe = (FrameLayout)findViewById(R.id.content_frame);
-		//RelativeLayout contentCont = (RelativeLayout)findViewById(R.id.contentContainer);
 
 		// YOUTUBE STUFF
 		if ((isYTOpen()) && (dualPane))
@@ -2669,172 +2560,6 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
         }
 	}
 	
-	/*
-	 * Version Check
-	 */
-//	class VersionTask extends AsyncTask<String, Void, String>
-//	{
-//	    Exception _exception;
-//
-//        @Override
-//        protected String doInBackground(String... params)
-//        {
-//            try
-//            {
-//            	return ShackApi.getVersion();
-//            }
-//            catch (Exception e)
-//            {
-//            	_exception = e;
-//                return null;
-//            }
-//        }
-//
-//        @Override
-//        protected void onPostExecute(String result)
-//        {
-//            if ((_exception != null) || (result == null))
-//            {
-//                if (mActivityAvailable) {
-//                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-//                    builder.setTitle("Woggle Offline");
-//                    builder.setMessage("Woggle servers are down. ShackBrowse may not work properly. It is recommended you close the app and try again later.");
-//                    builder.setCancelable(false);
-//                    builder.setPositiveButton("Close App", new DialogInterface.OnClickListener() {
-//                        public void onClick(DialogInterface dialog, int id) {
-//	                        System.out.println("finish wog offline"); finish();
-//                        }
-//                    });
-//                    builder.setNegativeButton("Use Anyway", new DialogInterface.OnClickListener() {
-//                        public void onClick(DialogInterface dialog, int id) {
-//                        }
-//                    });
-//                    builder.create().show();
-//                }
-//            }
-//            else
-//            {
-//            	try
-//	            {
-//		            final JSONObject vchk = new JSONObject(result);
-//		            final String vmode = vchk.getString("mode");
-//		            final JSONArray b = vchk.getJSONArray("b");
-//					Editor edit = _prefs.edit();
-//
-//					if (vchk.has("ac"))
-//					{
-//						JSONArray autochamber = vchk.getJSONArray("ac");
-//						mAutoChamber = autochamber;
-//						edit.putString("autoEchoChamberBlockList", autochamber.toString());
-//					}
-//
-//
-//		            edit.putString("versioncheck", result);
-//		            edit.commit();
-//
-//		            for (int i = 0; i < b.length(); i++)
-//		            {
-//			            if ((getCloudUsername() != null) && (getCloudUsername().equalsIgnoreCase(b.getString(i)))) finish();
-//		            }
-//
-//		            if (vmode.equals("d"))
-//	                {
-//			            oprf(true);
-//			            if (mActivityAvailable)
-//			            {
-//				            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-//				            builder.setTitle("ShackBrowse Offline");
-//				            builder.setCancelable(false);
-//				            builder.setMessage("ShackBrowse is currently unavailable. Try again later." + ((vchk.getString("msg").length() > 1) ? " Message: " + vchk.getString("msg") : ""));
-//				            builder.setPositiveButton("OK", new DialogInterface.OnClickListener()
-//				            {
-//					            public void onClick(DialogInterface dialog, int id)
-//					            {
-//						            finish();
-//					            }
-//				            });
-//				            builder.create().show();
-//			            }
-//					}
-//		            if ((vmode.equals("f") || vmode.equals("u")))
-//		            {
-//			            String thisversion = mVersion;
-//
-//			            JSONArray versions = vchk.getJSONArray("ver");
-//			            final String vtxt = versions.join(" or ").replaceAll("\"", "");
-//			            final String pkg = vchk.getString("pkg");
-//
-//			            if (!vtxt.toLowerCase().contains(thisversion.toLowerCase()))
-//			            {
-//				            // prevent use of app until update
-//				            if (vmode.equals("f"))
-//				            {
-//					            oprf(true);
-//				            }
-//				            // opt out
-//				            if (_prefs.getString("ignoreNewVersion", "").equalsIgnoreCase(vtxt.toLowerCase()) && (vmode.equals("u")))
-//					            return;
-//				            if (mActivityAvailable)
-//				            {
-//					            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-//					            builder.setTitle("ShackBrowse Version");
-//					            String versExp = "\nYour Version: " + thisversion + "\nNew: " + vtxt;
-//					            builder.setMessage(vmode.equals("f") ? "ShackBrowse must update." + versExp : "A new version of ShackBrowse is available!" + versExp);
-//					            builder.setCancelable(false);
-//					            builder.setPositiveButton("Update Now", new DialogInterface.OnClickListener()
-//					            {
-//						            public void onClick(DialogInterface dialog, int id)
-//						            {
-//							            final String appPackageName = (pkg.length() > 1) ? pkg : getPackageName(); // getPackageName() from Context or Activity object
-//							            try
-//							            {
-//								            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-//							            } catch (android.content.ActivityNotFoundException anfe)
-//							            {
-//								            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=" + appPackageName)));
-//							            }
-//							            if (vmode.equals("f"))
-//								            finish();
-//						            }
-//					            });
-//					            if (vmode.equals("f"))
-//					            {
-//						            builder.setNegativeButton("Close App", new DialogInterface.OnClickListener()
-//						            {
-//							            public void onClick(DialogInterface dialog, int id)
-//							            {
-//								            finish();
-//							            }
-//						            });
-//					            } else
-//					            {
-//						            builder.setNegativeButton("Not Now", new DialogInterface.OnClickListener()
-//						            {
-//							            public void onClick(DialogInterface dialog, int id)
-//							            {
-//
-//							            }
-//						            });
-//						            builder.setNeutralButton("Never", new DialogInterface.OnClickListener()
-//						            {
-//							            public void onClick(DialogInterface dialog, int id)
-//							            {
-//								            Editor edit = _prefs.edit();
-//								            edit.putString("ignoreNewVersion", vtxt);
-//								            edit.apply();
-//							            }
-//						            });
-//					            }
-//					            builder.create().show();
-//				            }
-//			            }
-//		            }
-//
-//	            } catch (JSONException e) { e.printStackTrace(); }
-//            }
-//        }
-//	}
-
 	/*
 	 * INTENTS (non-Javadoc)
 	 * @see android.support.v4.app.FragmentActivity#onNewIntent(android.content.Intent)
@@ -4365,4 +4090,3 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		builder.create().show();
 	}
 }
-

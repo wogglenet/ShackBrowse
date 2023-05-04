@@ -4,7 +4,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -17,12 +16,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
 
-//GCM access
-
+//FCM access
 public class NetworkNotificationServers
 {
 
-     static final String TAG = "GCMDemo";
+     static final String TAG = "NetworkNotificationServers";
 
      AtomicInteger msgId = new AtomicInteger();
      Context context;
@@ -79,7 +77,6 @@ public class NetworkNotificationServers
      interface OnGCMInteractListener
      {
     	 public void networkResult(String result);
-    	 public void userResult(JSONObject result);
      }
 
      public NetworkNotificationServers(Context activity, OnGCMInteractListener listener)
@@ -112,14 +109,9 @@ public class NetworkNotificationServers
      	}
 	}
 
-     public void doRegisterTask (String whatDo)
+    public void doRegisterTask (String whatDo)
      {
     	 new RegisterPushTask().execute(whatDo);
-     }
-     
-     public void updReplVan (boolean replies, boolean vanity)
-     {
-    	 new RegisterPushTask().execute("updreplyvanity", replies ? "1" : "0", vanity ? "1" : "0");
      }
      
      // SB BACKEND STUFF
@@ -150,42 +142,9 @@ public class NetworkNotificationServers
 	                 	 Log.d(TAG, "FCM ID: " + regId);
 	                	 if (regId.length() > 0)
 		                 {
-                         	// "enableDonatorFeatures"
-	                		boolean vEnabled = true;
-	                		String replies = "1";
-	                		String vanity = vEnabled ? "1" : "0";
-	                		if (params.length == 3)
-	                		{
-	                			replies = params[1];
-	                			vanity = params[2];
-	                		}
-//	                		try
-//	                		{
-//	                			ShackApi.noteGetUser(userName);
-//	                			// returns non-json when doesnt exist, so should raise exception
-//	                		}
-//	                		catch (Exception e)
-//	                		{
-//	                			// user doesnt exist
-//	                			ShackApi.noteAddUser(userName,replies,vanity);
-//	                		}
 							ShackApi.noteAddUser(userName, keywords);
 							boolean result = ShackApi.noteReg(userName, getRegistrationId());
 	                		return result ? "add device" : "";
-		                }
-	                	else return "";
-	                 }
-	                 if (params[0].equals("updreplyvanity") && (params.length == 3))
-	                 {
-	                	if (getRegistrationId().length() > 0)
-		                {
-
-	                			String replies = params[1];
-	                			String vanity = params[2];
-	                		
-	                		ShackApi.noteAddUser(userName,keywords);
-							boolean result = ShackApi.noteReg(userName, getRegistrationId());
-							return result ? "add device" : "";
 		                }
 	                	else return "";
 	                 }
@@ -219,88 +178,4 @@ public class NetworkNotificationServers
              }
          }
  	}
-    
-//    public void doUserInfoTask ()
-//    {
-//    	doUserInfoTask(null, null);
-//    }
-//
-//    public void doUserInfoTask (String preAction, String parameter)
-//    {
-//    	System.out.println("GETTING USER INFO");
-//   	    new GetUserInfoTask().execute(preAction, parameter);
-//    }
-//
-//    class GetUserInfoTask extends AsyncTask<String, Void, JSONObject>
-// 	{
-// 	    Exception _exception;
-//
-//         @Override
-//         protected JSONObject doInBackground(String... params)
-//         {
-//        	 String userName = _prefs.getString("userName", "");
-//             boolean verified  = _prefs.getBoolean("usernameVerified", false);
-//
-//             String preAction = params[0];
-//             if (preAction == null)
-//            	 preAction = "0";
-//
-//             // everything but unreg is protected by username check
-//             if (verified)
-//             {
-//            	 try {
-//            		 if (preAction.equals("addkeyword"))
-//            		 {
-//            			 ShackApi.noteAddKeyword(userName, params[1]);
-//            		 }
-//            		 if (preAction.equals("removekeyword"))
-//            		 {
-//            			 ShackApi.noteRemoveKeyword(userName, params[1]);
-//            		 }
-//		             if (preAction.equals("remallexcept"))
-//		             {
-//			             if (getRegistrationId().length() > 0)
-//			             {
-//				             ShackApi.noteUnregEverythingBut(userName, getRegistrationId());
-//			             }
-//		             }
-//					 return ShackApi.noteGetUser(userName);
-//				} catch (Exception e) {
-//					// username doesnt exist, add it then retry
-//                     // "enableDonatorFeatures"
-//					boolean vEnabled = true;
-//            		String replies = "1";
-//            		String vanity = vEnabled ? "1" : "0";
-//					try {
-//						ShackApi.noteAddUser(userName,replies,vanity);
-//						if (preAction.equals("addkeyword"))
-//	            		 {
-//	            			 ShackApi.noteAddKeyword(userName, params[1]);
-//	            		 }
-//	            		 if (preAction.equals("removekeyword"))
-//	            		 {
-//	            			 ShackApi.noteRemoveKeyword(userName, params[1]);
-//	            		 }
-//						 return ShackApi.noteGetUser(userName);
-//					} catch (Exception e1) {
-//						// TODO Auto-generated catch block
-//						e1.printStackTrace();
-//					}
-//					e.printStackTrace();
-//				}
-//             }
-//             return null;
-//         }
-//
-//         @Override
-//         protected void onPostExecute(JSONObject result)
-//         {
-//             try {
-//            	 _listener.userResult(result);
-//             }
-//             catch (Exception e)
-//             {
-//             }
-//         }
-// 	}
 }

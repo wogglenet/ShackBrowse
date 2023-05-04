@@ -53,7 +53,6 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
     private boolean _Venabled;
 
     private Preference _keyNotification;
-//    private Preference _devicesNotification;
     private OnGCMInteractListener mGCMlistener;
 
     @Override
@@ -90,50 +89,6 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
 
         });
 
-//        Preference testNote = (Preference) findPreference("pref_testnote");
-//        testNote.setOnPreferenceClickListener(new OnPreferenceClickListener(){
-//
-//                                                  @Override
-//                                                  public boolean onPreferenceClick(Preference preference) {
-//                                                      SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-//
-//                                                      Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
-//                                                      NotificationCompat.Builder mBuilder =
-//                                                              new NotificationCompat.Builder(getActivity(), NotifierReceiver.CHANNEL_REPLY)
-//                                                                      .setSmallIcon(R.drawable.note_logo2018)
-//                                                                      .setLargeIcon(largeIcon)
-//                                                                      .setContentTitle("Test")
-//                                                                      .setContentText("Only a test")
-//                                                                      .setColor(Color.GREEN)
-//                                                                      .setTicker("Test Notification")
-//                                                                      .setAutoCancel(true);
-//
-//                                                      NotificationManager mNotificationManager =
-//                                                              (NotificationManager)getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-//
-//                                                      PendingIntent notifyPIntent = PendingIntent.getActivity(getActivity().getApplicationContext(), 0, new Intent(), 0);
-//                                                      mBuilder.setContentIntent(notifyPIntent);
-//
-//                                                      Notification notification = mBuilder.build();
-//                                                      notification.sound = Uri.parse(prefs.getString("notificationSound", "DEFAULT_SOUND"));
-//
-//                                                      if (prefs.getBoolean("notificationVibrate", true))
-//                                                          notification.defaults|= Notification.DEFAULT_VIBRATE;
-//
-//                                                      notification.flags |= Notification.FLAG_AUTO_CANCEL;
-//                                                      notification.flags |= Notification.FLAG_SHOW_LIGHTS;
-//
-//                                                      notification.ledARGB = prefs.getInt("notificationColor", Color.GREEN);
-//                                                      notification.ledOffMS = Integer.parseInt(prefs.getString("LEDBlinkInMS", "2000"));
-//                                                      notification.ledOnMS = (int)(Integer.parseInt(prefs.getString("LEDBlinkInMS", "2000")) / 10);
-//                                                      // mId allows you to update the notification later on.
-//                                                      int mId = 58401;
-//                                                      mNotificationManager.notify(mId, notification);
-//
-//                                                      return false;
-//                                                  }}
-//        );
-
         Preference colorNote = (Preference) findPreference("notificationColor2");
         colorNote.setOnPreferenceClickListener(new OnPreferenceClickListener(){
 
@@ -155,166 +110,29 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
             }}
         );
 
-        mGCMlistener = new OnGCMInteractListener(){
+        mGCMlistener = new OnGCMInteractListener() {
             @Override
             public void networkResult(String res) {
                 Log.d(TAG, "NETWORKSERVERS RESULT" + res);
                 Editor edit = _prefs.edit();
-                if (res.contains("remove device"))
-                {
+                if (res.contains("remove device")) {
                     edit.putBoolean("noteEnabled", false);
                     _noteEnabled.setChecked(false);
                     _vanityNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
                     _keyNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
-//                    _devicesNotification.setEnabled(false);
-//                    if (_progressDialog != null)
-//                    {
-//                        _progressDialog.dismiss();
-//                        _progressDialog = null;
-//                    }
-                }
-                else if (res.contains("add device"))
-                {
+                } else if (res.contains("add device")) {
                     edit.putBoolean("noteEnabled", true);
                     _noteEnabled.setChecked(true);
-//                    _GCMAccess.doUserInfoTask();
-					/*
-					_vanityNotification.setChecked(false);
-					_repliesNotification.setChecked(true);
-					edit.putBoolean("noteReplies", true);
-                    edit.putBoolean("noteVanity", false); */
                     _vanityNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
                     _keyNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
                 }
-//                else if (res.contains("already exists"))
-//                {
-//                    // likely a vanity.repl update
-//                    _GCMAccess.doUserInfoTask();
-//                }
-                if (_progressDialog != null)
-                {
+                if (_progressDialog != null) {
                     _progressDialog.dismiss();
                     _progressDialog = null;
                 }
                 edit.commit();
             }
-
-            @Override
-            public void userResult(JSONObject result) {
-                Editor edit = _prefs.edit();
-                try{
-                    if (result == null)
-                    {
-                        edit.putBoolean("noteVanity", false);
-                        _vanityNotification.setChecked(false);
-                        edit.putBoolean("noteReplies", false);
-                        _repliesNotification.setChecked(false);
-                        _noteEnabled.setChecked(false);
-                        _vanityNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
-                        _keyNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
-//                        _devicesNotification.setEnabled(false);
-//                        mNoteKeywords = new ArrayList<String>();
-                        edit.putBoolean("noteEnabled", false);
-                    }
-                    else
-                    {
-                        System.out.println("TRYING TO READ USERINFO" + result.getString("get_vanity") + result.getString("get_replies"));
-                        if ("1".equals(result.getString("get_vanity")))
-                        {
-                            edit.putBoolean("noteVanity", true);
-                            _vanityNotification.setChecked(true);
-                        }
-                        else
-                        {
-                            edit.putBoolean("noteVanity", false);
-                            _vanityNotification.setChecked(false);
-                        }
-                        if ("1".equals(result.getString("get_replies")))
-                        {
-                            edit.putBoolean("noteReplies", true);
-                            _repliesNotification.setChecked(true);
-                        }
-                        else
-                        {
-                            edit.putBoolean("noteReplies", false);
-                            _repliesNotification.setChecked(false);
-                        }
-                        if (result.getJSONArray("devices").join("::").contains(_GCMAccess.getRegistrationId()))
-                        {
-                            edit.putBoolean("noteEnabled", true);
-                            _noteEnabled.setChecked(true);
-                            _vanityNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
-                            _keyNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
-//                            _devicesNotification.setEnabled(true);
-//                            _devicesNotification.setTitle("Devices: " + result.getJSONArray("devices").length());
-                        }
-                        else
-                        {
-                            edit.putBoolean("noteEnabled", false);
-                            _noteEnabled.setChecked(false);
-                            _vanityNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
-                            _keyNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
-//                            _devicesNotification.setTitle("Devices: " + result.getJSONArray("devices").length());
-//                            _devicesNotification.setEnabled(false);
-                        }
-
-//                        mNoteKeywords = new ArrayList<String>();
-                        JSONArray keywordArr = result.getJSONArray("keywords");
-                        if ((keywordArr != null) && (keywordArr.length() > 0))
-                        {
-                            for (int i=0;i<keywordArr.length();i++)
-                            {
-//                                mNoteKeywords.add(keywordArr.get(i).toString());
-                            }
-                        }
-                    }
-                } catch (Exception e) {}
-                edit.commit();
-                if (_progressDialog != null)
-                {
-                    _progressDialog.dismiss();
-                    _progressDialog = null;
-                }
-            }};
-
-//        ((Preference)findPreference("notificationEditOnline")).setOnPreferenceClickListener(new OnPreferenceClickListener()
-//        {
-//            @Override
-//            public boolean onPreferenceClick(Preference preference)
-//            {
-//                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.woggle.net/notifications"));
-//                startActivity(browserIntent);
-//                return false;
-//            }
-//        });
-//        _devicesNotification = (Preference) findPreference("notificationDevices");
-//        _devicesNotification.setOnPreferenceClickListener(new OnPreferenceClickListener()
-//        {
-//            @Override
-//            public boolean onPreferenceClick(Preference preference)
-//            {
-//                new MaterialDialog.Builder(getActivity()).title("Delete all other devices?").content("Are you sure? This will prevent all of your other devices from receiving notifications, and only this device will receive them until you re-enable notifications on other devices.").positiveText("Remove other devices").negativeText("Cancel")
-//                        .onPositive(new MaterialDialog.SingleButtonCallback()
-//                        {
-//                            @Override
-//                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which)
-//                            {
-//                                new MaterialDialog.Builder(getActivity()).title("Seriously?").content("Your other devices will be unregistered and will need to be registered on each device. Only use this if your notifications are broken.").positiveText("Remove all other devices").negativeText("Cancel")
-//                                .onPositive(new MaterialDialog.SingleButtonCallback()
-//                                {
-//                                    @Override
-//                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which)
-//                                    {
-//                                        _progressDialog = MaterialProgressDialog.show(getActivity(), "Adding Keyword", "Communicating with Shack Browse server...", true, true);
-//                                        _GCMAccess.doUserInfoTask("remallexcept", null);
-//                                    }
-//                                }).show();
-//                            }
-//                        }).show();
-//                return false;
-//            }
-//        });
-//        _devicesNotification.setTitle("Devices: #unknown");
+        };
 
         _keyNotification = (Preference) findPreference("noteKeywords");
         _keyNotification.setOnPreferenceClickListener(new OnPreferenceClickListener(){
@@ -364,7 +182,6 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
                                 _noteEnabled.setChecked(false);
                                 _vanityNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
                                 _keyNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
-//                                _devicesNotification.setEnabled(false);
                             }
                         });
                     }
@@ -505,7 +322,6 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
         showKeywords();
         try {
             _GCMAccess.doRegisterTask("reg");
-//            ShackApi.noteAddUser(userName,"", "");
         } catch(Exception e) {
             Log.e(TAG, "Exception in updateKeywords", e);
         }
@@ -607,12 +423,6 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
                 }
             });
             builder.show();
-        }
-        else
-        {
-            // TODO: Add getting notification API details if required for new PN server.
-//            _progressDialog = MaterialProgressDialog.show(getActivity(), "Checking Notification Status", "Communicating with Shack Browse server...", true, true);
-//            _GCMAccess.doUserInfoTask();
         }
         super.onResume();
     }
