@@ -126,11 +126,11 @@ public class NetworkNotificationServers
              {
                  String userName = _prefs.getString("userName", "");
                  boolean verified  = _prefs.getBoolean("usernameVerified", false);
-				 JSONArray keywords = null;
+				 JSONArray keywords = new JSONArray();
 				 try {
-					 keywords = new JSONArray(_prefs.getString(PreferenceKeys.notificationKeywords, ""));
+					 keywords = new JSONArray(_prefs.getString(PreferenceKeys.notificationKeywords, "[]"));
 				 } catch(JSONException e) {
-					 Log.e(TAG, "Error reading mNoteKeywords", e);
+					 Log.w(TAG, "Error reading mNoteKeywords", e);
 				 }
                  
                  // everything but unreg is protected by username check

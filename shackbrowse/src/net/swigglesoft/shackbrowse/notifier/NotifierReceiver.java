@@ -374,7 +374,7 @@ public class NotifierReceiver extends FirebaseMessagingService
 			return false;
 
 		try {
-			JSONArray mBlockList = new JSONArray(mPrefs.getString("echoChamberBlockList", ""));
+			JSONArray mBlockList = new JSONArray(mPrefs.getString("echoChamberBlockList", "[]"));
 			for (int i = 0; i < mBlockList.length(); i++) {
 				if (mBlockList.getString(i).equalsIgnoreCase(username))
 					return true;

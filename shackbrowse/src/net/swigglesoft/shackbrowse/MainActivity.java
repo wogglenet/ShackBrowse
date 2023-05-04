@@ -308,7 +308,7 @@ public class MainActivity extends AppCompatActivity implements ColorChooserDialo
 		if (_prefs.contains("echoChamberBlockList"))
 		{
 			try {
-				mBlockList = new JSONArray(_prefs.getString("echoChamberBlockList", ""));
+				mBlockList = new JSONArray(_prefs.getString("echoChamberBlockList", "[]"));
 			}
 			catch (Exception e)
 			{

@@ -69,7 +69,7 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
         final PreferenceFragment thisFrag = this;
         Preference SMCheckInterval = (Preference)findPreference("PeriodicNetworkServicePeriod");
         try {
-            mNoteKeywords = new JSONArray(_prefs.getString(PreferenceKeys.notificationKeywords, ""));
+            mNoteKeywords = new JSONArray(_prefs.getString(PreferenceKeys.notificationKeywords, "[]"));
         } catch(JSONException e) {
             Log.e(TAG, "Error reading mNoteKeywords", e);
         }
