@@ -930,11 +930,10 @@ public class ThreadListFragment extends ListFragment
 
 	    				iter.remove();
                         statInc(getActivity(), "CollapsedDueToKeywordFilter");
-	    				continue;
 	    			}
 	    		}
-
-				if (((MainActivity)getActivity()).isOnBlocklist(t.getUserName().toLowerCase()))
+				MainActivity mainActivity = (MainActivity)getActivity();
+				if (mainActivity != null && mainActivity.isOnBlocklist(t.getUserName().toLowerCase()))
 				{
 					// delete thread
 					System.out.println("DELETING U (echochamber): " + t.getUserName().toLowerCase());
@@ -946,9 +945,7 @@ public class ThreadListFragment extends ListFragment
 						iter.remove();
 					}
 					statInc(getActivity(), "EchoChamberRemoved");
-					continue;
 				}
-
 	    	}
 			return threads;
 	    }
