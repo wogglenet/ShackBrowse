@@ -1682,14 +1682,10 @@ public class ThreadViewFragment extends ListFragment
 					}
 				});
 
-
-//				boolean mutedButtonsVisible = (p.getUserName().equalsIgnoreCase(_userName) && (_messageId == 0) && (_replyNotificationsEnabled) && !p.isPQP());
-				boolean mutedButtonsVisible = true;
-
+				boolean mutedButtonsVisible = (p.getUserName().equalsIgnoreCase(_userName) && (_messageId == 0) && (_replyNotificationsEnabled) && !p.isPQP());
 				boolean mutedPost = checkIfMuted(p.getPostId(), _prefs);
 				holder.buttonNoteMuted.setVisibility(mutedPost && mutedButtonsVisible ? View.VISIBLE : View.GONE);
 				holder.buttonNoteEnabled.setVisibility(!mutedPost && mutedButtonsVisible ? View.VISIBLE : View.GONE);
-
 
 				final ImageButton btnlol = holder.buttonLol;
 				holder.buttonLol.setOnClickListener(new View.OnClickListener() {
