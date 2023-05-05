@@ -126,6 +126,7 @@ public class NetworkNotificationServers
              {
                  String userName = _prefs.getString("userName", "");
                  boolean verified  = _prefs.getBoolean("usernameVerified", false);
+				 boolean vanityEnabled = _prefs.getBoolean(PreferenceKeys.notificationOnVanity, false);
 				 JSONArray keywords = new JSONArray();
 				 try {
 					 keywords = new JSONArray(_prefs.getString(PreferenceKeys.notificationKeywords, "[]"));
@@ -139,10 +140,10 @@ public class NetworkNotificationServers
 	                 if (params[0].equals("reg"))
 	                 {
 						 String regId = getRegistrationId();
-	                 	 Log.d(TAG, "FCM ID: " + regId);
+						 Log.d(TAG, "FCM ID: " + regId);
 	                	 if (regId.length() > 0)
 		                 {
-							ShackApi.noteAddUser(userName, keywords);
+							ShackApi.noteAddUser(userName, keywords, vanityEnabled);
 							boolean result = ShackApi.noteReg(userName, getRegistrationId());
 	                		return result ? "add device" : "";
 		                }

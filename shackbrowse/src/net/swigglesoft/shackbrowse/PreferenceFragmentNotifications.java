@@ -2,7 +2,6 @@ package net.swigglesoft.shackbrowse;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import net.swigglesoft.shackbrowse.NetworkNotificationServers.OnGCMInteractListener;
 
@@ -172,7 +171,7 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
 
                             @Override
                             public void onSuccess() {
-                                _progressDialog = MaterialProgressDialog.show(getActivity(), "Changing Notification Status", "Communicating with Shack Browse server...", true, true);
+                                showChangingNotificationsProgress();
 
                                 _GCMAccess = new NetworkNotificationServers(getActivity(), mGCMlistener);
                                 if (checked)
@@ -191,7 +190,7 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
                     }
                     else
                     {
-                        _progressDialog = MaterialProgressDialog.show(getActivity(), "Changing Notification Status", "Communicating with Shack Browse server...", true, true);
+                        showChangingNotificationsProgress();
 
                         _GCMAccess = new NetworkNotificationServers(getActivity(), mGCMlistener);
                         if (checked)
@@ -229,6 +228,8 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
                     edit.putBoolean(PreferenceKeys.notificationOnVanity, checked);
                     edit.commit();
                     _vanityNotification.setChecked(checked);
+                    showChangingNotificationsProgress();
+                    _GCMAccess.doRegisterTask("reg");
                 }
                 return false;
             }
@@ -280,6 +281,22 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
 
     }
 
+    private void showProgressDialog(String title) {
+        _progressDialog = MaterialProgressDialog.show(getActivity(), title, "Communicating with Shack Browse server...", true, true);
+    }
+
+    private void showChangingNotificationsProgress() {
+        showProgressDialog("Changing Notification Status");
+    }
+
+    private void showAddKeywordProgress() {
+        showProgressDialog("Adding Keyword");
+    }
+
+    private void showRemoveKeywordProgress() {
+        showProgressDialog("Removing Keyword");
+    }
+
     /*
      * KEYWORDS
      */
@@ -304,7 +321,7 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 mNoteKeywords.put(input.getText().toString());
-                _progressDialog = MaterialProgressDialog.show(getActivity(), "Adding Keyword", "Communicating with Shack Browse server...", true, true);
+                showAddKeywordProgress();
                 updateKeywords();
             }
         });
@@ -348,7 +365,7 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 mNoteKeywords.remove(item);
-                _progressDialog = MaterialProgressDialog.show(getActivity(), "Removing Keyword", "Communicating with Shack Browse server...", true, true);
+                showRemoveKeywordProgress();
                 updateKeywords();
             }
         });

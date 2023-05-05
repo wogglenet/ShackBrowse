@@ -1863,10 +1863,10 @@ public class ShackApi
         }        
     }
 
-	public static boolean noteAddUser(String userName, JSONArray keywords) throws ClientProtocolException, UnsupportedEncodingException, IOException, JSONException {
+	public static boolean noteAddUser(String userName, JSONArray keywords, boolean vanityEnabled) throws ClientProtocolException, UnsupportedEncodingException, IOException, JSONException {
         List<NameValuePair> values = new ArrayList<>();
         values.add(new BasicNameValuePair("UserName", userName));
-        values.add(new BasicNameValuePair("NotifyOnUserName", "1"));
+        values.add(new BasicNameValuePair("NotifyOnUserName", vanityEnabled ? "1" : "0"));
         for(int i = 0; i < keywords.length(); i++) {
             values.add(new BasicNameValuePair("NotificationKeywords[" + i + "]", keywords.getString(i)));
         }
