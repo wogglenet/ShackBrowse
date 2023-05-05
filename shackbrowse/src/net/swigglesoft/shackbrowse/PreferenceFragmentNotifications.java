@@ -120,11 +120,15 @@ public class PreferenceFragmentNotifications extends PreferenceFragment
                     _noteEnabled.setChecked(false);
                     _vanityNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
                     _keyNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
+                    ErrorDialog.display(getContext(), "Deregistration OK", "Deregistered with the Push Notification server.");
                 } else if (res.contains("add device")) {
                     edit.putBoolean("noteEnabled", true);
                     _noteEnabled.setChecked(true);
                     _vanityNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
                     _keyNotification.setEnabled(_Venabled && _noteEnabled.isChecked());
+                    ErrorDialog.display(getContext(), "Registration OK", "Registered with the Push Notification server.");
+                } else if (res.toLowerCase().contains("error")) {
+                    ErrorDialog.display(getContext(), "Error registering with Push Notification server", res);
                 }
                 if (_progressDialog != null) {
                     _progressDialog.dismiss();

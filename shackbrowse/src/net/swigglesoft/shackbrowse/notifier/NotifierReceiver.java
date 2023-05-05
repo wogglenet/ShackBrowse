@@ -44,9 +44,7 @@ public class NotifierReceiver extends FirebaseMessagingService
 
 	private static final String TAG = "SBNOTIFIER";
 
-	public static final String CHANNEL_VANITY = "sbnotechannel_vanity";
-	public static final String CHANNEL_GENERAL = "sbnotechannel_general";
-	public static final String CHANNEL_KEYWORD = "sbnotechannel_keyword";
+	public static final String CHANNEL_NEWPOST = "sbnotechannel_newpost";
 	public static final String CHANNEL_SHACKMSG = "sbnotechannel_shackmsg";
 	public static final String CHANNEL_SYSTEM = "sbnotechannel_system";
 
@@ -85,15 +83,14 @@ public class NotifierReceiver extends FirebaseMessagingService
 		}
 
 		String notificationType = data.get("type").toString().toLowerCase();
-		if (notificationType.equals("general"))
+		if (notificationType.equals("reply") || notificationType.equals("mention") || notificationType.equals("keyword"))
 		{
-			String title = data.get("title").toString();
-			if(!repliesEnabled && title.startsWith("Reply")) {
+			if(!repliesEnabled && notificationType.equals("reply")) {
 				Log.w(TAG, "Skipping this notification due to the title starting with Reply and reply notifications are not enabled in settings.");
 				return;
 			}
 
-			if(!vanityEnabled && title.startsWith("Mentioned")) {
+			if(!vanityEnabled && notificationType.equals("mention")) {
 				Log.w(TAG, "Skipping this notification due to the title starting with Mentioned and vanity notifications are not enabled in settings.");
 				return;
 			}
@@ -172,7 +169,7 @@ public class NotifierReceiver extends FirebaseMessagingService
 
 	private void processGeneralNotification(Context context, Bitmap largeIcon, Map data) {
 		NotificationCompat.Builder mBuilder =
-				new NotificationCompat.Builder(context, NotifierReceiver.CHANNEL_GENERAL)
+				new NotificationCompat.Builder(context, NotifierReceiver.CHANNEL_NEWPOST)
 				.setSmallIcon(icon_res)
 				.setLargeIcon(largeIcon)
 				.setContentTitle(data.get("title").toString())

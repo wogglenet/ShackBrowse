@@ -163,7 +163,7 @@ public class NetworkNotificationServers
              {
                  Log.e("shackbrowse", "Error changing push status", e);
                  _exception = e;
-                 return "";
+                 return "Error: " + e.getMessage();
              }
          }
          @Override

@@ -922,7 +922,7 @@ public class ShackApi
 
         HttpResponse response = client.execute(post);
         int statusCode = response.getStatusLine().getStatusCode();
-        if (statusCode == 200)
+        if (statusCode >= 200 && statusCode <= 299)
         {
             return true;
         }

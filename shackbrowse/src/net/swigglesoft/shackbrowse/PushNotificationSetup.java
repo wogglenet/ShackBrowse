@@ -16,14 +16,8 @@ public class PushNotificationSetup {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
 
-			NotificationChannel channel = new NotificationChannel(NotifierReceiver.CHANNEL_VANITY, "Vanity Notifications", NotificationManager.IMPORTANCE_DEFAULT);
-			channel.setDescription("Notifications when someone mentions your shack name"); channel.enableLights(true); channel.setLightColor(Color.GREEN); channel.enableVibration(true);
-			notificationManager.createNotificationChannel(channel);
-			channel = new NotificationChannel(NotifierReceiver.CHANNEL_GENERAL, "Reply Notifications", NotificationManager.IMPORTANCE_DEFAULT);
-			channel.setDescription("Notifications when someone replies to your posts"); channel.enableLights(true); channel.setLightColor(Color.GREEN); channel.enableVibration(true);
-			notificationManager.createNotificationChannel(channel);
-			channel = new NotificationChannel(NotifierReceiver.CHANNEL_KEYWORD, "Keyword Notifications", NotificationManager.IMPORTANCE_DEFAULT);
-			channel.setDescription("Notifications when someone mentions a keyword you set"); channel.enableLights(true); channel.setLightColor(Color.GREEN); channel.enableVibration(true);
+			NotificationChannel channel = new NotificationChannel(NotifierReceiver.CHANNEL_NEWPOST, "New Post Notifications", NotificationManager.IMPORTANCE_DEFAULT);
+			channel.setDescription("Notifications when new posts come in that are replies, mentions or keyword matches"); channel.enableLights(true); channel.setLightColor(Color.GREEN); channel.enableVibration(true);
 			notificationManager.createNotificationChannel(channel);
 			channel = new NotificationChannel(NotifierReceiver.CHANNEL_SHACKMSG, "Shack Message Notifications", NotificationManager.IMPORTANCE_HIGH);
 			channel.setDescription("Notifications when someone sends you a private message"); channel.enableLights(true); channel.setLightColor(Color.GREEN); channel.enableVibration(true);

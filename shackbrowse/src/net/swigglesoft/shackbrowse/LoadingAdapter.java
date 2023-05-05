@@ -152,7 +152,7 @@ public abstract class LoadingAdapter<T> extends ArrayAdapter<T>
             if (_exception != null)
             {
             	_wasLastCallSuccessful = false;
-               ErrorDialog.display(getContext(), "Error", "Error loading data."); 
+               ErrorDialog.display(getContext(), "Error", "Error loading data.");
             }
             else if (result != null)
             {
