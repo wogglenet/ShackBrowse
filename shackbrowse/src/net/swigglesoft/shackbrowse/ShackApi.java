@@ -96,7 +96,7 @@ public class ShackApi
     static final String PUSHSERV_URL = "http://shackbrowsepublic.appspot.com/";
     static final String FASTPUSHSERV_URL = "http://shackbrowse.appspot.com/";
     
-    static final String NOTESERV_URL = "http://192.168.150.201:4000";
+    static final String NOTESERV_URL = "https://shacknotify.bit-shift.com";
     static final String NOTESERV_URL_SSL = "https://woggle.net/shackbrowsenotification/";
 
     static final String BASE_URL = "http://shackapi.hughes.cc/";
@@ -1381,7 +1381,7 @@ public class ShackApi
         post.setEntity(e);
 
         String content = client.execute(post, response_handler);
-        System.out.println("GET TAGGERS" + postId + " RESPONSE: " + content);
+        System.out.println("GET TAGGERS " + postId + " RESPONSE: " + content);
 
         // see if it did work
         if (!content.contains("status\":\"1\"")) {

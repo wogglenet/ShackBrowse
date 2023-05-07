@@ -89,6 +89,10 @@ b{Why does the thread open when I go from landscape to portrait?}b
 How am I supposed to tell if you were looking at the thread or the list of threads? You can disable split view/tablet view to fix this, or lock the orientation to portrait.
 
 -->
+$ 7.0.11
+% v 7.0.11
+_ May 7, 2023
+* Push Notifications return! Enable them in Settings -> Notifications. Turn on Reply notifications for replies, vanity notifications for mentions of your username, and add keywords for notifications when a keyword in your list matches. Use the Block List to block notifications from people you don't want to receive notifications for.
 
 $ 7.0.10
 % v 7.0.10
